@@ -1,0 +1,354 @@
+<style>
+    rect.node:hover{
+        stroke-width: 1;
+        stroke: black;
+    }
+</style>
+<body>
+    
+    <div id = 'timss'></div>
+    
+    <script src = 'd3.js'></script>
+    
+    <script>
+
+// =========================================================================== //
+// ================================ d3 scale info ============================ //
+// =========================================================================== //
+        
+        // The SVG element will act as a container for all graphic information
+        // The margins are for the container svg
+        var margin = {
+            top: 50,
+            bottom: 50,
+            left: 50,
+            right: 10
+        }
+        
+        //dimensions of the container svg
+        var width = 1300 - margin.left - margin.right,
+            height = 650 - margin.top - margin.bottom;
+        
+        //saving space for info bar
+        var width_info = 400;
+        
+        // consistent dimensions 
+        var internal_buffer = 20;
+        var node_height = 15;
+        var color_key_radius = 10
+        
+        var x_nodes = d3.scaleLinear()
+            .range([0, width - width_info - internal_buffer]);
+        
+        var y = d3.scaleBand()
+            .rangeRound([0, (.75 * height)]);
+        
+        var clr = d3.scaleLinear()
+            .range(['green', 'yellow', 'brown'])
+            .domain([1, .5, 0]);
+                 
+// ======================================================================================= //
+// ============================ Static Parts ============================================= //
+// ======================================================================================= //
+        
+        // conatiner svg
+        svg = d3.select('#timss')
+            .append('svg')
+            .attr('height', height + margin.top + margin.bottom)
+            .attr('width', width + margin.left + margin.right)
+            .append('g')
+            .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
+        
+        // info display
+        info = d3.select('svg')
+            .append('g')
+            .attr('transform', 'translate(' + (margin.left + width - width_info) + ',0)')
+                
+        //I should translate the intro text to spanish and create a 'choose language' functionality
+        //SVG text does not allow for newlines or tabs so I created an array of text lines
+        intro_text = [
+            'The Trends in International Math and Science Study',
+            '',
+            'TIMSS is a test that enables participating countries to make',
+            'evidence-based decisions for improving education policy.',
+            'Some countries have used TIMSS to:',
+            '-- Measure their education system in a global context',
+            '-- Identify gaps in learning resources and opportunities',
+            '-- Pinpoint areas of weakness and stimulate reform',
+            '-- Measure the impact of new educational initiatives',
+            '-- Train researchers and teachers in assesment and evaluation',
+            '',
+            'The test is administered to 8th grade students by the IEA and',
+            'Boston College. They publicized data sets of student-level ',
+            'data from every test administered since the test\'s inception',
+            'because they are awesome and want people like me to play',
+            'around with cool datasets. If you are interested in  more',
+            'information on TIMSS, then please visit the project\'s site:',
+            'http://timssandpirls.bc.edu/',
+            '',
+            'This graphic is my attempt to visualize their data.',
+            'Each node represents a question given in the test.',
+            'The nodes are ordered by country and success rate.',
+            'Questions that have a high success rate in a particular',
+            'country are located on the left. Questions that have a low',
+            'success rate in a particular country are located on the right',
+            'If the color of a node is more green than brown, then the',
+            'question that node represents has a success rate closer to',
+            '100% in that node\'s country. If the color of a node is more',
+            'brown than green, then the question that node represents has a',
+            'success rate closer to 0% in that node\'s country. You can get',
+            'more information about a country-question combination by',
+            'pressing on a particular node',
+            '', 
+            'Have fun!'
+        ]
+                
+        info.append('rect')
+            .attr('height', height)
+            .attr('width', width_info)
+            .attr('fill', 'black')
+            .attr('fill-opacity', '.5')
+        
+        info.selectAll('text')
+            .data(intro_text)
+            .enter().append('text')
+            .attr('y', function(d,i){ return (i+1) * 16})
+            .attr('x', '5')
+            .attr('font-size', '15')
+            .attr('fill', 'white')
+            .text(function(d){return d})
+
+        // Title display
+        title = d3.select('svg')
+            .append('text')
+            .attr('x', (width - width_info)/2)
+            .attr('y', margin.top)
+            .attr('text-anchor', 'middle')
+            .attr('fill', 'black')
+            .attr('font-size', '25')
+            .text('TIMSS 2011: Comparing Correct Response Rate')
+
+        // color key to understand node color
+        color_key = d3.select('svg')
+            .selectAll('circle')
+            .data([[.25, 1], [.5, .5], [.75, 0]])
+            .enter().append('circle')
+            .attr('cx', function(d){return (width - width_info - internal_buffer) * d[0]})
+            .attr('cy', height - color_key_radius)
+            .attr('r', color_key_radius)
+            .attr('fill', function(d){return clr(d[1])})
+            .attr('stroke', 'black')
+            .attr('stroke-width', '1')
+        
+        text_key = d3.select('svg')
+            .selectAll('text.key')
+            .data([[.25, '100% Success Rate'],[.5, '50% Success Rate'], [.75, '0% Success Rate']])
+            .enter().append('text')
+            .attr('x', function(d){ return ((width - width_info - internal_buffer) * d[0]) + (color_key_radius * 2)})
+            .attr('y', height - (color_key_radius/2))
+            .text(function(d){ return d[1]})        
+       
+// ============================================================================== //
+// ==================== Custom Functions ======================================== //
+// ============================================================================== //
+        
+        // I need to create a Spanish equivalent
+        // when a node is pressed the question information that the node represents is
+        // displayed on the info display
+        // display_question_info() receives an object containing question-level and
+        // country-level information on a particular question
+        function display_question_info(obj){
+            key_list = Object.keys(obj)
+            text = []
+            text2 = []
+            for(i = 0; i < key_list.length; i++){
+                c = key_list[i];
+                if(key_list[i] == 'question'){
+                    text2.push('Question: ' + obj[c]['topic'])
+                    text2.push('--Type: ' + obj[c]['type'])
+                    text2.push('-- Cognitive Domain: ' + obj[c]['cognitive'])
+                    text2.push('-- Content Domain: ' + obj[c]['content'])
+                    text2.push('-- ID: ' + obj[c]['id'])
+                } else{
+                    text.push( c + ':') 
+                    text.push('-- Question ranked as ' + obj[c]['question_rank'] + 'th easiest')
+                    text.push('-- ' + obj[c]['number_students'] + ' students were asked this question')
+                    text.push('-- ' + (Math.round(obj[c]['correct_ratio'] * 10000)/100) + '% of students answered this question correctly')
+                    text.push('---- ' + (Math.round(obj[c]['f_correct_ratio'] * 10000)/100) + '% of female students answered this question correctly' )
+                    text.push('---- ' + (Math.round(obj[c]['m_correct_ratio'] * 10000)/100) + '% of male students answered this question correctly')         
+                }
+            }
+            return text2.concat(text);
+        }
+                
+        // when a node is pressed the information display needs to be updated
+        // update_info() recieve an array of text typically formatted by display_question_info()
+        function update_info(array){
+                from_top = 0                
+            
+                info.selectAll('text')
+                    .remove()
+                
+                info.selectAll('text')
+                    .data(display_question_info(array))
+                    .enter().append('text')
+                    .attr('x', '5')
+                    .attr('y', function(d, i){
+                        if([0, 5, 11, 17, 23].indexOf(i) >= 0){
+                            from_top += 25
+                            return from_top
+                        } else {
+                            from_top += 16
+                            return from_top
+                        }
+                    })
+                    .text(function(d){return d})
+                    .attr('fill', 'white')
+                    .attr('font-size', '15')
+        }
+        
+        
+// ========================================================================================== //
+// ============================== Data Driven Documents ===================================== //
+// ========================================================================================== //
+                
+        // data is used for debugging purposes, it will equal the json received by the d3.json() call
+        var data;        
+        
+        d3.json('d3_timss.json', function(error, json){
+            if(error) throw error;
+            
+            //data received from json should take the format of [node data, link data, link data, link data,...]
+            data = json
+        
+            x_nodes.domain(d3.extent(json[0].map(function(i){ return i.question_rank })));
+            var yPoints = ['Chile', 'Japan', 'Korea', 'USA'];
+            y.domain(yPoints);    
+                        
+            //fill question_info with data organized by question(question:..., country1: ..., country2: ..., ...)
+            question_info = {};
+            
+            for(i = 0; i < json[0].length; i++){
+                obj = data[0][i];
+                ques = obj.question;
+                rank = obj.question_rank;
+                ratio = obj.correct_ratio_per_question;
+                fratio = obj.correct_ratio_per_question_female;
+                mratio = obj.correct_ratio_per_question_male;
+                n = obj.students_per_question;
+                country = obj.country;
+                topic = obj.FIELD_LABL;
+                cognitive = obj.cognitive_domain;
+                content = obj.content_domain;
+                type = obj.question_type;
+                
+                input_country = {};
+                
+                input_country[country] = {
+                    question_rank: rank,
+                    correct_ratio: ratio,
+                    f_correct_ratio: fratio,
+                    m_correct_ratio: mratio,
+                    number_students: n
+                }
+                
+                if(question_info[ques] === undefined) {
+                    question_info[ques] = input_country 
+                } else {
+                    question_info[ques][country] = input_country[country];
+                }
+                
+                if(question_info[ques]['question'] === undefined){
+                    question_info[ques]['question'] = {
+                        id: ques,
+                        topic: topic,
+                        cognitive: cognitive,
+                        content: content,
+                        type: type
+                    };
+                }
+            }
+            
+            // create nodes that represent questions
+            nodes = svg.selectAll('rect')
+                .data(json[0])
+                .enter().append('rect')
+                .attr('class', function(d){return d.question + ' ' + d.country + ' node'})
+                .attr('id', function(d){return d.id})
+                .attr('x', function(d){return x_nodes(d.question_rank);})
+                .attr('y', function(d){return margin.top + y(d.country);})
+                .attr('width', '3')
+                .attr('height', node_height)
+                .attr('fill', function(d){return clr(d.correct_ratio_per_question);})
+            
+            //consolidate all link data into one array to iterate over
+            link_data = []
+            
+            for(i = 1; i < json.length; i++){
+                link_data = link_data.concat(json[i])
+            }
+            
+            // draw links connecting question nodes to their equivalent at other countries
+            links = svg.selectAll('line')
+                .data(link_data)
+                .enter().append('line')
+                .attr('class', function(d){return d.question})
+                .attr('x1', function(d){return x_nodes(d.x1)})
+                .attr('x2', function(d){return x_nodes(d.x2)})
+                .attr('y1', function(d){return margin.top + y(d.y1) + node_height})
+                .attr('y2', function(d){return margin.top + y(d.y2)})
+                .attr('stroke', 'grey')
+                .attr('stroke-width', '1')
+                .attr('stroke-opacity', '.3')
+
+            // draw y axis
+            svg.append('g')
+                .attr('transform', 'translate(' + '0' + ',' + (.5 * node_height) +')')
+                .call(d3.axisLeft(y))
+        
+            // When a node is clicked the clicked node and all nodes representing the same question
+            // will be highlighted. All lines connecting the nodes will also be highlighted
+            // previously highlighted nodes and links will turn back to their original form
+            var chosen = '';
+            var colors = [];
+            var info_display;
+            
+            nodes.on('click', function(){
+                //if nodes/links are highlighted, un-highlight them
+                if(chosen != ''){
+                    d3.selectAll('line.' + chosen)
+                        .attr('stroke', 'grey')
+                        .attr('stroke-width', '1')
+                        .attr('stroke-opacity', '.3')
+                    
+                    d3.selectAll('rect.' + chosen)
+                        .attr('fill', function(){
+                            return colors[d3.select(this).attr('class').split(' ')[1]]
+                        })
+                    
+                    colors = {}
+                }
+                
+                chosen = this.className.baseVal.split(' ')[0]
+                
+                d3.selectAll('line.'+chosen)
+                    .attr('stroke', 'orange')
+                    .attr('stroke-width', '3')
+                    .attr('stroke-opacity', '1')
+                
+                d3.selectAll('rect.'+chosen)
+                    .each(function(){
+                        info_display = {};
+                        t = d3.select(this);
+                        colors[t.attr('class').split(' ')[1]] = (t.attr('fill'));
+                        info_display = question_info[t.attr('class').split(' ')[0]] 
+                    })
+                    .attr('fill', 'black')
+                
+                update_info(info_display);
+            })
+        
+        
+        })
+    </script>
+</body>
