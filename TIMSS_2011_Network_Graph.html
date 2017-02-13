@@ -1,15 +1,22 @@
-<style>
-    rect.node:hover{
-        stroke-width: 1;
-        stroke: black;
-    }
-</style>
+<head>
+     <link rel='stylesheet' href='styles.css'>
+    <style>
+        rect.node:hover{
+            stroke-width: 1;
+            stroke: black;
+        }
+    </style>
+</head>
 <body>
-    
+    <div id = 'header'>
+        <ul>
+            <li><a href = 'index.html'>Home</a></li>
+            <li><a href = 'articles.html'>Articles</a></li>
+            <li><a href = 'projects.html'>Projects</a></li>
+        </ul>
+    </div>
     <div id = 'timss'></div>
-    
     <script src = 'd3.js'></script>
-    
     <script>
 
 // =========================================================================== //
@@ -347,8 +354,6 @@
                 
                 update_info(info_display);
             })
-        
-        
         })
     </script>
 </body>

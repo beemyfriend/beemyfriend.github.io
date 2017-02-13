@@ -1,0 +1,40 @@
+
+body {
+    background-color: lightgrey;
+    margin: 0;
+}
+    
+#header ul {
+    height: 10%;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    background-color: rebeccapurple;
+    width: 100%;
+    display: block;
+}
+
+#header li {
+    float: left;
+    width: 10%;
+    text-align: center;
+    height: 100%;
+    display: block;
+}
+    
+#header li a {
+    display: block;
+    color: white;
+    text-decoration: none;
+    vertical-align: middle; 
+    position: relative;
+    top: 35%; 
+}
+    
+#header li:hover {
+    background-color: deeppink;
+}
+    
+#content {
+    margin: 
+}
