@@ -1,0 +1,2350 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="BeeMyFriend" />
+
+<meta name="date" content="2017-02-19" />
+
+<title>Questions For Chris</title>
+
+<script src="questions_for_chris_files/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="questions_for_chris_files/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="questions_for_chris_files/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="questions_for_chris_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="questions_for_chris_files/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="questions_for_chris_files/navigation-1.1/tabsets.js"></script>
+<link href="questions_for_chris_files/highlightjs-1.1/default.css" rel="stylesheet" />
+<script src="questions_for_chris_files/highlightjs-1.1/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Questions For Chris</h1>
+<h4 class="author"><em>BeeMyFriend</em></h4>
+<h4 class="date"><em>February 19, 2017</em></h4>
+
+</div>
+
+<div id="TOC">
+<ul>
+<li><a href="#intro">Intro</a></li>
+<li><a href="#correct-rates">Correct Rates</a><ul>
+<li><a href="#original-models-accuracy">Original Models Accuracy (%)</a></li>
+<li><a href="#adjusted-models-accuracy">Adjusted Models Accuracy (%)</a></li>
+</ul></li>
+<li><a href="#influential-columns">Influential Columns</a><ul>
+<li><a href="#columns-used-for-student-achievement-and-school-general-combination">Columns Used For Student Achievement and School General Combination</a></li>
+<li><a href="#columns-used-for-student-achievement-and-teacher-general-combination">Columns Used For Student Achievement and Teacher General Combination</a></li>
+<li><a href="#columns-used-for-student-achievement-and-student-general-combination">Columns Used For Student Achievement and Student General Combination</a></li>
+<li><a href="#columns-used-for-student-achievement-school-general-teacher-general-and-student-general-combination">Columns Used For Student Achievement, School General, Teacher General, and Student General Combination</a></li>
+</ul></li>
+</ul>
+</div>
+
+<div id="intro" class="section level2">
+<h2>Intro</h2>
+<p>Hey Chris,</p>
+<p>I’ve been working on the 2011 TIMSS Math dataset and now I’m trying to model some of the student data. My goal is to predict the international benchmark scores for each student. I’m using <em>Naive Bayes</em>, <em>Support Vector Models</em>, <em>Trees</em>, and <em>Random Forests</em> to model the data. This is all kind of new to me so I’m not sure if I’m approaching the models correctly.</p>
+<p>The TIMSS data set is pretty big and has a lot of information for each of the students, teachers, and schools involved. I don’t want to use every column provided because I think there is a lot of repetition and a big risk of overfitting the model. What I ended up doing was fitting each dataset to a <em>Generalized Boosted Regression Model</em> and letting <em>R</em>’s <code>gbm()</code> function figure out which columns would be the most influential in figuring out a student’s benchmark scores.</p>
+<p>I’ve also made two iterations of the models. The first iteration tries to predict the benchmark scores provided by TIMSS which I named ‘Advanced’, ‘High’, ‘Intermediate’, ‘Low’, and ‘Below Low’. The second iteration tries to predict a more generalized version of the benchmark scores which I named ‘High’, ‘Intermediate’, and ‘Low’.</p>
+<p>Below I made a table with the results of each model’s confusion matrix. Each of the models are trained with a random sample containing 75% of all observations. The models were tested with the remaining 25% of observations. Each cell contains a model’s accuracy - the percent of correctly predicted test benchmark scores. I’ve included the individual benchmark scores correct rate along with both the overall correct rate and the correct rate if I guessed that every student were to receive a Below Low (or Low) benchmark score.</p>
+<p>I have 4 main questions:</p>
+<ol style="list-style-type: decimal">
+<li><p>What are typical correct rates for models predicting the academic success for students? The TIMSS dataset does not include the school’s geolocation or whether it is private or public, so I suspect that the models could definitely be better. However, I feel like anything near a 90% correct rate is near impossible. <a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a></p></li>
+<li><p>What is the ‘Jacknife’ with regards to surveys? I don’t have any background in surveys and there aren’t any really good resources online for understanding what it is. The reason I ask is that there is a factor called ‘JKZONE’ which represents the ‘The variable that captures the assignment of cases (typically students) to sampling zones.’ The <code>gbm()</code> ranks this factor as really important in predicting the benchmark scores, but I don’t want to use it if it is a factor that the TIMSS provides. That is, I don’t want to use it until I can confirm that it is a predictor that can be derived independently of TIMSS.</p></li>
+<li><p>Is reducing the amount of possible values to predict a valid approach for modeling? In the second iteration of the models I combined the ‘Advanced’ and ‘High’ benchmarks together and combined the ‘Low’ and ‘Below Low’ benchmarks together. Obviously, the prediction accuracy improved a lot, but I’m not sure if this cheapens the model.</p></li>
+<li><p>Are there any other models worth trying out? I don’t really know what is typically done when analyzing survey/test data.</p></li>
+</ol>
+<p>Any help or advice you can give me would be awesome.</p>
+<p>Cheers,</p>
+<p>Ben</p>
+</div>
+<div id="correct-rates" class="section level2">
+<h2>Correct Rates</h2>
+<div id="original-models-accuracy" class="section level3">
+<h3>Original Models Accuracy (%)</h3>
+<!-- html table generated in R 3.3.2 by xtable 1.8-2 package -->
+<!-- Sun Feb 19 11:33:05 2017 -->
+<table border="1">
+<tr>
+<th>
+</th>
+<th>
+Model Name
+</th>
+<th>
+Advanced
+</th>
+<th>
+High
+</th>
+<th>
+Intermediate
+</th>
+<th>
+Low
+</th>
+<th>
+Below Low
+</th>
+<th>
+Overall
+</th>
+<th>
+Optimized Guess
+</th>
+<th>
+Improvement
+</th>
+</tr>
+<tr>
+<td align="right">
+1
+</td>
+<td>
+NB: Simple
+</td>
+<td align="right">
+0.00
+</td>
+<td align="right">
+29.69
+</td>
+<td align="right">
+40.80
+</td>
+<td align="right">
+49.00
+</td>
+<td align="right">
+73.26
+</td>
+<td align="right">
+54.48
+</td>
+<td align="right">
+38.64
+</td>
+<td align="right">
+15.84
+</td>
+</tr>
+<tr>
+<td align="right">
+2
+</td>
+<td>
+NB: Student-School Combo
+</td>
+<td align="right">
+3.85
+</td>
+<td align="right">
+34.64
+</td>
+<td align="right">
+35.11
+</td>
+<td align="right">
+51.41
+</td>
+<td align="right">
+69.01
+</td>
+<td align="right">
+52.10
+</td>
+<td align="right">
+35.94
+</td>
+<td align="right">
+16.16
+</td>
+</tr>
+<tr>
+<td align="right">
+3
+</td>
+<td>
+NB: Student-Teacher Combo
+</td>
+<td align="right">
+0.00
+</td>
+<td align="right">
+17.19
+</td>
+<td align="right">
+34.65
+</td>
+<td align="right">
+61.53
+</td>
+<td align="right">
+60.59
+</td>
+<td align="right">
+51.08
+</td>
+<td align="right">
+35.32
+</td>
+<td align="right">
+15.76
+</td>
+</tr>
+<tr>
+<td align="right">
+4
+</td>
+<td>
+NB: Student-Student Combo
+</td>
+<td align="right">
+16.67
+</td>
+<td align="right">
+34.05
+</td>
+<td align="right">
+45.67
+</td>
+<td align="right">
+44.98
+</td>
+<td align="right">
+82.66
+</td>
+<td align="right">
+58.28
+</td>
+<td align="right">
+37.79
+</td>
+<td align="right">
+20.49
+</td>
+</tr>
+<tr>
+<td align="right">
+5
+</td>
+<td>
+NB: Full Combo
+</td>
+<td align="right">
+12.82
+</td>
+<td align="right">
+32.36
+</td>
+<td align="right">
+45.43
+</td>
+<td align="right">
+51.01
+</td>
+<td align="right">
+80.18
+</td>
+<td align="right">
+59.14
+</td>
+<td align="right">
+38.13
+</td>
+<td align="right">
+21.01
+</td>
+</tr>
+<tr>
+<td align="right">
+6
+</td>
+<td>
+SVM: Simple
+</td>
+<td align="right">
+0.00
+</td>
+<td align="right">
+24.43
+</td>
+<td align="right">
+48.25
+</td>
+<td align="right">
+46.77
+</td>
+<td align="right">
+71.76
+</td>
+<td align="right">
+54.13
+</td>
+<td align="right">
+38.29
+</td>
+<td align="right">
+15.84
+</td>
+</tr>
+<tr>
+<td align="right">
+7
+</td>
+<td>
+SVM: Student-School Combo
+</td>
+<td align="right">
+0.00
+</td>
+<td align="right">
+35.04
+</td>
+<td align="right">
+40.12
+</td>
+<td align="right">
+52.82
+</td>
+<td align="right">
+73.05
+</td>
+<td align="right">
+55.13
+</td>
+<td align="right">
+35.59
+</td>
+<td align="right">
+19.54
+</td>
+</tr>
+<tr>
+<td align="right">
+8
+</td>
+<td>
+SVM: Student-Teacher Combo
+</td>
+<td align="right">
+0.00
+</td>
+<td align="right">
+32.16
+</td>
+<td align="right">
+36.27
+</td>
+<td align="right">
+52.87
+</td>
+<td align="right">
+72.75
+</td>
+<td align="right">
+54.10
+</td>
+<td align="right">
+36.04
+</td>
+<td align="right">
+18.06
+</td>
+</tr>
+<tr>
+<td align="right">
+9
+</td>
+<td>
+SVM: Student-Student Combo
+</td>
+<td align="right">
+2.33
+</td>
+<td align="right">
+47.37
+</td>
+<td align="right">
+45.99
+</td>
+<td align="right">
+54.95
+</td>
+<td align="right">
+75.73
+</td>
+<td align="right">
+60.09
+</td>
+<td align="right">
+38.74
+</td>
+<td align="right">
+21.35
+</td>
+</tr>
+<tr>
+<td align="right">
+10
+</td>
+<td>
+SVM: Full Combo
+</td>
+<td align="right">
+4.76
+</td>
+<td align="right">
+55.72
+</td>
+<td align="right">
+50.59
+</td>
+<td align="right">
+57.74
+</td>
+<td align="right">
+76.97
+</td>
+<td align="right">
+62.79
+</td>
+<td align="right">
+37.69
+</td>
+<td align="right">
+25.10
+</td>
+</tr>
+<tr>
+<td align="right">
+11
+</td>
+<td>
+TREE: Simple
+</td>
+<td align="right">
+0.00
+</td>
+<td align="right">
+0.00
+</td>
+<td align="right">
+0.00
+</td>
+<td align="right">
+0.00
+</td>
+<td align="right">
+100.00
+</td>
+<td align="right">
+38.98
+</td>
+<td align="right">
+38.98
+</td>
+<td align="right">
+0.00
+</td>
+</tr>
+<tr>
+<td align="right">
+12
+</td>
+<td>
+TREE: Student-School Combo
+</td>
+<td align="right">
+0.00
+</td>
+<td align="right">
+0.00
+</td>
+<td align="right">
+12.86
+</td>
+<td align="right">
+0.00
+</td>
+<td align="right">
+95.70
+</td>
+<td align="right">
+35.94
+</td>
+<td align="right">
+34.49
+</td>
+<td align="right">
+1.45
+</td>
+</tr>
+<tr>
+<td align="right">
+13
+</td>
+<td>
+TREE: Student-Teacher Combo
+</td>
+<td align="right">
+0.00
+</td>
+<td align="right">
+0.00
+</td>
+<td align="right">
+0.00
+</td>
+<td align="right">
+0.00
+</td>
+<td align="right">
+100.00
+</td>
+<td align="right">
+35.95
+</td>
+<td align="right">
+35.95
+</td>
+<td align="right">
+0.00
+</td>
+</tr>
+<tr>
+<td align="right">
+14
+</td>
+<td>
+TREE: Student-Student Combo
+</td>
+<td align="right">
+0.00
+</td>
+<td align="right">
+0.00
+</td>
+<td align="right">
+24.28
+</td>
+<td align="right">
+0.00
+</td>
+<td align="right">
+95.10
+</td>
+<td align="right">
+40.30
+</td>
+<td align="right">
+37.08
+</td>
+<td align="right">
+3.22
+</td>
+</tr>
+<tr>
+<td align="right">
+15
+</td>
+<td>
+TREE: Full Combo
+</td>
+<td align="right">
+0.00
+</td>
+<td align="right">
+0.00
+</td>
+<td align="right">
+40.93
+</td>
+<td align="right">
+15.94
+</td>
+<td align="right">
+82.50
+</td>
+<td align="right">
+44.17
+</td>
+<td align="right">
+36.61
+</td>
+<td align="right">
+7.56
+</td>
+</tr>
+<tr>
+<td align="right">
+16
+</td>
+<td>
+FOREST: Simple
+</td>
+<td align="right">
+0.00
+</td>
+<td align="right">
+0.00
+</td>
+<td align="right">
+0.00
+</td>
+<td align="right">
+0.00
+</td>
+<td align="right">
+100.00
+</td>
+<td align="right">
+35.54
+</td>
+<td align="right">
+35.54
+</td>
+<td align="right">
+0.00
+</td>
+</tr>
+<tr>
+<td align="right">
+17
+</td>
+<td>
+FOREST: Student-School Combo
+</td>
+<td align="right">
+0.00
+</td>
+<td align="right">
+16.55
+</td>
+<td align="right">
+23.87
+</td>
+<td align="right">
+48.41
+</td>
+<td align="right">
+66.06
+</td>
+<td align="right">
+45.82
+</td>
+<td align="right">
+34.40
+</td>
+<td align="right">
+11.42
+</td>
+</tr>
+<tr>
+<td align="right">
+18
+</td>
+<td>
+FOREST: Student-Teacher Combo
+</td>
+<td align="right">
+0.00
+</td>
+<td align="right">
+19.54
+</td>
+<td align="right">
+20.70
+</td>
+<td align="right">
+49.87
+</td>
+<td align="right">
+62.55
+</td>
+<td align="right">
+45.09
+</td>
+<td align="right">
+34.77
+</td>
+<td align="right">
+10.32
+</td>
+</tr>
+<tr>
+<td align="right">
+19
+</td>
+<td>
+FOREST: Student-Student Combo
+</td>
+<td align="right">
+1.92
+</td>
+<td align="right">
+13.27
+</td>
+<td align="right">
+26.67
+</td>
+<td align="right">
+31.39
+</td>
+<td align="right">
+75.68
+</td>
+<td align="right">
+45.13
+</td>
+<td align="right">
+37.24
+</td>
+<td align="right">
+7.89
+</td>
+</tr>
+<tr>
+<td align="right">
+20
+</td>
+<td>
+FOREST: Full Combo
+</td>
+<td align="right">
+0.00
+</td>
+<td align="right">
+13.77
+</td>
+<td align="right">
+33.30
+</td>
+<td align="right">
+38.43
+</td>
+<td align="right">
+72.54
+</td>
+<td align="right">
+47.77
+</td>
+<td align="right">
+36.89
+</td>
+<td align="right">
+10.88
+</td>
+</tr>
+</table>
+</div>
+<div id="adjusted-models-accuracy" class="section level3">
+<h3>Adjusted Models Accuracy (%)</h3>
+<!-- html table generated in R 3.3.2 by xtable 1.8-2 package -->
+<!-- Sun Feb 19 11:33:05 2017 -->
+<table border="1">
+<tr>
+<th>
+</th>
+<th>
+Model Name
+</th>
+<th>
+High
+</th>
+<th>
+Intermediate
+</th>
+<th>
+Low
+</th>
+<th>
+Overall
+</th>
+<th>
+Optimized Guess
+</th>
+<th>
+Improvement
+</th>
+</tr>
+<tr>
+<td align="right">
+1
+</td>
+<td>
+NB: Simple Adjusted
+</td>
+<td align="right">
+40.56
+</td>
+<td align="right">
+32.44
+</td>
+<td align="right">
+96.73
+</td>
+<td align="right">
+77.96
+</td>
+<td align="right">
+69.56
+</td>
+<td align="right">
+8.40
+</td>
+</tr>
+<tr>
+<td align="right">
+2
+</td>
+<td>
+NB: Student-School Combo Adjusted
+</td>
+<td align="right">
+41.18
+</td>
+<td align="right">
+29.37
+</td>
+<td align="right">
+92.07
+</td>
+<td align="right">
+72.67
+</td>
+<td align="right">
+67.25
+</td>
+<td align="right">
+5.42
+</td>
+</tr>
+<tr>
+<td align="right">
+3
+</td>
+<td>
+NB: Student-Teacher Combo Adjusted
+</td>
+<td align="right">
+41.18
+</td>
+<td align="right">
+29.37
+</td>
+<td align="right">
+92.07
+</td>
+<td align="right">
+72.67
+</td>
+<td align="right">
+67.25
+</td>
+<td align="right">
+5.42
+</td>
+</tr>
+<tr>
+<td align="right">
+4
+</td>
+<td>
+NB: Student-Student Combo Adjusted
+</td>
+<td align="right">
+40.49
+</td>
+<td align="right">
+37.34
+</td>
+<td align="right">
+94.54
+</td>
+<td align="right">
+77.82
+</td>
+<td align="right">
+70.30
+</td>
+<td align="right">
+7.52
+</td>
+</tr>
+<tr>
+<td align="right">
+5
+</td>
+<td>
+NB: Full Combo Adjusted
+</td>
+<td align="right">
+42.15
+</td>
+<td align="right">
+37.72
+</td>
+<td align="right">
+95.31
+</td>
+<td align="right">
+78.48
+</td>
+<td align="right">
+70.10
+</td>
+<td align="right">
+8.38
+</td>
+</tr>
+<tr>
+<td align="right">
+6
+</td>
+<td>
+SVM: Simple Adjusted
+</td>
+<td align="right">
+38.36
+</td>
+<td align="right">
+36.36
+</td>
+<td align="right">
+95.10
+</td>
+<td align="right">
+77.82
+</td>
+<td align="right">
+70.25
+</td>
+<td align="right">
+7.57
+</td>
+</tr>
+<tr>
+<td align="right">
+7
+</td>
+<td>
+SVM: Student-School Combo Adjusted
+</td>
+<td align="right">
+40.51
+</td>
+<td align="right">
+35.14
+</td>
+<td align="right">
+94.02
+</td>
+<td align="right">
+76.08
+</td>
+<td align="right">
+68.63
+</td>
+<td align="right">
+7.45
+</td>
+</tr>
+<tr>
+<td align="right">
+8
+</td>
+<td>
+SVM: Student-Teacher Combo Adjusted
+</td>
+<td align="right">
+41.47
+</td>
+<td align="right">
+30.33
+</td>
+<td align="right">
+95.25
+</td>
+<td align="right">
+75.72
+</td>
+<td align="right">
+68.24
+</td>
+<td align="right">
+7.48
+</td>
+</tr>
+<tr>
+<td align="right">
+9
+</td>
+<td>
+SVM: Student-Student Combo Adjusted
+</td>
+<td align="right">
+57.10
+</td>
+<td align="right">
+38.98
+</td>
+<td align="right">
+93.77
+</td>
+<td align="right">
+79.54
+</td>
+<td align="right">
+71.24
+</td>
+<td align="right">
+8.30
+</td>
+</tr>
+<tr>
+<td align="right">
+10
+</td>
+<td>
+SVM: Full Combo Adjusted
+</td>
+<td align="right">
+57.96
+</td>
+<td align="right">
+45.96
+</td>
+<td align="right">
+93.95
+</td>
+<td align="right">
+80.55
+</td>
+<td align="right">
+69.87
+</td>
+<td align="right">
+10.68
+</td>
+</tr>
+<tr>
+<td align="right">
+11
+</td>
+<td>
+TREE: Simple Adjusted
+</td>
+<td align="right">
+0.00
+</td>
+<td align="right">
+0.00
+</td>
+<td align="right">
+100.00
+</td>
+<td align="right">
+70.59
+</td>
+<td align="right">
+70.59
+</td>
+<td align="right">
+0.00
+</td>
+</tr>
+<tr>
+<td align="right">
+12
+</td>
+<td>
+TREE: Student-School Combo Adjusted
+</td>
+<td align="right">
+0.00
+</td>
+<td align="right">
+7.75
+</td>
+<td align="right">
+98.53
+</td>
+<td align="right">
+69.33
+</td>
+<td align="right">
+68.57
+</td>
+<td align="right">
+0.76
+</td>
+</tr>
+<tr>
+<td align="right">
+13
+</td>
+<td>
+TREE: Student-Teacher Combo Adjusted
+</td>
+<td align="right">
+0.00
+</td>
+<td align="right">
+0.00
+</td>
+<td align="right">
+100.00
+</td>
+<td align="right">
+69.01
+</td>
+<td align="right">
+69.01
+</td>
+<td align="right">
+0.00
+</td>
+</tr>
+<tr>
+<td align="right">
+14
+</td>
+<td>
+TREE: Student-Student Combo Adjusted
+</td>
+<td align="right">
+0.00
+</td>
+<td align="right">
+11.09
+</td>
+<td align="right">
+96.32
+</td>
+<td align="right">
+69.72
+</td>
+<td align="right">
+70.00
+</td>
+<td align="right">
+-0.28
+</td>
+</tr>
+<tr>
+<td align="right">
+15
+</td>
+<td>
+TREE: Full Combo Adjusted
+</td>
+<td align="right">
+16.15
+</td>
+<td align="right">
+18.78
+</td>
+<td align="right">
+95.66
+</td>
+<td align="right">
+72.28
+</td>
+<td align="right">
+69.89
+</td>
+<td align="right">
+2.39
+</td>
+</tr>
+<tr>
+<td align="right">
+16
+</td>
+<td>
+FOREST: Simple Adjusted
+</td>
+<td align="right">
+0.00
+</td>
+<td align="right">
+0.00
+</td>
+<td align="right">
+100.00
+</td>
+<td align="right">
+68.53
+</td>
+<td align="right">
+68.53
+</td>
+<td align="right">
+0.00
+</td>
+</tr>
+<tr>
+<td align="right">
+17
+</td>
+<td>
+FOREST: Student-School Combo Adjusted
+</td>
+<td align="right">
+17.38
+</td>
+<td align="right">
+13.28
+</td>
+<td align="right">
+98.24
+</td>
+<td align="right">
+71.47
+</td>
+<td align="right">
+68.03
+</td>
+<td align="right">
+3.44
+</td>
+</tr>
+<tr>
+<td align="right">
+18
+</td>
+<td>
+FOREST: Student-Teacher Combo Adjusted
+</td>
+<td align="right">
+22.51
+</td>
+<td align="right">
+16.80
+</td>
+<td align="right">
+97.66
+</td>
+<td align="right">
+73.42
+</td>
+<td align="right">
+69.41
+</td>
+<td align="right">
+4.01
+</td>
+</tr>
+<tr>
+<td align="right">
+19
+</td>
+<td>
+FOREST: Student-Student Combo Adjusted
+</td>
+<td align="right">
+15.86
+</td>
+<td align="right">
+14.10
+</td>
+<td align="right">
+96.48
+</td>
+<td align="right">
+71.91
+</td>
+<td align="right">
+69.98
+</td>
+<td align="right">
+1.93
+</td>
+</tr>
+<tr>
+<td align="right">
+20
+</td>
+<td>
+FOREST: Full Combo Adjusted
+</td>
+<td align="right">
+28.08
+</td>
+<td align="right">
+13.19
+</td>
+<td align="right">
+97.51
+</td>
+<td align="right">
+73.45
+</td>
+<td align="right">
+70.05
+</td>
+<td align="right">
+3.40
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div id="influential-columns" class="section level2">
+<h2>Influential Columns</h2>
+<div id="columns-used-for-student-achievement-and-school-general-combination" class="section level3">
+<h3>Columns Used For Student Achievement and School General Combination</h3>
+<!-- html table generated in R 3.3.2 by xtable 1.8-2 package -->
+<!-- Sun Feb 19 11:33:06 2017 -->
+<table border="1">
+<tr>
+<th>
+</th>
+<th>
+var
+</th>
+<th>
+rel.inf
+</th>
+<th>
+FIELD_LABL
+</th>
+</tr>
+<tr>
+<td align="right">
+1
+</td>
+<td>
+IDSCHOOL
+</td>
+<td align="right">
+57.78
+</td>
+<td>
+<em>SCHOOL ID</em>
+</td>
+</tr>
+<tr>
+<td align="right">
+2
+</td>
+<td>
+ITSEX
+</td>
+<td align="right">
+5.56
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td align="right">
+3
+</td>
+<td>
+BCBG06A
+</td>
+<td align="right">
+1.77
+</td>
+<td>
+GENDAYS PER YEAR
+</td>
+</tr>
+<tr>
+<td align="right">
+4
+</td>
+<td>
+BCBG15B
+</td>
+<td align="right">
+1.72
+</td>
+<td>
+GENTEACHING VACANCIES
+</td>
+</tr>
+<tr>
+<td align="right">
+5
+</td>
+<td>
+BCBG01
+</td>
+<td align="right">
+1.53
+</td>
+<td>
+GENENROLLMENT OF STUDENTS
+</td>
+</tr>
+<tr>
+<td align="right">
+6
+</td>
+<td>
+BCBG05A
+</td>
+<td align="right">
+1.21
+</td>
+<td>
+GENMANY PEOPLE LIVE IN AREA
+</td>
+</tr>
+<tr>
+<td align="right">
+7
+</td>
+<td>
+BCBG07
+</td>
+<td align="right">
+1.04
+</td>
+<td>
+GENNUMBER COMPUTERS
+</td>
+</tr>
+<tr>
+<td align="right">
+8
+</td>
+<td>
+BCBG10CF
+</td>
+<td align="right">
+1.03
+</td>
+<td>
+GENPARENTS. LEARNING MATERIALS
+</td>
+</tr>
+<tr>
+<td align="right">
+9
+</td>
+<td>
+BCBG02
+</td>
+<td align="right">
+0.94
+</td>
+<td>
+GENENROLL &lt;EIGHTH GRADE&gt; STD
+</td>
+</tr>
+<tr>
+<td align="right">
+10
+</td>
+<td>
+BCBGEAS
+</td>
+<td align="right">
+0.84
+</td>
+<td>
+<em>SCHOOL EMPHASIS ON ACADEMIC SUCCESS - PRINCIPAL REPORTS/SCL</em>
+</td>
+</tr>
+<tr>
+<td align="right">
+11
+</td>
+<td>
+BCBG09BF
+</td>
+<td align="right">
+0.83
+</td>
+<td>
+GEN
+</td>
+</tr>
+<tr>
+<td align="right">
+12
+</td>
+<td>
+BCBGMRS
+</td>
+<td align="right">
+0.82
+</td>
+<td>
+<em>INSTRUCTION AFFECTED BY MATHEMATICS RESOURCE SHORTAGES/SCL</em>
+</td>
+</tr>
+<tr>
+<td align="right">
+13
+</td>
+<td>
+BCBG11E
+</td>
+<td align="right">
+0.76
+</td>
+<td>
+GENCHARACTERSUPPORT
+</td>
+</tr>
+</table>
+</div>
+<div id="columns-used-for-student-achievement-and-teacher-general-combination" class="section level3">
+<h3>Columns Used For Student Achievement and Teacher General Combination</h3>
+<!-- html table generated in R 3.3.2 by xtable 1.8-2 package -->
+<!-- Sun Feb 19 11:33:06 2017 -->
+<table border="1">
+<tr>
+<th>
+</th>
+<th>
+var
+</th>
+<th>
+rel.inf
+</th>
+<th>
+FIELD_LABL
+</th>
+</tr>
+<tr>
+<td align="right">
+1
+</td>
+<td>
+IDSCHOOL
+</td>
+<td align="right">
+52.03
+</td>
+<td>
+<em>SCHOOL ID</em>
+</td>
+</tr>
+<tr>
+<td align="right">
+2
+</td>
+<td>
+ITSEX
+</td>
+<td align="right">
+5.67
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td align="right">
+3
+</td>
+<td>
+BTBG13
+</td>
+<td align="right">
+2.28
+</td>
+<td>
+GENDIFFICULTIES
+</td>
+</tr>
+<tr>
+<td align="right">
+4
+</td>
+<td>
+BTBG01
+</td>
+<td align="right">
+2.18
+</td>
+<td>
+GENBEEN TEACHING
+</td>
+</tr>
+<tr>
+<td align="right">
+5
+</td>
+<td>
+BTBGTWC
+</td>
+<td align="right">
+1.51
+</td>
+<td>
+<em>TEACHERS REPORT PROBLEMS WITH WORKING CONDITIONS/SCL</em>
+</td>
+</tr>
+<tr>
+<td align="right">
+6
+</td>
+<td>
+BTBGCIT
+</td>
+<td align="right">
+1.48
+</td>
+<td>
+<em>COLLABORATE TO IMPROVE TEACHING/SCL</em>
+</td>
+</tr>
+<tr>
+<td align="right">
+7
+</td>
+<td>
+BTBG12
+</td>
+<td align="right">
+1.05
+</td>
+<td>
+GENOF STUDENTS IN THE CLASS
+</td>
+</tr>
+<tr>
+<td align="right">
+8
+</td>
+<td>
+BTDMHW
+</td>
+<td align="right">
+1.00
+</td>
+<td>
+<em>MATHEMATICS INSTRUCTIONAL HOURS PER WEEK</em>
+</td>
+</tr>
+<tr>
+<td align="right">
+9
+</td>
+<td>
+BTDM23GE
+</td>
+<td align="right">
+0.92
+</td>
+<td>
+<em>PCT STUDENTS TAUGHT GEOMETRY TOPICS</em>
+</td>
+</tr>
+<tr>
+<td align="right">
+10
+</td>
+<td>
+BTBM24D
+</td>
+<td align="right">
+0.85
+</td>
+<td>
+MATHSPENT ON
+</td>
+</tr>
+</table>
+</div>
+<div id="columns-used-for-student-achievement-and-student-general-combination" class="section level3">
+<h3>Columns Used For Student Achievement and Student General Combination</h3>
+<!-- html table generated in R 3.3.2 by xtable 1.8-2 package -->
+<!-- Sun Feb 19 11:33:06 2017 -->
+<table border="1">
+<tr>
+<th>
+</th>
+<th>
+var
+</th>
+<th>
+rel.inf
+</th>
+<th>
+FIELD_LABL
+</th>
+</tr>
+<tr>
+<td align="right">
+1
+</td>
+<td>
+IDSCHOOL
+</td>
+<td align="right">
+86.19
+</td>
+<td>
+<em>SCHOOL ID</em>
+</td>
+</tr>
+<tr>
+<td align="right">
+2
+</td>
+<td>
+BSBGSCM
+</td>
+<td align="right">
+2.90
+</td>
+<td>
+<em>STUDENT CONFIDENCE WITH MATHEMATICS/SCL</em>
+</td>
+</tr>
+<tr>
+<td align="right">
+3
+</td>
+<td>
+ITSEX
+</td>
+<td align="right">
+0.87
+</td>
+<td>
+<em>SEX OF STUDENTS</em>
+</td>
+</tr>
+<tr>
+<td align="right">
+4
+</td>
+<td>
+BSDGSCM
+</td>
+<td align="right">
+0.70
+</td>
+<td>
+<em>STUDENT CONFIDENCE WITH MATHEMATICS/IDX</em>
+</td>
+</tr>
+<tr>
+<td align="right">
+5
+</td>
+<td>
+BSBM16A
+</td>
+<td align="right">
+0.59
+</td>
+<td>
+MATDO WELL IN MATH
+</td>
+</tr>
+<tr>
+<td align="right">
+6
+</td>
+<td>
+BSBM16D
+</td>
+<td align="right">
+0.58
+</td>
+<td>
+MATQUICKLY IN MATHEMATICS
+</td>
+</tr>
+<tr>
+<td align="right">
+7
+</td>
+<td>
+BSBG08B
+</td>
+<td align="right">
+0.51
+</td>
+<td>
+GEN&amp;lt;STFA OR MA GUARD&gt; BORN IN &lt;COUNTRY&gt;
+</td>
+</tr>
+<tr>
+<td align="right">
+8
+</td>
+<td>
+BSBM16I
+</td>
+<td align="right">
+0.41
+</td>
+<td>
+MATHARDER FOR ME
+</td>
+</tr>
+<tr>
+<td align="right">
+9
+</td>
+<td>
+BSBM16F
+</td>
+<td align="right">
+0.38
+</td>
+<td>
+MATAT WORKING OUT PROBLEMS
+</td>
+</tr>
+<tr>
+<td align="right">
+10
+</td>
+<td>
+BSBM16B
+</td>
+<td align="right">
+0.35
+</td>
+<td>
+MATIS MORE DIFFICULT
+</td>
+</tr>
+<tr>
+<td align="right">
+11
+</td>
+<td>
+BSBG03
+</td>
+<td align="right">
+0.34
+</td>
+<td>
+GENSPEAK &lt;LANG OF TEST&gt; AT HOME
+</td>
+</tr>
+<tr>
+<td align="right">
+12
+</td>
+<td>
+BSBM16E
+</td>
+<td align="right">
+0.31
+</td>
+<td>
+MATMAKES CONFUSED AND NERVOUS
+</td>
+</tr>
+<tr>
+<td align="right">
+13
+</td>
+<td>
+BSBM20A
+</td>
+<td align="right">
+0.27
+</td>
+<td>
+MATOFTEN TEACHER GIVE YOU HOMEWORK
+</td>
+</tr>
+<tr>
+<td align="right">
+14
+</td>
+<td>
+BSBG07
+</td>
+<td align="right">
+0.23
+</td>
+<td>
+GENFAR IN EDU DO YOU EXPECT TO GO
+</td>
+</tr>
+<tr>
+<td align="right">
+15
+</td>
+<td>
+BSBM16C
+</td>
+<td align="right">
+0.16
+</td>
+<td>
+MATNOT MY STRENGTH
+</td>
+</tr>
+<tr>
+<td align="right">
+16
+</td>
+<td>
+BSBG05B
+</td>
+<td align="right">
+0.15
+</td>
+<td>
+GENPOSSESSDESK
+</td>
+</tr>
+<tr>
+<td align="right">
+17
+</td>
+<td>
+BSBGSCS
+</td>
+<td align="right">
+0.14
+</td>
+<td>
+<em>STUDENT CONFIDENCE WITH SCIENCE/SCL</em>
+</td>
+</tr>
+<tr>
+<td align="right">
+18
+</td>
+<td>
+BSBG05A
+</td>
+<td align="right">
+0.12
+</td>
+<td>
+GENPOSSESS
+</td>
+</tr>
+<tr>
+<td align="right">
+19
+</td>
+<td>
+ITBIRTHD
+</td>
+<td align="right">
+0.12
+</td>
+<td>
+*DATE OF STUDENTS BIRTH
+</td>
+</tr>
+<tr>
+<td align="right">
+20
+</td>
+<td>
+BSBG13B
+</td>
+<td align="right">
+0.11
+</td>
+<td>
+GENOFTENOUT OF GAMES
+</td>
+</tr>
+<tr>
+<td align="right">
+21
+</td>
+<td>
+BSDGEDUP
+</td>
+<td align="right">
+0.11
+</td>
+<td>
+<em>PARENTS’ HIGHEST EDUCATION LEVEL</em>
+</td>
+</tr>
+<tr>
+<td align="right">
+22
+</td>
+<td>
+BSBGSVS
+</td>
+<td align="right">
+0.11
+</td>
+<td>
+<em>STUDENTS VALUE LEARNING SCIENCE/SCL</em>
+</td>
+</tr>
+</table>
+</div>
+<div id="columns-used-for-student-achievement-school-general-teacher-general-and-student-general-combination" class="section level3">
+<h3>Columns Used For Student Achievement, School General, Teacher General, and Student General Combination</h3>
+<!-- html table generated in R 3.3.2 by xtable 1.8-2 package -->
+<!-- Sun Feb 19 11:33:06 2017 -->
+<table border="1">
+<tr>
+<th>
+</th>
+<th>
+var
+</th>
+<th>
+rel.inf
+</th>
+<th>
+FIELD_LABL
+</th>
+</tr>
+<tr>
+<td align="right">
+1
+</td>
+<td>
+IDSCHOOL
+</td>
+<td align="right">
+31.55
+</td>
+<td>
+<em>SCHOOL ID</em>
+</td>
+</tr>
+<tr>
+<td align="right">
+2
+</td>
+<td>
+BSBGSCM
+</td>
+<td align="right">
+7.81
+</td>
+<td>
+<em>STUDENT CONFIDENCE WITH MATHEMATICS/SCL</em>
+</td>
+</tr>
+<tr>
+<td align="right">
+3
+</td>
+<td>
+BSDAGE
+</td>
+<td align="right">
+2.65
+</td>
+<td>
+<em>STUDENTS AGE</em>
+</td>
+</tr>
+<tr>
+<td align="right">
+4
+</td>
+<td>
+BSDGSCM
+</td>
+<td align="right">
+2.17
+</td>
+<td>
+<em>STUDENT CONFIDENCE WITH MATHEMATICS/IDX</em>
+</td>
+</tr>
+<tr>
+<td align="right">
+5
+</td>
+<td>
+BSBG05B
+</td>
+<td align="right">
+2.08
+</td>
+<td>
+GENPOSSESSDESK
+</td>
+</tr>
+<tr>
+<td align="right">
+6
+</td>
+<td>
+ITSEX
+</td>
+<td align="right">
+2.07
+</td>
+<td>
+<em>SEX OF STUDENTS</em>
+</td>
+</tr>
+<tr>
+<td align="right">
+7
+</td>
+<td>
+BSBM16I
+</td>
+<td align="right">
+1.22
+</td>
+<td>
+MATHARDER FOR ME
+</td>
+</tr>
+<tr>
+<td align="right">
+8
+</td>
+<td>
+BSBM16B
+</td>
+<td align="right">
+1.17
+</td>
+<td>
+MATIS MORE DIFFICULT
+</td>
+</tr>
+<tr>
+<td align="right">
+9
+</td>
+<td>
+BSBG07
+</td>
+<td align="right">
+1.14
+</td>
+<td>
+GENFAR IN EDU DO YOU EXPECT TO GO
+</td>
+</tr>
+<tr>
+<td align="right">
+10
+</td>
+<td>
+BSBGHER
+</td>
+<td align="right">
+1.10
+</td>
+<td>
+<em>HOME EDUCATIONAL RESOURCES /SCL</em>
+</td>
+</tr>
+<tr>
+<td align="right">
+11
+</td>
+<td>
+BSBM16F
+</td>
+<td align="right">
+1.02
+</td>
+<td>
+MATAT WORKING OUT PROBLEMS
+</td>
+</tr>
+<tr>
+<td align="right">
+12
+</td>
+<td>
+BSBM16E
+</td>
+<td align="right">
+0.99
+</td>
+<td>
+MATMAKES CONFUSED AND NERVOUS
+</td>
+</tr>
+<tr>
+<td align="right">
+13
+</td>
+<td>
+BSBM16D
+</td>
+<td align="right">
+0.97
+</td>
+<td>
+MATQUICKLY IN MATHEMATICS
+</td>
+</tr>
+<tr>
+<td align="right">
+14
+</td>
+<td>
+BCBG03B
+</td>
+<td align="right">
+0.94
+</td>
+<td>
+GENBACKGROUNDAFFLUEN
+</td>
+</tr>
+<tr>
+<td align="right">
+15
+</td>
+<td>
+BTBG07E
+</td>
+<td align="right">
+0.88
+</td>
+<td>
+GENABT CURR SCHRESPECT
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>The SVM, Tree, and Random Forest Models can all be improved. I somehow introduced a bug into SVM that lowered the accuracy. Also, I removed the ‘IDSCHOOL’ factor from both Tree and Random Forst Models. ‘IDSHOOL’ is the most important factor for all models, but the <code>tree()</code> function does not work when factors contain more than 50 levels. This can be remedied by giving each school it’s own column and giving a student a value of ‘1’ if the student belongs to the school and ‘0’ if the student does not belong to the school.<a href="#fnref1">↩</a></p></li>
+</ol>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
