@@ -142,10 +142,10 @@ $(document).ready(function () {
 <div id="intro" class="section level2">
 <h2>Intro</h2>
 <p>Hey Chris,</p>
-<p>I’ve been working on the 2011 TIMSS Math dataset and now I’m trying to model some of the student data. My goal is to predict the international benchmark scores for each student. I’m using <b>Naive Bayes</b>, <b>Support Vector Models</b>, <b>Trees</b>, and <b>Random Forests</b> to model the data. This is all kind of new to me so I’m not sure if I’m approaching the models correctly.</p>
-<p>The TIMSS data set is pretty big and has a lot of information for each of the students, teachers, and schools involved. The TIMSS data set is comprised of four main data tables: a <b>Student Achievement</b> data table that includes each student's question response to the Math and Science questions, a <b>Student General</b> data table that includes each student's response to a student background survey, a <b>School General</b> data table that includes each school director's response to a school background survey, and a <b>Teacher General</b> data table that includes each teacher's response to a classroom/teacher background survey. Together, the data tables provide a few hundred different columns of data that can be used for analysis. I don’t want to use every column provided because there is a risk of overfitting the model. What I ended up doing was fitting each dataset to a <b>Generalized Boosted Regression Model</b> and letting <b>R</b>’s <code>gbm()</code> function figure out which columns would be the most influential in predicting a student’s benchmark scores.</p>
+<p>I’ve been working on the 2011 TIMSS Math dataset and now I’m trying to model some of the student data. My goal is to predict the international benchmark scores for each student. I’m using <strong>Naive Bayes</strong>, <strong>Support Vector Models</strong>, <strong>Trees</strong>, and <strong>Random Forests</strong> to model the data. This is all kind of new to me so I’m not sure if I’m approaching the models correctly.</p>
+<p>The TIMSS data set is pretty big and has a lot of information for each of the students, teachers, and schools involved. The TIMSS data set is comprised of four main data tables: a <strong>Student Achievement</strong> data table that includes each student’s question response to the Math and Science questions, a <strong>Student General</strong> data table that includes each student’s response to a student background survey, a <strong>School General</strong> data table that includes each school director’s response to a school background survey, and a <strong>Teacher General</strong> data table that includes each teacher’s response to a classroom/teacher background survey. Together, the data tables provide a few hundred different columns of data that can be used for analysis. I don’t want to use every column provided because there is a risk of overfitting the model. What I ended up doing was fitting each dataset to a <strong>Generalized Boosted Regression Model</strong> and letting <strong>R</strong>’s <code>gbm()</code> function figure out which columns would be the most influential in figuring out a student’s benchmark scores.</p>
 <p>I’ve also made two iterations of the models. The first iteration tries to predict the benchmark scores provided by TIMSS which I named ‘Advanced’, ‘High’, ‘Intermediate’, ‘Low’, and ‘Below Low’. The second iteration tries to predict a more generalized version of the benchmark scores which I named ‘High’, ‘Intermediate’, and ‘Low’.</p>
-<p>Below I made a table with the results of each model’s confusion matrix. Each of the models are trained with a random sample containing 75% of all observations. The models were tested with the remaining 25% of observations. Each cell contains a model’s accuracy - the percent of correctly predicted test benchmark scores. I’ve included each model's accuracy at predicting a particular benchmark score along with  their overall accuracy and an optimized guess which is the accuracy of a model in which the only possible outcome is a Below Low (or Low) benchmark score. A model's improvement is the difference between the model's overall accuracy and it's optimized guess.</p>
+<p>Below I made a table with the results of each model’s confusion matrix. Each of the models are trained with a random sample containing 75% of all observations. The models were tested with the remaining 25% of observations. Each cell contains a model’s accuracy - the percent of correctly predicted test benchmark scores. I’ve included each model’s accuracy at predicting a particular benchmark score along with their overall accuracy and an optimized guess which is the accuracy of a model in which the only possible outcome is a Below Low (or Low) benchmark score. A model’s improvement is the difference between the model’s overall accuracy and it’s optimized guess.</p>
 <p>I have 4 main questions:</p>
 <ol style="list-style-type: decimal">
 <li><p>What is the typical accuracy for models predicting the academic success for students? The TIMSS dataset does not include the school’s geolocation or whether it is private or public, so I suspect that the models could definitely be better. However, I feel like anything near a 90% correct rate is near impossible. <a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a></p></li>
@@ -158,11 +158,11 @@ $(document).ready(function () {
 <p>Ben</p>
 </div>
 <div id="correct-rates" class="section level2">
-<h2>Model Accuracy</h2>
+<h2>Correct Rates</h2>
 <div id="original-models-accuracy" class="section level3">
 <h3>Original Models Accuracy (%)</h3>
 <!-- html table generated in R 3.3.2 by xtable 1.8-2 package -->
-<!-- Sun Feb 19 11:33:05 2017 -->
+<!-- Mon Feb 20 12:20:58 2017 -->
 <table border="1">
 <tr>
 <th>
@@ -398,25 +398,25 @@ SVM: Student-School Combo
 0.00
 </td>
 <td align="right">
-35.04
+33.58
 </td>
 <td align="right">
 40.12
 </td>
 <td align="right">
-52.82
+52.91
 </td>
 <td align="right">
 73.05
 </td>
 <td align="right">
-55.13
+55.03
 </td>
 <td align="right">
 35.59
 </td>
 <td align="right">
-19.54
+19.44
 </td>
 </tr>
 <tr>
@@ -459,28 +459,28 @@ SVM: Student-Teacher Combo
 SVM: Student-Student Combo
 </td>
 <td align="right">
-2.33
+6.98
 </td>
 <td align="right">
-47.37
+45.51
 </td>
 <td align="right">
-45.99
+45.54
 </td>
 <td align="right">
-54.95
+55.80
 </td>
 <td align="right">
-75.73
+75.13
 </td>
 <td align="right">
-60.09
+59.95
 </td>
 <td align="right">
 38.74
 </td>
 <td align="right">
-21.35
+21.21
 </td>
 </tr>
 <tr>
@@ -491,28 +491,28 @@ SVM: Student-Student Combo
 SVM: Full Combo
 </td>
 <td align="right">
-4.76
+6.25
 </td>
 <td align="right">
-55.72
+48.07
 </td>
 <td align="right">
-50.59
+46.81
 </td>
 <td align="right">
-57.74
+55.70
 </td>
 <td align="right">
-76.97
+79.61
 </td>
 <td align="right">
-62.79
+61.70
 </td>
 <td align="right">
-37.69
+37.63
 </td>
 <td align="right">
-25.10
+24.07
 </td>
 </tr>
 <tr>
@@ -840,7 +840,7 @@ FOREST: Full Combo
 <div id="adjusted-models-accuracy" class="section level3">
 <h3>Adjusted Models Accuracy (%)</h3>
 <!-- html table generated in R 3.3.2 by xtable 1.8-2 package -->
-<!-- Sun Feb 19 11:33:05 2017 -->
+<!-- Mon Feb 20 12:20:58 2017 -->
 <table border="1">
 <tr>
 <th>
@@ -1083,22 +1083,22 @@ SVM: Student-Teacher Combo Adjusted
 SVM: Student-Student Combo Adjusted
 </td>
 <td align="right">
-57.10
+57.65
 </td>
 <td align="right">
-38.98
+37.18
 </td>
 <td align="right">
-93.77
+93.32
 </td>
 <td align="right">
-79.54
+78.90
 </td>
 <td align="right">
 71.24
 </td>
 <td align="right">
-8.30
+7.66
 </td>
 </tr>
 <tr>
@@ -1109,22 +1109,22 @@ SVM: Student-Student Combo Adjusted
 SVM: Full Combo Adjusted
 </td>
 <td align="right">
-57.96
+54.03
 </td>
 <td align="right">
-45.96
+40.77
 </td>
 <td align="right">
-93.95
+93.98
 </td>
 <td align="right">
-80.55
+79.32
 </td>
 <td align="right">
-69.87
+70.25
 </td>
 <td align="right">
-10.68
+9.07
 </td>
 </tr>
 <tr>
@@ -1395,7 +1395,7 @@ FOREST: Full Combo Adjusted
 <div id="columns-used-for-student-achievement-and-school-general-combination" class="section level3">
 <h3>Columns Used For Student Achievement and School General Combination</h3>
 <!-- html table generated in R 3.3.2 by xtable 1.8-2 package -->
-<!-- Sun Feb 19 11:33:06 2017 -->
+<!-- Mon Feb 20 12:20:58 2017 -->
 <table border="1">
 <tr>
 <th>
@@ -1596,7 +1596,7 @@ GENCHARACTERSUPPORT
 <div id="columns-used-for-student-achievement-and-teacher-general-combination" class="section level3">
 <h3>Columns Used For Student Achievement and Teacher General Combination</h3>
 <!-- html table generated in R 3.3.2 by xtable 1.8-2 package -->
-<!-- Sun Feb 19 11:33:06 2017 -->
+<!-- Mon Feb 20 12:20:58 2017 -->
 <table border="1">
 <tr>
 <th>
@@ -1755,7 +1755,7 @@ MATHSPENT ON
 <div id="columns-used-for-student-achievement-and-student-general-combination" class="section level3">
 <h3>Columns Used For Student Achievement and Student General Combination</h3>
 <!-- html table generated in R 3.3.2 by xtable 1.8-2 package -->
-<!-- Sun Feb 19 11:33:06 2017 -->
+<!-- Mon Feb 20 12:20:59 2017 -->
 <table border="1">
 <tr>
 <th>
@@ -2083,7 +2083,7 @@ BSBGSVS
 <div id="columns-used-for-student-achievement-school-general-teacher-general-and-student-general-combination" class="section level3">
 <h3>Columns Used For Student Achievement, School General, Teacher General, and Student General Combination</h3>
 <!-- html table generated in R 3.3.2 by xtable 1.8-2 package -->
-<!-- Sun Feb 19 11:33:06 2017 -->
+<!-- Mon Feb 20 12:20:59 2017 -->
 <table border="1">
 <tr>
 <th>
@@ -2314,7 +2314,7 @@ GENABT CURR SCHRESPECT
 <div class="footnotes">
 <hr />
 <ol>
-<li id="fn1"><p>The SVM, Tree, and Random Forest Models can all be improved. I somehow introduced a bug into SVM that lowered the accuracy. Also, I removed the ‘IDSCHOOL’ factor from both Tree and Random Forst Models. ‘IDSHOOL’ is the most important factor for all models, but the <code>tree()</code> function does not work when factors contain more than 50 levels. This can be remedied by giving each school it’s own column and giving a student a value of ‘1’ if the student belongs to the school and ‘0’ if the student does not belong to the school.<a href="#fnref1">↩</a></p></li>
+<li id="fn1"><p>The SVM, Tree, and Random Forest Models can all be improved. I somehow introduced a bug into SVM that lowered the accuracy. Also, I removed the ‘IDSCHOOL’ factor from both Tree and Random Forst Models. ‘IDSHOOL’ is the most important factor for all models, but the <code>tree()</code> function does not work when factors contain more than 50 levels. This can be remedied by classifying the schools using unsupervised learning and then giving each school classification it’s own column and giving a student a value of ‘1’ if the student belongs to the school classification and ‘0’ if the student does not belong to the school classification.<a href="#fnref1">↩</a></p></li>
 </ol>
 </div>
 
