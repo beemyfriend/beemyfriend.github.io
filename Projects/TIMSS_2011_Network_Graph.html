@@ -1,5 +1,5 @@
 <head>
-     <link rel='stylesheet' href='styles.css'>
+     <link rel='stylesheet' href='../styles.css'>
     <style>
         rect.node:hover{
             stroke-width: 1;
@@ -10,8 +10,8 @@
 <body>
     <div id = 'header'>
         <ul>
-            <li><a href = 'index.html'>Home</a></li>
-            <li><a href = 'articles.html'>Articles</a></li>
+            <li><a href = '../index.html'>Home</a></li>
+            <li><a href = '../Articles/articles.html'>Articles</a></li>
             <li><a href = 'projects.html'>Projects</a></li>
         </ul>
     </div>
@@ -19,16 +19,16 @@
     <script src = 'd3.js'></script>
     <script>
 
-// =========================================================================== //
-// ================================ d3 scale info ============================ //
-// =========================================================================== //
+// =========================================== //
+// ======= d3 scale info ===================== //
+// =========================================== //
         
         // The SVG element will act as a container for all graphic information
         // The margins are for the container svg
         var margin = {
             top: 50,
             bottom: 50,
-            left: 50,
+            left: 60,
             right: 10
         }
         
@@ -54,9 +54,9 @@
             .range(['green', 'yellow', 'brown'])
             .domain([1, .5, 0]);
                  
-// ======================================================================================= //
-// ============================ Static Parts ============================================= //
-// ======================================================================================= //
+// =========================================== //
+// ========== Static Parts =================== //
+// =========================================== //
         
         // conatiner svg
         svg = d3.select('#timss')
@@ -155,9 +155,9 @@
             .attr('y', height - (color_key_radius/2))
             .text(function(d){ return d[1]})        
        
-// ============================================================================== //
-// ==================== Custom Functions ======================================== //
-// ============================================================================== //
+// =========================================== //
+// =========== Custom Functions ============== //
+// =========================================== //
         
         // I need to create a Spanish equivalent
         // when a node is pressed the question information that the node represents is
@@ -215,9 +215,9 @@
         }
         
         
-// ========================================================================================== //
-// ============================== Data Driven Documents ===================================== //
-// ========================================================================================== //
+// =========================================== //
+// ========== Data Driven Documents ========== //
+// =========================================== //
                 
         // data is used for debugging purposes, it will equal the json received by the d3.json() call
         var data;        
@@ -227,9 +227,11 @@
             
             //data received from json should take the format of [node data, link data, link data, link data,...]
             data = json
-        
+            
             x_nodes.domain(d3.extent(json[0].map(function(i){ return i.question_rank })));
-            var yPoints = ['Chile', 'Japan', 'Korea', 'USA'];
+            
+            //I need to make this more general...change it from hardcoded to function...
+            var yPoints = ['Chile', 'Lithuania', 'USA', 'Korea'];
             y.domain(yPoints);    
                         
             //fill question_info with data organized by question(question:..., country1: ..., country2: ..., ...)

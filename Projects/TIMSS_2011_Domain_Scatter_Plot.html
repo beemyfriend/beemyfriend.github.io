@@ -1,0 +1,233 @@
+<head>
+    <link rel='stylesheet' href = '../styles.css'>
+</head>
+<body>
+    <div id = 'header'>
+        <ul>
+            <li><a href = '../index.html'>Home</a></li>
+            <li><a href = '../Articles/articles.html'>Articles</a></li>
+            <li><a href = 'projects.html'>Projects</a></li>
+        </ul>
+    </div>
+    <div id = 'content'><div id = 'timss'></div></div>
+    <script src = 'd3.js'></script>
+    <script>
+        var margin = {
+            top: 10,
+            bottom: 50,
+            left: 100,
+            right: 10
+        };
+        
+        var width = 1300 - margin.left - margin.right,
+            height = 650 - margin.top - margin.bottom;
+        
+        var title_height = height/15,
+            key_height = height/30,
+            sub_title_height = height/30,
+            buffer = 20,
+            sub_width = (width/2) - buffer,
+            sub_height = (height - title_height - key_height - buffer)/2,
+            sub_plot_height = sub_height - sub_title_height,
+            vert_partition = sub_width,
+            horz_partition = sub_height + sub_title_height + title_height + key_height,
+            symbol_size = 50,
+            symbol_size_enlarge = 300,
+            fill_alpha = .25;
+        
+        var clr = d3.scaleOrdinal()
+            .range(['red', 'green', 'blue', 'purple'])
+            .domain(['Algebra', 'Data And Chance', 'Geometry', 'Number']);
+
+        var y_scale = d3.scaleLinear()
+            .domain([-.2, .2])
+            .range([sub_plot_height - buffer, 0])
+        
+        var x_scale = d3.scaleLinear()
+            .domain([0, 1])
+            .range([0, sub_width-buffer])
+        
+        
+        var main = d3.select('#timss')
+            .append('svg')
+            .attr('height', height)
+            .attr('width', width)
+            .attr('transform', 'translate(0,' + margin.top  + ')')
+            .attr('class', 'main')
+            .append('g');
+
+        var left_label = main.append('text')
+            .attr('class', 'left_label')
+            .attr('transform', 'translate(' + margin.left/2 + ',' + ((height/2) + margin.top) + ') rotate(-90)')
+            .text('% Male Success Rate - % Female Success Rate')
+            .attr('text-anchor', 'middle')
+            .attr('fill', 'black');
+                
+        var bottom_label = main.append('text')
+            .attr('class', 'bottom_label')
+            .attr('transform', 'translate(' + (margin.left + width)/2 + ',' + (margin.top + height - buffer) + ')' )
+            .text('n Students Successfully Answer Question / Total Students')
+            .attr('text-anchor', 'middle')
+            .attr('fill', 'black');
+        
+        var diamond_generator = d3.symbol() 
+                .type(d3.symbolDiamond)
+                .size(symbol_size);
+        
+        var star_generator = d3.symbol()
+                .type(d3.symbolStar)
+                .size(symbol_size);
+        
+        var square_generator = d3.symbol()
+                .type(d3.symbolSquare)
+                .size(symbol_size);
+    
+        function cognitive_shape(cognitive_domain){
+            switch(cognitive_domain){
+                case 'Applying':
+                    return diamond_generator();
+                case 'Knowing':
+                    return star_generator();
+                case 'Reasoning':
+                    return square_generator();
+            }
+        }
+        
+        var title = main
+            .attr('height', title_height)
+            .attr('width', width)
+            .attr('transform', 'translate(0,0)')
+            .append('g')
+            .append('text')
+            .attr('x', width/2)
+            .attr('y', title_height)
+            .attr('font-size', title_height/1.5)
+            .attr('fill', 'black')
+            .attr('text-anchor', 'middle')
+            .text('TIMSS 2011: International Comparison of Success Rate and Gendered Difference for Math Questions')
+            .attr('class', 'title');
+        
+        color_key = main
+            .selectAll('circle.key')
+            .data([[1/7, 'Algebra'], [2/7, 'Data And Chance'], [3/7, 'Geometry'], [4/7, 'Number']])
+            .enter().append('circle')
+            .attr('cx', function(d){return d[0] * width * .9})
+            .attr('cy', title_height + key_height)
+            .attr('r', key_height/2)
+            .attr('fill', function(d){return clr(d[1])})
+            .attr('class', 'key');
+        
+        shape_key = main
+            .selectAll('path.key')
+            .data([[5/7, 'Applying'], [6/7, 'Knowing'], [7/7, 'Reasoning']])
+            .enter().append('path')
+            .attr('d', function(d){return cognitive_shape(d[1])})
+            .attr('transform', function(d){return 'translate(' + (d[0] * width * .9) + ',' + (title_height + key_height) + ')'})
+            .attr('stroke', 'black')
+            .attr('stroke-width', key_height/4)
+            .attr('class', 'key');
+
+        text_key = main
+            .selectAll('text.key')
+            .data([[1/7, 'Algebra'], [2/7, 'Data And Chance'], [3/7, 'Geometry'], [4/7, 'Number'], [5/7, 'Applying'], [6/7, 'Knowing'], [7/7, 'Reasoning']])
+            .enter().append('text')
+            .attr('fill', 'black')
+            .attr('font-size', key_height/1.25)
+            .attr('x', function(d){ return (d[0] * width * .9) + key_height})
+            .attr('y', function(d){return title_height + key_height / 1.5 + margin.top})
+            .text(function(d){return d[1]})
+            .attr('class', 'key');
+        
+        function create_scatter(data, country, x, y, left_axis, bottom_axis){
+            data = data.filter(function(i){return i.country == country;});
+            
+            var sub_panel = main
+                .append('g')
+                .attr('transform', 'translate(' + x + ',' + y + ')')
+                .attr('height', sub_height)
+                .attr('width', sub_width)
+
+            if(left_axis){
+                sub_panel.append('g')
+                    .attr('tranform', 'translate(0,' + (sub_title_height) + ')')
+                    .call(d3.axisLeft(y_scale));
+            }            
+            
+            if(bottom_axis){
+                sub_panel.append('g')
+                    .attr('transform', 'translate(0,' + y_scale(-.2) + ')')
+                    .call(d3.axisBottom(x_scale));
+            }
+            
+            sub_panel.append('line')
+                .attr('x1', x_scale(0))
+                .attr('x2', x_scale(1))
+                .attr('y1', y_scale(0))
+                .attr('y2', y_scale(0))
+                .attr('stroke', 'black')
+                .attr('stroke-width', 1);
+            
+            sub_panel.append('line')
+                .attr('x1', x_scale(.5))
+                .attr('x2', x_scale(.5))
+                .attr('y1', y_scale(-.2))
+                .attr('y2', y_scale(.2) + sub_title_height)
+                .attr('stroke', 'black')
+                .attr('stroke-width', 1)
+            
+            sub_panel.append('text')
+                .attr('x', x_scale(.5))
+                .attr('y', sub_title_height/2)
+                .attr('text-anchor', 'middle')
+                .attr('fill', 'black')
+                .attr('font-size', sub_title_height)
+                .text(country)
+            
+            sub_panel.selectAll('path')
+                .data(data)
+                .enter().append('path')
+                .attr('d', function(d){ return cognitive_shape(d.cognitive_domain);})
+                .attr('transform', function(d){return 'translate(' + x_scale(d.correct_ratio_per_question) + ',' + y_scale(d.diff_male_female) + ')' })
+                .attr('fill', function(d){return clr(d.content_domain)})
+                .attr('fill-opacity', fill_alpha)
+                .attr('stroke', function(d){return clr(d.content_domain)})
+                .attr('stroke-width', 1)
+                .attr('class', function(d){return d.question + ' ' + d.country + ' point'})
+                .on('mouseover', handle_mouse_over)
+                .on('mouseout', handle_mouse_out)
+                .append('title')
+                .html(function(d){
+                    return '<b>Question ID: <b>' + d.question + '<br><b>Question: <b>' + d.FIELD_LABL + '<br><b>Type: <b>' + d.question_type});
+        }
+        
+        function handle_mouse_over(d,i){
+            d3.selectAll('path.' + this.className.baseVal.split(' ')[0])
+                .attr('stroke-width', 15)
+                .attr('fill-opacity', 1);
+            console.log(d)
+        }
+        
+        function  handle_mouse_out(d, i){
+            d3.selectAll('path.' + this.className.baseVal.split(' ')[0])
+                .attr('stroke-width', 1)
+                .attr('fill-opacity', fill_alpha);
+        }        
+        
+        var data;
+        
+        d3.json('d3_timss.json', function(error, json){
+            if(error) throw error;
+            data = json;
+            
+            create_scatter(json[0], 'Korea', margin.left, (title_height + key_height + buffer), true, false);
+            create_scatter(json[0], 'USA', (vert_partition + margin.left), (title_height+ key_height + buffer), false, false);
+            create_scatter(json[0], 'Lithuania', margin.left, horz_partition, true, true);
+            create_scatter(json[0], 'Chile', (vert_partition + margin.left), horz_partition, false, true);
+            
+            
+        });
+
+        
+        
+    </script>
+</body>
