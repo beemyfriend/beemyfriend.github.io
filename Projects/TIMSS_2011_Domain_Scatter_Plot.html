@@ -24,23 +24,22 @@
         
         var title_height = height/15,
             key_height = height/30,
-            sub_title_height = height/30,
+            sub_title_height = height/35,
             buffer = 20,
             sub_width = (width/2) - buffer,
-            sub_height = (height - title_height - key_height - buffer)/2,
+            sub_height = (height - title_height - key_height - buffer - buffer)/2,
             sub_plot_height = sub_height - sub_title_height,
             vert_partition = sub_width,
             horz_partition = sub_height + sub_title_height + title_height + key_height,
             symbol_size = 50,
             symbol_size_enlarge = 300,
-            fill_alpha = .25;
+            fill_alpha = .20;
         
         var clr = d3.scaleOrdinal()
             .range(['red', 'green', 'blue', 'purple'])
             .domain(['Algebra', 'Data And Chance', 'Geometry', 'Number']);
 
         var y_scale = d3.scaleLinear()
-            .domain([-.2, .2])
             .range([sub_plot_height - buffer, 0])
         
         var x_scale = d3.scaleLinear()
@@ -170,14 +169,14 @@
             sub_panel.append('line')
                 .attr('x1', x_scale(.5))
                 .attr('x2', x_scale(.5))
-                .attr('y1', y_scale(-.2))
-                .attr('y2', y_scale(.2) + sub_title_height)
+                .attr('y1', (sub_height - sub_title_height))
+                .attr('y2', 0)
                 .attr('stroke', 'black')
                 .attr('stroke-width', 1)
             
             sub_panel.append('text')
                 .attr('x', x_scale(.5))
-                .attr('y', sub_title_height/2)
+                .attr('y', 0)
                 .attr('text-anchor', 'middle')
                 .attr('fill', 'black')
                 .attr('font-size', sub_title_height)
@@ -218,6 +217,8 @@
         d3.json('d3_timss.json', function(error, json){
             if(error) throw error;
             data = json;
+            
+            y_scale.domain(d3.extent(json[0], function(d){return d.diff_male_female}))
             
             create_scatter(json[0], 'Korea', margin.left, (title_height + key_height + buffer), true, false);
             create_scatter(json[0], 'USA', (vert_partition + margin.left), (title_height+ key_height + buffer), false, false);
