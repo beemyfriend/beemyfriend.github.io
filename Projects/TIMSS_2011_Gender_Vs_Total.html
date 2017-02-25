@@ -1,0 +1,290 @@
+<head>
+    <link rel='stylesheet' href = '../styles.css'>
+</head>
+<body>
+    <div id = 'header'>
+        <ul>
+            <li><a href = '../index.html'>Home</a></li>
+            <li><a href = '../Articles/articles.html'>Artiles</a></li>
+            <li><a href = 'projects.html'>Projects</a></li>
+        </ul>
+    </div>
+    <div id = 'content'><div id = 'timss'></div></div>
+    <script src = 'd3.js'></script>
+    <script>
+        var margin = {
+            top: 50,
+            bottom: 50,
+            left: 60,
+            right: 10
+        };
+        
+        var width = 1300 - margin.left - margin.right,
+            height = 565 - margin.top - margin.bottom;
+        
+        var title_height = height/15,
+            label_height = height/30,
+            width_right_hist = 80,
+            height_top_hist = 80,
+            width_main = width - width_right_hist,
+            height_main = height - height_top_hist,
+            circ_radius = 5,
+            fill_alpha = .2,
+            bin_num = 100;
+        
+        var clr = d3.scaleOrdinal()
+            .range(['red', 'green', 'blue', 'purple'])
+            .domain(['Chile', 'Korea', 'Lithuania', 'USA']);
+        
+        var svg = d3.select('#timss')
+            .append('svg')
+            .attr('height', height + margin.top + margin.bottom)
+            .attr('width', width + margin.left + margin.right)
+            .append('g');
+        
+        var key = svg 
+            .append('g')
+            .attr('height', height_top_hist)
+            .attr('width', width_right_hist)
+            .attr('transform', 'translate(' + (margin.left + width_main) + ',' + margin.top + ')')
+        
+        var key_data = [[1/4, 'Korea'], [2/4, 'USA'], [3/4, 'Lithuania'], [4/4, 'Chile']]
+        
+        color_key = key
+            .selectAll('circle')
+            .data(key_data)
+            .enter().append('circle')
+            .attr('cx', width_right_hist/3)
+            .attr('cy', function(d){return d[0] * .8 * height_top_hist})
+            .attr('r', circ_radius)
+            .attr('fill', function(d){return clr(d[1])})
+        
+        text_key = key
+            .selectAll('text')
+            .data(key_data)
+            .enter().append('text')
+            .attr('x', (width_right_hist/3) + (2 * circ_radius))
+            .attr('y', function(d){return (d[0] * .8 * height_top_hist) + circ_radius})
+            .attr('font-size', (circ_radius * 2.5))
+            .attr('fill', 'black')
+            .text(function(d){return d[1]})
+            
+        
+        var title = svg
+            .append('g')
+            .attr('height', title_height)
+            .attr('width', width_main)
+            .attr('transform', 'translate(0,0)')
+            .append('text')
+            .attr('x', width_main/2)
+            .attr('y', title_height)
+            .attr('font-size', title_height/1.5)
+            .attr('fill', 'black')
+            .attr('text-anchor', 'middle')
+            .text('TIMSS 2011: International Comparison of Success Rate and Gender Difference for Math Questions')
+        
+        var bottom_label = svg
+            .append('g')
+            .attr('height', label_height)
+            .attr('width', width)
+            .attr('transform', 'translate(0,' + (height + margin.top + margin.bottom - (1.5*label_height)) + ')')
+            .append('text')
+            .attr('x', width/2)
+            .attr('y', label_height)
+            .attr('font-size', label_height)
+            .attr('fill', 'black')
+            .attr('text-anchor', 'middle')
+            .text('n Students Successfully Answer Question / Total Students in Country')
+
+        var left_label = svg
+            .append('g')
+            .attr('heigth', label_height)
+            .attr('width', (height + margin.top + margin.bottom))
+            .attr('transform', 'translate(' + 0 + ',' + (height  +  margin.top + margin.bottom) + ') rotate(-90)')
+            .append('text')
+            .attr('x', (height + margin.top + margin.bottom)/2)
+            .attr('y', label_height)
+            .attr('font-size', label_height)
+            .attr('fill', 'black')
+            .attr('text-anchor', 'middle')
+            .text('% Male Success Rate - % Female Success Rate')
+    
+        
+        var main = d3.select('svg')
+            .append('g')
+            .attr('transform', 'translate(' + margin.left + ',' + (height_top_hist + margin.top + circ_radius) + ')')
+            .attr('height', height_main)
+            .attr('width', width_main);
+    
+        var x_main = d3.scaleLinear()
+            .range([0, width_main])
+        
+        var y_main = d3.scaleLinear()
+            .range([height_main, 0])
+        
+        var top_hist = d3.select('svg')
+            .append('g')
+            .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
+            .attr('height', height_top_hist)
+            .attr('width', width_main)
+        
+        var y_top = d3.scaleLinear()
+            .range([height_top_hist, 0])
+        
+        var right_hist = d3.select('svg')
+            .append('g')
+            .attr('transform', 'translate(' + (margin.left + width_main + + circ_radius) + ',' + (margin.top + height_top_hist + circ_radius) + ')')
+            .attr('height', height_main)
+            .attr('width', width_right_hist)
+        
+        var x_right = d3.scaleLinear()
+            .range([0, width_right_hist])
+    
+        function prep_for_hist(data, country, property){
+            return data.filter(function(i){return i.country == country;}).map(function(i){return i[property];});
+        }
+        
+        var area_top  = d3.area()
+            .x(function(d){return x_main(d.x1)})
+            .y1(function(d){return y_top(d.length)})
+            .y0(height_top_hist);
+
+        test_bins = []
+        
+        function create_top_hist(country){
+
+            var test_top = d3.histogram()
+                .domain(x_main.domain())
+                .thresholds(x_main.ticks(bin_num));           
+            
+            var bins = test_top(correct_hist[country]);
+            
+            test_bins.push(bins);
+            
+            y_top.domain([0, d3.max(bins, function(d){return d.length;})]) 
+            
+            var top_area = top_hist.append('path')
+                .datum(bins)
+                .attr('d', area_top)
+                .attr('class', country)
+                .attr('fill', clr(country))
+                .attr('fill-opacity', fill_alpha);    
+        }
+        
+        var area_right = d3.area()
+            .x0(0)
+            .x1(function(d){ return x_right(d.length);})
+            .y(function(d){ return y_main(d.x0);});
+        
+        function create_right_hist(country){
+            var test_right = d3.histogram()
+                .domain(y_main.domain())
+                .thresholds(y_main.ticks(bin_num));
+            
+            var bins = test_right(gender_hist[country]);
+            
+            test_bins.push(bins);
+            
+            x_right.domain([0, d3.max(bins, function(d){return d.length})])            
+            
+            var right_area = right_hist.append('path')
+                .datum(bins)
+                .attr('d', area_right)
+                .attr('class', country)
+                .attr('fill', clr(country))
+                .attr('fill-opacity', fill_alpha);   
+        }
+        
+        function handle_mouse_over(d, i){
+            d3.selectAll('circle.' + this.className.baseVal)
+                .attr('r', (2*circ_radius))
+                .attr('stroke', 'gold')
+                .attr('stroke-width', 5)
+                .attr('fill-opacity', 1)
+            console.log(d)
+        }
+        
+        function handle_mouse_out(d, i){
+            d3.selectAll('circle.' + this.className.baseVal)
+                .attr('r', circ_radius)
+                .attr('stroke-width', 0)
+                .attr('fill-opacity', fill_alpha)
+        }
+        
+        var data;
+        var correct_hist;
+        var gender_hist;
+        
+        d3.json('d3_timss.json', function(error, json){
+            if(error) throw error;
+            data = json;
+            
+            x_main.domain(d3.extent(json[0], function(d){return d.correct_ratio_per_question}))
+            y_main.domain(d3.extent(json[0], function(d){return d.diff_male_female}));
+            
+            main.selectAll('circle')
+                .data(json[0])
+                .enter().append('circle')
+                .attr('cx', function getx(d){ return x_main(d.correct_ratio_per_question);})
+                .attr('cy', function gety(d){ return y_main(d.diff_male_female);})
+                .attr('r', circ_radius)
+                .attr('fill', function getclr(d){ return clr(d.country);})
+                .attr('fill-opacity', fill_alpha)
+                .attr('class', function (d){ return d.question})
+                .on('mouseover', handle_mouse_over)
+                .on('mouseout', handle_mouse_out)
+                .append('title')
+                .html(function(d){
+                    return 'Country: ' + d.country + '<br>Question ID: ' + d.question + '<br>Question: ' + d.FIELD_LABL + '<br>Type: ' + d.question_type + '<br>Content Domain: ' + d.content_domain + '<br>Cognitive Domain: ' + d.cognitive_domain;
+            });
+            
+            main.append('g')
+                .attr('transform', 'translate(' + (0-circ_radius) + ', 0)')
+                .call(d3.axisLeft(y_main));
+            
+            main.append('g')
+                .attr('transform', 'translate(0,' + (height_main + circ_radius) + ')')
+                .call(d3.axisBottom(x_main));
+            
+            main.append('line')
+                .attr('x1', x_main(.5))
+                .attr('x2', x_main(.5))
+                .attr('y1', (0 - circ_radius))
+                .attr('y2', (height_main + circ_radius))
+                .attr('stroke', 'black')
+                .attr('stroke-width', 1);
+            
+            main.append('line')
+                .attr('x1', x_main(0))
+                .attr('x2', (width_main + circ_radius))
+                .attr('y1', y_main(0))
+                .attr('y2', y_main(0))
+                .attr('stroke', 'black')
+                .attr('stroke-width', 1)
+            
+            correct_hist = {
+                'Korea': prep_for_hist(json[0], 'Korea', 'correct_ratio_per_question'),
+                'USA': prep_for_hist(json[0], 'USA', 'correct_ratio_per_question'),
+                'Lithuania': prep_for_hist(json[0], 'Lithuania', 'correct_ratio_per_question'),
+                'Chile': prep_for_hist(json[0], 'Chile', 'correct_ratio_per_question')
+            };
+            
+            gender_hist = {
+                'Korea': prep_for_hist(json[0], 'Korea', 'diff_male_female'),
+                'USA': prep_for_hist(json[0], 'USA', 'diff_male_female'),
+                'Lithuania': prep_for_hist(json[0], 'Lithuania', 'diff_male_female'),
+                'Chile': prep_for_hist(json[0], 'Chile', 'diff_male_female')
+            };
+            
+            create_top_hist('USA');
+            create_top_hist('Korea');
+            create_top_hist('Chile');
+            create_top_hist('Lithuania');
+            
+            create_right_hist('USA');
+            create_right_hist('Korea');
+            create_right_hist('Chile');
+            create_right_hist('Lithuania');
+        })
+    </script>
+</body>

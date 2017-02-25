@@ -15,7 +15,7 @@
         var margin = {
             top: 10,
             bottom: 50,
-            left: 100,
+            left: 70,
             right: 10
         };
         
@@ -27,10 +27,11 @@
             sub_title_height = height/35,
             buffer = 20,
             sub_width = (width/2) - buffer,
-            sub_height = (height - title_height - key_height - buffer - buffer)/2,
+            sub_height = (height - title_height - key_height - (3 * buffer))/2,
             sub_plot_height = sub_height - sub_title_height,
+            top_partition = title_height + key_height + (2 *buffer),
             vert_partition = sub_width,
-            horz_partition = sub_height + sub_title_height + title_height + key_height,
+            horz_partition = sub_height + top_partition,
             symbol_size = 50,
             symbol_size_enlarge = 300,
             fill_alpha = .20;
@@ -40,7 +41,7 @@
             .domain(['Algebra', 'Data And Chance', 'Geometry', 'Number']);
 
         var y_scale = d3.scaleLinear()
-            .range([sub_plot_height - buffer, 0])
+            .range([sub_plot_height - buffer, buffer/2])
         
         var x_scale = d3.scaleLinear()
             .domain([0, 1])
@@ -64,7 +65,7 @@
                 
         var bottom_label = main.append('text')
             .attr('class', 'bottom_label')
-            .attr('transform', 'translate(' + (margin.left + width)/2 + ',' + (margin.top + height - buffer) + ')' )
+            .attr('transform', 'translate(' + (margin.left + width)/2 + ',' + (height - buffer) + ')' )
             .text('n Students Successfully Answer Question / Total Students')
             .attr('text-anchor', 'middle')
             .attr('fill', 'black');
@@ -103,7 +104,7 @@
             .attr('font-size', title_height/1.5)
             .attr('fill', 'black')
             .attr('text-anchor', 'middle')
-            .text('TIMSS 2011: International Comparison of Success Rate and Gendered Difference for Math Questions')
+            .text('TIMSS 2011: International Comparison of Success Rate and Gendered Difference for Math Questions and Domain')
             .attr('class', 'title');
         
         color_key = main
@@ -154,7 +155,7 @@
             
             if(bottom_axis){
                 sub_panel.append('g')
-                    .attr('transform', 'translate(0,' + y_scale(-.2) + ')')
+                    .attr('transform', 'translate(0,' + (sub_plot_height - buffer) + ')')
                     .call(d3.axisBottom(x_scale));
             }
             
@@ -169,8 +170,8 @@
             sub_panel.append('line')
                 .attr('x1', x_scale(.5))
                 .attr('x2', x_scale(.5))
-                .attr('y1', (sub_height - sub_title_height))
-                .attr('y2', 0)
+                .attr('y1', (sub_plot_height - buffer))
+                .attr('y2', buffer/2)
                 .attr('stroke', 'black')
                 .attr('stroke-width', 1)
             
@@ -220,8 +221,8 @@
             
             y_scale.domain(d3.extent(json[0], function(d){return d.diff_male_female}))
             
-            create_scatter(json[0], 'Korea', margin.left, (title_height + key_height + buffer), true, false);
-            create_scatter(json[0], 'USA', (vert_partition + margin.left), (title_height+ key_height + buffer), false, false);
+            create_scatter(json[0], 'Korea', margin.left, top_partition, true, false);
+            create_scatter(json[0], 'USA', (vert_partition + margin.left), top_partition, false, false);
             create_scatter(json[0], 'Lithuania', margin.left, horz_partition, true, true);
             create_scatter(json[0], 'Chile', (vert_partition + margin.left), horz_partition, false, true);
             
