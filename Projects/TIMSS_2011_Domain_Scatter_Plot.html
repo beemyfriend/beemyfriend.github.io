@@ -203,14 +203,16 @@
         function handle_mouse_over(d,i){
             d3.selectAll('path.' + this.className.baseVal.split(' ')[0])
                 .attr('stroke-width', 15)
-                .attr('fill-opacity', 1);
-            console.log(d)
+                .attr('fill-opacity', 1)
+                .raise();
+            console.log(d);
         }
         
         function  handle_mouse_out(d, i){
             d3.selectAll('path.' + this.className.baseVal.split(' ')[0])
                 .attr('stroke-width', 1)
-                .attr('fill-opacity', fill_alpha);
+                .attr('fill-opacity', fill_alpha)
+                .lower();
         }        
         
         var data;
