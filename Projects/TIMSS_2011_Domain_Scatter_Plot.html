@@ -1,5 +1,20 @@
 <head>
     <link rel='stylesheet' href = '../styles.css'>
+    
+    <style>
+        div.tooltip{
+            position: absolute;
+            text-align: left;
+            width: 300px;
+            height: 50px;
+            padding: 5px;
+            font-size: 14px;
+            background: lightsteelblue;
+            border: 0px;
+            border-radius: 8px;
+            pointer-events: none;
+        }
+    </style>
 </head>
 <body>
     <div id = 'header'>
@@ -194,17 +209,36 @@
                 .attr('stroke-width', 1)
                 .attr('class', function(d){return d.question + ' ' + d.country + ' point'})
                 .on('mouseover', handle_mouse_over)
-                .on('mouseout', handle_mouse_out)
-                .append('title')
-                .html(function(d){
-                    return '<b>Question ID: <b>' + d.question + '<br><b>Question: <b>' + d.FIELD_LABL + '<br><b>Type: <b>' + d.question_type});
+                .on('mouseout', handle_mouse_out);
         }
+        
+        var div = d3.select('body').append('div')
+            .attr('class', 'tooltip')
+            .style('opacity', 0)
         
         function handle_mouse_over(d,i){
             d3.selectAll('path.' + this.className.baseVal.split(' ')[0])
                 .attr('stroke-width', 15)
                 .attr('fill-opacity', 1)
                 .raise();
+            
+            div.transition('body')
+                .duration(500)
+                .style('opacity', .8)
+            
+            div.html('<b>Question ID: </b>' + d.question + '<br><b>Question: </b>' + d.FIELD_LABL + '<br><b>Type: </b>' + d.question_type)
+            
+            if(d3.event.pageX < width/2){
+                div.style('left', (d3.event.pageX) + 'px');
+            } else {
+                div.style('left', (d3.event.pageX - 300) + 'px');
+            }
+            
+            if(d3.event.pageY < height/1.5){
+                div.style('top', (d3.event.pageY) + 'px');
+            } else {
+                div.style('top', (d3.event.pageY - 50) + 'px');
+            }
             console.log(d);
         }
         
@@ -213,6 +247,10 @@
                 .attr('stroke-width', 1)
                 .attr('fill-opacity', fill_alpha)
                 .lower();
+            
+            div.transition()
+                .duration(500)
+                .style('opacity', 0);
         }        
         
         var data;

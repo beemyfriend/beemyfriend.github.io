@@ -1,5 +1,19 @@
 <head>
     <link rel='stylesheet' href = '../styles.css'>
+    <style>
+        div.tooltip{
+            position: absolute;
+            text-align: left;
+            width: 250px;
+            height: 125px;
+            padding: 5px;
+            font-size: 14px;
+            background: lightsteelblue;
+            border: 0px;
+            border-radius: 8px;
+            pointer-events: none;
+        }
+    </style>
 </head>
 <body>
     <div id = 'header'>
@@ -176,6 +190,11 @@
             .x1(function(d){ return x_right(d.length);})
             .y(function(d){ return y_main(d.x0);});
         
+        
+        var div = d3.select('body').append('div')
+            .attr('class', 'tooltip')
+            .style('opacity', 0);
+        
         function create_right_hist(country){
             var test_right = d3.histogram()
                 .domain(y_main.domain())
@@ -192,7 +211,7 @@
                 .attr('d', area_right)
                 .attr('class', country)
                 .attr('fill', clr(country))
-                .attr('fill-opacity', fill_alpha);   
+                .attr('fill-opacity', fill_alpha);
         }
         
         function handle_mouse_over(d, i){
@@ -201,6 +220,28 @@
                 .attr('stroke', 'gold')
                 .attr('stroke-width', 5)
                 .attr('fill-opacity', 1)
+                .raise();
+            
+            
+            div.transition()
+                .duration(500)
+                .style('opacity', .8)
+            
+            div.html('<b>Country:</b> ' + d.country + '<br><b>Question ID:</b> ' + d.question + '<br><b>Question:</b> ' + d.FIELD_LABL + '<br><b>Type:</b> ' + d.question_type + '<br><b>Content Domain:</b> ' + d.content_domain + '<br><b>Cognitive Domain:</b> ' + d.cognitive_domain);
+            
+            if(d3.event.pageX < width/2 + margin.left){
+                div.style('left', (d3.event.pageX) + 'px')
+            } else {
+                div.style('left', (d3.event.pageX - 250) + 'px')
+            }
+            
+            if(d3.event.pageY < height + margin.top + margin.bottom - (height_main/2) + (circ_radius *2)){
+                div.style('top', (d3.event.pageY) + 'px');
+            } else {
+                div.style('top', (d3.event.pageY - 125) + 'px');
+            }
+
+            
             console.log(d)
         }
         
@@ -208,7 +249,11 @@
             d3.selectAll('circle.' + this.className.baseVal)
                 .attr('r', circ_radius)
                 .attr('stroke-width', 0)
-                .attr('fill-opacity', fill_alpha)
+                .attr('fill-opacity', fill_alpha);
+            
+            div.transition()
+                .duration(500)
+                .style('opacity', 0);
         }
         
         var data;
@@ -232,11 +277,7 @@
                 .attr('fill-opacity', fill_alpha)
                 .attr('class', function (d){ return d.question})
                 .on('mouseover', handle_mouse_over)
-                .on('mouseout', handle_mouse_out)
-                .append('title')
-                .html(function(d){
-                    return 'Country: ' + d.country + '<br>Question ID: ' + d.question + '<br>Question: ' + d.FIELD_LABL + '<br>Type: ' + d.question_type + '<br>Content Domain: ' + d.content_domain + '<br>Cognitive Domain: ' + d.cognitive_domain;
-            });
+                .on('mouseout', handle_mouse_out);
             
             main.append('g')
                 .attr('transform', 'translate(' + (0-circ_radius) + ', 0)')
