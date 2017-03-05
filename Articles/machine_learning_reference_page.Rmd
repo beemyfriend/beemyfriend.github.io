@@ -1,0 +1,208 @@
+---
+title: "Machine Learning Reference Page"
+author: "BeeMyFriend"
+date: "March 5, 2017"
+output:
+  html_document:
+    toc: true
+    toc_depth: 3
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+##Introduction
+
+This is just a basic reference on how to use different machine learning techniques in R. This doesn't go into depth about the algorithms used for each machine learning technique nor does it explore the nuances of each function.
+
+Each technique referenced here, along with ther functions used, is explained with great care and detail in ['An Introduction to Statistical Learning with Applications in R'](http://www-bcf.usc.edu/~gareth/ISL/). This is the best introduction to both machine learning and machine learning in R. The authors, Gareth James, Daniela Witten, Trevor Hastie and Robert Tibshirani, are amazing and have provided the text for free online.
+
+##Supervised Machine Learning
+
+
+###Data
+
+The Iris dataset is ideal for testing out machine learning techniques. Let's divide the dataset into two parts - a training set and a testing set. The training set is what we will use to create a model. The testing set is what we will use to see how accurate the model actually is. The test set represents data that we would find in the wild. If we can correctly predict the class of most observations in the test set, then we can safely assume that the model will correctly classify future data. We'll put about 3/4 of the data into the training set and test the remaining 1/4 of the data. 
+
+```{r}
+set.seed(1)
+
+train <- sample(nrow(iris), (nrow(iris) * .75))
+
+train_iris <- iris[train,]
+test_iris <- iris[-train,]
+```
+
+###Naive Bayes
+
+The Naive Bayes method is a Bayesian classification method that uses probability to predict outcomes. While typically known to use factors as predictors, Naive Bayes is also very powerful when numeric predictors are introduced. ^[There are a number of intelligent people who can explain Bayesian Statistics and Naive Bayes methods in enlightening ways. I am not one of them...[but you can find a few of these people on stackoverflow](http://stackoverflow.com/a/20556654/7657071)]
+
+The Naive Bayes method can be found in the `caret` package.
+
+```{r message=F}
+library(caret) 
+```
+
+The key function we'll use is the `train()` function. It excepts a formula, a dataset, a method, and a control variable. Formulas are used in most modeling functions and take the form of `Y ~ predictor1+predictor2+pridector3...` where `Y` is the variable we are trying to predict and the predictors are the variables we want to use to predict `Y`. If all variables are used in the model, then a shortcut to writing the formula is `Y~.`.
+
+Once we get a model from training the training set, we will use the model to predict the `Species` of each observation in the testing set. We will then check the accuracty of the model by creating a confusion matrix. A confusion matrix is a table that compares the predicted class of an observation to the actual class of the observation. 
+
+```{r message=F}
+iris_nb_model <- train(Species~., data = train_iris, method = 'nb', trControl = trainControl(method = 'cv', number = 5))
+
+prediction <- predict(iris_nb_model$finalModel, test_iris)
+prediction <- prediction$class
+truth <- test_iris$Species
+
+#Confusion Matrix
+iris_nb_cmatrix <- table(prediction, truth)
+
+iris_nb_cmatrix
+```
+
+The numbers on the diagonal represent correct predictions. Any number that is not on the diagonal represents an inccorect prediction. The Naive Bayes model incorrectly misclassified only one observation. A virginica flower was mistakenly classified as a Versicolor flower. This model is `r round(((iris_nb_cmatrix[1,1] + iris_nb_cmatrix[2,2] + iris_nb_cmatrix[3,3])/sum(iris_nb_cmatrix)) * 100, 2)`% accurate!
+
+While we can tell at a glance that there 15 total Virginicas in the test set, figuring out the total number of true values in a test set becomes more difficult as the number of observations in the test set increases and as the accuracy of the model decreases. A good practice is to create a truth matrix to quickly see how many instances of a value are truly present.
+
+```{r}
+truth_matrix <- table(truth, truth)
+truth_matrix
+```
+
+Another good practice is to `detach` packages that we will no longer use. 
+
+```{r}
+detach(package:caret)
+```
+
+###Support Vector Machines
+
+Support Vector Machines, like Naive Bayes, is typically used on factor predictors, but is also powerful when given numeric predictors. Support Vector Machines creates strict rules for each predictor. Essentially, imagine that a line is drawn. Any observation found on one side of the line is given one classification, any observation found on the otherside of the line is given another classification. ^[Suport Vector Methods are a lot more complex than what I explained, but again, the internet is filled with awesome resources to dig in deeper. [KDNuggets provides a decent explanation](http://www.kdnuggets.com/2016/07/support-vector-machines-simple-explanation.html)] 
+
+Support Vector Machines can be used once the `e1071` library is loaded.
+
+```{r}
+library(e1071)
+```
+
+The `svm()` function is similiar to the previously used `train()` function. We input a formula and the underlying dataset. Unlike the Naive Bayes model, when `predict()` is called on an Support Vector Machine model we are provided with the predicted classes directly. 
+
+```{r}
+iris_svm_model <- svm(Species~., data = train_iris, kernel = 'linear', cost = 10)
+
+prediction <- predict(iris_svm_model, test_iris)
+
+iris_svm_cmatrix <- table(prediction, truth)
+
+iris_svm_cmatrix
+truth_matrix
+```
+
+The Support Vector Machine model is `r round(((iris_svm_cmatrix[1,1] + iris_svm_cmatrix[2,2] + iris_svm_cmatrix[3,3])/sum(iris_svm_cmatrix)) * 100, 2)`% accurate. So far the Naive Bayes model is the most accurate for the iris dataset.
+
+```{r}
+detach(package:e1071)
+```
+###Basic Decision Trees
+
+Binary trees are essentially a series of `if()` statements that end on nodes that determine the classification of an observation. If the `if()` statement is true, then the tree branches out to the left and either a terminal node with the classification is found or another `if()` statment is found and the process continues. If an `if()` statement is false, then the tree branches out to the right. 
+
+The order of `if()` statments is determined by the statment's overall effect on the final decision. As you will see, the iris' petal length can immediately determine whether or not a flower is a setosa. This is a pretty influential statement and it is therfore the first statment to split the tree. 
+
+Trees can be used once the aptly named `tree` library is loaded.
+
+```{r}
+library(tree)
+```
+The `tree()` funtion is similiar to the `train()` and `svm()` functions. The beautiful thing about the `tree()` function is that it provides a chart of the actual decision tree being used. Decision tree charts are used across many different disciplines because they are easily interpreted and are similiar to the mental processes people use to make decisions in their daily live. 
+
+```{r}
+set.seed(1)
+
+iris_tree_model <- tree(Species~., data = train_iris)
+
+plot(iris_tree_model)
+text(iris_tree_model, pretty=0)
+
+prediction <- predict(iris_tree_model, test_iris, type='class')
+
+iris_tree_cmatrix <- table(prediction, truth)
+
+iris_tree_cmatrix
+truth_matrix
+
+detach(package:tree)
+```
+The decision tree method is `r round(((iris_tree_cmatrix[1,1] + iris_tree_cmatrix[2,2] + iris_tree_cmatrix[3,3])/sum(iris_tree_cmatrix)) * 100, 2)`% accurate. The Naive Bayes model is still the best model for analyzing the iris dataset.
+
+###Random Forests
+
+Random Forests is a variation of the decision trees, actually, it is many variations of the decision trees. The random forest algorithm is to split the data into many different groups and use all groups except for one in training the data. The excluded group is then used as a test set to measure the accuracy of the tree created. This process is repeated until every group has acted as a test set. Then the final tree represents the best decision splits according to the multiple different trees. 
+
+Again, R developers have made life easy for us by naming a package after the method/function/model that we want.
+
+```{r message=F}
+library(randomForest)
+```
+
+In order to provide reproducible results we will set the seed to 1. This is necessary because randomness is a factor in splitting the training set into it's own seperate groups.
+
+```{r}
+set.seed(1)
+
+iris_rf_model <- randomForest(Species~., data = iris, subset = train, importance = T)
+
+prediction <- predict(iris_rf_model, test_iris)
+
+iris_rf_cmatrix <- table(prediction, truth)
+
+iris_rf_cmatrix
+truth_matrix
+
+detach(package:randomForest)
+```
+The random forest model is `r round(((iris_tree_cmatrix[1,1] + iris_tree_cmatrix[2,2] + iris_tree_cmatrix[3,3])/sum(iris_tree_cmatrix)) * 100, 2)`% accurate. Of all the supervise learning technique we used, Naive Bayes is the most accurate with random forests coming in at a close second and both Support Vector Machines and Trees tied for third place.
+
+##Unsupervised Machine Learning
+
+The idea behind unsupervised machine learning is that we do not know how to classify an observation. Imagine being in a field of flowers, but not knowing what each flower is called. You would probably start finding similarities between different flowers and start putting flowers according to their features, let's say, their color, their pedal length, and their sepal width...Machine learning is just this process - it groups diferent observations according to their similiarities and differences.
+
+###Data
+
+We will continue using the iris dataset, but in order to imitate unsupervised machine learning, we will reorder the rows and get rid of the `Species` column. 
+
+```{r}
+
+scramble_iris <- iris[sample(nrow(iris), nrow(iris)),]
+unclassified_iris <- scramble_iris[-5]
+```
+
+We now have absolutely no (not really) clue what kind of flowers we have.
+
+###K-Means Clustering
+```{r}
+set.seed(1)
+iris_KMC_model <- kmeans(unclassified_iris, 3, nstart = 20)
+table(iris_KMC_model$cluster, scramble_iris$Species)
+
+```
+###Hierarchical Clustering
+```{r}
+iris_CHC_model <- hclust(dist(unclassified_iris), method = 'complete')
+iris_AHC_model <- hclust(dist(unclassified_iris), method = 'average')
+iris_SHC_model <- hclust(dist(unclassified_iris), method = 'single')
+
+plot(iris_CHC_model)
+cut_iris_CHC <- cutree(iris_CHC_model, 3)
+table(cut_iris_CHC, scramble_iris$Species)
+
+
+plot(iris_AHC_model)
+cut_iris_AHC <- cutree(iris_AHC_model, 3)
+table(cut_iris_AHC, scramble_iris$Species)
+
+plot(iris_SHC_model)
+cut_iris_SHC <- cutree(iris_SHC_model, 3)
+table(cut_iris_SHC, scramble_iris$Species)
+
+```{r}
