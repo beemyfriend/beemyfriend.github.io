@@ -35,7 +35,7 @@ test_iris <- iris[-train,]
 
 ###Naive Bayes
 
-The Naive Bayes method is a Bayesian classification method that uses probability to predict outcomes. While typically known to use factors as predictors, Naive Bayes is also very powerful when numeric predictors are introduced. ^[There are a number of intelligent people who can explain Bayesian Statistics and Naive Bayes methods in enlightening ways. I am not one of them...[but you can find a few of these people on stackoverflow](http://stackoverflow.com/a/20556654/7657071)]
+The Naive Bayes method is a Bayesian classification method that uses probability to predict outcomes. While typically known to use factors as predictors, Naive Bayes is also very powerful when numeric predictors are introduced. The Naive Bayes model determines the weight of each variable for each classification. When the majority of variables of an observation match the weights of a particular classification, then the observation is given that classification. ^[There are a number of intelligent people who can explain Bayesian Statistics and Naive Bayes methods in enlightening ways. I am not one of them...[but you can find a few of these people on stackoverflow](http://stackoverflow.com/a/20556654/7657071)]
 
 The Naive Bayes method can be found in the `caret` package.
 
@@ -77,7 +77,14 @@ detach(package:caret)
 
 ###Support Vector Machines
 
-Support Vector Machines, like Naive Bayes, is typically used on factor predictors, but is also powerful when given numeric predictors. Support Vector Machines creates strict rules for each predictor. Essentially, imagine that a line is drawn. Any observation found on one side of the line is given one classification, any observation found on the otherside of the line is given another classification. ^[Suport Vector Methods are a lot more complex than what I explained, but again, the internet is filled with awesome resources to dig in deeper. [KDNuggets provides a decent explanation](http://www.kdnuggets.com/2016/07/support-vector-machines-simple-explanation.html)] 
+Support Vector Machines, like Naive Bayes, is typically used on factor predictors, but is also powerful when given numeric predictors. Support Vector Machines creates strict rules for each predictor. Essentially, imagine a 2-dimensional graph with the first variable in the x-axis and the second variable in the y-axis. Observations are scattered along the graph. The Support Vector Machine splits the observations into two groups with a line. Any observation found on one side of the line is given one classification, any observation found on the otherside of the line is given another classification. As more variables are introduced to the model, the graph and line increase in dimensions. For example, with three variables, the graph becomes a 3-dimensional graph and the line becomes a 2-dimensional plane. When 4 or more variables are introduced, the graph becomes unplottable, but the Support Vector Machines can still figure out the n-dimensional line that splits the classifications. ^[Suport Vector Methods are a lot more complex than what I explained, but again, the internet is filled with awesome resources to dig in deeper. [KDNuggets provides a decent explanation](http://www.kdnuggets.com/2016/07/support-vector-machines-simple-explanation.html)] 
+
+```{r echo=F}
+
+ggplot2::ggplot(
+  
+)
+```
 
 Support Vector Machines can be used once the `e1071` library is loaded.
 
