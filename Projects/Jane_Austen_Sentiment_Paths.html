@@ -1,0 +1,72 @@
+<head></head>
+<body>
+    <div id = 'jane'></div>
+    <svg><circle cx = 300 cy = 20 r = 10 fill = 'blue'/>
+    </svg>
+    <script src = 'd3.js'></script>
+    <script>
+        var height = 600, 
+            width = 500;
+        
+        var books = ['Sense & Sensibility', 'Pride & Prejudice', 'Mansfield Park', 'Emma', 'Northanger Abbey', 'Persuasion'];
+        
+        var clr = d3.scaleOrdinal()
+            .range(['red', 'green', 'blue', 'purple', 'brown', 'orange'])
+            .domain(books);
+        
+        function binary_sentiment_path(sent_arr, start_str, line_len){
+            var path = 'M ' + start_str;
+            
+            for(i = 0; i <  sent_arr.length; i++){
+                if(sent_arr[i].index_sentiment > 0){
+                    path += ' l ' + line_len + ' ' + line_len;
+                } else {
+                    path += ' l -' + line_len + ' ' + line_len;
+                }
+            }
+            console.log(sent_arr)
+            return path            
+        }
+        
+        var svg = d3.select('#jane')
+            .append('svg')
+            .attr('height', height)
+            .attr('width', width)
+            .attr('transform', 'translate(0, 0)')
+            .append('g')
+            .attr('transform', 'translate(0,0)');
+        
+        var  x = d3.scaleLinear()
+            .range([0, width]);
+        
+        var y = d3.scaleLinear()
+            .range([0, height]);
+        
+        var data;
+        
+        //something is wrong with the bing data in the json
+        var afinn;
+        
+        d3.json('ja_sentiments.json', function(error, json){
+            if(error) throw error;
+            data = json;
+            afinn = json.afinn;
+            
+            var tri_hyp = d3.extent(afinn, function(x){ return x.index})[1]
+            var tri_leg = Math.sqrt((tri_hyp**2)/2)
+            
+            x.domain([0, tri_leg])
+            y.domain([0, tri_leg])
+            
+            svg.selectAll('path')
+                .data(books)
+                .enter().append('path')
+                .attr('d', function(d){return binary_sentiment_path(afinn.filter(function(x){ return x.book == d}), '' + (width/2) + ' 0', 1)})
+                .attr('fill', 'transparent')
+                .attr('stroke', function(d){return clr(d)})
+                .attr('stroke-width', 1)
+                .attr('stroke-opacity', .25)
+            
+        })
+    </script>
+</body>
