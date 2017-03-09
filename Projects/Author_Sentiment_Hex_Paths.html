@@ -1,19 +1,19 @@
 <head></head>
 <body>
-    <div id = 'jane'></div>
-    </svg>
+    <div id = 'authors'></div>
     <script src = 'd3.js'></script>
     <script>
         var height = 600, 
-            width = 1000;
-        
-        var books = ['Sense & Sensibility', 'Pride & Prejudice', 'Mansfield Park', 'Emma', 'Northanger Abbey', 'Persuasion'];
+            width = 1400;
+
+        var authors = ['Jane Austen', 'H. G. Wells', 'Bronte Sisters']
         
         var clr = d3.scaleOrdinal()
-            .range(['red', 'green', 'blue', 'purple', 'brown', 'orange'])
-            .domain(books);
+            .range(['blue', 'purple', 'orange'])
+            .domain(authors);
         
-        function hex_sentiment_path(sent_arr, start_str, line_len){
+                
+    function hex_sentiment_path(sent_arr, start_str, line_len){
             var path = 'M ' + start_str;
             
             for(i = 0; i <  sent_arr.length; i++){
@@ -37,22 +37,23 @@
 
             return path            
         }
+
         
-        var svg = d3.select('#jane')
+        var svg = d3.select('#authors')
             .append('svg')
             .attr('height', height)
             .attr('width', width)
             .attr('transform', 'translate(0, 0)')
             .append('g')
             .attr('transform', 'translate(0,0)');
-
+        
         var center = d3.select('svg')
             .append('circle')
             .attr('cx', width/2)
             .attr('cy', height/2)
             .attr('r', 2)
             .attr('fill', 'black')
-    
+        
         var  x = d3.scaleLinear()
             .range([0, width]);
         
@@ -62,29 +63,48 @@
         var data;
         
         //something is wrong with the bing data in the json
-        var nrc;
+        var nrc = [];
+        var books = [];
+        var unique = {};
         
-        d3.json('ja_sentiments.json', function(error, json){
+        function find_books(){
+            
+            
+            for(var i in nrc){
+                for( var j =0; j < nrc[i].length; j++){
+                    if(unique[nrc[i][j].book] == undefined){
+                        unique[nrc[i][j].book] = nrc[i][j].author;
+                        books.push(nrc[i][j].book)
+                    }
+                }
+            }
+            return books
+        }
+        
+        d3.json('author_sentiments.json', function(error, json){
             if(error) throw error;
             data = json;
-            nrc = json.nrc;
+            nrc = json.map(function(x){return x.nrc});
+            var all_nrc = [];
+            for(var i = 0; i<nrc.length; i++){
+                all_nrc = all_nrc.concat(nrc[i])
+            }
             
+                
             var tri_hyp = d3.extent(nrc, function(x){ return x.index})[1]
             var tri_leg = Math.sqrt((tri_hyp**2)/2)
             
             x.domain([0, tri_leg])
             y.domain([0, tri_leg])
             
-            svg.selectAll('path')
-                .data(books)
+            {svg.selectAll('path')
+                .data(find_books())
                 .enter().append('path')
-                .attr('d', function(d){return hex_sentiment_path(nrc.filter(function(x){ return x.book == d}), '' + (width/2) + ' ' + (height/2), 3)})
+                .attr('d', function(d){return hex_sentiment_path(all_nrc.filter(function(x){ return x.book == d}), '' + (width/2) + ' ' + (height/2), 3)})
                 .attr('fill', 'transparent')
-                .attr('stroke', function(d){return clr(d)})
+                .attr('stroke', function(d){return clr(unique[d])})
                 .attr('stroke-width', 2)
-                .attr('stroke-opacity', .25)
-            
-
+                .attr('stroke-opacity', .75)}
             
         })
     </script>
