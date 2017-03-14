@@ -1,16 +1,44 @@
-<head></head>
+<head>
+    <link rel='stylesheet' href = '../styles.css'>
+
+    <style>
+        div.tooltip{
+            position: absolute;
+            text-align: left;
+            width: 250px;
+            height: 35px;
+            padding: 5px;
+            font-size: 14px;
+            background: lightsteelblue;
+            border: 0px;
+            border-radius: 8px;
+            pointer-events: none;
+        }
+    </style>
+</head>
 <body>
-    <div id = 'authors'></div>
+    <div id= 'header'>
+        <ul>
+            <li><a href = '../index.html'>Home</a></li>
+            <li><a href = '../Articles/articles.html'>Articles</a></li>
+            <li><a href = 'projects.html'>Projects</a></li>
+        </ul>
+    </div> 
+    <div id = 'content'><div id = 'authors'></div></div>
     <script src = 'd3.js'></script>
     <script>
-        var height = 1200, 
-            width = 600;
+        var height = 600, 
+            width = 1200,
+            title_height = height/15;
 
         var authors = ['Jane Austen', 'H. G. Wells', 'Bronte Sisters']
         
         var clr = d3.scaleOrdinal()
             .range(['blue', 'purple', 'orange'])
             .domain(authors);
+        
+        var line_alpha = .33,
+            line_width = 2;
         
         function binary_sentiment_path(sent_arr, start_str, line_len){
             var path = 'M ' + start_str;
@@ -26,13 +54,37 @@
             return path            
         }
         
-        var svg = d3.select('#authors')
+        var main = d3.select('#authors')
             .append('svg')
             .attr('height', height)
             .attr('width', width)
             .attr('transform', 'translate(0, 0)')
             .append('g')
             .attr('transform', 'translate(0,0)');
+        
+        var title = main
+            .attr('height', title_height)
+            .attr('width', width)
+            .attr('transform', 'translate(0,0)')
+            .append('g')
+            .append('text')
+            .attr('x', width/2)
+            .attr('y', -10)
+            .attr('font-size', title_height)
+            .attr('fill', 'black')
+            .attr('text-anchor', 'middle')
+            .text('Literary Sentiment Paths: AFINN')
+            .attr('class', 'title')
+        
+        var graph = main
+            .attr('height', height - title_height)
+            .attr('width', width)
+            .attr('transform', 'translate(0,' + title_height + ')')
+            .append('g')
+        
+        var div = d3.select('body').append('div')
+            .attr('class', 'tooltip')
+            .style('opacity', 0)
         
         var  x = d3.scaleLinear()
             .range([0, width]);
@@ -46,10 +98,9 @@
         var afinn = [];
         var books = [];
         var unique = {};
+        var all_afinn = [];
         
-        function find_books(){
-            
-            
+        function find_books(){   
             for(var i in afinn){
                 for( var j =0; j < afinn[i].length; j++){
                     if(unique[afinn[i][j].book] == undefined){
@@ -61,11 +112,39 @@
             return books
         }
         
+        function handle_mouse_over(d, i){
+            d3.select('path.' + this.className.baseVal)
+                .attr('stroke-opacity', 1)
+                .attr('stroke-width', 2 * line_width)
+                .raise()
+            
+            console.log(this.className.baseVal)
+            
+            div.transition()
+                .duration(500)
+                .style('opacity', .8);
+            
+            div.html('<b>Book: </b> ' + d + '<br><b>Author: </b>' + all_afinn.filter(function(x){return x.book == d})[1].author );
+            
+            div.style('top', (d3.event.pageY) + 'px')
+                .style('left', (d3.event.pageX) + 'px');
+        }
+        
+        function handle_mouse_out(d,i){
+            d3.select('path.'+this.className.baseVal)
+                .attr('stroke-opacity', line_alpha)
+                .attr('stroke-width', line_width)
+                .lower();
+            
+            div.transition()
+                .duration(500)
+                .style('opacity', 0)
+        }
+        
         d3.json('author_sentiments.json', function(error, json){
             if(error) throw error;
             data = json;
             afinn = json.map(function(x){return x.afinn});
-            var all_afinn = [];
             for(var i = 0; i<afinn.length; i++){
                 all_afinn = all_afinn.concat(afinn[i])
             }
@@ -77,14 +156,17 @@
             x.domain([0, tri_leg])
             y.domain([0, tri_leg])
             
-            {svg.selectAll('path')
+            {graph.selectAll('path')
                 .data(find_books())
                 .enter().append('path')
                 .attr('d', function(d){return binary_sentiment_path(all_afinn.filter(function(x){ return x.book == d}), '' + (width/2) + ' 0', 2)})
                 .attr('fill', 'transparent')
                 .attr('stroke', function(d){return clr(unique[d])})
-                .attr('stroke-width', 2)
-                .attr('stroke-opacity', .33)}
+                .attr('stroke-width', line_width)
+                .attr('stroke-opacity', line_alpha)
+                .attr('class', function(d){return d.replace(/\s/g, '').replace('&', '')})
+                .on('mouseover', handle_mouse_over)
+                .on('mouseout', handle_mouse_out)}
             
         })
     </script>
