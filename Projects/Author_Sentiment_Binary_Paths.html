@@ -31,16 +31,15 @@
             width = 1200,
             title_height = height/15,
             graph_height = height - title_height,
-            label_height = graph_height/15;
+            label_height = graph_height/15,
+            line_alpha = .33,
+            line_width = 2;
 
         var authors = ['Jane Austen', 'H. G. Wells', 'Bronte Sisters']
         
         var clr = d3.scaleOrdinal()
             .range(['blue', 'purple', 'orange'])
             .domain(authors);
-        
-        var line_alpha = .33,
-            line_width = 2;
         
         function binary_sentiment_path(sent_arr, start_str, line_len){
             var path = 'M ' + start_str;
@@ -65,9 +64,26 @@
             .append('g')
             .attr('transform', 'translate(0,0)');
         
-        var key = main
-            .append('g')
-            .attr('height')
+        var color_key = main
+            .selectAll('line.key')
+            .data(authors)
+            .enter().append('line')
+            .attr('x1', width * .8)
+            .attr('x2', width * .85)
+            .attr('y1', function(d,i){return (graph_height/15) * (i + 1)})
+            .attr('y2', function(d, i){ return (graph_height/15) * (i + 1) })
+            .attr('stroke-width', line_width * 2)
+            .attr('stroke', function(d){return clr(d)});
+            
+        var text_key = main
+            .selectAll('text.key')
+            .data(authors)
+            .enter().append('text')
+            .attr('x', width * .86)
+            .attr('y', function(d, i){ return (graph_height/15) * (i + 1)})
+            .text(function(d){return d})
+            .attr('fill', 'black')
+            .attr('font-size', label_height/2);
         
         var title = main
             .attr('height', title_height)
