@@ -29,7 +29,9 @@
     <script>
         var height = 600, 
             width = 1200,
-            title_height = height/15;
+            title_height = height/15,
+            graph_height = height - title_height,
+            label_height = graph_height/15;
 
         var authors = ['Jane Austen', 'H. G. Wells', 'Bronte Sisters']
         
@@ -54,6 +56,7 @@
             return path            
         }
         
+        
         var main = d3.select('#authors')
             .append('svg')
             .attr('height', height)
@@ -61,6 +64,10 @@
             .attr('transform', 'translate(0, 0)')
             .append('g')
             .attr('transform', 'translate(0,0)');
+        
+        var key = main
+            .append('g')
+            .attr('height')
         
         var title = main
             .attr('height', title_height)
@@ -77,10 +84,64 @@
             .attr('class', 'title')
         
         var graph = main
-            .attr('height', height - title_height)
+            .attr('height', graph_height)
             .attr('width', width)
             .attr('transform', 'translate(0,' + title_height + ')')
             .append('g')
+        
+        graph
+            .append('text')
+            .attr('transform', 'rotate(-90)')
+            .attr('x', -(graph_height - label_height))
+            .attr('y', label_height)
+            .attr('font-size', label_height/2)
+            .attr('fill', 'black')
+            .text('End of Book')
+            .attr('class', 'yaxis')
+        
+        graph
+            .append('text')
+            .attr('transform', 'rotate(-90)')
+            .attr('x', 0)
+            .attr('y', label_height)
+            .attr('font-size', label_height/2)
+            .attr('fill', 'black')
+            .text('Beginning of Book')
+            .attr('text-anchor', 'end')
+            .attr('class', 'yaxis');
+        
+        graph
+            .append('text')
+            .attr('x', (2 * label_height))
+            .attr('y', (graph_height - label_height/2))
+            .attr('font-size', label_height/2)
+            .attr('fill', 'black')
+            .text('Negative Sentiment')
+            .attr('class', 'xaxis');
+        
+        graph
+            .append('text')
+            .attr('x', width)
+            .attr('y', (graph_height - label_height/2))
+            .attr('font-size', label_height/2)
+            .attr('fill', 'black')
+            .text('Positive Sentiment')
+            .attr('text-anchor', 'end')
+            .attr('class', 'xaxis');
+        
+        graph
+            .append('path')
+            .attr('d', 'M ' + (width * .23) + ' ' + (graph_height - label_height * .75) + ' l 4 -4 l -4 4 l 4 4 l -4 -4 l ' + (width * .60) + ' 0 l -4 -4 l 4 4 l -4 4')
+            .attr('stroke-width', line_width)
+            .attr('stroke', 'black')
+            .attr('fill', 'transparent');
+        
+        graph
+            .append('path')
+            .attr('d', 'M ' + (label_height) + ' ' + (graph_height * .30) + ' l 0 ' + (graph_height * .40) + ' l -4 -4 l 4 4 l 4 -4')
+            .attr('stroke-width', line_width)
+            .attr('stroke', 'black')
+            .attr('fill', 'transparent');
         
         var div = d3.select('body').append('div')
             .attr('class', 'tooltip')
@@ -156,7 +217,7 @@
             x.domain([0, tri_leg])
             y.domain([0, tri_leg])
             
-            {graph.selectAll('path')
+            {graph.selectAll('path.graph')
                 .data(find_books())
                 .enter().append('path')
                 .attr('d', function(d){return binary_sentiment_path(all_afinn.filter(function(x){ return x.book == d}), '' + (width/2) + ' 0', 2)})

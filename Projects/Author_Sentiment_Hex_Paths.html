@@ -1,10 +1,39 @@
-<head></head>
+<head>
+    <link rel='stylesheet' href = '../styles.css'>
+
+    <style>
+        div.tooltip{
+            position: absolute;
+            text-align: left;
+            width: 250px;
+            height: 35px;
+            padding: 5px;
+            font-size: 14px;
+            background: lightsteelblue;
+            border: 0px;
+            border-radius: 8px;
+            pointer-events: none;
+        }
+    </style>
+</head>
 <body>
-    <div id = 'authors'></div>
+    <div id= 'header'>
+        <ul>
+            <li><a href = '../index.html'>Home</a></li>
+            <li><a href = '../Articles/articles.html'>Articles</a></li>
+            <li><a href = 'projects.html'>Projects</a></li>
+        </ul>
+    </div> 
+    <div id = 'content'><div id = 'authors'></div></div>
     <script src = 'd3.js'></script>
     <script>
         var height = 600, 
-            width = 1400;
+            width = 1200,
+            title_height = height/15,
+            graph_height = height - title_height,
+            label_height = graph_height/15,
+            line_alpha = .60,
+            line_width = 2;
 
         var authors = ['Jane Austen', 'H. G. Wells', 'Bronte Sisters']
         
@@ -39,7 +68,7 @@
         }
 
         
-        var svg = d3.select('#authors')
+        var main = d3.select('#authors')
             .append('svg')
             .attr('height', height)
             .attr('width', width)
@@ -47,12 +76,100 @@
             .append('g')
             .attr('transform', 'translate(0,0)');
         
-        var center = d3.select('svg')
+        var title = main
+            .attr('height', title_height)
+            .attr('width', width)
+            .attr('transform', 'translate(0,0)')
+            .append('g')
+            .append('text')
+            .attr('x', width/2)
+            .attr('y', -10)
+            .attr('font-size', title_height)
+            .attr('fill', 'black')
+            .attr('text-anchor', 'middle')
+            .text('Literary Sentiment Paths: NRC')
+            .attr('class', 'title')
+        
+        var graph = main
+            .attr('height', graph_height)
+            .attr('width', width)
+            .attr('transform', 'translate(0,' + title_height + ')')
+            .append('g')
+        
+        graph
+            .append('text')
+            .attr('transform', 'rotate(-90)')
+            .attr('x', 0)
+            .attr('y', label_height)
+            .attr('font-size', label_height/2)
+            .attr('fill', 'black')
+            .text('Joy')
+            .attr('text-anchor', 'end')
+            .attr('class', 'left_axis')
+        
+        graph
+            .append('text')
+            .attr('transform', 'rotate(-90)')
+            .attr('x', -(graph_height/2 + label_height))
+            .attr('y', label_height)
+            .attr('font-size', label_height/2)
+            .attr('fill', 'black')
+            .text('Trust')
+            .attr('text-anchor', 'middle')
+            .attr('class', 'left_axis')
+        
+        graph
+            .append('text')
+            .attr('transform', 'rotate(-90)')
+            .attr('x', -(graph_height ))
+            .attr('y', label_height)
+            .attr('font-size', label_height/2)
+            .attr('fill', 'black')
+            .text('Anticipation')
+            .attr('class', 'left_axis')
+        
+        graph
+            .append('text')
+            .attr('transform', 'rotate(90)')
+            .attr('x', 0)
+            .attr('y', -(width-label_height))
+            .attr('font-size', label_height/2)
+            .attr('fill', 'black')
+            .text('Fear')
+            .attr('class', 'right_axis')
+        
+        graph
+            .append('text')
+            .attr('transform', 'rotate(90)')
+            .attr('x', graph_height/2)
+            .attr('y', -(width-label_height))
+            .attr('font-size', label_height/2)
+            .attr('fill', 'black')
+            .text('Sadness')
+            .attr('text-anchor', 'middle')
+            .attr('class', 'right_axis')
+        
+        graph
+            .append('text')
+            .attr('transform', 'rotate(90)')
+            .attr('x', graph_height)
+            .attr('y', -(width-label_height))
+            .attr('font-size', label_height/2)
+            .attr('fill', 'black')
+            .text('Anger')
+            .attr('text-anchor', 'end')
+            .attr('class', 'right_axis')
+        
+        var div = d3.select('body').append('div')
+            .attr('class', 'tooltip')
+            .style('opacity', 0);
+        
+        var center = graph
             .append('circle')
             .attr('cx', width/2)
-            .attr('cy', height/2)
+            .attr('cy', graph_height/2)
             .attr('r', 2)
-            .attr('fill', 'black')
+            .attr('fill', 'white')
         
         var  x = d3.scaleLinear()
             .range([0, width]);
@@ -64,12 +181,11 @@
         
         //something is wrong with the bing data in the json
         var nrc = [];
+        var all_nrc = [];
         var books = [];
         var unique = {};
         
         function find_books(){
-            
-            
             for(var i in nrc){
                 for( var j =0; j < nrc[i].length; j++){
                     if(unique[nrc[i][j].book] == undefined){
@@ -81,11 +197,41 @@
             return books
         }
         
+        function handle_mouse_over(d, i){
+            d3.select('path.' + this.className.baseVal)
+                .attr('stroke-opacity', 1)
+                .attr('stroke-width', 2 * line_width)
+                .raise();
+            
+            div.transition()
+                .duration(500)
+                .style('opacity', .8);
+            
+            div.html('<b>Book: </b>' + d + '<br><b>Author: </b>' + all_nrc.filter(function(x){return x.book == d})[1].author)
+            
+            console.log('in: ' + this.className.baseVal)
+            
+            div.style('top', (d3.event.pageY) + 'px')
+                .style('left', d3.event.pageX + 'px') 
+        }
+        
+        function handle_mouse_out(d, i){
+            d3.select('path.' + this.className.baseVal)
+                .attr('stroke-opacity', line_alpha)
+                .attr('stroke-width', line_width)
+                .lower();
+            
+            div.transition()
+                .duration(500)
+                .style('opacity', 0)
+            
+            console.log('out: ' + this.className.baseVal )
+        }
+        
         d3.json('author_sentiments.json', function(error, json){
             if(error) throw error;
             data = json;
             nrc = json.map(function(x){return x.nrc});
-            var all_nrc = [];
             for(var i = 0; i<nrc.length; i++){
                 all_nrc = all_nrc.concat(nrc[i])
             }
@@ -97,14 +243,18 @@
             x.domain([0, tri_leg])
             y.domain([0, tri_leg])
             
-            {svg.selectAll('path')
+            {graph.selectAll('path')
                 .data(find_books())
                 .enter().append('path')
-                .attr('d', function(d){return hex_sentiment_path(all_nrc.filter(function(x){ return x.book == d}), '' + (width/2) + ' ' + (height/2), 3)})
+                .attr('d', function(d){return hex_sentiment_path(all_nrc.filter(function(x){ return x.book == d}), '' + (width/2) + ' ' + (graph_height/2), 3)})
                 .attr('fill', 'transparent')
                 .attr('stroke', function(d){return clr(unique[d])})
-                .attr('stroke-width', 2)
-                .attr('stroke-opacity', .75)}
+                .attr('stroke-width', line_width)
+                .attr('stroke-opacity', line_alpha)
+                .attr('class', function(d){return d.replace(/\s/g, '').replace('&', '')})
+                .on('mouseover', handle_mouse_over)
+                .on('mouseout', handle_mouse_out)
+                .lower()}
             
         })
     </script>
