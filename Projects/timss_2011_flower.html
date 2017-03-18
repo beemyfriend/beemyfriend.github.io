@@ -1,0 +1,168 @@
+<head>
+    <link rel='stylesheet' href='../styles.css'>
+    <style>
+        
+        rect.node:hover{
+            stroke-width: 1;
+            stroke: black;
+        }
+        
+        div.tooltip{
+            position: absolute;
+            text-align: left;
+            width: 300px;
+            height: 110px;
+            padding: 5px;
+            font-size: 14px;
+            background: lightsteelblue;
+            border: 0px;
+            border-radius: 8px;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div id = 'header'>
+        <ul>
+            <li><a href = '../index.html'>Home</a></li>
+            <li><a href = '../Articles/articles.html'>Articles</a></li>
+            <li><a href = 'projects.html'>Projects</a></li>
+        </ul>
+    </div>
+
+    <div id = 'content'><div id = 'flower'></div></div>
+    <script src = 'd3.js'></script>
+    <script>
+        var width = 1300,
+            height = 650,
+            center_radius = 25,
+            node_radius = 1,
+            color_key_radius = 10;
+        
+        var node_radial_position = d3.scaleLinear()
+            .range([center_radius, Math.min(width, height)/2]);
+        
+        var country_angle = d3.scaleLinear()
+            .range([0, 360]);
+        
+        var clr = d3.scaleLinear()
+            .range(['green', 'yellow', 'brown'])
+            .domain([1, .5, 0]);
+        
+        
+        var svg = d3.select('#flower')
+            .append('svg')
+            .attr('height', height)
+            .attr('width', width)
+            .append('g')
+            .attr('transform', 'translate(0,0)');
+        
+        color_key = d3.select('svg')
+            .selectAll('circle')
+            .data([[.25, 1], [.5, .5], [.75, 0]])
+            .enter().append('circle')
+            .attr('cy', function(d){return height * d[0]})
+            .attr('cx',  color_key_radius * 4)
+            .attr('r', color_key_radius)
+            .attr('fill', function(d){return clr(d[1])})
+            .attr('stroke', 'black')
+            .attr('stroke-width', '1')
+        
+        text_key = d3.select('svg')
+            .selectAll('text.key')
+            .data([[.25, '100% Success Rate'],[.5, '50% Success Rate'], [.75, '0% Success Rate']])
+            .enter().append('text')
+            .attr('x',  (color_key_radius * 6))
+            .attr('y', function(d){ return (height * d[0]) + (.5 * color_key_radius) })
+            .text(function(d){ return d[1]})
+            .attr('fill', 'black')
+            .attr('font-size', color_key_radius * 2)
+
+        
+        var div = d3.select('body')
+            .append('div')
+            .attr('class', 'tooltip')
+            .style('opacity', 0)
+        
+        var chosen;
+        
+        function handle_mouse_over(d, i){
+            chosen = this.className.baseVal;
+            
+            div.transition()
+                .duration(500)
+                .style('opacity', .8);
+            
+            div.html('Question ID: ' + d.question + '<br>Question: ' + d.FIELD_LABL + '<br>Country: ' + d.country + '<br>Question Ranked: ' + d.question_rank  + '<br>Students Given Question: ' + d.students_per_question + '<br>% Students Correctly Answered Question: ' + (Math.round(d.correct_ratio_per_question * 10000) / 100) + '%')
+            .style('left', (d3.event.pageX) + 'px')
+            .style('top', (d3.event.pageY) + 'px');
+            
+            d3.selectAll('line.' + chosen)
+                .attr('stroke', 'black');
+            
+        }
+        
+        function handle_mouse_out(d, i){
+            div.transition()
+                .duration(500)
+                .style('opacity', 0)
+            
+            countries.map(function(x){
+                d3.selectAll('line#' + chosen + x)
+                    .attr('stroke', clr(data[x].filter(function(y){return y.question == chosen})[0].correct_ratio_per_question))
+            })
+        }
+        
+        function create_pedal(d, json){
+            var pedal = svg
+                .append('g')
+                .attr('transform', 'translate(' + (width/2) + ',' + (height/2) + ') rotate(' + (country_angle(json[d][1].international_rank-1) - 90 ) + ')')
+                .attr('width', Math.min(width, height)/2)
+                .attr('height', node_radius * 2);
+            
+     /*  
+            pedal.selectAll('circle')
+                .data(json[d])
+                .enter().append('circle')
+                .attr('cx', function(d){return node_radial_position(d.question_rank)})
+                .attr('cy', node_radius)
+                .attr('r', node_radius)
+                .attr('fill', function(d){return clr(d.correct_ratio_per_question)})
+                .attr('class', function(d){return d.question})
+                .on('mouseover', handle_mouse_over)
+                .on('mouseout', handle_mouse_out);
+       */     
+            pedal.selectAll('line')
+                .data(json[d])
+                .enter().append('line')
+                .attr('x1', function(d){return node_radial_position(d.question_rank)})
+                .attr('x2', function(d){return node_radial_position(d.question_rank)})
+                .attr('y1', 0)
+                .attr('y2', 10)
+                .attr('stroke-width', 1)
+                .attr('stroke', function(d){return clr(d.correct_ratio_per_question)})
+                .attr('class', function(d){return d.question})
+                .attr('id', function(d){return d.question + d.country})
+                .on('mouseover', handle_mouse_over)
+                .on('mouseout', handle_mouse_out);
+        }
+        
+        var data,
+            countries;
+        
+        d3.json('TIMSS_2011_ALL_MATH.json', function(error, json){
+            if(error) throw error;
+            
+            data = json;
+            countries = Object.getOwnPropertyNames(json);
+            
+            country_angle.domain([0, (countries.length)]);
+            node_radial_position.domain([1, 219]);
+            
+            for(i in countries){
+                create_pedal(countries[i], json);
+            }
+        })
+        
+    </script>
+</body>
