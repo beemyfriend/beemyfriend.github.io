@@ -10,8 +10,8 @@
         div.tooltip{
             position: absolute;
             text-align: left;
-            width: 300px;
-            height: 110px;
+            width: 360px;
+            height: 160px;
             padding: 5px;
             font-size: 14px;
             background: lightsteelblue;
@@ -34,21 +34,23 @@
     <script src = 'd3.js'></script>
     <script>
         var width = 1300,
-            height = 650,
+            height = 700,
+            title_height = 50,
+            main_height = height - title_height,
             center_radius = 25,
             node_radius = 1,
-            color_key_radius = 10;
+            color_key_radius = 10,
+            tot_radians = Math.PI * 2;
         
         var node_radial_position = d3.scaleLinear()
-            .range([center_radius, Math.min(width, height)/2]);
+            .range([center_radius, Math.min(width, main_height)/2]);
         
         var country_angle = d3.scaleLinear()
-            .range([0, 360]);
+            .range([tot_radians/4, (tot_radians * 5/4)]);
         
         var clr = d3.scaleLinear()
             .range(['green', 'yellow', 'brown'])
             .domain([1, .5, 0]);
-        
         
         var svg = d3.select('#flower')
             .append('svg')
@@ -57,27 +59,35 @@
             .append('g')
             .attr('transform', 'translate(0,0)');
         
-        color_key = d3.select('svg')
+        var title = svg
+            .append('text')
+            .attr('x', width/2)
+            .attr('y', title_height/2)
+            .attr('font-size', title_height/2)
+            .attr('text-anchor', 'middle')
+            .attr('fill', 'black')
+            .text('TIMSS 2011: International Comparison of Math Question Success')
+        
+        color_key = svg
             .selectAll('circle')
             .data([[.25, 1], [.5, .5], [.75, 0]])
             .enter().append('circle')
-            .attr('cy', function(d){return height * d[0]})
+            .attr('cy', function(d){return main_height * d[0]})
             .attr('cx',  color_key_radius * 4)
             .attr('r', color_key_radius)
             .attr('fill', function(d){return clr(d[1])})
             .attr('stroke', 'black')
             .attr('stroke-width', '1')
         
-        text_key = d3.select('svg')
+        text_key = svg
             .selectAll('text.key')
             .data([[.25, '100% Success Rate'],[.5, '50% Success Rate'], [.75, '0% Success Rate']])
             .enter().append('text')
             .attr('x',  (color_key_radius * 6))
-            .attr('y', function(d){ return (height * d[0]) + (.5 * color_key_radius) })
+            .attr('y', function(d){ return (main_height * d[0]) + (.5 * color_key_radius) })
             .text(function(d){ return d[1]})
             .attr('fill', 'black')
             .attr('font-size', color_key_radius * 2)
-
         
         var div = d3.select('body')
             .append('div')
@@ -93,13 +103,12 @@
                 .duration(500)
                 .style('opacity', .8);
             
-            div.html('Question ID: ' + d.question + '<br>Question: ' + d.FIELD_LABL + '<br>Country: ' + d.country + '<br>Question Ranked: ' + d.question_rank  + '<br>Students Given Question: ' + d.students_per_question + '<br>% Students Correctly Answered Question: ' + (Math.round(d.correct_ratio_per_question * 10000) / 100) + '%')
+            div.html('<b>Country: </b>' + d.country + '<br><b>Question ID: </b>' + d.question + '<br><b>Question: </b>' + d.FIELD_LABL + '<br><b>Cognitive Domain: </b>' + d.cognitive_domain + '<br><b>Content Domain: </b>' + d.content_domain + '<br><b>Question Ranked: </b>' + d.question_rank  + '<br><b>Students Given Question: </b>' + d.students_per_question + '<br><b>% Students Correctly Answered Question: </b>' + (Math.round(d.correct_ratio_per_question * 10000) / 100) + '%<br><b>% Female Students Correctly Answered Question: </b>' + (Math.round(d.correct_ratio_per_question_female * 10000) / 100) + '%<br><b>% Male Students Correctly Answered Question: </b>' + (Math.round(d.correct_ratio_per_question_male * 10000) / 100) +'%')
             .style('left', (d3.event.pageX) + 'px')
             .style('top', (d3.event.pageY) + 'px');
             
-            d3.selectAll('line.' + chosen)
-                .attr('stroke', 'black');
-            
+            d3.selectAll('path.' + chosen)
+                .attr('fill', 'black');
         }
         
         function handle_mouse_out(d, i){
@@ -108,45 +117,42 @@
                 .style('opacity', 0)
             
             countries.map(function(x){
-                d3.selectAll('line#' + chosen + x)
-                    .attr('stroke', clr(data[x].filter(function(y){return y.question == chosen})[0].correct_ratio_per_question))
+                //not every question is given to every country
+                //the below if statement confirms that the node exists
+                //before changing the color. Else the code breaks when a non-existing
+                //node is selected
+                if(d3.selectAll('path#' + chosen + x)._groups[0].length){
+                    d3.selectAll('path#' + chosen + x)
+                    .attr('fill', clr(data[x].filter(function(y){return y.question == chosen})[0].correct_ratio_per_question))    
+                }
+                
             })
         }
         
         function create_pedal(d, json){
+            
             var pedal = svg
                 .append('g')
-                .attr('transform', 'translate(' + (width/2) + ',' + (height/2) + ') rotate(' + (country_angle(json[d][1].international_rank-1) - 90 ) + ')')
-                .attr('width', Math.min(width, height)/2)
+                .attr('transform', 'translate(' + (width/2) + ',' + (title_height + main_height/2) + ') rotate(' + (country_angle(json[d][1].international_rank-1) - 90 ) + ')')
+                .attr('width', Math.min(width, (title_height + main_height/2)))
                 .attr('height', node_radius * 2);
             
-     /*  
-            pedal.selectAll('circle')
+            var arc = d3.arc()
+                .outerRadius(function(d){return node_radial_position(d.question_rank + 1)})
+                .innerRadius(function(d){return node_radial_position(d.question_rank)})
+                .startAngle(function(d){return country_angle(d.international_rank - 1)})
+                .endAngle(function(d){return country_angle(d.international_rank)});
+            
+            pedal.selectAll('path')
                 .data(json[d])
-                .enter().append('circle')
-                .attr('cx', function(d){return node_radial_position(d.question_rank)})
-                .attr('cy', node_radius)
-                .attr('r', node_radius)
+                .enter().append('path')
+                .attr('d', arc)
                 .attr('fill', function(d){return clr(d.correct_ratio_per_question)})
-                .attr('class', function(d){return d.question})
-                .on('mouseover', handle_mouse_over)
-                .on('mouseout', handle_mouse_out);
-       */     
-            pedal.selectAll('line')
-                .data(json[d])
-                .enter().append('line')
-                .attr('x1', function(d){return node_radial_position(d.question_rank)})
-                .attr('x2', function(d){return node_radial_position(d.question_rank)})
-                .attr('y1', 0)
-                .attr('y2', 10)
-                .attr('stroke-width', 1)
-                .attr('stroke', function(d){return clr(d.correct_ratio_per_question)})
                 .attr('class', function(d){return d.question})
                 .attr('id', function(d){return d.question + d.country})
                 .on('mouseover', handle_mouse_over)
-                .on('mouseout', handle_mouse_out);
+                .on('mouseout', handle_mouse_out);            
         }
-        
         var data,
             countries;
         
@@ -156,7 +162,7 @@
             data = json;
             countries = Object.getOwnPropertyNames(json);
             
-            country_angle.domain([0, (countries.length)]);
+            country_angle.domain([0, (countries.length + 1)]);
             node_radial_position.domain([1, 219]);
             
             for(i in countries){
