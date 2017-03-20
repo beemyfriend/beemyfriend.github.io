@@ -80,23 +80,69 @@
             .selectAll('line.key')
             .data(authors)
             .enter().append('line')
-            .attr('x1', width * .45)
-            .attr('x2', width * .50)
-            .attr('y1', function(d,i){return (graph_height/15) * (i + 1)})
-            .attr('y2', function(d, i){ return (graph_height/15) * (i + 1) })
+            .attr('x1', width * .60)
+            .attr('x2', width * .65)
+            .attr('y1', function(d,i){return (graph_height/15) * (i + 1) - 5})
+            .attr('y2', function(d, i){ return (graph_height/15) * (i + 1) - 5})
             .attr('stroke-width', line_width * 2)
             .attr('stroke', function(d){return clr(d)});
             
         var text_key = main
-            .selectAll('text.key')
+            .selectAll('text.lineKey')
             .data(authors)
             .enter().append('text')
-            .attr('x', width * .51)
+            .attr('x', width * .66)
             .attr('y', function(d, i){ return (graph_height/15) * (i + 1)})
             .text(function(d){return d})
             .attr('fill', 'black')
             .attr('font-size', label_height/2);
 
+        main
+            .append('circle')
+            .attr('cx', width * .63)
+            .attr('cy', ((graph_height/15) * 4) - 5)
+            .attr('r', 5)
+            .attr('fill', 'white')
+            .attr('stroke', 'black')
+            .attr('stroke-width', 1);
+        
+        main
+            .append('text')
+            .attr('x', width * .66)
+            .attr('y', (graph_height/15) * 4)
+            .text('Beginning of Book')
+            .attr('fill', 'black')
+            .attr('font-size', label_height/2)
+        
+        var hex_key = main
+            .append('path')
+            .attr('d', 'M ' + (width * .33) + ' ' + (graph_height/15) + ' l -50 50 l 50 50 h ' + Math.sqrt((50**2)*2) +' l 50 -50 l -50 -50 z')
+            .attr('fill', 'transparent')
+            .attr('stroke', 'black')
+            .attr('stroke-width', line_width);
+        
+        var hex_text = [['Joy', (width * .33 -10), (graph_height/15), 'end'], ['Trust', (width * .33 - 60), (graph_height/15 + 50), 'end'], ['Anticipation', (width * .33 - 10), (graph_height/15 + 100), 'end'], ['Fear', (width * .33 + (Math.sqrt((50**2)*2)) + 10), (graph_height/15), 'start'], ['Sadness', (width * .33 + (Math.sqrt((50**2)*2)) + 50), (graph_height/15  + 50), 'start'], ['Anger', (width * .33 + (Math.sqrt((50**2)*2)) + 10), (graph_height/15 + 100), 'start']]
+        
+        main
+            .selectAll('text.hex')
+            .data(hex_text)
+            .enter().append('text')
+            .text(function(d){return d[0]})
+            .attr('x', function(d){return d[1]})
+            .attr('y', function(d){return d[2]})
+            .attr('text-anchor', function(d){return d[3]})
+            .attr('fill', 'black')
+            .attr('font-size', label_height/2);
+            
+        
+        main
+            .append('circle')
+            .attr('cx', (width * .33) + (Math.sqrt((50**2)*2)/2))
+            .attr('cy', (graph_height/15) + 50)
+            .attr('r', 5)
+            .attr('fill', 'white')
+            .attr('stroke', 'black')
+            .attr('stroke-width', 1);
         
         var title = main
             .attr('height', title_height)
@@ -118,70 +164,6 @@
             .attr('transform', 'translate(0,' + title_height + ')')
             .append('g')
         
-        graph
-            .append('text')
-            .attr('transform', 'rotate(-90)')
-            .attr('x', 0)
-            .attr('y', label_height)
-            .attr('font-size', label_height/2)
-            .attr('fill', 'black')
-            .text('Joy')
-            .attr('text-anchor', 'end')
-            .attr('class', 'left_axis')
-        
-        graph
-            .append('text')
-            .attr('transform', 'rotate(-90)')
-            .attr('x', -(graph_height/2 + label_height))
-            .attr('y', label_height)
-            .attr('font-size', label_height/2)
-            .attr('fill', 'black')
-            .text('Trust')
-            .attr('text-anchor', 'middle')
-            .attr('class', 'left_axis')
-        
-        graph
-            .append('text')
-            .attr('transform', 'rotate(-90)')
-            .attr('x', -(graph_height ))
-            .attr('y', label_height)
-            .attr('font-size', label_height/2)
-            .attr('fill', 'black')
-            .text('Anticipation')
-            .attr('class', 'left_axis')
-        
-        graph
-            .append('text')
-            .attr('transform', 'rotate(90)')
-            .attr('x', 0)
-            .attr('y', -(width-label_height))
-            .attr('font-size', label_height/2)
-            .attr('fill', 'black')
-            .text('Fear')
-            .attr('class', 'right_axis')
-        
-        graph
-            .append('text')
-            .attr('transform', 'rotate(90)')
-            .attr('x', graph_height/2)
-            .attr('y', -(width-label_height))
-            .attr('font-size', label_height/2)
-            .attr('fill', 'black')
-            .text('Sadness')
-            .attr('text-anchor', 'middle')
-            .attr('class', 'right_axis')
-        
-        graph
-            .append('text')
-            .attr('transform', 'rotate(90)')
-            .attr('x', graph_height)
-            .attr('y', -(width-label_height))
-            .attr('font-size', label_height/2)
-            .attr('fill', 'black')
-            .text('Anger')
-            .attr('text-anchor', 'end')
-            .attr('class', 'right_axis')
-        
         var div = d3.select('body').append('div')
             .attr('class', 'tooltip')
             .style('opacity', 0);
@@ -190,8 +172,10 @@
             .append('circle')
             .attr('cx', width/2)
             .attr('cy', graph_height/2)
-            .attr('r', 2)
+            .attr('r', 5)
             .attr('fill', 'white')
+            .attr('stroke', 'black')
+            .attr('stroke-width', 1)
         
         var  x = d3.scaleLinear()
             .range([0, width]);
@@ -257,15 +241,8 @@
             for(var i = 0; i<nrc.length; i++){
                 all_nrc = all_nrc.concat(nrc[i])
             }
-            
-                
-            var tri_hyp = d3.extent(nrc, function(x){ return x.index})[1]
-            var tri_leg = Math.sqrt((tri_hyp**2)/2)
-            
-            x.domain([0, tri_leg])
-            y.domain([0, tri_leg])
-            
-            {graph.selectAll('path')
+                    
+            {graph.selectAll('path.sentiment')
                 .data(find_books())
                 .enter().append('path')
                 .attr('d', function(d){return hex_sentiment_path(all_nrc.filter(function(x){ return x.book == d}), '' + (width/2) + ' ' + (graph_height/2), 3)})
