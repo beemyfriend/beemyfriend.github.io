@@ -1,0 +1,128 @@
+<head></head>
+<body>
+    <div style = 'position: absolute; top:0px; left:-500px'><canvas id = 'myCanvas' width = '500' height = '500' ></canvas></div>
+    <div style = 'position: absolute; top:0px; left:0px'><canvas id = 'otherCanvas' width = '500' height = '500'></canvas></div>
+    <form name = 'createRule' style = 'position: absolute; top:0px; left:510px'>
+        <br>
+        <br>
+        <h3>Create Fractal Rules</h3>
+        <label id = 'xslabel'>X-Scale: .5</label>
+        <input id = 'xscale' type = 'range' min = '-1' max = '1' step = '.05' value = '.5' onchange="document.getElementById('xslabel').innerHTML = 'X-Scale: ' + this.value;"/>
+        <br>
+        <label id = 'yslabel'>Y-Scale: .5</label>
+        <input id = 'yscale' type = 'range' min = '0' max = '1' step = '.05' value = '.5' onchange="document.getElementById('yslabel').innerHTML = 'Y-Scale: ' + this.value;"/>
+        <br>
+        <label id = 'anglelabel'>Angle: 0 degrees</label> 
+        <input id = 'angle' type = 'range' min = 0 max = '360' step = '5' value = '0' onchange="document.getElementById('anglelabel').innerHTML = 'Angle: ' + this.value + ' degrees';"/>
+        <br>
+        <label id = 'xclabel'>X-Coordinate: 0</label>
+        <input id = 'x' type = 'range' min = '-1' max = '1' step = '.05' value = '0' onchange="document.getElementById('xclabel').innerHTML = 'X-Coordinate: ' + this.value;"/>
+        <br>
+        <label id = 'yclabel'>Y-Coordinate: 0</label>
+        <input id = 'y' type= 'range' min = '-1' max = '1' step = '.05' value = '0' onchange="document.getElementById('yclabel').innerHTML = 'Y-Scale: ' + this.value;"/>
+        <br><br>
+        <button onclick = 'createNewRule(); return false;'>Add Rule</button>
+        <br>
+        <button onclick="draw(myRules, 10); return false;">Build the Fractal!</button>
+    </form>
+    <script>
+        
+        var myRules = [];
+        
+        function createNewRule(){
+            var xscale = document.getElementById('xscale').value;
+            var yscale = document.getElementById('yscale').value;
+            var angle = document.getElementById('angle').value;
+            var x = document.getElementById('x').value;
+            var y = document.getElementById('y').value;
+            console.log( xscale + ' ' + yscale + ' ' + angle + ' ' + x + ' ' + y );
+            myRules[myRules.length] = [xscale, yscale, angle, x, y];
+        }
+
+        var myCanvas = document.getElementById('myCanvas'),
+            myCtx = myCanvas.getContext('2d'),
+            otherCtx = document.getElementById('otherCanvas').getContext('2d'),
+            height = myCanvas.height,
+            width = myCanvas.width;
+        
+        function init(){
+            console.log('ran init')
+            myCtx.fillStyle = 'purple';
+            myCtx.fillRect(0, 0, width, height);
+            myCtx.fillStyle = 'yellow';
+            myCtx.fillRect(0, 0, width/10 , height/10 );
+            myCtx.fillStyle = 'pink';
+            myCtx.fillRect(width * 9 / 10, height * 9 / 10, width/10, height/10);
+            myCtx.fillStyle = 'blue';
+            myCtx.fillRect(0, height * 9 /10, width/10, height/10);
+            myCtx.fillStyle = 'brown';
+            myCtx.fillRect(width * 9 / 10, 0, width/10, height/10);
+            myCtx.strokeStyle = 'red';
+            myCtx.rect(0, 0, width, height);
+            myCtx.stroke();   
+       }        
+        
+        function toRads(degree){
+            return Math.PI / 180 * degree;
+        }
+        
+        //need to adust for a -scale_y, it flips upwards, instead of downwards
+        function fractalRules(scale_x, scale_y, angle, x, y){
+            angle = -angle;
+            otherCtx.save();
+            otherCtx.translate(x * width, height - y * height - height * scale_y)
+            otherCtx.rotate(toRads(angle));
+            otherCtx.scale(scale_x, scale_y);
+            otherCtx.drawImage(myCanvas, Math.cos(toRads(90 - angle)) * height, -(height - Math.sin(toRads(90 - angle)) * height));
+            otherCtx.restore();
+        }
+        
+        function draw(rules, iterations){
+            console.log('ran draw')
+            var now = 0;
+            var animate = setInterval(function(){now < 1 ? start() : update()}, 1000);
+            console.log('ran animate')
+            function start(){
+                console.log('ran start')
+                init();
+                otherCtx.drawImage(myCanvas, 0, 0);
+                now++
+            }
+            function update(){
+                console.log('called update')
+                if(now >= iterations){
+                    clearInterval(animate);
+                } else {
+                    otherCtx.clearRect(0, 0, width, height)
+                    for(var i = 0; i < rules.length; i++){
+                        fractalRules(Number(rules[i][0]), Number(rules[i][1]), Number(rules[i][2]), Number(rules[i][3]), Number(rules[i][4]))
+                        console.log(i + ': ' + rules[i])
+                    }
+                    myCtx.clearRect(0, 0, width, height);
+                    myCtx.drawImage(otherCanvas, 0, 0);
+                    now++;
+                }
+            }
+        }
+        
+        
+//        rules = [
+//            function(){fractalRules(.5, .5, 45, 0, 0)},
+//            function(){fractalRules(.5, .5, 0, width/2, height/2)},
+//            function(){fractalRules(.5, .5, 0, 0, height/2 )},
+//            function(){fractalRules(.5, .5, 30, width/4, height/4)}
+//        ]
+        
+//        draw(rules, 10);
+       
+//        
+//        var angle = 0;
+//        otherCtx.save();
+//        otherCtx.translate( width/2, height/2)
+//        otherCtx.rotate( toRads(angle));
+//        otherCtx.scale(.5, -.5);
+//        otherCtx.drawImage(myCanvas, Math.cos(toRads(90 - angle)) * height, -(height - Math.sin(toRads(90 - angle)) * height));
+//        otherCtx.restore();
+                
+    </script>
+</body>
