@@ -1,33 +1,82 @@
-<head></head>
+<head>
+    <link rel='stylesheet' href='../styles.css'>  
+</head>
 <body>
-    <div style = 'position: absolute; top:0px; left:-500px'><canvas id = 'myCanvas' width = '500' height = '500' ></canvas></div>
-    <div style = 'position: absolute; top:0px; left:0px'><canvas id = 'otherCanvas' width = '500' height = '500'></canvas></div>
-    <form name = 'createRule' style = 'position: absolute; top:0px; left:510px'>
-        <br>
-        <br>
-        <h3>Create Fractal Rules</h3>
-        <label id = 'xslabel'>X-Scale: .5</label>
-        <input id = 'xscale' type = 'range' min = '-1' max = '1' step = '.05' value = '.5' onchange="document.getElementById('xslabel').innerHTML = 'X-Scale: ' + this.value;"/>
-        <br>
-        <label id = 'yslabel'>Y-Scale: .5</label>
-        <input id = 'yscale' type = 'range' min = '0' max = '1' step = '.05' value = '.5' onchange="document.getElementById('yslabel').innerHTML = 'Y-Scale: ' + this.value;"/>
-        <br>
-        <label id = 'anglelabel'>Angle: 0 degrees</label> 
-        <input id = 'angle' type = 'range' min = 0 max = '360' step = '5' value = '0' onchange="document.getElementById('anglelabel').innerHTML = 'Angle: ' + this.value + ' degrees';"/>
-        <br>
-        <label id = 'xclabel'>X-Coordinate: 0</label>
-        <input id = 'x' type = 'range' min = '-1' max = '1' step = '.05' value = '0' onchange="document.getElementById('xclabel').innerHTML = 'X-Coordinate: ' + this.value;"/>
-        <br>
-        <label id = 'yclabel'>Y-Coordinate: 0</label>
-        <input id = 'y' type= 'range' min = '-1' max = '1' step = '.05' value = '0' onchange="document.getElementById('yclabel').innerHTML = 'Y-Scale: ' + this.value;"/>
-        <br><br>
-        <button onclick = 'createNewRule(); return false;'>Add Rule</button>
-        <br>
-        <button onclick="draw(myRules, 10); return false;">Build the Fractal!</button>
-    </form>
+    <div id = 'header'>
+        <ul>
+            <li><a href = '../index.html'>Home</a></li>
+            <li><a href = '../Articles/articles.html'>Articles</a></li>
+            <li><a href = 'projects.html'>Projects</a></li>
+        </ul>
+    </div>
+    <div id = 'content'>
+        <div style = 'position: absolute; top:0px; left:-500px'><canvas id = 'myCanvas' width = '500' height = '500' ></canvas></div>
+        <div style = 'position: absolute; top:70px; left:10px'><canvas id = 'otherCanvas' width = '500' height = '500'></canvas></div>
+        <form name = 'createRule' style = 'position: absolute; top:60px; left:520px'>
+            <br>
+            <br>
+            <h3>Create Fractal Rules</h3>
+            <label id = 'xslabel'>X-Scale: 0.5</label>
+            <input id = 'xscale' type = 'range' min = '-1' max = '1' step = '.05' value = '.5' onchange="document.getElementById('xslabel').innerHTML = 'X-Scale: ' + this.value;"/>
+            <br>
+            <label id = 'yslabel'>Y-Scale: 0.5</label>
+            <input id = 'yscale' type = 'range' min = '-1' max = '1' step = '.05' value = '.5' onchange="document.getElementById('yslabel').innerHTML = 'Y-Scale: ' + this.value;"/>
+            <br>
+            <label id = 'anglelabel'>Angle: 0 degrees</label> 
+            <input id = 'angle' type = 'range' min = 0 max = '360' step = '5' value = '0' onchange="document.getElementById('anglelabel').innerHTML = 'Angle: ' + this.value + ' degrees';"/>
+            <br>
+            <label id = 'xclabel'>X-Coordinate: 0</label>
+            <input id = 'x' type = 'range' min = '-1' max = '1' step = '.05' value = '0' onchange="document.getElementById('xclabel').innerHTML = 'X-Coordinate: ' + this.value;"/>
+            <br>
+            <label id = 'yclabel'>Y-Coordinate: 0</label>
+            <input id = 'y' type= 'range' min = '-1' max = '1' step = '.05' value = '0' onchange="document.getElementById('yclabel').innerHTML = 'Y-Coordinate: ' + this.value;"/>
+            <br><br>
+            <button onclick = 'createNewRule(); update(); return false;'>Add Rule</button>
+            <br>
+            <button onclick="draw(myRules, 10); return false;">Build the Fractal!</button>
+        </form>
+        <div id = 'showrules' style = 'position:absolute; top: 370; left: 520'></div>
+    </div>
+    <script src = 'd3.js'></script>
     <script>
         
-        var myRules = [];
+        var myCanvas = document.getElementById('myCanvas'),
+            myCtx = myCanvas.getContext('2d'),
+            otherCtx = document.getElementById('otherCanvas').getContext('2d'),
+            height = myCanvas.height,
+            width = myCanvas.width,
+            myRules = [];
+
+        var showRules = d3.select('#showrules');
+
+
+        
+        function update(){
+            var text = showRules.selectAll('p')
+                .data(myRules);
+                        
+            text.enter().append('p')
+                .attr('class', 'enter')
+                .attr('id', function(d,i){return 'rule'+(i+1);})
+                .html(function(d, i){return '<b>Fractal Rule #' + (i+1) +'</b><br><b>X-Scale:</b> ' + d[0] + ' <b>Y-Scale:</b> ' + d[1] + ' <b>Angle:</b> ' + d[2] + ' <b>X-Coordinate:</b> ' + d[3] + ' <b>Y-Coordinate:</b> ' + d[4];});
+            
+            text.exit().remove();
+            
+            var buttons = showRules.selectAll('input')
+                .data(myRules);
+            
+            function handleClick(i){
+                myRules.splice(i, 1);
+                update();
+            };
+            
+            buttons.enter().append('input')
+                .attr('type', 'button')
+                .attr('value', function(d, i){return 'delete rule '+ (i+1)})
+                .on('click', function(d,i){return handleClick(i)})
+            
+            buttons.exit().remove();
+        }
         
         function createNewRule(){
             var xscale = document.getElementById('xscale').value;
@@ -38,12 +87,6 @@
             console.log( xscale + ' ' + yscale + ' ' + angle + ' ' + x + ' ' + y );
             myRules[myRules.length] = [xscale, yscale, angle, x, y];
         }
-
-        var myCanvas = document.getElementById('myCanvas'),
-            myCtx = myCanvas.getContext('2d'),
-            otherCtx = document.getElementById('otherCanvas').getContext('2d'),
-            height = myCanvas.height,
-            width = myCanvas.width;
         
         function init(){
             console.log('ran init')
@@ -66,14 +109,29 @@
             return Math.PI / 180 * degree;
         }
         
+        
+        //-yscale and -xscale work
+        //need to work on angle
         //need to adust for a -scale_y, it flips upwards, instead of downwards
+        //sofar so good
         function fractalRules(scale_x, scale_y, angle, x, y){
-            angle = -angle;
+            if(scale_x > 0){
+                angle = -angle
+            }
+            angle = toRads(angle);
+            var dw = width/scale_x;
+            var dh = height/scale_y;
+            var dx = (dw * x)
+            var dy = dh - (dh * y) - (dh * scale_y);
+            console.log('dy: ' + dy);
+            console.log('dh: ' + dh);
             otherCtx.save();
-            otherCtx.translate(x * width, height - y * height - height * scale_y)
-            otherCtx.rotate(toRads(angle));
             otherCtx.scale(scale_x, scale_y);
-            otherCtx.drawImage(myCanvas, Math.cos(toRads(90 - angle)) * height, -(height - Math.sin(toRads(90 - angle)) * height));
+            otherCtx.translate(0, height)
+            otherCtx.translate(dx, dy)
+            //otherCtx.translate(dx, dy)
+            otherCtx.rotate(angle);
+            otherCtx.drawImage(myCanvas, 0, -height);
             otherCtx.restore();
         }
         
