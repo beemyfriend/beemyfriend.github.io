@@ -1,0 +1,244 @@
+---
+title: "Exploring Enron Emails"
+author: "BeeMyFriend"
+date: "March 31, 2017"
+output:
+  html_document:
+    toc: true
+    toc_depth: 3
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction
+## Sentiment Analysis
+### Data Munging: First and hopefully only time
+```{r}
+library(tidyverse)
+library(lubridate)
+library(stringr)
+library(tidytext)
+```
+
+```{r eval = F}
+enron_emails <- read_csv('emails.csv')
+```
+
+```{r echo = F}
+enron_emails <- read_csv('D:/enron-email-dataset/enron_sent_box.csv')
+```
+
+```{r}
+enron_emails <- enron_emails  %>%
+  filter(str_detect(file, '/_sent_mail/')) %>%
+  mutate(message = message %>% str_replace_all('\r', '')) %>%
+  mutate(header = str_sub(message, end = str_locate(message, '\n\n')[,1] -1)) %>%
+  mutate(body = str_sub(message, start = str_locate(message, '\n\n')[,2] + 1) %>% 
+           str_replace_all('\n|\t', ' ') %>% 
+           str_replace_all('---Original Message .*', 'FORWARDED_MESSAGE') %>% 
+           str_replace_all('--- Forwarded by .*', 'FORWARDED_MESSAGE') %>%
+           str_replace_all('From: .*', 'FORWARDED_MESSAGE') %>%
+           str_replace('To:.*', 'FORWARDED_MESSAGE') %>%
+           str_replace_all('\\S*@\\S*', 'EMAIL_ADDRESS')) 
+```
+
+```{r}
+enron_emails <- enron_emails %>%
+  mutate(date = str_extract(header, 'Date:.*') %>% 
+           str_replace('Date: ', '') %>% 
+           str_replace('.+, ', '') %>% 
+           strptime(format = '%d %b %Y %H:%M:%S %z') %>%
+           as.POSIXct()) %>%
+  mutate(from = str_extract(header, 'From:.*') %>% 
+           str_replace('From: ', '')) %>%
+  mutate(to = header %>% str_replace_all('\n|\t', ' ') %>%
+           str_extract('To:.*Subject:') %>%
+           str_replace_all('To: |Subject:', '')) %>%
+  mutate(subject = str_extract(header, 'Subject:.*') %>% 
+           str_replace('Subject: ', '')) %>%
+  mutate(xfrom = str_extract(header, 'X-From:.*') %>% 
+           str_replace('X-From: ', '')) %>%
+  mutate(xto = str_extract(header, 'X-To:.*') %>% 
+           str_replace('X-To: ', '')) %>%
+  mutate(xcc = str_extract(header, 'X-cc:.*') %>% 
+           str_replace('X-cc: ', '')) %>%
+  mutate(xbcc = str_extract(message, 'X-bcc:.*') %>% 
+           str_replace('X-bcc: ', '')) %>%
+  arrange(date)
+
+```
+
+##Sentiments: 
+
+```{r}
+
+library(tm)
+library(topicmodels)
+
+dtm.control = list(
+  removePunctuation = T,
+  removeNumber = T,
+  stopwords = stopwords('english')
+)
+
+enron_dtm <- Corpus(VectorSource(enron_emails$body)) %>%
+  DocumentTermMatrix(dtm.control)
+
+enron_sentiments <- tidy(enron_dtm) %>%
+  inner_join(get_sentiments('afinn'), by = c(term = 'word')) %>%
+  mutate(score = score * count) %>%
+  group_by(document) %>%
+  nest() %>%
+  mutate(sentiment = sapply(seq_along(.$data), function(i){
+    .$data[[i]]['score'] %>%
+      sum()
+  })) %>%
+  select(-data)
+
+enron_emails <- enron_emails %>%
+  mutate(weekday = wday(date, label = T)) %>%
+  mutate(month = month(date, label = T)) %>%
+  mutate(document = 1:nrow(.) %>% as.character()) %>%
+  left_join(enron_sentiments) 
+
+enron_emails$sentiment[is.na(enron_emails$sentiment)] = 0
+
+enron_emails <- enron_emails %>%
+  mutate(to = str_split(to, ',')) %>%
+  unnest() %>%
+  group_by(from, to) %>%
+  nest() %>%
+  mutate(mean_sentiment = sapply(seq_along(.$data), function(i){
+      .$data[[i]]$sentiment %>% 
+      mean()
+    })) %>%
+  mutate(correspondence = sapply(seq_along(.$data), function(i){
+      .$data[[i]] %>% 
+      nrow()
+    })) %>%
+  arrange(desc(correspondence))
+
+```
+
+## Visualizations
+
+```{r}
+
+ggplot(enron_emails %>% filter(correspondence > 10), aes(to, from)) +
+  geom_point(aes(color = mean_sentiment)) +
+  scale_color_gradient(low = 'brown', 
+                       high = 'blue') +
+  theme(axis.text.x = element_blank(), 
+        axis.ticks.x = element_blank())
+
+ggplot(enron_emails %>% filter(correspondence > 10), aes(to, from)) +
+  geom_point(aes(size = correspondence)) +
+  theme(axis.text.x = element_blank(),
+        axis.ticks.x = element_blank())
+```
+```{r}
+
+enron_emails %>%
+  unnest() %>%
+  group_by(from, to, correspondence) %>%
+  nest() %>%
+  arrange(desc(correspondence)) %>%
+  select(-data)
+
+top_ten_writers <- enron_emails %>% 
+  unnest()  %>%
+  filter(!(str_detect(from, 'vince.kaminski') & str_detect(to, 'vkaminski'))) %>%
+  group_by(from, body) %>%
+  nest() %>%
+  group_by(from) %>%
+  nest() %>%
+  mutate(tot_emails_sent = sapply(seq_along(.$data), function(i){nrow(.$data[[i]])})) %>%
+  arrange(desc(tot_emails_sent)) %>%
+  .[1:10,] %>%
+  unnest() 
+```
+```{r}
+ggplot(top_ten_writers %>% unnest(), aes(to, from)) +
+  geom_point(aes(color = mean_sentiment)) +
+  scale_color_gradient(low = 'grey', high = 'blue') +
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank())
+
+ggplot(top_ten_writers %>% unnest(), aes(to, from)) +
+  geom_point(aes(size = correspondence)) +
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank())
+
+top_ten_writers %>% 
+  unnest() %>% 
+  filter(correspondence > 100) %>% 
+  group_by(from, to, correspondence) %>% 
+  nest() 
+
+ggplot(top_ten_writers %>% unnest(), aes(month, sentiment)) +
+  geom_boxplot()
+
+ggplot(top_ten_writers %>% unnest(), aes(weekday, sentiment)) +
+  geom_boxplot()
+
+```
+
+## Machine Learning: Latent Dirichlet Allocation
+
+```{r}
+enron_body_corpus <- Corpus(VectorSource(enron_emails$body))
+
+dtm.control = list(
+  tolower = T,
+  removePunctuation = T,
+  removeNumbers = T,
+  stopwords = stopwords('english'),
+  weighting = weightTf
+)
+
+enron_dtm <- Corpus(VectorSource(top_ten_writers$body)) %>%
+  DocumentTermMatrix( control = dtm.control) %>%
+  removeSparseTerms(.999) %>%
+  .[rowSums(as.matrix(.))>0,]
+
+enron_body_lda <- LDA(enron_dtm, k = 5)
+terms(enron_body_lda, 20)
+
+```
+## Networks
+
+```{r}
+
+library(ggraph)
+library(igraph)
+
+enron_network <- enron_emails %>%
+  unnest() %>%
+  group_by(from, to, xfrom, correspondence) %>%
+  nest() %>%
+  filter(to %in% from) %>%
+  select(-data) %>%
+  mutate(correspondence = sapply(correspondence, function(x){
+    if(x < 9){
+        'Few'
+      } else if ( x < 17) {
+        'Medium'
+      } else {
+        'Many'
+      }}) %>%
+      as.factor()) 
+
+set.seed(4321)
+graph <- graph_from_data_frame(enron_network) 
+
+ggraph(graph, layout = 'kk') +
+  geom_edge_fan(aes(color = correspondence), width = 1, arrow = arrow(length = unit(4, 'mm')), start_cap = circle(3, 'mm'), end_cap = circle(3, 'mm')) +
+  geom_edge_loop(aes(color = correspondence), width = 1, arrow = arrow(length = unit(4, 'mm')), start_cap = circle(3, 'mm'), end_cap = circle(3, 'mm')) +
+  geom_node_point() +
+  theme(axis.text = element_blank(), axis.ticks = element_blank(), axis.title = element_blank())
+
+```
+### Mung' de Tois: Is it all good things come in threes or is it all bad things?
+### Riding the gg-raph
+
+## Conclusion
