@@ -253,6 +253,7 @@ top_ten_writers <- enron_emails %>%
   .[1:10,] %>%
   unnest() 
 ```
+
 Let's visualize both the sentiment and correspondence once more, but with just the top ten email writers.
 
 ```{r}
@@ -274,6 +275,7 @@ top_ten_writers %>%
   .$body %>%
   .[1]
 ```
+
 It turns out the most positive email was a compilation of 5 posting to producers in West Virginia. While the overall tone of these postings is cordial, I wouldn't say that they are particularly positive. This is an instance where the more words on a document can skew its sentiment score. 
 
 
@@ -294,6 +296,7 @@ ggplot(top_ten_writers %>% unnest(), aes(to, from)) +
   geom_point(aes(size = correspondence)) +
   theme(axis.text.x = element_blank(), axis.ticks = element_blank())
 ```
+
 It turns out Kay Mann write the most emails in general and also seems to write the most emails to individuals as well. Let's verify this by checking all correspondence greater than 100.
 
 ```{r}
@@ -337,6 +340,7 @@ enron_dtm <- Corpus(VectorSource(top_ten_writers$body)) %>%
   removeSparseTerms(.999) %>%
   .[rowSums(as.matrix(.))>0,]
 ```
+
 Once the document term matrix is created, we can make the model with `LDA()`. We will arbitrarily choose to create 4 different topics. Once the model is created, then we can see the most frequently used words in each topic by using the `terms()` function. 
 
 ```{r message = F}

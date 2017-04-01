@@ -21,6 +21,7 @@
         
         #graph{
             width: 500px;
+            height: 500px;
             float: left;
             margin-left: 40px;
         }
@@ -45,7 +46,7 @@
             <div id = 'sections'>
                 <div>
                     <h3>Introduction to Fractals</h3>
-                    <p>A fractal is a geometric figure, each part of which has the same statistical character as the whole. If the replication is exactly the same at every scale,it is called a self-similar pattern. The Sierpinski Gasket, shown on the right of this page, is an example of a self-similar fractal.</p>
+                    <p>A fractal is a geometric figure, each part of which has the same statistical character as the whole. If the replication is exactly the same at every scale, it is called a self-similar pattern. The Sierpinski Gasket, shown on the right of this page, is an example of a self-similar fractal.</p>
                     <br><br><br><br><br><br><br>
                 </div>
                 <div>
@@ -54,14 +55,17 @@
                     <br><br><br>
                 </div>
                 <div>
-                    <p>Alternatively, it can be said that the overall figure is made up of nine identical figures that are a fourth the width and height of the overall figure. Or even 27 identical figures that are an eigth the width and height of the overall figure...  </p>
+                    <p>Alternatively, it can be said that the overall figure is made up of nine identical figures that are a fourth the width and height of the overall figure. Or even 27 identical figures that are an eigth the width and height of the overall figure  </p>
                     <br><br><br><br><br><br><br>
                     <br><br><br>
-                    
                 </div>
                 <div>
+                    <p>We can keep on saying that the figure is made of many more and much smaller identical figures, but it is more practical to say that the fractal is made with the the least and larger iterations. Which in this case is just three identical figures at half the width and height.</p>
+                    <br><br><br><br><br><br><br>
+                    <br><br><br></div>
+                <div>
                     <h3>Building a Fractal</h3>
-                    <p>To build a self-similar fractal, we need to start with an image. In this tutorial we will use a square. In general, it does not matter what image you start with. We then manipulate the image by giving it commands. We can give the image 5 different commands.</p>
+                    <p>To build a self-similar fractal, we need to start with an image. In this tutorial we will use a square. In general, it does not matter what image you start with. We then manipulate the image by giving it commands. We can give the image 5 different commands. Please note that in the examples below, we will use the full cartesian coordinate system, that is, we will use both a positive and negative x-axis as well as both a positive and negative y-axis. However, normally when making fractals we will only use the positive cartesian coordinate system, that is we will only use the positive x-axis and the positive y-axis. Anything outside of the positive cartesian coordinate system will not be seen. The image we will be manipulating is one that uses the full positive cartesian coordinate system.</p>
                     <br><br><br><br><br><br><br>
                     <br><br><br>
                 </div>
@@ -147,41 +151,46 @@
                     <br><br><br><br><br><br><br>
                 </div>
                 <div>
+                    <p>Now try to make a few of your own. Try to replicate the below example</p>
+                    <br><br><br><br><br><br><br>
+                    <br><br><br><br><br><br><br>
+                </div>
+                <div>
                      <form name = 'createRule' >
                         <br>
                         <br>
                         <h3>Create Fractal Rules</h3>
                         <p>Now try to create your own:</p>
                         <label id = 'xslabel'>X-Scale: 0.5</label>
-                        <input id = 'xscale' type = 'range' min = '-1' max = '1' step = '.05' value = '.5' onchange="document.getElementById('xslabel').innerHTML = 'X-Scale: ' + this.value;"/>
+                        <input id = 'xscale' type = 'number' min = '-1' max = '1' step = '.05' value = '.5' onchange="document.getElementById('xslabel').innerHTML = 'X-Scale: ' + this.value;"/>
                         <br>
                         <label id = 'yslabel'>Y-Scale: 0.5</label>
-                        <input id = 'yscale' type = 'range' min = '-1' max = '1' step = '.05' value = '.5' onchange="document.getElementById('yslabel').innerHTML = 'Y-Scale: ' + this.value;"/>
+                        <input id = 'yscale' type = 'number' min = '-1' max = '1' step = '.05' value = '.5' onchange="document.getElementById('yslabel').innerHTML = 'Y-Scale: ' + this.value;"/>
                         <br>
                         <label id = 'anglelabel'>Angle: 0 degrees</label> 
-                        <input id = 'angle' type = 'range' min = 0 max = '360' step = '5' value = '0' onchange="document.getElementById('anglelabel').innerHTML = 'Angle: ' + this.value + ' degrees';"/>
+                        <input id = 'angle' type = 'number' min = 0 max = '360' step = '5' value = '0' onchange="document.getElementById('anglelabel').innerHTML = 'Angle: ' + this.value + ' degrees';"/>
                         <br>
                         <label id = 'xclabel'>X-Coordinate: 0</label>
-                        <input id = 'x' type = 'range' min = '-1' max = '1' step = '.05' value = '0' onchange="document.getElementById('xclabel').innerHTML = 'X-Coordinate: ' + this.value;"/>
+                        <input id = 'x' type = 'number' min = '-1' max = '1' step = '.05' value = '0' onchange="document.getElementById('xclabel').innerHTML = 'X-Coordinate: ' + this.value;"/>
                         <br>
                         <label id = 'yclabel'>Y-Coordinate: 0</label>
-                        <input id = 'y' type= 'range' min = '-1' max = '1' step = '.05' value = '0' onchange="document.getElementById('yclabel').innerHTML = 'Y-Coordinate: ' + this.value;"/>
+                        <input id = 'y' type= 'number' min = '-1' max = '1' step = '.05' value = '0' onchange="document.getElementById('yclabel').innerHTML = 'Y-Coordinate: ' + this.value;"/>
                         <br><br>
                         <button onclick = 'createNewRule(); update(); return false;'>Add Rule</button>
                         <br>
-                        <button onclick="draw(myRules, 10); return false;">Build the Fractal!</button>
+                        <button onclick="draw(myRules, 10, 1000, false, graph_canvas, graph_context); return false;">Build the Fractal!</button>
                     </form>
                     <div id = 'showrules'></div>
                     <br><br><br><br><br><br><br>
                     <br><br><br><br><br><br><br>
                 </div>
             </div>
-            <div id = 'graph'></div>
+            <div id = 'graph'><canvas id = 'graph_canvas' width = '500' height = '500'></canvas></div>
         </div>
         
         
         <div style = 'position: absolute; top:0px; left:-500px'><canvas id = 'myCanvas' width = '500' height = '500' ></canvas></div>
-        <div style = 'position: absolute; top:2070px; left:10px'><canvas id = 'otherCanvas' width = '500' height = '500'></canvas></div>
+        <div style = 'position: absolute; top:2070px; left:-500px'><canvas id = 'otherCanvas' width = '500' height = '500'></canvas></div>
 
     </div>
     
@@ -198,33 +207,57 @@
             .graph(d3.selectAll('#graph'))
             .container(d3.select('#container'));
         
-        var svg_w = 600,
-            svg_h = 600,
-            r = 40;
+//        var graph_canvas = d3.select('#graph')
+//            .append('canvas')
+//            .attrs({width: 500, height: 500, id: 'graph_canvas'});
+//        
+//        var graph_context = graph_canvas
+//            .node()
+//            .getContext('2d');
         
-        var svg = d3.select('#graph')
-            .append('svg')
-            .attrs({width: svg_w, height: svg_h})
+
         
-        var circle = svg.append('circle')
-            .attrs({cx: 0, cy: 0, r: r});
+        var graph_canvas = document.getElementById('graph_canvas'),
+            graph_context = graph_canvas.getContext('2d');
         
         var colors = ['orange', 'purple', 'steelblue', 'black'];
-        
+        var sierpinski_rules = [[.5, .5, 0, 0, 0], [.5, .5, 0, .5, 0], [.5, .5, 0, 0, .5]];
+        var alt_rules = [[[.5, .5, 0, 0, 0], [.5, .5, 0, .5, 0], [.5, .5, 0, .25, .5]], [[-.5, .5, 0, .5, 0], [.5, .5, 0, 0, .5], [.5, .5, 0, .5, .5]], [[.5, .5, 0, 0, 0], [.5, .5, 0, .5, 0], [.5, -.5, 0, .5, 1]]]
         var gs = d3.graphScroll()
             .container(d3.select('#container'))
             .graph(d3.selectAll('#graph'))
             .sections(d3.selectAll('#sections > div'))
             .on('active', function(i){
-                var pos = [{cx: svg_w - r, cy: r},
-                          {cx: r, cy: r},
-                          {cx: svg_w-r, cy: svg_h -r},
-                          {cx: svg_w/2, cy: svg_h/2}][i];
+
+                var to_display = [function(){draw(sierpinski_rules, 10, 0, false, otherCanvas, otherCtx)},
+                                  function(){graph_canvas},
+                                  function(){graph_canvas},
+                                  function(){draw(sierpinski_rules, 10, 0, false, otherCanvas, otherCtx)},
+                                  function(){draw([[.5, .5, 0, .5, .5]], 2, 0, true, otherCanvas, otherCtx)},
+                                  function(){draw([[.25, .5, 0, .5, .5]], 2, 0, true, otherCanvas, otherCtx)},
+                                  function(){draw([[-.25, .5, 0, .5, .5]], 2, 0, true, otherCanvas, otherCtx)},
+                                  function(){draw([[.5, .25, 0, .5, .5]], 2, 0, true, otherCanvas, otherCtx)},
+                                  function(){draw([[.5, -.25, 0, .5, .5]], 2, 0, true, otherCanvas, otherCtx)},
+                                  function(){draw([[.5, .5, 45, .5, .5]], 2, 0, true, otherCanvas, otherCtx)},
+                                  function(){draw([[.5, .5, 0, .75, .5]], 2, 0, true, otherCanvas, otherCtx)},
+                                  function(){draw([[.5, .5, 0, .5, .75]], 2, 0, true, otherCanvas, otherCtx)},
+                                  function(){draw(sierpinski_rules, 10, 0, false, otherCanvas, otherCtx)},
+                                  function(){draw(sierpinski_rules, 10, 0, false, otherCanvas, otherCtx)},
+                                  function(){draw([[.5, .5, 0, 0, 0]], 2, 0, false, otherCanvas, otherCtx)},
+                                  function(){draw([[.5, .5, 0, .5, 0]], 2, 0, false, otherCanvas, otherCtx)},
+                                  function(){draw([[.5, .5, 0, 0, .5]], 2, 0, false, otherCanvas, otherCtx)},
+                                  function(){draw(sierpinski_rules, 10, 500, false, graph_canvas, graph_context)},
+                                  function(){draw(sierpinski_rules, 10, 0, false, graph_canvas, graph_context)},
+                                  function(){draw(alt_rules[Math.floor(Math.random()*alt_rules.length)], 10, 500, false, graph_canvas, graph_context)}
+                                 ];
                 
-                circle.transition().duration(1000)
-                    .attrs(pos)
-                    .transition()
-                    .style('fill', colors[i])
+                graph_context.clearRect(0, 0, 500, 500);
+                to_display[i]()
+                if(i< 17){
+                    graph_context
+                        .drawImage(otherCanvas, 0, 0)
+                    
+                }
             });
         
         var myCanvas = document.getElementById('myCanvas'),
@@ -269,12 +302,10 @@
             var angle = document.getElementById('angle').value;
             var x = document.getElementById('x').value;
             var y = document.getElementById('y').value;
-            console.log( xscale + ' ' + yscale + ' ' + angle + ' ' + x + ' ' + y );
             myRules[myRules.length] = [xscale, yscale, angle, x, y];
         }
         
         function init(){
-            console.log('ran init')
             myCtx.fillStyle = 'purple';
             myCtx.fillRect(0, 0, width, height);
             myCtx.fillStyle = 'yellow';
@@ -295,7 +326,7 @@
         }
         
 
-        function fractalRules(scale_x, scale_y, angle, x, y){
+        function fractalRules(scale_x, scale_y, angle, x, y, select_context){
             if(scale_x > 0){
                 angle = -angle
             }
@@ -304,42 +335,78 @@
             var dh = height/scale_y;
             var dx = (dw * x)
             var dy = dh - (dh * y) - (dh * scale_y);
-            console.log('dy: ' + dy);
-            console.log('dh: ' + dh);
-            otherCtx.save();
-            otherCtx.scale(scale_x, scale_y);
-            otherCtx.translate(0, height)
-            otherCtx.translate(dx, dy)
-            otherCtx.rotate(angle);
-            otherCtx.drawImage(myCanvas, 0, -height);
-            otherCtx.restore();
+            select_context.save();
+            select_context.scale(scale_x, scale_y);
+            select_context.translate(0, height)
+            select_context.translate(dx, dy)
+            select_context.rotate(angle);
+            select_context.drawImage(myCanvas, 0, -height);
+            select_context.restore();
         }
         
-        function draw(rules, iterations){
-            console.log('ran draw')
+        function draw(rules, iterations, time_per_iteration, zoomout, select_canvas, select_context){
             var now = 0;
-            var animate = setInterval(function(){now < 1 ? start() : update()}, 1000);
-            console.log('ran animate')
             function start(){
-                console.log('ran start')
-                init();
-                otherCtx.drawImage(myCanvas, 0, 0);
-                now++
-            }
-            function update(){
-                console.log('called update')
-                if(now >= iterations){
-                    clearInterval(animate);
-                } else {
-                    otherCtx.clearRect(0, 0, width, height)
-                    for(var i = 0; i < rules.length; i++){
-                        fractalRules(Number(rules[i][0]), Number(rules[i][1]), Number(rules[i][2]), Number(rules[i][3]), Number(rules[i][4]))
-                        console.log(i + ': ' + rules[i])
-                    }
-                    myCtx.clearRect(0, 0, width, height);
-                    myCtx.drawImage(otherCanvas, 0, 0);
-                    now++;
+                    init();
+                    select_context.drawImage(myCanvas, 0, 0);
+                    now++
                 }
+
+            
+            if(time_per_iteration > 0){
+                var animate = setInterval(function(){now < 1 ? start() : update()}, time_per_iteration);
+                                
+                function update(){
+                    if(now >= iterations){
+                        clearInterval(animate);
+                    } else {
+                        select_context.clearRect(0, 0, width, height)
+                        for(var i = 0; i < rules.length; i++){
+                            fractalRules(Number(rules[i][0]), Number(rules[i][1]), Number(rules[i][2]), Number(rules[i][3]), Number(rules[i][4]), select_context)
+                        }
+                        myCtx.clearRect(0, 0, width, height);
+                        myCtx.drawImage(select_canvas, 0, 0);
+                        now++;
+                    }
+                }
+            } else {
+                function update(){
+                    select_context.clearRect(0, 0, width, height)
+                    if(now <1){
+                        start()
+                    } else {
+                        for(var i = 0; i < rules.length; i++){
+                            fractalRules(Number(rules[i][0]), Number(rules[i][1]), Number(rules[i][2]), Number(rules[i][3]), Number(rules[i][4]),
+                            select_context)
+                        }
+                        myCtx.clearRect(0, 0, width, height);
+                        myCtx.drawImage(select_canvas, 0, 0);
+                        now++;
+                    }
+                }
+                while(now < iterations-1){
+                    update()
+                }
+                
+                update()
+                
+                if(zoomout){
+                    select_context.save();
+                    select_context.moveTo(0, 250);
+                    select_context.lineTo(500, 250);
+                    select_context.stroke();
+                    select_context.moveTo(250, 0);
+                    select_context.lineTo(250, 500);
+                    select_context.stroke();
+                    select_context.fillStyle = 'rgba(0,0,0,.4)';
+                    select_context.fillRect(0,0, 250, 500);
+                    select_context.fillRect(250, 250, 250, 250);
+                    select_context.restore();
+                } else {
+//                  for some reason, if i stroke just the left and lower part of the window, it stays on the screen even if
+//                    I go to a zoomout
+                }
+
             }
         }
                 
