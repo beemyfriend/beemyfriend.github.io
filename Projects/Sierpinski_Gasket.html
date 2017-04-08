@@ -1,10 +1,52 @@
 <head>
+    <style>
+        body{
+            background-color: whitesmoke;
+        }
+        svg{
+            background-color: none;
+        }
+        path.line{
+            fill:none;
+            stroke: lightgrey;
+            stroke-width: 1px;
+        }
+        .annotation path{
+            stroke: #E8336D;
+            stroke-width: 5;
+            fill: none;
+        }
+        .annotation path.connector-arrow,
+        .title text, .annotation text,
+        .annotation.callout.circle .annotation-subject path{
+            fill: #E8336D;
+        }
+        .annotation-note-bg{
+            fill: rgba(255, 255, 255, 0);
+        }
+        .annotation-note-title{
+            font-weight: bold;
+        }
+        .annotation.xythreshold{
+            cursor: move;
+        }
+        .hidden{
+            display: none;
+        }
+        text.hover{
+            font-size: .7em;
+        }
+        text.title{
+            font-size: 1.1em;
+        }
+    </style>
 </head>
 <body>
-    <div id = 'sg'></div>
+    <div id = 'sg' style = 'position: relative;'></div>
     <script src = 'd3.js'></script>
+    <script src = 'd3v4+jetpack.js'></script>
+    <script src = 'd3-annotation.js'></script>
     <script>        
-
         var img_width = 400,
             img_height = 400;
         
@@ -33,7 +75,7 @@
                 .append('canvas')
                 .attr('height', img_height)
                 .attr('width', img_width)
-                .attr('position', 'absolute')
+                .attr('style', 'position: absolute; top: 0px; left: 0px;')
                 .attr('transform', 'translate(0,0)')
                 .attr('id', 'f' + id);
             
@@ -71,6 +113,33 @@
         }
         
         draw(14);
+        
+        var svg = d3.select('#sg')
+            .append('svg')
+            .attrs({width: 1000, height: 1000})
+        
+        var annotations = [{
+            note: {
+                label: 'a part',
+                title: 'part1'
+            },
+            x: img_width,
+            y: img_height,
+            dx: 100,
+            dy: 100,
+            subject: {
+                width: -img_width,
+                height:-img_width
+            }
+        }]
+        
+        var makeAnnotations = d3.annotation()
+            .type(d3.annotationCalloutRect)
+            .annotations(annotations);
+        
+        svg.append('g')
+            .attr('class', 'annotation-group')
+            .call(makeAnnotations);
         
     </script>
 </body>

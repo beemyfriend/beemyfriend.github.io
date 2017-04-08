@@ -31,6 +31,63 @@
             top: 0px;
             margin-left: 440;
         }
+        body{
+            background-color: whitesmoke;
+        }
+        svg{
+            background-color: none;
+            position: absolute;
+            top:0px;
+            left: 0px;
+            z-index: 2;
+        }
+        path.line{
+            fill:none;
+            stroke: lightgrey;
+            stroke-width: 1px;
+        }
+        .annotation path{
+            stroke-width: 5;
+            fill: none;
+        }
+        
+        .black.annotation path{
+            stroke: black;
+            stroke-opacity: .5;
+        }
+        
+        .pink.annotation path{
+            stroke: #E8336D;
+            stroke-opacity: .5;
+        }
+        
+        .blue.annotation path{
+            stroke: blue;
+            stroke-opacity: .5;
+        }
+        .annotation path.connector-arrow,
+        .title text, .annotation text,
+        .annotation.callout.circle .annotation-subject path{
+            fill: #E8336D;
+        }
+        .annotation-note-bg{
+            fill: rgba(255, 255, 255, 0);
+        }
+        .annotation-note-title{
+            font-weight: bold;
+        }
+        .annotation.xythreshold{
+            cursor: move;
+        }
+        .hidden{
+            display: none;
+        }
+        text.hover{
+            font-size: .7em;
+        }
+        text.title{
+            font-size: 1.1em;
+        }
     </style>
 </head>
 <body>
@@ -190,14 +247,14 @@
         
         
         <div style = 'position: absolute; top:0px; left:-500px'><canvas id = 'myCanvas' width = '500' height = '500' ></canvas></div>
-        <div style = 'position: absolute; top:2070px; left:-500px'><canvas id = 'otherCanvas' width = '500' height = '500'></canvas></div>
+        <div style = 'position: absolute; top:500px; left:-500px'><canvas id = 'otherCanvas' width = '500' height = '500'></canvas></div>
 
     </div>
     
     <script src = 'd3.js'></script>
     <script src ='d3v4+jetpack.js'></script>
     <script src = 'graph-scroll.js'></script>
-    
+    <script src = 'd3-annotation.js'></script>
     <script>
         d3.graphScroll()
             .sections(d3.selectAll('#sections > div'))
@@ -207,32 +264,22 @@
             .graph(d3.selectAll('#graph'))
             .container(d3.select('#container'));
         
-//        var graph_canvas = d3.select('#graph')
-//            .append('canvas')
-//            .attrs({width: 500, height: 500, id: 'graph_canvas'});
-//        
-//        var graph_context = graph_canvas
-//            .node()
-//            .getContext('2d');
-        
-
-        
         var graph_canvas = document.getElementById('graph_canvas'),
             graph_context = graph_canvas.getContext('2d');
         
         var colors = ['orange', 'purple', 'steelblue', 'black'];
         var sierpinski_rules = [[.5, .5, 0, 0, 0], [.5, .5, 0, .5, 0], [.5, .5, 0, 0, .5]];
-        var alt_rules = [[[.5, .5, 0, 0, 0], [.5, .5, 0, .5, 0], [.5, .5, 0, .25, .5]], [[-.5, .5, 0, .5, 0], [.5, .5, 0, 0, .5], [.5, .5, 0, .5, .5]], [[.5, .5, 0, 0, 0], [.5, .5, 0, .5, 0], [.5, -.5, 0, .5, 1]]]
+        var alt_rules = [[[.5, .5, 0, 0, 0], [.5, .5, 0, .5, 0], [.5, .5, 0, .25, .5]], [[-.5, .5, 0, .5, 0], [.5, .5, 0, 0, .5], [.5, .5, 0, .5, .5]], [[.5, .5, 0, 0, 0], [.5, .5, 0, .5, 0], [.5, -.5, 0, .5, 1]]];
+        
         var gs = d3.graphScroll()
             .container(d3.select('#container'))
             .graph(d3.selectAll('#graph'))
             .sections(d3.selectAll('#sections > div'))
             .on('active', function(i){
-
                 var to_display = [function(){draw(sierpinski_rules, 10, 0, false, otherCanvas, otherCtx)},
-                                  function(){graph_canvas},
-                                  function(){graph_canvas},
-                                  function(){draw(sierpinski_rules, 10, 0, false, otherCanvas, otherCtx)},
+                                  function(){draw(sierpinski_rules, 10, 0, false, otherCanvas, otherCtx, 1)},
+                                  function(){draw(sierpinski_rules, 10, 0, false, otherCanvas, otherCtx, 2)},
+                                  function(){draw(sierpinski_rules, 10, 0, false, otherCanvas, otherCtx, 1)},
                                   function(){draw([[.5, .5, 0, .5, .5]], 2, 0, true, otherCanvas, otherCtx)},
                                   function(){draw([[.25, .5, 0, .5, .5]], 2, 0, true, otherCanvas, otherCtx)},
                                   function(){draw([[-.25, .5, 0, .5, .5]], 2, 0, true, otherCanvas, otherCtx)},
@@ -256,7 +303,6 @@
                 if(i< 17){
                     graph_context
                         .drawImage(otherCanvas, 0, 0)
-                    
                 }
             });
         
@@ -324,7 +370,6 @@
         function toRads(degree){
             return Math.PI / 180 * degree;
         }
-        
 
         function fractalRules(scale_x, scale_y, angle, x, y, select_context){
             if(scale_x > 0){
@@ -344,7 +389,7 @@
             select_context.restore();
         }
         
-        function draw(rules, iterations, time_per_iteration, zoomout, select_canvas, select_context){
+        function draw(rules, iterations, time_per_iteration, zoomout, select_canvas, select_context, annot_code){
             var now = 0;
             function start(){
                     init();
@@ -352,7 +397,6 @@
                     now++
                 }
 
-            
             if(time_per_iteration > 0){
                 var animate = setInterval(function(){now < 1 ? start() : update()}, time_per_iteration);
                                 
@@ -408,6 +452,45 @@
                 }
 
             }
+            create_annot_rect(annot_code)
+        }
+
+        var svg = d3.select('#graph')
+            .append('svg')
+            .attrs({width:500, height: 500});
+        
+        function create_annot_rect(annot_code){
+            svg.selectAll('g')
+                .remove()
+
+            function annot_rect(x,y,width,height, classColor){
+                return {
+                    x: x,
+                    y: y,
+                    subject: {
+                        width: width,
+                        height: height
+                    },
+                    type: d3.annotationCalloutRect,
+                    className: classColor
+                } 
+            }
+            
+            var annot;
+            if (annot_code == 1){
+                annot = [annot_rect(250, 250, -250, 250, 'blue'), annot_rect(250, 250, -250, -250, 'pink'), annot_rect(250, 250, 250, 250, 'black')];
+            } else if (annot_code == 2){
+                annot = [annot_rect(0, 0, 125, 125, 'pink'), annot_rect(0, 125, 125, 125, 'pink'), annot_rect(125, 125, 125, 125, 'pink'), annot_rect(0, 250, 125, 125, 'blue'), annot_rect(0, 375, 125, 125, 'blue'), annot_rect(125, 375, 125, 125, 'blue'), annot_rect(250, 250, 125, 125, 'black'), annot_rect(250, 375, 125, 125, 'black'), annot_rect(375, 375, 125, 125, 'black')];
+            } else {
+                annot = [];
+            }
+
+            var makeAnnotations = d3.annotation()
+                .annotations(annot)
+
+            svg.append('g')
+                .attr('class', 'annotation-group')
+                .call(makeAnnotations);
         }
                 
     </script>
