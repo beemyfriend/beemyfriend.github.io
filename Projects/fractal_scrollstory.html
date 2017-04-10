@@ -69,6 +69,7 @@
         .title text, .annotation text,
         .annotation.callout.circle .annotation-subject path{
             fill: #E8336D;
+            font-size: 13;
         }
         .annotation-note-bg{
             fill: rgba(255, 255, 255, 0);
@@ -122,7 +123,7 @@
                     <br><br><br></div>
                 <div>
                     <h3>Building a Fractal</h3>
-                    <p>To build a self-similar fractal, we need to start with an image. In this tutorial we will use a square. In general, it does not matter what image you start with. We then manipulate the image by giving it commands. We can give the image 5 different commands. Please note that in the examples below, we will use the full cartesian coordinate system, that is, we will use both a positive and negative x-axis as well as both a positive and negative y-axis. However, normally when making fractals we will only use the positive cartesian coordinate system, that is we will only use the positive x-axis and the positive y-axis. Anything outside of the positive cartesian coordinate system will not be seen. The image we will be manipulating is one that uses the full positive cartesian coordinate system.</p>
+                    <p>To build a self-similar fractal, we need to start with an image. In this tutorial we will use a square. In general, it does not matter what image you start with. We then manipulate the image by giving it commands. We can give the image 5 different commands. Please note that in the mini-tutorial below, we will use the full cartesian coordinate system, that is, we will use both a positive and negative x-axis as well as both a positive and negative y-axis. However, normally when making fractals we will only use the positive cartesian coordinate system, that is we will only use the positive x-axis and the positive y-axis. Anything outside of the positive cartesian coordinate system will not be seen.</p>
                     <br><br><br><br><br><br><br>
                     <br><br><br>
                 </div>
@@ -132,7 +133,7 @@
                     <br><br><br><br><br><br><br>
                 </div>
                 <div>
-                    <p><b>1b: </b>If we scale the image's width by a negative number, then the image's width is scaled down <b>AND</b> flipped on the y-axis. That is, the new image is a reflection of the original image. Here is an example of the image's width being scaled down by -1, that is, the width stays the same, but the image is now reflected on the y-axis.</p>
+                    <p><b>1b: </b>If we scale the image's width by a negative number, then the image's width is scaled down <b>AND</b> flipped on the y-axis. That is, the new image is a reflection of the original image. Here is an example of the image's width being scaled down by -0.5, that is, the width stays the same, but the image is now reflected on the y-axis.</p>
                     <br><br><br><br><br><br><br>
                     <br><br><br><br><br><br><br>
                 </div>
@@ -142,7 +143,7 @@
                     <br><br><br><br><br><br><br>
                 </div>
                 <div>
-                    <p><b>2b: </b>If we scale the image's height by a negative number, then the image's height is scaled down  <b>AND</b> flipped on the x-axis. That is, the new image is a reflection of the original image. Here is an example of the image's height being scaled down by -1, that is, the height stays the same, but the image is now reflected on the x-axis.</p>
+                    <p><b>2b: </b>If we scale the image's height by a negative number, then the image's height is scaled down  <b>AND</b> flipped on the x-axis. That is, the new image is a reflection of the original image. Here is an example of the image's height being scaled down by -0.5, that is, the height stays the same, but the image is now reflected on the x-axis.</p>
                     <br><br><br><br><br><br><br>
                     <br><br><br><br><br><br><br>
                 </div>
@@ -186,7 +187,7 @@
                     <p>The first set of rules are:</p>
                     <p><b>Scale-Width: </b>0.5</p>
                     <p><b>Scale-Height: </b>0.5</p>
-                    <p><b>Rotation Angle: </b> 0.0 degrees</p>
+                    <p><b>Rotation Angle: </b> 0 degrees</p>
                     <p><b>X-Coordinate: </b>0.0</p>
                     <p><b>Y-Coordinate: </b>0.0</p>
                     <br><br><br><br><br><br><br>
@@ -196,7 +197,7 @@
                     <p>The second set of rules are:</p>
                     <p><b>Scale-Width: </b>0.5</p>
                     <p><b>Scale-Height: </b>0.5</p>
-                    <p><b>Rotation Angle: </b> 0.0 degrees</p>
+                    <p><b>Rotation Angle: </b> 0 degrees</p>
                     <p><b>X-Coordinate: </b>0.5</p>
                     <p><b>Y-Coordinate: </b>0.0</p>
                     <br><br><br><br><br><br><br>
@@ -206,7 +207,53 @@
                     <p>The third and final set of rules are:</p>
                     <p><b>Scale-Width: </b>0.5</p>
                     <p><b>Scale-Height: </b>0.5</p>
-                    <p><b>Rotation Angle: </b> 0.0 degrees</p>
+                    <p><b>Rotation Angle: </b> 0 degrees</p>
+                    <p><b>X-Coordinate: </b>0.0</p>
+                    <p><b>Y-Coordinate: </b>0.5</p>
+                    <br><br><br><br><br><br><br>
+                    <br><br><br><br><br><br><br>
+                </div>
+                <div>
+                    <p>We then iterate this pattern 10 times to see the outcome</p>
+                    <br><br><br><br><br><br><br>
+                    <br><br><br><br><br><br><br>
+                </div>
+                <div>
+                    <p>The Sierpinski Gasket shows that we don't need a particularly complex algorithm to make a beautiful fractal. In fact, the algorithm needed to make the Sierpinski Gasket only uses three rules</p>
+                    <br><br><br><br><br><br><br>
+                    <br><br><br><br><br><br><br>
+                </div>
+                <div>
+                    <h3>Example #2</h3>
+                    <p>It turns out we make a large number of fractals with just three rules. Try to gues how to make this fractal beore even looking at the rules.</p>
+                    <br><br><br><br><br><br><br>
+                    <br><br><br><br><br><br><br>
+                </div>
+                <div>
+                    <p>The first set of rules are:</p>
+                    <p><b>Scale-Width: </b>-0.5</p>
+                    <p><b>Scale-Height: </b>0.5</p>
+                    <p><b>Rotation Angle: </b> 90 degrees</p>
+                    <p><b>X-Coordinate: </b>0.5</p>
+                    <p><b>Y-Coordinate: </b>0.5</p>
+                    <br><br><br><br><br><br><br>
+                    <br><br><br><br><br><br><br>
+                </div>
+                <div>
+                    <p>The second set of rules are:</p>
+                    <p><b>Scale-Width: </b>0.5</p>
+                    <p><b>Scale-Height: </b>0.5</p>
+                    <p><b>Rotation Angle: </b> -90 (or 270) degrees</p>
+                    <p><b>X-Coordinate: </b>0.5</p>
+                    <p><b>Y-Coordinate: </b>0.5</p>
+                    <br><br><br><br><br><br><br>
+                    <br><br><br><br><br><br><br>
+                </div>
+                <div>
+                    <p>The third and final set of rules are:</p>
+                    <p><b>Scale-Width: </b>0.5</p>
+                    <p><b>Scale-Height: </b>0.5</p>
+                    <p><b>Rotation Angle: </b> 0 degrees</p>
                     <p><b>X-Coordinate: </b>0.0</p>
                     <p><b>Y-Coordinate: </b>0.5</p>
                     <br><br><br><br><br><br><br>
@@ -279,6 +326,7 @@
         
         var colors = ['orange', 'purple', 'steelblue', 'black'];
         var sierpinski_rules = [[.5, .5, 0, 0, 0], [.5, .5, 0, .5, 0], [.5, .5, 0, 0, .5]];
+        var complex_rules = [[-.5, .5, 90, .5, .5], [.5, .5, -90, .5, .5], [.5, .5, 0, 0, .5]];
         var alt_rules = [[[.5, .5, 0, 0, 0], [.5, .5, 0, .5, 0], [.5, .5, 0, .25, .5]], [[-.5, .5, 0, .5, 0], [.5, .5, 0, 0, .5], [.5, .5, 0, .5, .5]], [[.5, .5, 0, 0, 0], [.5, .5, 0, .5, 0], [.5, -.5, 0, .5, 1]]];
         
         var gs = d3.graphScroll()
@@ -289,7 +337,7 @@
                 var to_display = [function(){draw(sierpinski_rules, 10, 0, false, otherCanvas, otherCtx)},
                                   function(){draw(sierpinski_rules, 10, 0, false, otherCanvas, otherCtx, 1)},
                                   function(){draw(sierpinski_rules, 10, 0, false, otherCanvas, otherCtx, 2)},
-                                  function(){draw(sierpinski_rules, 10, 0, false, otherCanvas, otherCtx, 1)},
+                                  function(){draw(sierpinski_rules, 10, 0, false, otherCanvas, otherCtx, 3)},
                                   function(){draw([[.5, .5, 0, .5, .5]], 2, 0, 'quad', otherCanvas, otherCtx)},
                                   function(){draw([[.25, .5, 0, .5, .5]], 2, 0, 'quad', otherCanvas, otherCtx)},
                                   function(){draw([[-.25, .5, 0, .5, .5]], 2, 0, 'quad', otherCanvas, otherCtx)},
@@ -307,12 +355,18 @@
                                   function(){draw([[.5, .5, 0, 0, .5]], 2, 0, 'single', otherCanvas, otherCtx)},
                                   function(){draw(sierpinski_rules, 10, 500, 'single', graph_canvas, graph_context)},
                                   function(){draw(sierpinski_rules, 10, 0, false, graph_canvas, graph_context)},
+                                  function(){draw(complex_rules, 10, 0, false, graph_canvas, graph_context)},
+                                  function(){draw([[-.5, .5, 90, .5, .5]], 2, 0, 'single', graph_canvas, graph_context)}, 
+                                  function(){draw([[.5, .5, -90, .5, .5]], 2, 0, 'single', graph_canvas, graph_context)},
+                                  function(){draw([[.5, .5, 0, 0, .5]], 2, 0, 'single', graph_canvas, graph_context)}, 
+                                  function(){draw(complex_rules, 10, 500, false, graph_canvas, graph_context)},
+                                  function(){draw(complex_rules, 10, 0, false, graph_canvas, graph_context)},
                                   function(){draw(alt_rules[Math.floor(Math.random()*alt_rules.length)], 10, 500, false, graph_canvas, graph_context)}
                                  ];
                 
                 graph_context.clearRect(0, 0, 500, 500);
                 to_display[i]()
-                if(i< 19){
+                if(i < 19){
                     graph_context
                         .drawImage(otherCanvas, 0, 0)
                 }
@@ -496,9 +550,11 @@
             
             var annot;
             if (annot_code == 1){
-                annot = [annot_rect(250, 250, -250, 250, 'blue', ['Another identical image', 100, -100]), annot_rect(250, 0, -250, 250, 'pink', ['An identical image at 1/2 scale', 100, 50]), annot_rect(250, 250, 250, 250, 'black', ['Yet another identical image',  100, -50])];
+                annot = [annot_rect(250, 250, -250, 250, 'blue', ['Another identical image', 100, -110]), annot_rect(250, 0, -250, 250, 'pink', ['An identical image at 1/2 scale', 100, 50]), annot_rect(250, 250, 250, 250, 'black', ['Yet another identical image',  100, -50])];
             } else if (annot_code == 2){
                 annot = [annot_rect(0, 0, 125, 125, 'pink'), annot_rect(0, 125, 125, 125, 'pink', ['Each identical image has it\'s own scaled-down identical images', 150, -25]), annot_rect(125, 125, 125, 125, 'pink'), annot_rect(0, 250, 125, 125, 'blue'), annot_rect(0, 375, 125, 125, 'blue'), annot_rect(125, 375, 125, 125, 'blue'), annot_rect(250, 250, 125, 125, 'black'), annot_rect(250, 375, 125, 125, 'black'), annot_rect(375, 375, 125, 125, 'black')];
+            } else if (annot_code == 3){
+                annot = [annot_rect(250, 250, -250, 250, 'blue', ['This image contains 81 identical images at 1/16 scale', 60, -115]), annot_rect(250, 0, -250, 250, 'pink', ['This image contains 27 identical images at 1/8 scale', 100, 25]), annot_rect(250, 250, 250, 250, 'black', ['HINT: This image is the same as the other two, but only has 3 images at 1/2 scale',  80, -20])]
             } else {
                 annot = [];
             }
@@ -530,10 +586,8 @@
 
             } else if (type == 'single') {
                 svg.append('path.fractalAxis')
-                    .attrs({d: 'M 0 0 v 250 h 10 h -10 v 250 h 250 v -10 v 10 h 250', fill: 'transparent', 'stroke-width': 5, stroke: 'black'})
-                
-            }
-            
+                    .attrs({d: 'M 0 0 v 250 h 10 h -10 v 250 h 250 v -10 v 10 h 250', fill: 'transparent', 'stroke-width': 5, stroke: 'black'})   
+            }   
         }
                 
     </script>
