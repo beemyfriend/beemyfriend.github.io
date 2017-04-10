@@ -225,7 +225,7 @@
                 </div>
                 <div>
                     <h3>Example #2</h3>
-                    <p>It turns out we make a large number of fractals with just three rules. Try to gues how to make this fractal beore even looking at the rules.</p>
+                    <p>It turns out we make a large number of fractals with just three rules. Try to figure out how to make this fractal before looking at the rules.</p>
                     <br><br><br><br><br><br><br>
                     <br><br><br><br><br><br><br>
                 </div>
@@ -265,7 +265,7 @@
                     <br><br><br><br><br><br><br>
                 </div>
                 <div>
-                    <p>Now try to make a few of your own. Try to replicate the below example</p>
+                    <p>Now try to make a few of your own. Try to replicate the below example. If you want to learn more about fractals, then please visit <a href = 'http://users.math.yale.edu/public_html/People/frame/Fractals/'>Michael Frame's website</a>. He was the amazing person who introduced me to fractals. If you want an even more in depth look into fractals, then check out his book (co-written by Amelia Urry) <a href = 'http://yalebooks.com/book/9780300197877/fractal-worlds'>"Fractal Worlds</a>"</p>
                     <br><br><br><br><br><br><br>
                     <br><br><br><br><br><br><br>
                 </div>
@@ -327,7 +327,7 @@
         var colors = ['orange', 'purple', 'steelblue', 'black'];
         var sierpinski_rules = [[.5, .5, 0, 0, 0], [.5, .5, 0, .5, 0], [.5, .5, 0, 0, .5]];
         var complex_rules = [[-.5, .5, 90, .5, .5], [.5, .5, -90, .5, .5], [.5, .5, 0, 0, .5]];
-        var alt_rules = [[[.5, .5, 0, 0, 0], [.5, .5, 0, .5, 0], [.5, .5, 0, .25, .5]], [[-.5, .5, 0, .5, 0], [.5, .5, 0, 0, .5], [.5, .5, 0, .5, .5]], [[.5, .5, 0, 0, 0], [.5, .5, 0, .5, 0], [.5, -.5, 0, .5, 1]]];
+        var alt_rules = [[[.5, .5, 0, 0, 0], [.5, .5, 0, .5, 0], [.5, .5, 0, .25, .5]], [[-.5, .5, 0, .5, 0], [.5, .5, 0, 0, .5], [.5, .5, 0, .5, .5]], [[.5, .5, 0, 0, 0], [.5, .5, 0, .5, 0], [.5, -.5, 0, .5, 1]], [[-.25, .25, 0, .25, 0], [-.25, .25, 0, 1, 0], [.5, .5, 0, .25, .25], [-.25, .25, 0, 1, .5], [-.25, .25, 0, .25, .75], [.25, .25, 0, .5, .75]], [[-.5, .5, 90, .5, .5], [.5, .5, 90, 1, 0], [-.5, .5, -90, 0, .5]]];
         
         var gs = d3.graphScroll()
             .container(d3.select('#container'))
@@ -466,7 +466,10 @@
             select_context.restore();
         }
         
+        var animate;
+        
         function draw(rules, iterations, time_per_iteration, axisType, select_canvas, select_context, annot_code){
+            if(animate){animate.stop()};
             var now = 0;
             function start(){
                     init();
@@ -475,7 +478,7 @@
                 }
 
             if(time_per_iteration > 0){
-                var animate = setInterval(function(){now < 1 ? start() : update()}, time_per_iteration);
+                animate = d3.interval(function(){now < 1 ? start() : update()}, time_per_iteration);
                                 
                 function update(){
                     if(now >= iterations){
