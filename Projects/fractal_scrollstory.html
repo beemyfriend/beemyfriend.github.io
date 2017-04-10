@@ -152,22 +152,32 @@
                     <br><br><br><br><br><br><br>
                 </div>
                 <div>
-                    <p><b>4: </b>We can move the image to a coordinate on the x-axis. Horizontal movement always starts on x = 0, so it does not matter if the image was flipped or rotated. Here we show the image on the x-coordinate 0.5</p>
+                    <p><b>4a: </b>We can move the image to a coordinate on the x-axis. Horizontal movement always starts on x = 0, so it does not matter if the image was flipped or rotated. Here we move the image, scaled-down by half, to the right by 0.5</p>
                     <br><br><br><br><br><br><br>
                     <br><br><br><br><br><br><br>
                 </div>
                 <div>
-                    <p><b>5: </b>We can move the image to a coordinate on the y-axis. Vertical movement always starts on y = 0, so it does not matter if the image was flipped or rotated. Here we show the image on the y-coordinate 0.5</p>
+                    <p><b>4b: </b> Here we again scale down the image by half, but this time we scale down the image's width by -.5. We then move the scaled-down image to the right by 0.5</p>
                     <br><br><br><br><br><br><br>
                     <br><br><br><br><br><br><br>
                 </div>
                 <div>
-                    <p>The commands are given to the image in the same order that they wer presented. First we scale-down the image, then we rotate the image, and then we move the image to a new (x,y) coordinates.</p>
+                    <p><b>5a: </b>We can move the image to a coordinate on the y-axis. Vertical movement always starts on y = 0, so it does not matter if the image was flipped or rotated. Here we move the image, scaled-down by half, upwards by 0.5</p>
                     <br><br><br><br><br><br><br>
                     <br><br><br><br><br><br><br>
                 </div>
                 <div>
-                    <h3>Exaple #1</h3>
+                    <p><b>5b: </b>Here we again scale down the image by half, but this time we scale down the image's height by -.5. We then move the scaled-down image upwards by 0.5</p>
+                    <br><br><br><br><br><br><br>
+                    <br><br><br><br><br><br><br>
+                </div>
+                <div>
+                    <p>The commands are given to the image in the same order that they were presented. First we scale-down the image, then we rotate the image, and then we move the image to new (x,y) coordinates.</p>
+                    <br><br><br><br><br><br><br>
+                    <br><br><br><br><br><br><br>
+                </div>
+                <div>
+                    <h3>Example #1</h3>
                     <p>The Sierpinski gasket that we showed earlier is created by giving an original image three different sets of commands.</p>
                     <br><br><br><br><br><br><br>
                     <br><br><br><br><br><br><br>
@@ -280,27 +290,29 @@
                                   function(){draw(sierpinski_rules, 10, 0, false, otherCanvas, otherCtx, 1)},
                                   function(){draw(sierpinski_rules, 10, 0, false, otherCanvas, otherCtx, 2)},
                                   function(){draw(sierpinski_rules, 10, 0, false, otherCanvas, otherCtx, 1)},
-                                  function(){draw([[.5, .5, 0, .5, .5]], 2, 0, true, otherCanvas, otherCtx)},
-                                  function(){draw([[.25, .5, 0, .5, .5]], 2, 0, true, otherCanvas, otherCtx)},
-                                  function(){draw([[-.25, .5, 0, .5, .5]], 2, 0, true, otherCanvas, otherCtx)},
-                                  function(){draw([[.5, .25, 0, .5, .5]], 2, 0, true, otherCanvas, otherCtx)},
-                                  function(){draw([[.5, -.25, 0, .5, .5]], 2, 0, true, otherCanvas, otherCtx)},
-                                  function(){draw([[.5, .5, 45, .5, .5]], 2, 0, true, otherCanvas, otherCtx)},
-                                  function(){draw([[.5, .5, 0, .75, .5]], 2, 0, true, otherCanvas, otherCtx)},
-                                  function(){draw([[.5, .5, 0, .5, .75]], 2, 0, true, otherCanvas, otherCtx)},
-                                  function(){draw(sierpinski_rules, 10, 0, false, otherCanvas, otherCtx)},
-                                  function(){draw(sierpinski_rules, 10, 0, false, otherCanvas, otherCtx)},
-                                  function(){draw([[.5, .5, 0, 0, 0]], 2, 0, false, otherCanvas, otherCtx)},
-                                  function(){draw([[.5, .5, 0, .5, 0]], 2, 0, false, otherCanvas, otherCtx)},
-                                  function(){draw([[.5, .5, 0, 0, .5]], 2, 0, false, otherCanvas, otherCtx)},
-                                  function(){draw(sierpinski_rules, 10, 500, false, graph_canvas, graph_context)},
+                                  function(){draw([[.5, .5, 0, .5, .5]], 2, 0, 'quad', otherCanvas, otherCtx)},
+                                  function(){draw([[.25, .5, 0, .5, .5]], 2, 0, 'quad', otherCanvas, otherCtx)},
+                                  function(){draw([[-.25, .5, 0, .5, .5]], 2, 0, 'quad', otherCanvas, otherCtx)},
+                                  function(){draw([[.5, .25, 0, .5, .5]], 2, 0, 'quad', otherCanvas, otherCtx)},
+                                  function(){draw([[.5, -.25, 0, .5, .5]], 2, 0, 'quad', otherCanvas, otherCtx)},
+                                  function(){draw([[.5, .5, 45, .5, .5]], 2, 0, 'quad', otherCanvas, otherCtx)},
+                                  function(){draw([[.25, .25, 0, .75, .5]], 2, 0, 'quad', otherCanvas, otherCtx)},
+                                  function(){draw([[-.25, .25, 0, .75, .5]], 2, 0, 'quad', otherCanvas, otherCtx)},
+                                  function(){draw([[.25, .25, 0, .5, .75]], 2, 0, 'quad', otherCanvas, otherCtx)},
+                                  function(){draw([[.25, -.25, 0, .5, .75]], 2, 0,  'quad', otherCanvas, otherCtx)},
+                                  function(){draw(sierpinski_rules, 10, 0, 'single', otherCanvas, otherCtx)},
+                                  function(){draw(sierpinski_rules, 10, 0, 'single', otherCanvas, otherCtx)},
+                                  function(){draw([[.5, .5, 0, 0, 0]], 2, 0, 'single', otherCanvas, otherCtx)},
+                                  function(){draw([[.5, .5, 0, .5, 0]], 2, 0, 'single', otherCanvas, otherCtx)},
+                                  function(){draw([[.5, .5, 0, 0, .5]], 2, 0, 'single', otherCanvas, otherCtx)},
+                                  function(){draw(sierpinski_rules, 10, 500, 'single', graph_canvas, graph_context)},
                                   function(){draw(sierpinski_rules, 10, 0, false, graph_canvas, graph_context)},
                                   function(){draw(alt_rules[Math.floor(Math.random()*alt_rules.length)], 10, 500, false, graph_canvas, graph_context)}
                                  ];
                 
                 graph_context.clearRect(0, 0, 500, 500);
                 to_display[i]()
-                if(i< 17){
+                if(i< 19){
                     graph_context
                         .drawImage(otherCanvas, 0, 0)
                 }
@@ -362,6 +374,17 @@
             myCtx.fillRect(0, height * 9 /10, width/10, height/10);
             myCtx.fillStyle = 'brown';
             myCtx.fillRect(width * 9 / 10, 0, width/10, height/10);
+            myCtx.save()
+            myCtx.beginPath();
+            myCtx.lineWidth = 10;
+            myCtx.strokeStyle = 'white';
+            myCtx.arc(width/2, height/2, width/2 - 10, 0, Math.PI);
+            myCtx.moveTo(width/2 - 10, height/4);
+            myCtx.arc(width/4, height/4, width/4 - 10, 0, 2*Math.PI);
+            myCtx.moveTo(width/2 + 10, height/4);
+            myCtx.lineTo(width-10, height/4)
+            myCtx.stroke();
+            myCtx.restore();
             myCtx.strokeStyle = 'red';
             myCtx.rect(0, 0, width, height);
             myCtx.stroke();   
@@ -389,7 +412,7 @@
             select_context.restore();
         }
         
-        function draw(rules, iterations, time_per_iteration, zoomout, select_canvas, select_context, annot_code){
+        function draw(rules, iterations, time_per_iteration, axisType, select_canvas, select_context, annot_code){
             var now = 0;
             function start(){
                     init();
@@ -434,22 +457,7 @@
                 
                 update()
                 
-                if(zoomout){
-                    select_context.save();
-                    select_context.moveTo(0, 250);
-                    select_context.lineTo(500, 250);
-                    select_context.stroke();
-                    select_context.moveTo(250, 0);
-                    select_context.lineTo(250, 500);
-                    select_context.stroke();
-                    select_context.fillStyle = 'rgba(0,0,0,.4)';
-                    select_context.fillRect(0,0, 250, 500);
-                    select_context.fillRect(250, 250, 250, 250);
-                    select_context.restore();
-                } else {
-//                  for some reason, if i stroke just the left and lower part of the window, it stays on the screen even if
-//                    I go to a zoomout
-                }
+                axisScale(axisType)
 
             }
             create_annot_rect(annot_code)
@@ -460,11 +468,11 @@
             .attrs({width:500, height: 500});
         
         function create_annot_rect(annot_code){
-            svg.selectAll('g')
+            svg.selectAll('.annotation-group')
                 .remove()
 
-            function annot_rect(x,y,width,height, classColor){
-                return {
+            function annot_rect(x,y,width,height, classColor, labelInfo){
+                var annot_obj = {
                     x: x,
                     y: y,
                     subject: {
@@ -473,14 +481,24 @@
                     },
                     type: d3.annotationCalloutRect,
                     className: classColor
-                } 
+                }
+                
+               if(labelInfo){
+                    annot_obj.note = {
+                        label: labelInfo[0]
+                    };
+                    annot_obj.dx = labelInfo[1];
+                    annot_obj.dy = labelInfo[2];
+                    
+                }
+                return annot_obj
             }
             
             var annot;
             if (annot_code == 1){
-                annot = [annot_rect(250, 250, -250, 250, 'blue'), annot_rect(250, 250, -250, -250, 'pink'), annot_rect(250, 250, 250, 250, 'black')];
+                annot = [annot_rect(250, 250, -250, 250, 'blue', ['Another identical image', 100, -100]), annot_rect(250, 0, -250, 250, 'pink', ['An identical image at 1/2 scale', 100, 50]), annot_rect(250, 250, 250, 250, 'black', ['Yet another identical image',  100, -50])];
             } else if (annot_code == 2){
-                annot = [annot_rect(0, 0, 125, 125, 'pink'), annot_rect(0, 125, 125, 125, 'pink'), annot_rect(125, 125, 125, 125, 'pink'), annot_rect(0, 250, 125, 125, 'blue'), annot_rect(0, 375, 125, 125, 'blue'), annot_rect(125, 375, 125, 125, 'blue'), annot_rect(250, 250, 125, 125, 'black'), annot_rect(250, 375, 125, 125, 'black'), annot_rect(375, 375, 125, 125, 'black')];
+                annot = [annot_rect(0, 0, 125, 125, 'pink'), annot_rect(0, 125, 125, 125, 'pink', ['Each identical image has it\'s own scaled-down identical images', 150, -25]), annot_rect(125, 125, 125, 125, 'pink'), annot_rect(0, 250, 125, 125, 'blue'), annot_rect(0, 375, 125, 125, 'blue'), annot_rect(125, 375, 125, 125, 'blue'), annot_rect(250, 250, 125, 125, 'black'), annot_rect(250, 375, 125, 125, 'black'), annot_rect(375, 375, 125, 125, 'black')];
             } else {
                 annot = [];
             }
@@ -491,6 +509,31 @@
             svg.append('g')
                 .attr('class', 'annotation-group')
                 .call(makeAnnotations);
+        }
+        
+        function axisScale(type){
+            svg.selectAll('.fractalAxis')
+                .remove();
+            
+            if(type == 'quad'){
+                svg.append('path.fractalAxis')
+                    .attrs({d: 'M 0 250 h 125 v 5 v -10 v 5 h 125 v 125 h 5 h -10 h 5 v 125 v -375 h 5 h -10 h 5 v -125 v 250 h 125 v 5 v -10 v 5 h 125', fill: 'transparent', 'stroke-width': 2, stroke: 'black'})
+                
+                svg.append('path.fractalAxis')
+                        .attrs({d: 'M 250 0 v 250 h 250 v 250 h -500 v -500 h 250', 'fill-opacity': .4, fill: 'black'})
+                
+                svg.selectAll('text.fratalAxis')
+                    .data([[245, 265, '(0,0)', 'end'], [375, 265, '0.5', 'middle'], [125, 265, '-0.5', 'middle'], [245, 125, '0.5', 'end'], [245, 375, '-0.5', 'end']])
+                    .enter().append('text.fractalAxis')
+                    .attrs({transform: function(d){return 'translate(' + d[0] + ',' + d[1] + ')'}, fill: 'black', 'font-size': 15, 'text-anchor': function(d){return d[3]}})
+                    .text(function(d){return d[2]});
+
+            } else if (type == 'single') {
+                svg.append('path.fractalAxis')
+                    .attrs({d: 'M 0 0 v 250 h 10 h -10 v 250 h 250 v -10 v 10 h 250', fill: 'transparent', 'stroke-width': 5, stroke: 'black'})
+                
+            }
+            
         }
                 
     </script>
