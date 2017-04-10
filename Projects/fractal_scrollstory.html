@@ -123,7 +123,8 @@
                     <br><br><br></div>
                 <div>
                     <h3>Building a Fractal</h3>
-                    <p>To build a self-similar fractal, we need to start with an image. In this tutorial we will use a square. In general, it does not matter what image you start with. We then manipulate the image by giving it commands. We can give the image 5 different commands. Please note that in the mini-tutorial below, we will use the full cartesian coordinate system, that is, we will use both a positive and negative x-axis as well as both a positive and negative y-axis. However, normally when making fractals we will only use the positive cartesian coordinate system, that is we will only use the positive x-axis and the positive y-axis. Anything outside of the positive cartesian coordinate system will not be seen.</p>
+                    <p>To build a self-similar fractal, we need to start with an image. In this tutorial we will use a square. In general, it does not matter what image you start with. We then manipulate the image by giving it commands. We can give the image 5 different commands.</p>
+                    <p>Please note that in the mini-tutorial below, we will use the full cartesian coordinate system, that is, we will use both a positive and negative x-axis as well as both a positive and negative y-axis. However, normally when making fractals we will only use the positive cartesian coordinate system, that is we will only use the positive x-axis and the positive y-axis. Anything outside of the positive cartesian coordinate system will not be seen.</p>
                     <br><br><br><br><br><br><br>
                     <br><br><br>
                 </div>
@@ -133,7 +134,7 @@
                     <br><br><br><br><br><br><br>
                 </div>
                 <div>
-                    <p><b>1b: </b>If we scale the image's width by a negative number, then the image's width is scaled down <b>AND</b> flipped on the y-axis. That is, the new image is a reflection of the original image. Here is an example of the image's width being scaled down by -0.5, that is, the width stays the same, but the image is now reflected on the y-axis.</p>
+                    <p><b>1b: </b>If we scale the image's width by a negative number, then the image's width is scaled down <b>AND</b> flipped on the y-axis. That is, the new image is a reflection of the original image. Here is an example of the image's width being scaled down by -0.5, that is, the width is scaled-down to half again, but the image is now reflected on the y-axis.</p>
                     <br><br><br><br><br><br><br>
                     <br><br><br><br><br><br><br>
                 </div>
@@ -143,7 +144,7 @@
                     <br><br><br><br><br><br><br>
                 </div>
                 <div>
-                    <p><b>2b: </b>If we scale the image's height by a negative number, then the image's height is scaled down  <b>AND</b> flipped on the x-axis. That is, the new image is a reflection of the original image. Here is an example of the image's height being scaled down by -0.5, that is, the height stays the same, but the image is now reflected on the x-axis.</p>
+                    <p><b>2b: </b>If we scale the image's height by a negative number, then the image's height is scaled down  <b>AND</b> flipped on the x-axis. That is, the new image is a reflection of the original image. Here is an example of the image's height being scaled down by -0.5, that is, the height is scaled-down to half again, but the image is now reflected on the x-axis.</p>
                     <br><br><br><br><br><br><br>
                     <br><br><br><br><br><br><br>
                 </div>
@@ -343,7 +344,7 @@
                                   function(){draw([[-.25, .5, 0, .5, .5]], 2, 0, 'quad', otherCanvas, otherCtx)},
                                   function(){draw([[.5, .25, 0, .5, .5]], 2, 0, 'quad', otherCanvas, otherCtx)},
                                   function(){draw([[.5, -.25, 0, .5, .5]], 2, 0, 'quad', otherCanvas, otherCtx)},
-                                  function(){draw([[.5, .5, 45, .5, .5]], 2, 0, 'quad', otherCanvas, otherCtx)},
+                                  function(){draw([[.5, .5, 45, .5, .5]], 2, 0, 'angle', otherCanvas, otherCtx)},
                                   function(){draw([[.25, .25, 0, .75, .5]], 2, 0, 'quad', otherCanvas, otherCtx)},
                                   function(){draw([[-.25, .25, 0, .75, .5]], 2, 0, 'quad', otherCanvas, otherCtx)},
                                   function(){draw([[.25, .25, 0, .5, .75]], 2, 0, 'quad', otherCanvas, otherCtx)},
@@ -361,7 +362,7 @@
                                   function(){draw([[.5, .5, 0, 0, .5]], 2, 0, 'single', graph_canvas, graph_context)}, 
                                   function(){draw(complex_rules, 10, 500, false, graph_canvas, graph_context)},
                                   function(){draw(complex_rules, 10, 0, false, graph_canvas, graph_context)},
-                                  function(){draw(alt_rules[Math.floor(Math.random()*alt_rules.length)], 10, 500, false, graph_canvas, graph_context)}
+                                  function(){draw(alt_rules[Math.floor(Math.random()*alt_rules.length)], 7, 500, false, graph_canvas, graph_context)}
                                  ];
                 
                 graph_context.clearRect(0, 0, 500, 500);
@@ -386,7 +387,7 @@
                 .data(myRules);
                         
             text.enter().append('p')
-                .attr('class', 'enter')
+                .merge(text)
                 .attr('id', function(d,i){return 'rule'+(i+1);})
                 .html(function(d, i){return '<b>Fractal Rule #' + (i+1) +'</b><br><b>X-Scale:</b> ' + d[0] + ' <b>Y-Scale:</b> ' + d[1] + ' <b>Angle:</b> ' + d[2] + ' <b>X-Coordinate:</b> ' + d[3] + ' <b>Y-Coordinate:</b> ' + d[4];});
             
@@ -557,7 +558,7 @@
             } else if (annot_code == 2){
                 annot = [annot_rect(0, 0, 125, 125, 'pink'), annot_rect(0, 125, 125, 125, 'pink', ['Each identical image has it\'s own scaled-down identical images', 150, -25]), annot_rect(125, 125, 125, 125, 'pink'), annot_rect(0, 250, 125, 125, 'blue'), annot_rect(0, 375, 125, 125, 'blue'), annot_rect(125, 375, 125, 125, 'blue'), annot_rect(250, 250, 125, 125, 'black'), annot_rect(250, 375, 125, 125, 'black'), annot_rect(375, 375, 125, 125, 'black')];
             } else if (annot_code == 3){
-                annot = [annot_rect(250, 250, -250, 250, 'blue', ['This image contains 81 identical images at 1/16 scale', 60, -115]), annot_rect(250, 0, -250, 250, 'pink', ['This image contains 27 identical images at 1/8 scale', 100, 25]), annot_rect(250, 250, 250, 250, 'black', ['HINT: This image is the same as the other two, but only has 3 images at 1/2 scale',  80, -20])]
+                annot = [annot_rect(250, 250, -250, 250, 'blue', ['This image contains 81 identical images at 1/16 scale', 60, -115]), annot_rect(250, 0, -250, 250, 'pink', ['This image contains 27 identical images at 1/8 scale', 100, 25]), annot_rect(250, 250, 250, 250, 'black', ['This image is the same as the other two, but only has 3 images at 1/2 scale',  80, -20])]
             } else {
                 annot = [];
             }
@@ -589,8 +590,24 @@
 
             } else if (type == 'single') {
                 svg.append('path.fractalAxis')
-                    .attrs({d: 'M 0 0 v 250 h 10 h -10 v 250 h 250 v -10 v 10 h 250', fill: 'transparent', 'stroke-width': 5, stroke: 'black'})   
-            }   
+                    .attrs({d: 'M 0 0 v 250 h 10 h -10 v 250 h 250 v -10 v 10 h 250', fill: 'transparent', 'stroke-width': 5, stroke: 'black'});
+                
+            } else if (type == 'angle') {
+                svg.append('path.fractalAxis')
+                    .attrs({d: 'M 0 250 h 125 v 5 v -10 v 5 h 125 v 125 h 5 h -10 h 5 v 125 v -375 h 5 h -10 h 5 v -125 v 250 h 125 v 5 v -10 v 5 h 125', fill: 'transparent', 'stroke-width': 2, stroke: 'black'})
+                
+                svg.append('path.fractalAxis')
+                        .attrs({d: 'M 250 0 v 250 h 250 v 250 h -500 v -500 h 250', 'fill-opacity': .4, fill: 'black'})
+                
+                svg.selectAll('text.fratalAxis')
+                    .data([[245, 265, '(0,0)', 'end'], [375, 265, '0.5', 'middle'], [125, 265, '-0.5', 'middle'], [245, 125, '0.5', 'end'], [245, 375, '-0.5', 'end'], [370, 200, '45 degrees', 'start']])
+                    .enter().append('text.fractalAxis')
+                    .attrs({transform: function(d){return 'translate(' + d[0] + ',' + d[1] + ')'}, fill: 'black', 'font-size': 15, 'text-anchor': function(d){return d[3]}})
+                    .text(function(d){return d[2]}); 
+                
+                svg.append('path.fractalAxis')
+                    .attrs({d: 'M 375 250 A 375 250 0 0 0 345 155', fill: 'transparent', stroke: 'purple', 'stroke-width': 5})
+            }  
         }
                 
     </script>
