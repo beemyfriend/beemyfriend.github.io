@@ -335,11 +335,16 @@
             .graph(d3.selectAll('#graph'))
             .sections(d3.selectAll('#sections > div'))
             .on('active', function(i){
-                var to_display = [function(){drawFractal(sierpinski_rules, 10, 0, false, otherCanvas, otherCtx)},
-                                  function(){drawFractal(sierpinski_rules, 10, 0, false, otherCanvas, otherCtx, 1)},
-                                  function(){drawFractal(sierpinski_rules, 10, 0, false, otherCanvas, otherCtx, 2)},
-                                  function(){drawFractal(sierpinski_rules, 10, 0, false, otherCanvas, otherCtx, 3)},
-                                  function(){drawFractal([[.5, .5, 0, .5, .5]], 2, 0, 'quad', otherCanvas, otherCtx)},
+                var to_display = [function(){if(animate){animate.stop()};
+                                             drawFractal(sierpinski_rules, 10, 0, false, otherCanvas, otherCtx)},
+                                  function(){if(animate){animate.stop()};
+                                             drawFractal(sierpinski_rules, 10, 0, false, otherCanvas, otherCtx, 1)},
+                                  function(){if(animate){animate.stop()};
+                                             drawFractal(sierpinski_rules, 10, 0, false, otherCanvas, otherCtx, 2)},
+                                  function(){if(animate){animate.stop()};
+                                             drawFractal(sierpinski_rules, 10, 0, false, otherCanvas, otherCtx, 3)},
+                                  function(){if(animate){animate.stop()};
+                                             drawFractal([[.5, .5, 0, .5, .5]], 2, 0, 'quad', otherCanvas, otherCtx)},
                                   function(){draw([function(){drawFractal([[.5, .5, 0, .5, .5]], 2, 0, 'quad', otherCanvas, otherCtx)}, 
                                                    function(){drawFractal([[.4, .5, 0, .5, .5]], 2, 0, 'quad', otherCanvas, otherCtx)},
                                                    function(){drawFractal([[.3, .5, 0, .5, .5]], 2, 0, 'quad', otherCanvas, otherCtx)},
@@ -394,8 +399,10 @@
                                                    function(){drawFractal([[.25, -.25, 0, .5, .6]], 2, 0, 'quad', otherCanvas, otherCtx)}, 
                                                    function(){drawFractal([[.25, -.25, 0, .5, .75]], 2, 0, 'quad', otherCanvas, otherCtx)}],
                                                  500)},
-                                  function(){drawFractal(sierpinski_rules, 10, 0, 'single', otherCanvas, otherCtx)},
-                                  function(){drawFractal(sierpinski_rules, 10, 0, 'single', otherCanvas, otherCtx)},
+                                  function(){if(animate){animate.stop()}; 
+                                             drawFractal(sierpinski_rules, 10, 0, 'single', otherCanvas, otherCtx)},
+                                  function(){if(animate){animate.stop()};
+                                             drawFractal(sierpinski_rules, 10, 0, 'single', otherCanvas, otherCtx)},
                                   function(){draw([function(){drawFractal([[1, 1, 0, 0, 0]], 2, 0, 'single', otherCanvas, otherCtx)}, 
                                                    function(){drawFractal([[.75, .75, 0, 0, 0]], 2, 0, 'single', otherCanvas, otherCtx)}, 
                                                    function(){drawFractal([[.5, .5, 0, 0, 0]], 2, 0, 'single', otherCanvas, otherCtx)}],
@@ -414,8 +421,10 @@
                                                  500)},
                                   function(){if(animate){animate.stop()};
                                              drawFractal(sierpinski_rules, 10, 500, 'single', graph_canvas, graph_context);},
-                                  function(){drawFractal(sierpinski_rules, 10, 0, false, graph_canvas, graph_context)},
-                                  function(){drawFractal(complex_rules, 10, 0, false, graph_canvas, graph_context)},
+                                  function(){if(animate){animate.stop()}; 
+                                             drawFractal(sierpinski_rules, 10, 0, false, graph_canvas, graph_context)},
+                                  function(){if(animate){animate.stop()}; 
+                                             drawFractal(complex_rules, 10, 0, false, graph_canvas, graph_context)},
                                   function(){draw([function(){drawFractal([[1, 1, 0, 0, 0]], 2, 0, 'single', otherCanvas, otherCtx)}, 
                                                    function(){drawFractal([[.75, .75, 0, 0, 0]], 2, 0, 'single', otherCanvas, otherCtx)}, 
                                                    function(){drawFractal([[.5, .5, 0, 0, 0]], 2, 0, 'single', otherCanvas, otherCtx)}, 
@@ -439,8 +448,10 @@
                                                  500)},
                                   function(){if(animate){animate.stop()};
                                              drawFractal(complex_rules, 10, 500, false, graph_canvas, graph_context)},
-                                  function(){drawFractal(complex_rules, 10, 0, false, graph_canvas, graph_context)},
-                                  function(){drawFractal(alt_rules[Math.floor(Math.random()*alt_rules.length)], 7, 500, false, graph_canvas, graph_context)}
+                                  function(){if(animate){animate.stop()};
+                                             drawFractal(complex_rules, 10, 0, false, graph_canvas, graph_context)},
+                                  function(){if(animate){animate.stop()};
+                                             drawFractal(alt_rules[Math.floor(Math.random()*alt_rules.length)], 7, 500, false, graph_canvas, graph_context)}
                                  ];
                 
                 graph_context.clearRect(0, 0, 500, 500);
