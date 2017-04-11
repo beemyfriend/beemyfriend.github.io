@@ -293,7 +293,7 @@
                         <br><br>
                         <button onclick = 'createNewRule(); update(); return false;'>Add Rule</button>
                         <br>
-                        <button onclick="draw(myRules, 10, 1000, false, graph_canvas, graph_context); return false;">Build the Fractal!</button>
+                        <button onclick="drawFractal(myRules, 10, 1000, false, graph_canvas, graph_context); return false;">Build the Fractal!</button>
                     </form>
                     <div id = 'showrules'></div>
                     <br><br><br><br><br><br><br>
@@ -335,34 +335,112 @@
             .graph(d3.selectAll('#graph'))
             .sections(d3.selectAll('#sections > div'))
             .on('active', function(i){
-                var to_display = [function(){draw(sierpinski_rules, 10, 0, false, otherCanvas, otherCtx)},
-                                  function(){draw(sierpinski_rules, 10, 0, false, otherCanvas, otherCtx, 1)},
-                                  function(){draw(sierpinski_rules, 10, 0, false, otherCanvas, otherCtx, 2)},
-                                  function(){draw(sierpinski_rules, 10, 0, false, otherCanvas, otherCtx, 3)},
-                                  function(){draw([[.5, .5, 0, .5, .5]], 2, 0, 'quad', otherCanvas, otherCtx)},
-                                  function(){draw([[.25, .5, 0, .5, .5]], 2, 0, 'quad', otherCanvas, otherCtx)},
-                                  function(){draw([[-.25, .5, 0, .5, .5]], 2, 0, 'quad', otherCanvas, otherCtx)},
-                                  function(){draw([[.5, .25, 0, .5, .5]], 2, 0, 'quad', otherCanvas, otherCtx)},
-                                  function(){draw([[.5, -.25, 0, .5, .5]], 2, 0, 'quad', otherCanvas, otherCtx)},
-                                  function(){draw([[.5, .5, 45, .5, .5]], 2, 0, 'angle', otherCanvas, otherCtx)},
-                                  function(){draw([[.25, .25, 0, .75, .5]], 2, 0, 'quad', otherCanvas, otherCtx)},
-                                  function(){draw([[-.25, .25, 0, .75, .5]], 2, 0, 'quad', otherCanvas, otherCtx)},
-                                  function(){draw([[.25, .25, 0, .5, .75]], 2, 0, 'quad', otherCanvas, otherCtx)},
-                                  function(){draw([[.25, -.25, 0, .5, .75]], 2, 0,  'quad', otherCanvas, otherCtx)},
-                                  function(){draw(sierpinski_rules, 10, 0, 'single', otherCanvas, otherCtx)},
-                                  function(){draw(sierpinski_rules, 10, 0, 'single', otherCanvas, otherCtx)},
-                                  function(){draw([[.5, .5, 0, 0, 0]], 2, 0, 'single', otherCanvas, otherCtx)},
-                                  function(){draw([[.5, .5, 0, .5, 0]], 2, 0, 'single', otherCanvas, otherCtx)},
-                                  function(){draw([[.5, .5, 0, 0, .5]], 2, 0, 'single', otherCanvas, otherCtx)},
-                                  function(){draw(sierpinski_rules, 10, 500, 'single', graph_canvas, graph_context)},
-                                  function(){draw(sierpinski_rules, 10, 0, false, graph_canvas, graph_context)},
-                                  function(){draw(complex_rules, 10, 0, false, graph_canvas, graph_context)},
-                                  function(){draw([[-.5, .5, 90, .5, .5]], 2, 0, 'single', graph_canvas, graph_context)}, 
-                                  function(){draw([[.5, .5, -90, .5, .5]], 2, 0, 'single', graph_canvas, graph_context)},
-                                  function(){draw([[.5, .5, 0, 0, .5]], 2, 0, 'single', graph_canvas, graph_context)}, 
-                                  function(){draw(complex_rules, 10, 500, false, graph_canvas, graph_context)},
-                                  function(){draw(complex_rules, 10, 0, false, graph_canvas, graph_context)},
-                                  function(){draw(alt_rules[Math.floor(Math.random()*alt_rules.length)], 7, 500, false, graph_canvas, graph_context)}
+                var to_display = [function(){drawFractal(sierpinski_rules, 10, 0, false, otherCanvas, otherCtx)},
+                                  function(){drawFractal(sierpinski_rules, 10, 0, false, otherCanvas, otherCtx, 1)},
+                                  function(){drawFractal(sierpinski_rules, 10, 0, false, otherCanvas, otherCtx, 2)},
+                                  function(){drawFractal(sierpinski_rules, 10, 0, false, otherCanvas, otherCtx, 3)},
+                                  function(){drawFractal([[.5, .5, 0, .5, .5]], 2, 0, 'quad', otherCanvas, otherCtx)},
+                                  function(){draw([function(){drawFractal([[.5, .5, 0, .5, .5]], 2, 0, 'quad', otherCanvas, otherCtx)}, 
+                                                   function(){drawFractal([[.4, .5, 0, .5, .5]], 2, 0, 'quad', otherCanvas, otherCtx)},
+                                                   function(){drawFractal([[.3, .5, 0, .5, .5]], 2, 0, 'quad', otherCanvas, otherCtx)},
+                                                   function(){drawFractal([[.25, .5, 0, .5, .5]], 2, 0, 'quad', otherCanvas, otherCtx)}], 
+                                                  500)},
+                                  function(){draw([function(){drawFractal([[.5, .5, 0, .5, .5]], 2, 0, 'quad', otherCanvas, otherCtx)}, 
+                                                   function(){drawFractal([[.4, .5, 0, .5, .5]], 2, 0, 'quad', otherCanvas, otherCtx)},
+                                                   function(){drawFractal([[.3, .5, 0, .5, .5]], 2, 0, 'quad', otherCanvas, otherCtx)},
+                                                   function(){drawFractal([[.25, .5, 0, .5, .5]], 2, 0, 'quad', otherCanvas, otherCtx)},
+                                                   function(){drawFractal([[-.25, .5, 0, .5, .5]], 2, 0, 'quad', otherCanvas, otherCtx)}], 
+                                                  500)},
+                                  function(){draw([function(){drawFractal([[.5, .5, 0, .5, .5]], 2, 0, 'quad', otherCanvas, otherCtx)}, 
+                                                   function(){drawFractal([[.5, .4, 0, .5, .5]], 2, 0, 'quad', otherCanvas, otherCtx)},
+                                                   function(){drawFractal([[.5, .3, 0, .5, .5]], 2, 0, 'quad', otherCanvas, otherCtx)},
+                                                   function(){drawFractal([[.5, .25, 0, .5, .5]], 2, 0, 'quad', otherCanvas, otherCtx)},], 
+                                                  500)},
+                                  function(){draw([function(){drawFractal([[.5, .5, 0, .5, .5]], 2, 0, 'quad', otherCanvas, otherCtx)}, 
+                                                   function(){drawFractal([[.5, .4, 0, .5, .5]], 2, 0, 'quad', otherCanvas, otherCtx)},
+                                                   function(){drawFractal([[.5, .3, 0, .5, .5]], 2, 0, 'quad', otherCanvas, otherCtx)},
+                                                   function(){drawFractal([[.5, .25, 0, .5, .5]], 2, 0, 'quad', otherCanvas, otherCtx)},
+                                                   function(){drawFractal([[.5, -.25, 0, .5, .5]], 2, 0, 'quad', otherCanvas, otherCtx)}], 
+                                                  500)},
+                                  function(){draw([function(){drawFractal([[.5, .5, 0, .5, .5]], 2, 0, 'quad', otherCanvas, otherCtx)},
+                                                   function(){drawFractal([[.5, .5, 10, .5, .5]], 2, 0, 'quad', otherCanvas, otherCtx)}, 
+                                                   function(){drawFractal([[.5, .5, 20, .5, .5]], 2, 0, 'quad', otherCanvas, otherCtx)}, 
+                                                   function(){drawFractal([[.5, .5, 30, .5, .5]], 2, 0, 'quad', otherCanvas, otherCtx)}, 
+                                                   function(){drawFractal([[.5, .5, 45, .5, .5]], 2, 0, 'angle', otherCanvas, otherCtx)}],
+                                                 500)},
+                                  function(){draw([function(){drawFractal([[.5, .5, 0, .5, .5]], 2, 0, 'quad', otherCanvas, otherCtx)}, 
+                                                   function(){drawFractal([[.33, .33, 0, .5, .5]], 2, 0, 'quad', otherCanvas, otherCtx)}, 
+                                                   function(){drawFractal([[.25, .25, 0, .5, .5]], 2, 0, 'quad', otherCanvas, otherCtx)}, 
+                                                   function(){drawFractal([[.25, .25, 0, .6, .5]], 2, 0, 'quad', otherCanvas, otherCtx)}, 
+                                                   function(){drawFractal([[.25, .25, 0, .75, .5]], 2, 0, 'quad', otherCanvas, otherCtx)}],
+                                                 500)},
+                                  function(){draw([function(){drawFractal([[.5, .5, 0, .5, .5]], 2, 0, 'quad', otherCanvas, otherCtx)}, 
+                                                   function(){drawFractal([[.33, .33, 0, .5, .5]], 2, 0, 'quad', otherCanvas, otherCtx)}, 
+                                                   function(){drawFractal([[.25, .25, 0, .5, .5]], 2, 0, 'quad', otherCanvas, otherCtx)},
+                                                   function(){drawFractal([[-.25, .25, 0, .5, .5]], 2, 0, 'quad', otherCanvas, otherCtx)},
+                                                   function(){drawFractal([[-.25, .25, 0, .6, .5]], 2, 0, 'quad', otherCanvas, otherCtx)}, 
+                                                   function(){drawFractal([[-.25, .25, 0, .75, .5]], 2, 0, 'quad', otherCanvas, otherCtx)}],
+                                                 500)},
+                                  function(){draw([function(){drawFractal([[.5, .5, 0, .5, .5]], 2, 0, 'quad', otherCanvas, otherCtx)}, 
+                                                   function(){drawFractal([[.33, .33, 0, .5, .5]], 2, 0, 'quad', otherCanvas, otherCtx)}, 
+                                                   function(){drawFractal([[.25, .25, 0, .5, .5]], 2, 0, 'quad', otherCanvas, otherCtx)}, 
+                                                   function(){drawFractal([[.25, .25, 0, .5, .6]], 2, 0, 'quad', otherCanvas, otherCtx)}, 
+                                                   function(){drawFractal([[.25, .25, 0, .5, .75]], 2, 0, 'quad', otherCanvas, otherCtx)}],
+                                                 500)},
+                                  function(){draw([function(){drawFractal([[.5, .5, 0, .5, .5]], 2, 0, 'quad', otherCanvas, otherCtx)}, 
+                                                   function(){drawFractal([[.33, .33, 0, .5, .5]], 2, 0, 'quad', otherCanvas, otherCtx)}, 
+                                                   function(){drawFractal([[.25, .25, 0, .5, .5]], 2, 0, 'quad', otherCanvas, otherCtx)},
+                                                   function(){drawFractal([[.25, -.25, 0, .5, .5]], 2, 0, 'quad', otherCanvas, otherCtx)},
+                                                   function(){drawFractal([[.25, -.25, 0, .5, .6]], 2, 0, 'quad', otherCanvas, otherCtx)}, 
+                                                   function(){drawFractal([[.25, -.25, 0, .5, .75]], 2, 0, 'quad', otherCanvas, otherCtx)}],
+                                                 500)},
+                                  function(){drawFractal(sierpinski_rules, 10, 0, 'single', otherCanvas, otherCtx)},
+                                  function(){drawFractal(sierpinski_rules, 10, 0, 'single', otherCanvas, otherCtx)},
+                                  function(){draw([function(){drawFractal([[1, 1, 0, 0, 0]], 2, 0, 'single', otherCanvas, otherCtx)}, 
+                                                   function(){drawFractal([[.75, .75, 0, 0, 0]], 2, 0, 'single', otherCanvas, otherCtx)}, 
+                                                   function(){drawFractal([[.5, .5, 0, 0, 0]], 2, 0, 'single', otherCanvas, otherCtx)}],
+                                                 500)},
+                                  function(){draw([function(){drawFractal([[1, 1, 0, 0, 0]], 2, 0, 'single', otherCanvas, otherCtx)}, 
+                                                   function(){drawFractal([[.75, .75, 0, 0, 0]], 2, 0, 'single', otherCanvas, otherCtx)}, 
+                                                   function(){drawFractal([[.5, .5, 0, 0, 0]], 2, 0, 'single', otherCanvas, otherCtx)}, 
+                                                   function(){drawFractal([[.5, .5, 0, .25, 0]], 2, 0, 'single', otherCanvas, otherCtx)}, 
+                                                   function(){drawFractal([[.5, .5, 0, .5, 0]], 2, 0, 'single', otherCanvas, otherCtx)}],
+                                                 500)},
+                                  function(){draw([function(){drawFractal([[1, 1, 0, 0, 0]], 2, 0, 'single', otherCanvas, otherCtx)}, 
+                                                   function(){drawFractal([[.75, .75, 0, 0, 0]], 2, 0, 'single', otherCanvas, otherCtx)}, 
+                                                   function(){drawFractal([[.5, .5, 0, 0, 0]], 2, 0, 'single', otherCanvas, otherCtx)}, 
+                                                   function(){drawFractal([[.5, .5, 0, 0, .25]], 2, 0, 'single', otherCanvas, otherCtx)}, 
+                                                   function(){drawFractal([[.5, .5, 0, 0, .5]], 2, 0, 'single', otherCanvas, otherCtx)}],
+                                                 500)},
+                                  function(){if(animate){animate.stop()};
+                                             drawFractal(sierpinski_rules, 10, 500, 'single', graph_canvas, graph_context);},
+                                  function(){drawFractal(sierpinski_rules, 10, 0, false, graph_canvas, graph_context)},
+                                  function(){drawFractal(complex_rules, 10, 0, false, graph_canvas, graph_context)},
+                                  function(){draw([function(){drawFractal([[1, 1, 0, 0, 0]], 2, 0, 'single', otherCanvas, otherCtx)}, 
+                                                   function(){drawFractal([[.75, .75, 0, 0, 0]], 2, 0, 'single', otherCanvas, otherCtx)}, 
+                                                   function(){drawFractal([[.5, .5, 0, 0, 0]], 2, 0, 'single', otherCanvas, otherCtx)}, 
+                                                   function(){drawFractal([[-.5, .5, 0, 0, 0]], 2, 0, 'single', otherCanvas, otherCtx)}, 
+                                                   function(){drawFractal([[-.5, .5, 90, .25, .25]], 2, 0, 'single', otherCanvas, otherCtx)}, 
+                                                   function(){drawFractal([[-.5, .5, 90, .5, .5]], 2, 0, 'single', otherCanvas, otherCtx)}],
+                                                 500)},                                  
+                                  function(){draw([function(){drawFractal([[1, 1, 0, 0, 0]], 2, 0, 'single', otherCanvas, otherCtx)}, 
+                                                   function(){drawFractal([[.75, .75, 0, 0, 0]], 2, 0, 'single', otherCanvas, otherCtx)}, 
+                                                   function(){drawFractal([[.5, .5, 0, 0, 0]], 2, 0, 'single', otherCanvas, otherCtx)}, 
+                                                   function(){drawFractal([[.5, .5, -45, 0, 0]], 2, 0, 'single', otherCanvas, otherCtx)}, 
+                                                   function(){drawFractal([[.5, .5, -90, 0, 0]], 2, 0, 'single', otherCanvas, otherCtx)}, 
+                                                   function(){drawFractal([[.5, .5, -90, .25, .25]], 2, 0, 'single', otherCanvas, otherCtx)}, 
+                                                   function(){drawFractal([[.5, .5, -90, .5, .5]], 2, 0, 'single', otherCanvas, otherCtx)}],
+                                                 500)}, 
+                                  function(){draw([function(){drawFractal([[1, 1, 0, 0, 0]], 2, 0, 'single', otherCanvas, otherCtx)}, 
+                                                   function(){drawFractal([[.75, .75, 0, 0, 0]], 2, 0, 'single', otherCanvas, otherCtx)}, 
+                                                   function(){drawFractal([[.5, .5, 0, 0, 0]], 2, 0, 'single', otherCanvas, otherCtx)}, 
+                                                   function(){drawFractal([[.5, .5, 0, 0, .25]], 2, 0, 'single', otherCanvas, otherCtx)}, 
+                                                   function(){drawFractal([[.5, .5, 0, 0, .5]], 2, 0, 'single', otherCanvas, otherCtx)}],
+                                                 500)},
+                                  function(){if(animate){animate.stop()};
+                                             drawFractal(complex_rules, 10, 500, false, graph_canvas, graph_context)},
+                                  function(){drawFractal(complex_rules, 10, 0, false, graph_canvas, graph_context)},
+                                  function(){drawFractal(alt_rules[Math.floor(Math.random()*alt_rules.length)], 7, 500, false, graph_canvas, graph_context)}
                                  ];
                 
                 graph_context.clearRect(0, 0, 500, 500);
@@ -467,23 +545,27 @@
             select_context.restore();
         }
         
-        var animate;
+        var animateFractal;
         
-        function draw(rules, iterations, time_per_iteration, axisType, select_canvas, select_context, annot_code){
-            if(animate){animate.stop()};
-            var now = 0;
+        //draws the fractals, if time_per_iterations == 0, then the function provides a picture, if time_per_iteration > 0, then the 
+        //function provides an animation that displays the creation of the fractal
+        function drawFractal(rules, iterations, time_per_iteration, axisType, select_canvas, select_context, annot_code){
+            if(animateFractal){animateFractal.stop()};
+            
+            var nowFractal = 0;
+            
             function start(){
                     init();
                     select_context.drawImage(myCanvas, 0, 0);
-                    now++
+                    nowFractal++
                 }
 
             if(time_per_iteration > 0){
-                animate = d3.interval(function(){now < 1 ? start() : update()}, time_per_iteration);
+                animateFractal = d3.interval(function(){nowFractal < 1 ? start() : updateFractal()}, time_per_iteration);
                                 
-                function update(){
-                    if(now >= iterations){
-                        clearInterval(animate);
+                function updateFractal(){
+                    if(nowFractal >= iterations){
+                        animateFractal.stop();
                     } else {
                         select_context.clearRect(0, 0, width, height)
                         for(var i = 0; i < rules.length; i++){
@@ -491,13 +573,13 @@
                         }
                         myCtx.clearRect(0, 0, width, height);
                         myCtx.drawImage(select_canvas, 0, 0);
-                        now++;
+                        nowFractal++;
                     }
                 }
             } else {
-                function update(){
+                function updateFractal(){
                     select_context.clearRect(0, 0, width, height)
-                    if(now <1){
+                    if(nowFractal <1){
                         start()
                     } else {
                         for(var i = 0; i < rules.length; i++){
@@ -506,19 +588,42 @@
                         }
                         myCtx.clearRect(0, 0, width, height);
                         myCtx.drawImage(select_canvas, 0, 0);
-                        now++;
+                        nowFractal++;
                     }
                 }
-                while(now < iterations-1){
-                    update()
+                while(nowFractal < iterations-1){
+                    updateFractal()
                 }
                 
-                update()
+                updateFractal()
                 
                 axisScale(axisType)
 
             }
             create_annot_rect(annot_code)
+        }
+        
+        var framestest;
+        var animate;
+        //frames is an array of images and frame_rate is speed at which we show those images
+        function draw(frames, frame_rate){
+            if(animate){animate.stop()};
+
+            animate = d3.interval(function(){update()}, frame_rate);
+            
+            var now = 0;
+            framestest = frames
+            function update(){
+                if(now >= frames.length){
+                    animate.stop()
+                } else {
+                    console.log(now);
+                    graph_context.clearRect(0, 0, 500, 500);
+                    frames[now]();                    
+                    graph_context.drawImage(myCanvas, 0, 0);
+                    now++
+                }
+            }
         }
 
         var svg = d3.select('#graph')
