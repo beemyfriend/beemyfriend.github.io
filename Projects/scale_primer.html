@@ -186,6 +186,36 @@
             leftLogAxis0 = d3.axisLeft(logScaleY0),
             bottomCirclesAxis = d3.axisBottom(x_circles)
         
+        function textMaker(text, fontsize, x, y){
+            svg.append('g')
+                .append('text')
+                .text(text)
+                .attr('font-size', fontsize)
+                .attr('transform', 'translate(' + x + ',' + y + ')');
+        }
+        
+        function annotationMaker(message, x, y, width, height, dx, dy){
+            var annotations = [{
+                note: {label: message},
+                x: x,
+                y: y,
+                subject: {
+                    width: width,
+                    height: height
+                },
+                dx: dx,
+                dy: dy
+            }]
+            
+            var makeAnnotations = d3.annotation()
+                .type(d3.annotationCalloutRect)
+                .annotations(annotations);
+            
+            svg.append('g')
+                .attr('class', 'annotation-group')
+                .call(makeAnnotations)
+        }
+        
         
         var svg = d3.select('#graph')
             .append('svg')
@@ -224,59 +254,25 @@
                 .attr('transform', 'translate(' + margin.left + ',0)')
                 .call(leftLineAxis0);
             
-            svg.append('g')
-                .append('text')
-                .text("d3.scaleLinear()")
-                .attr('font-size', 40)
-                .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+            textMaker("d3.scaleLinear()", 40, margin.left, margin.top);
             
-            svg.append('g')
-                .append('text')
-                .text('When there are no extreme outliers in your data, then use a normal linear scale.')
-                .attr('font-size', 20)
-                .attr('transform', 'translate(' + margin.left + ',' + (margin.top * 2) + ')')
+            textMaker('When there are no extreme outliers in your data, then use a normal linear scale.', 20, margin.left, (margin.top * 2));
             
-            var annotations = [{
-                note:{
-                    label: 'The difference in value between these two circles is also 20'
-                },
-                x: (x(4)),
-                y: (lineScaleY0(100) - pointHW/2),
-                subject: {
-                    width: (x(5) - x(4) + pointHW),
-                    height: (lineScaleY0(80) - lineScaleY0(100) + pointHW)
-                },
-                dx: -100,
-                dy: 0
-            }];
+            annotationMaker('The difference in value between these two circles is also 20', 
+                            x(4), 
+                            (lineScaleY0(100) - pointHW/2), 
+                            (x(5) - x(4) + pointHW), 
+                            (lineScaleY0(80) - lineScaleY0(100) + pointHW),
+                            -100, 
+                            0);
             
-            var makeAnnotations = d3.annotation()
-                .type(d3.annotationCalloutRect)
-                .annotations(annotations);
+            annotationMaker('The difference in value between these two circles is 20', 
+                            x(1), (lineScaleY0(40) - pointHW/2),
+                            (x(5) - x(4) + pointHW), 
+                            (lineScaleY0(80) - lineScaleY0(100) + pointHW), 
+                            0, 
+                            -100);
             
-            svg.append('g')
-                .attr('class', 'annotation-group')
-                .call(makeAnnotations)
-            
-            var annotations2 = [{
-                note: {label: 'The difference in value between these two circles is 20'},
-                x: (x(1)),
-                y: (lineScaleY0(40) - pointHW/2),
-                subject: {
-                    width: (x(5) - x(4) + pointHW),
-                    height: (lineScaleY0(80) - lineScaleY0(100) + pointHW)
-                },
-                dx: 0,
-                dy: -100
-            }]
-            
-            var makeAnnotations2 = d3.annotation()
-                .type(d3.annotationCalloutRect)
-                .annotations(annotations2);
-            
-            svg.append('g')
-                .attr('class', 'annotation-group')
-                .call(makeAnnotations2)            
         }
         
         function notokline(){
@@ -299,65 +295,27 @@
                 .attr('transform', 'translate(' + margin.left + ',0)')
                 .call(leftLineAxis1)
             
-            svg.append('g')
-                .append('text')
-                .text("d3.scaleLinear()")
-                .attr('font-size', 40)
-                .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+            textMaker('d.scaleLinear()', 40, margin.left, margin.top);
             
-            svg.append('g')
-                .append('text')
-                .text('However, when there is an extreme outlier, than the rest of the data is clustered together on the scale and are')
-                .attr('font-size', 20)
-                .attr('transform', 'translate(' + margin.left + ',' + (margin.top * 2) + ')')
+            textMaker('However, when there is an extreme outlier, than the rest of the data is clustered together on the scale and are', 20, margin.left, (margin.top*2));
             
-            svg.append('g')
-                .append('text')
-                .text('difficult to differentiate.')
-                .attr('font-size', 20)
-                .attr('transform', 'translate(' + margin.left + ',' + (margin.top * 2.5) + ')')
+            textMaker('difficult to differentiate.', 20, margin.left, (margin.top * 2.5));
             
-                        var annotations = [{
-                note:{
-                    label: 'The difference in value between these two circles is 9, can you tell?'
-                },
-                x: (x(0)),
-                y: (lineScaleY1(10) - pointHW/2),
-                subject: {
-                    width: (x(5) - x(4) + pointHW),
-                    height: (lineScaleY1(1) - lineScaleY1(10) + pointHW)
-                },
-                dx: 10,
-                dy: -100
-            }];
+            annotationMaker('The difference in value between these two circles is 9, can you tell?',
+                           x(0),
+                           (lineScaleY1(10) - pointHW/2),
+                           (x(5) - x(4) + pointHW),
+                           (lineScaleY1(1) - lineScaleY1(10) + pointHW),
+                           10,
+                           -100)
             
-            var makeAnnotations = d3.annotation()
-                .type(d3.annotationCalloutRect)
-                .annotations(annotations);
-            
-            svg.append('g')
-                .attr('class', 'annotation-group')
-                .call(makeAnnotations)
-            
-            var annotations2 = [{
-                note: {label: 'The difference in value between these two circles is 900, can you tell?'},
-                x: (x(2)),
-                y: (lineScaleY1(1000) - pointHW/2),
-                subject: {
-                    width: (x(5) - x(4) + pointHW),
-                    height: (lineScaleY1(100) - lineScaleY1(1000) + pointHW)
-                },
-                dx: 10,
-                dy: -100
-            }]
-            
-            var makeAnnotations2 = d3.annotation()
-                .type(d3.annotationCalloutRect)
-                .annotations(annotations2);
-            
-            svg.append('g')
-                .attr('class', 'annotation-group')
-                .call(makeAnnotations2)
+            annotationMaker('The difference in value between these two circles is 900, can you tell?', 
+                            x(2), 
+                            (lineScaleY1(1000) - pointHW/2), 
+                            (x(5) - x(4) + pointHW), 
+                            (lineScaleY1(100) - lineScaleY1(1000) + pointHW), 
+                            10, 
+                            -100)
 
         }
         
@@ -379,81 +337,36 @@
             
             svg.append('g')
                 .attr('transform', 'translate(' + margin.left + ',0)')
-                .call(leftLogAxis1)
+                .call(leftLogAxis1);
           
-            svg.append('g')
-                .append('text')
-                .text("d3.scaleLog().base(10)")
-                .attr('font-size', 40)
-                .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+            textMaker('d3.scaleLog().base(10)', 40, margin.left, margin.top);
+            
+            textMaker('If you have an extreme outlier, and you want to differentiate the rest of the data, then you want to use a log scale.', 20, margin.left, (margin.top * 2));
 
-            svg.append('g')
-                .append('text')
-                .text('If you have an extreme outlier, and you want to differentiate the rest of the data, then you want to use a log scale.')
-                .attr('font-size', 20)
-                .attr('transform', 'translate(' + margin.left + ',' + (margin.top * 2) + ')')            
+            annotationMaker('The difference in value between these two circles is 9',
+                            x(0),
+                            (logScaleY1(10) - pointHW/2),
+                            (x(5) - x(4) + pointHW),
+                            (logScaleY1(1) - logScaleY1(10) + pointHW), 
+                            50, 
+                            -100);
             
-            var annotations = [{
-                note:{
-                    label: 'The difference in value between these two circles is 9'
-                },
-                x: (x(0)),
-                y: (logScaleY1(10) - pointHW/2),
-                subject: {
-                    width: (x(5) - x(4) + pointHW),
-                    height: (logScaleY1(1) - logScaleY1(10) + pointHW)
-                },
-                dx: 50,
-                dy: -100
-            }];
+            annotationMaker('The difference in value between these two circles is 900',
+                            x(2),
+                            (logScaleY1(1000) - pointHW/2),
+                            (x(5) - x(4) + pointHW),
+                            (logScaleY1(100) - logScaleY1(1000) + pointHW),
+                            50,
+                            -100);
             
-            var makeAnnotations = d3.annotation()
-                .type(d3.annotationCalloutRect)
-                .annotations(annotations);
+            annotationMaker('The difference in value between these two circles is 90,000',
+                            x(4),
+                            (logScaleY1(100000) - pointHW/2),
+                            (x(5) - x(4) + pointHW),
+                            (logScaleY1(10000) - logScaleY1(100000) + pointHW),
+                            50,
+                            200);
             
-            svg.append('g')
-                .attr('class', 'annotation-group')
-                .call(makeAnnotations)
-            
-            var annotations2 = [{
-                note: {label: 'The difference in value between these two circles is 900'},
-                x: (x(2)),
-                y: (logScaleY1(1000) - pointHW/2),
-                subject: {
-                    width: (x(5) - x(4) + pointHW),
-                    height: (logScaleY1(100) - logScaleY1(1000) + pointHW)
-                },
-                dx: 50,
-                dy: -100
-            }]
-            
-            var makeAnnotations2 = d3.annotation()
-                .type(d3.annotationCalloutRect)
-                .annotations(annotations2);
-            
-            svg.append('g')
-                .attr('class', 'annotation-group')
-                .call(makeAnnotations2)
-
-            var annotations3 = [{
-                note: {label: 'The difference in value between these two circles is 90,000'},
-                x: (x(4)),
-                y: (logScaleY1(100000) - pointHW/2),
-                subject: {
-                    width: (x(5) - x(4) + pointHW),
-                    height: (logScaleY1(10000) - logScaleY1(100000) + pointHW)
-                },
-                dx: 50,
-                dy: 200
-            }]
-            
-            var makeAnnotations3 = d3.annotation()
-                .type(d3.annotationCalloutRect)
-                .annotations(annotations3);
-            
-            svg.append('g')
-                .attr('class', 'annotation-group')
-                .call(makeAnnotations3)            
         }
         
         function notoklog(){
@@ -474,67 +387,31 @@
             
             svg.append('g')
                 .attr('transform', 'translate(' + margin.left + ',0)')
-                .call(leftLogAxis0)
-
-            svg.append('g')
-                .append('text')
-                .text("d3.scaleLog().base(10)")
-                .attr('font-size', 40)
-                .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
-
-            svg.append('g')
-                .append('text')
-                .text('The magnitude represented by a space or tick on the upper end of a log scale is exponentially greater than the ')
-                .attr('font-size', 20)
-                .attr('transform', 'translate(' + margin.left + ',' + margin.top * 2 + ')')    
+                .call(leftLogAxis0);
             
-            svg.append('g')
-                .append('text')
-                .text('magnitude represented by a space or a tick on the lower end of a log scale.')
-                .attr('font-size', 20)
-                .attr('transform', 'translate(' + margin.left + ',' + (margin.top * 2.5) + ')')
+            textMaker('d3.scaleLog().base(10)', 40, margin.left, margin.top);
             
-                        var annotations = [{
-                note:{
-                    label: 'The difference in value between these two circles is 20'
-                },
-                x: (x(1)),
-                y: (logScaleY0(40) - pointHW/2),
-                subject: {
-                    width: (x(5) - x(4) + pointHW),
-                    height: (logScaleY0(20) - logScaleY0(40) + pointHW)
-                },
-                dx: 50,
-                dy: 200
-            }];
+            textMaker('The magnitude represented by a space or tick on the upper end of a log scale is exponentially greater than the ', 20, margin.left, (margin.top * 2));
             
-            var makeAnnotations = d3.annotation()
-                .type(d3.annotationCalloutRect)
-                .annotations(annotations);
+            textMaker('magnitude represented by a space or a tick on the lower end of a log scale.', 20, margin.left, (margin.top * 2.5));
             
-            svg.append('g')
-                .attr('class', 'annotation-group')
-                .call(makeAnnotations)
+            annotationMaker('The difference in value between these two circles is 20', 
+                            x(1),
+                            (logScaleY0(40) - pointHW/2),
+                            (x(5) - x(4) + pointHW),
+                            (logScaleY0(20) - logScaleY0(40) + pointHW),
+                            50,
+                            200
+                           );
             
-            var annotations2 = [{
-                note: {label: 'The difference in value between these two circles is also 20'},
-                x: (x(4)),
-                y: (logScaleY0(100) - pointHW/2),
-                subject: {
-                    width: (x(5) - x(4) + pointHW),
-                    height: (logScaleY0(80) - logScaleY0(100) + pointHW)
-                },
-                dx: 50,
-                dy: 150
-            }]
-            
-            var makeAnnotations2 = d3.annotation()
-                .type(d3.annotationCalloutRect)
-                .annotations(annotations2);
-            
-            svg.append('g')
-                .attr('class', 'annotation-group')
-                .call(makeAnnotations2)
+            annotationMaker('The difference in value between these two circles is also 20',
+                            x(4),
+                            (logScaleY0(100) - pointHW/2),
+                            (x(5) - x(4) + pointHW),
+                            (logScaleY0(80) - logScaleY0(100) + pointHW),
+                            50,
+                            150
+                           )
         }
         
         function notokradius(){
@@ -559,29 +436,13 @@
                 .attr('transform', 'translate(0,' + (height-margin.bottom) + ')')
                 .call(bottomCirclesAxis)
             
-            svg.append('g')
-                .append('text')
-                .text("d3.scaleLinear()")
-                .attr('font-size', 40)
-                .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+            textMaker('d3.scaleLinear()', 40, margin.left, margin.top);
             
-            svg.append('g')
-                .append('text')
-                .text("When adjusting the radius of a circle according to data, you should not use a linear scale. This is because")
-                .attr('font-size', 20)
-                .attr('transform', 'translate(' + margin.left + ',' + (margin.top * 2) + ')');            
+            textMaker("When adjusting the radius of a circle according to data, you should not use a linear scale. This is because", 20, margin.left, (margin.top * 2));
             
-            svg.append('g')
-                .append('text')
-                .text('the area of a circle is proportional to the square of the radius. A circle representing adata point that is ')
-                .attr('font-size', 20)
-                .attr('transform', 'translate(' + margin.left + ',' + (margin.top *  2.5) + ')')
+            textMaker('the area of a circle is proportional to the square of the radius. A circle representing adata point that is ', 20, margin.left, (margin.top * 2.5));
             
-            svg.append('g')
-                .append('text')
-                .text('only 2x the magnitude of another, will actually have 4x the area')
-                .attr('font-size', 20)
-                .attr('transform', 'translate(' + margin.left + ',' + (margin.top * 3) + ')');
+            textMaker('only 2x the magnitude of another, will actually have 4x the area', 20, margin.left, (margin.top * 3));
                 
         }
         
@@ -601,29 +462,17 @@
                 .attr('fill', 'black')
                 .attr('fill-opacity', .33)
                 .attr('rx', 100)
-                .attr('ry', 100)
+                .attr('ry', 100);
             
             svg.append('g')
                 .attr('transform', 'translate(0,' + (height-margin.bottom) + ')')
-                .call(bottomCirclesAxis)     
+                .call(bottomCirclesAxis);     
             
-            svg.append('g')
-                .append('text')
-                .text("d3.scaleSqrt()")
-                .attr('font-size', 40)
-                .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+            textMaker('d3.scaleSqrt()', 40, margin.left, margin.top);
             
-            svg.append('g')
-                .append('text')
-                .text("In order to create circles with areas that are proportional to the data, we need to create radii")
-                .attr('font-size', 20)
-                .attr('transform', 'translate(' + margin.left + ',' + (margin.top * 2) + ')');                   
+            textMaker("In order to create circles with areas that are proportional to the data, we need to create radii", 20, margin.left, (margin.top * 2));
            
-            svg.append('g')
-                .append('text')
-                .text("using a square root scale.")
-                .attr('font-size', 20)
-                .attr('transform', 'translate(' + margin.left + ',' + (margin.top * 2.5) + ')');                          
+            textMaker("using a square root scale.", 20, margin.left, (margin.top * 2.5));
         }
         
         function okcircle2square(){
@@ -642,28 +491,20 @@
                 .attr('fill', 'black')
                 .attr('fill-opacity', .33)
                 .attr('rx', 0)
-                .attr('ry', 0)
+                .attr('ry', 0);
             
             svg.selectAll('rect')
                 .transition().delay(animationDuration).duration(animationDuration)
-                .attr('x', function(d){return d[2] == 25 ? x_circles(100) -  (Math.sqrt(Math.PI * (sqrtScaleR0(100) **2))/2)  : x_circles(d[2]) - (Math.sqrt(Math.PI * (sqrtScaleR0(d[2]) **2))/2)})
+                .attr('x', function(d){return d[2] == 25 ? x_circles(100) -  (Math.sqrt(Math.PI * (sqrtScaleR0(100) **2))/2)  : x_circles(d[2]) - (Math.sqrt(Math.PI * (sqrtScaleR0(d[2]) **2))/2)});
 
             svg.append('g')
                 .attr('transform', 'translate(0,' + (height-margin.bottom) + ')')
-                .call(bottomCirclesAxis)
+                .call(bottomCirclesAxis);
             
-            svg.append('g')
-                .append('text')
-                .text("d3.scaleSqrt()")
-                .attr('font-size', 40)
-                .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
-            
-            svg.append('g')
-                .append('text')
-                .text("Here we convert the circles to squares to show the improved effect using a square root scale has on a circle's area.")
-                .attr('font-size', 20)
-                .attr('transform', 'translate(' + margin.left + ',' + (margin.top * 2) + ')');                              
+            textMaker('d3.scaleSqrt()', 40, margin.left, margin.top);
 
+            textMaker("Here we convert the circles to squares to show the improved effect using a square root scale has on a circle's area.", 20, margin.left, (margin.top * 2));
+            
         }
         
         function notokcircle2square(){
@@ -696,23 +537,11 @@
                 .attr('transform', 'translate(0,' + (height-margin.bottom) + ')')
                 .call(bottomCirclesAxis)    
             
-            svg.append('g')
-                .append('text')
-                .text("d3.scaleLinear()")
-                .attr('font-size', 40)
-                .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+            textMaker('d3.scaleLinear()', 40, margin.left, margin.top);
             
-            svg.append('g')
-                .append('text')
-                .text("If we create squares with the same volume as the circles, then it is easier to see the problem with")
-                .attr('font-size', 20)
-                .attr('transform', 'translate(' + margin.left + ',' + (margin.top * 2) + ')');            
-
-            svg.append('g')
-                .append('text')
-                .text("using a linear scale for creating a circle's radius.")
-                .attr('font-size', 20)
-                .attr('transform', 'translate(' + margin.left + ',' + (margin.top * 2.5) + ')');       
+            textMaker("If we create squares with the same volume as the circles, then it is easier to see the problem with", 20, margin.left, (margin.top * 2)); 
+            
+            textMaker("using a linear scale for creating a circle's radius.", 20, margin.left, (margin.top * 2.5));
         }
         
         scrollFunctions = [
