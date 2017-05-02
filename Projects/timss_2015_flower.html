@@ -1,0 +1,138 @@
+<head>
+</head>
+<body>
+    <svg id = 'flower'></svg>
+    <script src = 'd3.js'></script>
+    <script>
+        var data,
+            height = 800,
+            width = 1200,
+            tot_radians = Math.PI * 2,
+            node_radius = 2,
+            center_radius = 5,
+            symbol_size = 50;
+        
+        var margin = {
+            top: 50,
+            left: 100,
+            bottom: 50,
+            right:50
+        }
+        
+        var vis_height = height - margin.top - margin.bottom,
+            vis_width = width - margin.left - margin.right,
+            vis_cx = margin.left + vis_width/2,
+            vis_cy = margin.top + vis_height/2
+        
+        var y_correct_ratio_gender = d3.scaleLinear()
+            .range([-vis_height/2, vis_height/2])
+        
+        var x_correct_ratio = d3.scaleLinear()
+            .range([-vis_width/2, vis_width/2])
+            .domain([0, 1])
+        
+        var clr_flower = d3.scaleLinear()
+            .domain([0, .5, 1])
+            .range(['#fc8d59', '#ffffbf', '#91bfdb']);
+        
+        var clr_content = d3.scaleOrdinal()
+            .range(['#e41a1c', '#377eb8', '#4daf4a', '#984ea3'])
+            .domain(['Algebra', 'Data and Chance', 'Geometry', 'Number'])
+            
+        var country_angle = d3.scaleLinear()
+            .range([0, tot_radians]);
+        
+        var node_radial_position = d3.scaleLinear()
+            .range([center_radius, Math.min(vis_width, vis_height)/2]);
+        
+        var diamond_generator = d3.symbol() 
+            .type(d3.symbolDiamond)
+            .size(symbol_size);
+        
+        var star_generator = d3.symbol()
+            .type(d3.symbolStar)
+            .size(symbol_size);
+        
+        var square_generator = d3.symbol()
+            .type(d3.symbolSquare)
+            .size(symbol_size);
+        
+        var svg = d3.select('#flower')
+            .attr('height', height)
+            .attr('width', width);
+        
+        var g = svg.append('g')
+            .attr('transform', 'translate(' + vis_cx + ',' + vis_cy + ')');    
+        
+        function handle_mouse_over(d, i){
+            console.log(d.country + ' ' + d.question + ' ' + d.international_rank)
+        }
+        
+        function cognitive_shape(cognitive_domain){
+            switch(cognitive_domain){
+                case 'Applying':
+                    return diamond_generator();
+                case 'Knowing':
+                    return star_generator();
+                case 'Reasoning':
+                    return square_generator();
+            }
+        }
+        
+        function create_flower(data){
+            
+            var arc = d3.arc()
+                .outerRadius(function(d){return node_radial_position(d.question_rank )})
+                .innerRadius(function(d){return node_radial_position(d.question_rank - 1)})
+                .startAngle(function(d){return country_angle(d.international_rank - 1)})
+                .endAngle(function(d){return country_angle(d.international_rank)});
+            
+            g.selectAll('path')
+                .data(data)
+                .enter().append('path')
+                .attr('d', arc)
+                .attr('fill', function(d){return clr_flower(d.correct_ratio_per_question)})
+                .attr('stroke', 'black')
+                .attr('stroke-opacity', .2)
+                .attr('class', function(d){return d.question})
+                .attr('id', function(d){return d.question + d.country})
+                .on('mouseover', handle_mouse_over);            
+        }
+        
+        function create_domain_plot(data, country){
+            var country_data = data.filter(function(x){return x.country == country;});
+            
+            g.selectAll('path')
+                .data(country_data)
+                .enter().append('path')
+                .attr('d', function(d){ return cognitive_shape(d.cognitive_domain);})
+                .attr('transform', function(d){return 'translate(' + x_correct_ratio(d.correct_ratio_per_question) + ',' + y_correct_ratio_gender(d.diff_male_female) + ')' })
+                .attr('fill', function(d){return clr_content(d.content_domain)})
+                .attr('fill-opacity', .75)
+                .attr('stroke', function(d){return clr_content(d.content_domain)})
+                .attr('stroke-width', 1)
+                .attr('class', function(d){return d.question + ' ' + d.country + ' point'})
+                .on('mouseover', handle_mouse_over);
+        }
+        
+        
+        d3.tsv('TIMSS_2015_ALL_MATH.tsv', function(error, tsv){
+            if(error) throw error;
+            
+            data = tsv;
+            
+            var countries = tsv.map(function(x){return x.country;}).filter(function(x,i,self){return self.indexOf(x) == i;});
+                        
+            y_correct_ratio_gender.domain(d3.extent(tsv, function(d){return +d.diff_male_female;}));
+            
+            country_angle.domain([0, countries.length]);
+            
+            node_radial_position.domain(d3.extent(tsv, function(d){return +d.question_rank;}));
+            
+//            create_domain_plot(tsv, 'sgp')
+            create_flower(tsv);
+  
+            
+        })
+    </script>
+</body>
