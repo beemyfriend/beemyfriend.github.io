@@ -1,28 +1,118 @@
 <head>
+    <style>
+        #sections > div{
+            opacity: .3;
+        }
+        
+        #sections div.graph-scroll-active{
+            opacity: 1;
+        }
+        
+        #container{
+            position: relative;
+            overflow: auto;
+        }
+        
+        #sections{
+            width: 40px;
+            float: left;
+        }
+        
+        #graph{
+            float: left;
+            left: 40px;
+        }
+        
+        #graph.graph-scroll-fixed{
+            position: fixed;
+            top: 0px;
+            left: 40;
+            margin-left: 10;
+        }
+        body{
+            background-color: whitesmoke;
+        }
+        svg{
+            background-color: none;
+            position: absolute;
+            top:0px;
+            z-index: 2;
+        }
+                
+        
+        div.tooltip{
+            position: absolute;
+            text-align: left;
+            width: 360px;
+            height: 160px;
+            padding: 5px;
+            font-size: 14px;
+            background: lightsteelblue;
+            border: 0px;
+            border-radius: 8px;
+            pointer-events: none;
+        }
+
+</style>
 </head>
 <body>
-    <svg id = 'flower'></svg>
+    <div id = 'container'>
+        <div id = 'sections'>
+            <div>
+                <br><br><br><br><br><br><br><br><br><br>
+                <br><br><br><br><br><br><br><br><br><br>
+                <br><br><br><br><br><br><br><br><br><br>
+                <br><br><br><br><br><br><br><br><br><br>                
+            </div>
+            <div>
+                <br><br><br><br><br><br><br><br><br><br>
+                <br><br><br><br><br><br><br><br><br><br>
+                <br><br><br><br><br><br><br><br><br><br>
+                <br><br><br><br><br><br><br><br><br><br>                
+            </div>
+            <div>
+                <br><br><br><br><br><br><br><br><br><br>
+                <br><br><br><br><br><br><br><br><br><br>
+                <br><br><br><br><br><br><br><br><br><br>
+                <br><br><br><br><br><br><br><br><br><br>
+            </div>
+        </div>
+        <div id = 'graph'></div>
+    </div>
     <script src = 'd3.js'></script>
+    <script src = 'graph-scroll.js'></script>
     <script>
         var data,
             height = 800,
-            width = 1200,
+            width = 1400,
             tot_radians = Math.PI * 2,
             node_radius = 2,
-            center_radius = 5,
-            symbol_size = 50;
+            center_radius = 2,
+            symbol_size = 50,
+            scroll_functions,
+            gs;
         
         var margin = {
-            top: 50,
+            top: 100,
             left: 100,
-            bottom: 50,
+            bottom: 10,
             right:50
         }
         
+        function radtodeg(x){
+            return (x * 180)/Math.PI;
+        }
+        
+        country_full = ["Singapore", "Korea, Rep. of", "Chinese Taipei", "Hong Kong SAR", "Japan", "cqu (Quebec, Canada)", "Russian Federation", "Kazakhstan", "Hungary", "England", "cot (Ontario, Canada)", "Unted States", "Slovenia", "Israel", "Norway", "Australia", "Malaysia", "Lithuania", "adu (Dubai, UAE)", "New Zealand", "Sweden", "Italy", "Bahrain", "Turkey", "United Arab Emirates", "Georgia", "Thailand", "Iran, Islamic Rep. of", "Qatar", "Lebanon", "Chile", "aad (Abu Dhabi, UAE)", "Oman", "Botswana", "Jordan", "Morocco", "South Africa", "Saudi Arabia"]
+        
         var vis_height = height - margin.top - margin.bottom,
             vis_width = width - margin.left - margin.right,
-            vis_cx = margin.left + vis_width/2,
-            vis_cy = margin.top + vis_height/2
+            vis_cx = margin.left + vis_width * 2/3,
+            vis_cy = margin.top + vis_height/2,
+            flag_size = 30,
+            gap = 5,
+            gender_size = 10,
+            pedal_length = (vis_height/2 - gap - flag_size - gap - gender_size);
         
         var y_correct_ratio_gender = d3.scaleLinear()
             .range([-vis_height/2, vis_height/2])
@@ -43,7 +133,7 @@
             .range([0, tot_radians]);
         
         var node_radial_position = d3.scaleLinear()
-            .range([center_radius, Math.min(vis_width, vis_height)/2]);
+            .range([center_radius, pedal_length]);
         
         var diamond_generator = d3.symbol() 
             .type(d3.symbolDiamond)
@@ -57,7 +147,9 @@
             .type(d3.symbolSquare)
             .size(symbol_size);
         
-        var svg = d3.select('#flower')
+        
+        var svg = d3.select('#graph')
+            .append('svg')
             .attr('height', height)
             .attr('width', width);
         
@@ -77,51 +169,23 @@
                 case 'Reasoning':
                     return square_generator();
             }
-        }
+        }   
         
-        function create_flower(data){
-            
-            var arc = d3.arc()
-                .outerRadius(function(d){return node_radial_position(d.question_rank )})
-                .innerRadius(function(d){return node_radial_position(d.question_rank - 1)})
-                .startAngle(function(d){return country_angle(d.international_rank - 1)})
-                .endAngle(function(d){return country_angle(d.international_rank)});
-            
-            g.selectAll('path')
-                .data(data)
-                .enter().append('path')
-                .attr('d', arc)
-                .attr('fill', function(d){return clr_flower(d.correct_ratio_per_question)})
-                .attr('stroke', 'black')
-                .attr('stroke-opacity', .2)
-                .attr('class', function(d){return d.question})
-                .attr('id', function(d){return d.question + d.country})
-                .on('mouseover', handle_mouse_over);            
-        }
-        
-        function create_domain_plot(data, country){
-            var country_data = data.filter(function(x){return x.country == country;});
-            
-            g.selectAll('path')
-                .data(country_data)
-                .enter().append('path')
-                .attr('d', function(d){ return cognitive_shape(d.cognitive_domain);})
-                .attr('transform', function(d){return 'translate(' + x_correct_ratio(d.correct_ratio_per_question) + ',' + y_correct_ratio_gender(d.diff_male_female) + ')' })
-                .attr('fill', function(d){return clr_content(d.content_domain)})
-                .attr('fill-opacity', .75)
-                .attr('stroke', function(d){return clr_content(d.content_domain)})
-                .attr('stroke-width', 1)
-                .attr('class', function(d){return d.question + ' ' + d.country + ' point'})
-                .on('mouseover', handle_mouse_over);
-        }
+        var country_info;
         
         
-        d3.tsv('TIMSS_2015_ALL_MATH.tsv', function(error, tsv){
+        d3.queue()
+            .defer(d3.tsv, 'TIMSS_2015_NO_BM.tsv')
+            .defer(d3.tsv, '2015_timss_country.tsv')
+            .await(ready)
+        
+        function ready(error, tsv, country_tsv){
             if(error) throw error;
             
             data = tsv;
+            country_info = country_tsv;
             
-            var countries = tsv.map(function(x){return x.country;}).filter(function(x,i,self){return self.indexOf(x) == i;});
+            countries = tsv.map(function(x){return x.country;}).filter(function(x,i,self){return self.indexOf(x) == i;});
                         
             y_correct_ratio_gender.domain(d3.extent(tsv, function(d){return +d.diff_male_female;}));
             
@@ -129,10 +193,270 @@
             
             node_radial_position.domain(d3.extent(tsv, function(d){return +d.question_rank;}));
             
-//            create_domain_plot(tsv, 'sgp')
-            create_flower(tsv);
+            function nothingness(){
+                g.selectAll('path')
+                    .remove();
+                
+                g.selectAll('path')
+                    .data(tsv)
+                    .enter().append('path')
+                    .attr('d', 'M 0 0, h 10, v 10, h -10, v -10')
+                   
+            }
+            
+            
+            function create_flower(){
+                g.selectAll('path')
+                    .remove();
+                
+                var arc = d3.arc()
+                    .outerRadius(function(d){return node_radial_position(d.question_rank )})
+                    .innerRadius(function(d){return node_radial_position(d.question_rank - 1)})
+                    .startAngle(function(d){return country_angle(d.international_rank - 1)})
+                    .endAngle(function(d){return country_angle(d.international_rank)});
+                
+                var arc2 = d3.arc()
+                    .outerRadius(vis_height/2 - flag_size - gap)
+                    .innerRadius(vis_height/2 - flag_size - gap - gender_size)
+                    .startAngle(function(d, i){return country_angle(d.international_rank);})
+                    .endAngle(function(d, i){return country_angle(d.international_rank-1);});
+                
+                var arc3 = d3.arc()
+                    .outerRadius(vis_height/2 + gap)
+                    .innerRadius(vis_height/2 - flag_size)
+                    .startAngle(function(d, i){return country_angle(i);})
+                    .endAngle(function(d, i){return country_angle(i+1);});
+                
+                var arckey = d3.arc()
+                    .outerRadius(function(d){return d * (pedal_length)/12})
+                    .innerRadius(function(d){return (d-1) * (pedal_length)/12})
+                    .startAngle(country_angle(8))
+                    .endAngle(country_angle(9));
+        
+                g.selectAll('path')
+                    .data(tsv)
+                    .enter().append('path')
+                    .attr('d', arc)
+                    .attr('fill', function(d){return clr_flower(d.correct_ratio_per_question)})
+                    .attr('stroke', 'black')
+                    .attr('stroke-opacity', .2)
+                    .attr('class', function(d){return d.question})
+                    .attr('id', function(d){return d.question + d.country})
+                    .on('mouseover', handle_mouse_over);   
+                
+                g.selectAll('path.gendered')
+                    .data(country_info)
+                    .enter().append('path')
+                    .attr('d', arc2)
+                    .attr('fill', function(d){if(d.dominant_gender_country == 'Male'){return 'purple'} else {return 'yellow'};})
+                    .attr('stroke', 'black');
+                
+                g.selectAll('path.flags')
+                    .data(countries)
+                    .enter().append('path')
+                    .attr('d', arc3)
+                    .attr('fill', 'black')
+                    .attr('fill-opacity', .1)
+                
+                g.selectAll('image.flags')
+                    .data(countries)
+                    .enter().append('image')
+                    .attr('transform', function(d, i){return 'rotate(' + (radtodeg(country_angle(i))-90) + ') translate(' + (vis_height/2) + ',0) rotate(95)' })
+                    .attr('href', 'chile-flag-xs.png')
+                    .attr('width', 60)
+                    .attr('height', 30)
+                    .on('mouseover', function(d){console.log(d)})
+                
+                
+                var defs = svg.append('g')
+                    .attr('class', 'key')
+                    .attr('x', margin.top)
+                    .attr('y', margin.left)
+                    .append('defs');
+                
+                var flower_gradient_key = defs.append('svg:linearGradient')
+                    .attr('id', 'gradient')
+                    .attr('x1', '0%')
+                    .attr('y1', '100%')
+                    .attr('x2', '100%')
+                    .attr('y2', '100%')
+                    .attr('spreadMethod', 'pad');
+                
+                flower_gradient_key.append('stop')
+                    .attr('offset', '0%')
+                    .attr('stop-color', clr_flower(1))
+                    .attr('stop-opacity', 1);
+                
+                flower_gradient_key.append('stop')
+                    .attr('offset', '50%')
+                    .attr('stop-color', clr_flower(.5))
+                    .attr('stop-opacity', 1);
+                
+                flower_gradient_key.append('stop')
+                    .attr('offset', '100%')
+                    .attr('stop-color', clr_flower(0))
+                    .attr('stop-opacity', 1);
+
+                svg.append('g')
+                    .attr('class', 'key')
+                    .append('rect')
+                    .attr('height', 40)
+                    .attr('width', pedal_length)
+                    .attr('x', (margin.left + pedal_length/4) )
+                    .attr('y', vis_height * 3/5 + margin.top)
+                    .attr('fill', 'url(#gradient)')
+                    .attr('stroke-width', 2)
+                    .attr('stroke', 'black');
+                
+                svg.append('g')
+                    .attr('class', 'key')
+                    .append('text')
+                    .attr('transform', 'translate(' + margin.left + ',' + (vis_height * 3/5 - 70 + margin.top) + ')')
+                    .attr('font-size', 20)
+                    .text('There are 215 total questions. If a question is colored blue,')
+            
+                svg.append('g')
+                    .attr('class', 'key')
+                    .append('text')
+                    .attr('transform', 'translate(' + margin.left + ',' + (vis_height * 3/5 - 45 + margin.top) + ')')
+                    .attr('font-size', 20)
+                    .text('then most students in the country answered the question')
+                
+                svg.append('g')
+                    .attr('class', 'key')
+                    .append('text')
+                    .attr('transform', 'translate(' + margin.left + ',' + (vis_height * 3/5 - 20 + margin.top) + ')')
+                    .attr('font-size', 20)
+                    .text('correctly. If brown, then most answered it incorrectly.')                
+                
+                svg.append('g')
+                    .attr('class', 'key')
+                    .attr('transform', 'translate(' + (margin.left + pedal_length/4) + ',' + (vis_height * 2/5 + margin.top) + ')')
+                    .selectAll('path')
+                    .data([1,2,3,4,5,6,7,8, 9, 10, 11, 12])
+                    .enter().append('path')
+                    .attr('d', arckey)
+                    .attr('fill', 'white')
+                    .attr('stroke', 'black')
+                    .attr('stroke-width', 2);
+                
+                svg.append('g')
+                    .attr('class', 'key')
+                    .append('text')
+                    .attr('transform', 'translate(' + margin.left + ',' + (vis_height * 2/5 + margin.top - 75) + ')')
+                    .attr('font-size', 20)
+                    .text('The question that most students in a country answered correctly');
+                
+                svg.append('g')
+                    .attr('class', 'key')
+                    .append('text')
+                    .attr('transform', 'translate(' + margin.left + ',' + (vis_height * 2/5 + margin.top - 50) + ')')
+                    .attr('font-size', 20)
+                    .text('is located at the center. The question answered least correctly'); 
+    
+                svg.append('g')
+                    .attr('class', 'key')
+                    .append('text')
+                    .attr('transform', 'translate(' + margin.left + ',' + (vis_height * 2/5 + margin.top - 25) + ')')
+                    .attr('font-size', 20)
+                    .text('is located at the edge.');                 
+                
+                svg.append('g')
+                    .attr('class', 'key')
+                    .append('rect')
+                    .attr('height', 10)
+                    .attr('width', pedal_length/2)
+                    .attr('x', margin.left + pedal_length/4)
+                    .attr('y', vis_height * 4/5 + margin.top)
+                    .attr('fill', 'purple')
+                    .attr('stroke', 'black')
+                    .attr('stroke-width', 2);
+                
+                svg.append('g')
+                    .attr('class', 'key')
+                    .append('rect')
+                    .attr('height', 10)
+                    .attr('width', pedal_length/2)
+                    .attr('x', margin.left + pedal_length/4 + pedal_length/2)
+                    .attr('y', vis_height * 4/5 + margin.top)
+                    .attr('fill', 'gold')
+                    .attr('stroke', 'black')
+                    .attr('stroke-width', 2);
+                
+                svg.append('g')
+                    .attr('class', 'key')
+                    .append('text')
+                    .attr('transform', 'translate(' + margin.left + ',' + (vis_height * 4/5 + margin.top - 70) + ')')
+                    .attr('font-size', 20)
+                    .text('If a country contains a purple band, then males perform better');             
+                
+                svg.append('g')
+                    .attr('class', 'key')
+                    .append('text')
+                    .attr('transform', 'translate(' + margin.left + ',' + (vis_height * 4/5 + margin.top - 45) + ')')
+                    .attr('font-size', 20)
+                    .text('than females on the test in that country. If it contains a yellow');
+                
+                svg.append('g')
+                    .attr('class', 'key')
+                    .append('text')
+                    .attr('transform', 'translate(' + margin.left + ',' + (vis_height * 4/5 + margin.top - 20) + ')')
+                    .attr('font-size', 20)
+                    .text(' band, then females perform better than males');                             
+                
+                svg.append('g')
+                    .attr('class', 'key')
+                    .append('text')
+                    .attr('transform', 'translate(' + margin.left + ',' + (margin.top/2) + ')')
+                    .attr('font-size', margin.top/2 - 10)
+                    .text('TIMSS 2015: International Comparison of Math Questions')
+                
+                
+//                g.selectAll('g')
+//                    .data(countries)
+//                    .enter().append('g')
+//                    .attr('transform', function(d, i){return 'rotate(' + (radtodeg(country_angle(i))-85) + ') translate(' + (vis_height/2 + 10) + ',0)' })
+//                    .append('text')
+//                    .text(function(d){ return d})
+//                    .attr('font-size', 20)
+//                    .attr('fill', 'black')
+            }
+
+            function create_domain_plot(){
+                g.selectAll('path')
+                    .remove();
+                
+                var country = 'usa'
+                var country_data = tsv.filter(function(x){return x.country == country;});
+
+                g.selectAll('path')
+                    .data(country_data)
+                    .enter().append('path')
+                    .attr('d', function(d){ return cognitive_shape(d.cognitive_domain);})
+                    .attr('transform', function(d){return 'translate(' + x_correct_ratio(d.correct_ratio_per_question) + ',' + y_correct_ratio_gender(d.diff_male_female) + ')' })
+                    .attr('fill', function(d){return clr_content(d.content_domain)})
+                    .attr('fill-opacity', .75)
+                    .attr('stroke', function(d){return clr_content(d.content_domain)})
+                    .attr('stroke-width', 1)
+                    .attr('class', function(d){return d.question + ' ' + d.country + ' point'})
+                    .on('mouseover', handle_mouse_over);
+            }            
+            
+            scroll_functions = [
+                nothingness,
+                create_domain_plot,
+                create_flower
+            ]
+            
+            gs = d3.graphScroll()
+                .container(d3.select('#container'))
+                .graph(d3.selectAll('#graph'))
+                .sections(d3.selectAll('#sections > div'))
+                .on('active', function(i){
+                    scroll_functions[i]()
+                })
   
             
-        })
+        }
     </script>
 </body>

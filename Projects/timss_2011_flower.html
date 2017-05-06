@@ -103,7 +103,7 @@
                 .duration(500)
                 .style('opacity', .7);
             
-            div.html('<b>Country: </b>' + d.country + '<br><b>Question ID: </b>' + d.question + '<br><b>Question: </b>' + d.FIELD_LABL + '<br><b>Cognitive Domain: </b>' + d.cognitive_domain + '<br><b>Content Domain: </b>' + d.content_domain + '<br><b>Question Ranked: </b>' + d.question_rank  + '<br><b>Students Given Question: </b>' + d.students_per_question + '<br><b>% Students Correctly Answered Question: </b>' + (Math.round(d.correct_ratio_per_question * 10000) / 100) + '%<br><b>% Female Students Correctly Answered Question: </b>' + (Math.round(d.correct_ratio_per_question_female * 10000) / 100) + '%<br><b>% Male Students Correctly Answered Question: </b>' + (Math.round(d.correct_ratio_per_question_male * 10000) / 100) +'%')
+            div.html('<b>Country: </b>' + d.country + '<br><b>Question ID: </b>' + d.question + '<br><b>Question: </b>' + d.label + '<br><b>Question Ranked: </b>' + d.question_rank  + '<br><b>% Students Correctly Answered Question: </b>' + (Math.round(d.correct_ratio_per_question * 10000) / 100) + '%')
             .style('left', (d3.event.pageX) + 'px')
             .style('top', (d3.event.pageY) + 'px');
             
