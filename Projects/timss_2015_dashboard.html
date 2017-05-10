@@ -1,0 +1,356 @@
+<head>
+    <style>
+        div.tooltip{
+            position: absolute;
+            text-align: left;
+            width: 360px;
+            height: 130px;
+            padding: 5px;
+            font-size: 14px;
+            background: lightsteelblue;
+            border: 0px;
+            border-radius: 8px;
+            pointer-events: none;
+            z-index: 4;
+        }
+    </style>
+</head>
+<body>
+    <div id='dashboard'></div>
+    <script src = 'd3.js'></script>
+    <script src = 'd3v4+jetpack.js'></script>
+    <script>
+        var width = 1300,
+            height = 700,
+            symbol_size = 40;
+        
+        var margin = {
+            top: 100,
+            right: 150,
+            bottom: 125,
+            left: 100,
+            gap: 60
+        };
+        
+        var heat_width = (width - margin.left - margin.right - margin.gap)/2 - 100,
+            scat_width = (width - margin.left - margin.right - margin.gap - heat_width)
+            vis_height = height - margin.top - margin.bottom;
+        
+        var svg = d3.select('#dashboard')
+            .append('svg')
+            .attrs({'height': height, 'width': width});
+        
+        var heatmap = svg.append('g')
+            .attrs({'width': heat_width, 
+                    'height': vis_height, 
+                    'transform': 'translate(' + margin.left + ',' + margin.top + ')',
+                    'id': 'heatmap'});
+        
+        var scatter = svg.append('g')
+            .attrs({'width': scat_width, 
+                    'height': vis_height, 
+                    'transform': 'translate(' + (margin.left + heat_width + margin.gap) + ',' + margin.top + ')',
+                    'id': 'scatter'});  
+                
+        var heat_y = d3.scaleLinear()
+            .range([vis_height, 0]);
+        
+        var heat_x = d3.scaleLinear()
+            .range([0, heat_width]);
+        
+        var heat_x_ordinal = d3.scaleOrdinal();
+        
+        
+        var scat_y = d3.scaleLinear()
+            .range([vis_height, 0]);
+        
+        var scat_x = d3.scaleLinear()
+            .range([0, scat_width])
+            .domain([0, 1]);
+        
+        var heat_clr = d3.scaleLinear()
+            .domain([0, .5, 1])
+            .range(['#fc8d59', '#ffffbf', '#91bfdb']);
+        
+        var div = d3.select('body')
+            .append('div')
+            .attr('class', 'tooltip')
+            .style('opacity', 0);
+        
+        var star_generator = d3.symbol()
+            .type(d3.symbolStar)
+            .size(symbol_size);
+        
+        var wye_generator = d3.symbol()
+            .type(d3.symbolWye)
+            .size(symbol_size);
+        
+        var diamond_generator = d3.symbol()
+            .type(d3.symbolDiamond)
+            .size(symbol_size);
+        
+        var cross_generator = d3.symbol()
+            .type(d3.symbolCross)
+            .size(symbol_size)
+       
+        function content_shape(content_domain){
+            switch(content_domain){
+                case 'Algebra':
+                    return wye_generator();
+                case 'Data and Chance':
+                    return diamond_generator();
+                case 'Geometry':
+                    return star_generator();
+                case 'Number':
+                    return cross_generator();
+            }
+        }
+        
+        var cognitive_clr = d3.scaleOrdinal()
+            .domain(['Applying', 'Knowing', 'Reasoning'])
+            .range(['#66c2a5', '#fc8d62', '#8da0cb']);
+        
+        scatter.selectAll('path.contentkey')
+            .data(['Algebra', 'Data and Chance', 'Geometry', 'Number'])
+            .enter().append('path')
+            .attrs({'d': function(d){return content_shape(d)}, 
+                   'class': 'contentkey', 
+                    'stroke': 'black',
+                   'fill': 'black', 
+                   'transform': function(d,i){return 'translate(' + scat_width +',' + (30 * i) + ')'}});
+        
+        scatter.selectAll('circle.cognitivekey')
+            .data(['Applying', 'Knowing', 'Reasoning'])
+            .enter().append('circle')
+            .attrs({'class': 'cognitivekey', 
+                    'fill': function(d){return cognitive_clr(d)}, 
+                    'stroke': 'black', 
+                    'cx': scat_width, 
+                    'cy': function(d,i){ return (120 + i * 30)}, 
+                    'r': 5})
+        
+        scatter.selectAll('text.domainkey')
+            .data(['Algebra', 'Data and Chance', 'Geometry', 'Number', 'Applying', 'Knowing', 'Reasoning'])
+            .enter().append('text')
+            .attrs({'class': 'domainkey', 
+                    'fill': 'black', 
+                    'transform': function(d,i){ return 'translate(' + (scat_width + 10) + ',' + (5 + 30 * i) + ')'}})
+            .text(function(d){return d});
+        
+        scatter.append('text')
+            .attrs({'class': 'domainkey', 'fill': 'black', 'transform': 'translate(' + (scat_width) + ',0) rotate(-90) translate(-90, -15)', 'text-anchor': 'middle'})
+            .text('Content & Cognitive Domains')
+            
+        
+        function handle_mouse_over(d, i){
+            chosen = this.className.baseVal.split(' ')[0];
+            
+            div.transition()
+                .duration(500)
+                .style('opacity', .8);
+            
+            div.html('<b>Country: </b>' + (country_info.filter(function(x){return x.country == d.country})[0].country_full) + '<br><b>Question ID: </b>' + d.question + '<br><b>Question: </b>' + d.label + '<br><b>Topic Area: </b>' + d.topic_area + '<br><b>Question Ranked Nationally: </b>' + d.question_rank  + '<br><b>% Students Correctly Answered Question: </b>' + (Math.round(d.correct_ratio_per_question * 10000) / 100) + '%'+ '<br><b>% Males Correctly Answered Question: </b>' + Math.round(d.correct_ratio_per_question_male * 10000)/100 + '<br><b>% Females Correctly Answered Question: </b>' + Math.round(d.correct_ratio_per_question_female * 10000)/100  )
+            .style('left', (d3.event.pageX) + 'px')
+            .style('top', (d3.event.pageY) + 'px');
+            
+            d3.selectAll('rect.' + chosen)
+                .attr('fill', 'black');
+            
+            d3.select('path.' + chosen)
+                .attrs({'transform': 'translate(' + scat_x( +d.correct_ratio_per_question) + ',' + scat_y(+d.diff_male_female) + ') scale(3)'})
+                .raise();
+            
+            if(d3.event.pageX < width/2){
+                div.style('left', (d3.event.pageX) + 'px');
+            } else {
+                div.style('left', (d3.event.pageX - 360) + 'px');
+            }
+            
+            if(d3.event.pageY < height/2){
+                div.style('top', (d3.event.pageY) + 'px');
+            } else {
+                div.style('top', (d3.event.pageY - 130) + 'px');
+            }
+        }
+        
+        function handle_mouse_out(d, i){
+            div.transition()
+                .duration(500)
+                .style('opacity', 0)
+            
+            country_info.map(function(x){
+                //not every question is given to every country
+                //the below if statement confirms that the node exists
+                //before changing the color. Else the code breaks when a non-existing
+                //node is selected
+                if(d3.selectAll('rect#' + chosen + x.country)._groups[0].length){
+                    d3.selectAll('rect#' + chosen + x.country)
+                    .attr('fill', heat_clr(data.filter(function(z){return z.country == x.country}).filter(function(y){return y.question == chosen})[0].correct_ratio_per_question))    
+                }
+            
+            })
+            
+            if(d3.select('path.' + chosen)._groups[0].length){
+                d3.select('path.' + chosen)
+                    .attrs({'transform':'translate(' + scat_x( +d.correct_ratio_per_question) + ',' + scat_y(+d.diff_male_female) + ') scale(1)'})
+                    .lower()
+            }
+        }
+        
+        function handle_mouse_over_country(d, i){
+            d3.selectAll('rect.country')
+                .attr('fill-opacity', .33);
+            
+            d3.select('rect#' + scat_displayed)
+                .attr('fill-opacity', 1)
+            
+            d3.select('rect#' + d.country)
+                .attr('fill-opacity', .6);
+            
+            console.log(d.country);
+        }
+        
+        d3.queue()
+            .defer(d3.tsv, 'TIMSS_2015_NO_BM.tsv')
+            .defer(d3.tsv, '2015_timss_country.tsv')
+            .await(ready);
+        
+        function ready(error, tsv, country_tsv){
+            if(error) throw error;
+            
+            data = tsv;
+            country_info = country_tsv;
+            
+            heat_y.domain(d3.extent(tsv.map(function(x){return +x.question_rank})));
+            
+            heat_x.domain([0, country_tsv.length]);
+            
+            heat_x_ordinal.domain(country_info.map(function(x){return x.country}))
+                .range(country_info.map(function(x, i){return (heat_x(2) - heat_x(1)) * i + (heat_x(2) - heat_x(1))/2}));
+            
+            scat_y.domain(d3.extent(tsv.map(function(x){return +x.diff_male_female})));
+            
+            svg.append('text')
+                .attrs({'transform': 'translate(' + margin.left + ',' + margin.top/2 + ')', 'font-size': margin.top/2.5, 'fill': 'black' })
+                .text('2015 TIMSS: International Comparison of Math Questions')
+            
+            heatmap.selectAll('rect')
+                .data(tsv)
+                .enter().append('rect')
+                .attrs({'height': heat_y(1) - heat_y(2),
+                        'width': heat_x(2) - heat_x(1),
+                        'fill': function(d){return heat_clr( +d.correct_ratio_per_question)},
+                        'x': function(d){return heat_x(+d.international_rank - 1)},
+                        'y': function(d){return heat_y(+d.question_rank + 1)},
+                        'class': function(d){return d.question},
+                        'id': function(d){return d.question + d.country}
+                        })
+                .on('mouseover', handle_mouse_over)
+                .on('mouseout', handle_mouse_out);
+            
+            heatmap.selectAll('rect.country')
+                .data(country_tsv)
+                .enter().append('rect')
+                .attrs({'width': heat_x(2) - heat_x(1), 
+                        'height': 40, 
+                        'x': function(d){return heat_x(+d.international_rank -1)}, 
+                        'y': heat_y(0), 
+                        'class': 'country', 'id': function(d){return d.country }, 'fill': 'yellow', 'fill-opacity': .33})
+                .on('mouseover', handle_mouse_over_country)
+                .on('click', function(d){create_scatter(d.country)});
+            
+            var heat_y_axis = d3.axisLeft(heat_y);
+            
+            var heat_x_axis = d3.axisBottom(heat_x_ordinal);
+            
+            svg.append('g')
+                .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
+                .call(heat_y_axis);
+            
+            svg.append('g')
+                .attr('transform', 'translate(' + margin.left + ',' + (margin.top + vis_height) + ')')
+                .call(heat_x_axis)
+                .selectAll('text')
+                .attrs({'transform': 'rotate(-90) translate( -8,' + (heat_x(1) - heat_x(2)) + ')', 'text-anchor': 'end', });
+                
+            var scat_y_axis = d3.axisLeft(scat_y);
+            
+            var scat_x_axis = d3.axisBottom(scat_x);
+            
+            svg.append('g')
+                .attr('transform', 'translate(' + (margin.left + heat_width + margin.gap) + ',' + (margin.top) +')')
+                .call(scat_y_axis);
+            
+            svg.append('g')
+                .attr('transform', 'translate(' + (margin.left + heat_width + margin.gap) + ',' + (margin.top + vis_height) + ')')
+                .call(scat_x_axis);
+             
+            heatmap.append('g')
+                .append('text')
+                .attrs({'fill': 'black', 'transform': 'translate(0,' +( margin.top/5 * (-1)) + ')', 'font-size': margin.top/4.5, 'class': 'heatmap' })
+                .text('Question Success per Country');
+            
+            scatter.append('g')
+                .append('path')
+                .attrs({'d': 'M ' + scat_x(0) + ' ' + scat_y(0) + ' h ' + scat_width, 
+                        'stroke': 'black'});
+            
+            scatter.append('g')
+                .append('path')
+                .attrs({'d': 'M ' + scat_x(.5) + ' 0 v ' + vis_height, 
+                        'stroke':'black' });
+            
+            heatmap.append('g')
+                .append('text')
+                .attrs({'transform': 'rotate(-90) translate(' + (-1 * vis_height/2) + ', -35)', 'font-size': margin.left/6.5, 'fill': 'black', 'text-anchor': 'middle'})
+                .text('National Question Ranking From Most Successfully Answered To Least')
+
+            scatter.append('g')
+                .append('text')
+                .attrs({'transform': 'rotate(-90) translate(' + (-1 * vis_height/2) + ', -40)', 'font-size': margin.left/6.5, 'fill': 'black', 'text-anchor': 'middle'})
+                .text('Question Success Rate Male - Success Rate Female');
+            
+            scatter.append('g')
+                .append('text')
+                .attrs(({transform: 'translate(' + (scat_width/2) + ','+ (vis_height + 35) + ')', 'font-size': margin.left/6.5, 'fill': 'black', 'text-anchor': 'middle'}))
+                .text('National Question Success Rate')
+            
+            function create_scatter(country){
+                scat_country = tsv.filter(function(x){return x.country == country})
+                
+                scat_displayed = country;
+                
+                d3.selectAll('rect.country')
+                    .attr('fill-opacity', .33);
+                
+                d3.select('rect#' + country)
+                    .attr('fill-opacity', 1);
+                
+                scatter.selectAll('path.scatter')
+                    .remove();
+                
+                scatter.selectAll('text.scatter')
+                    .remove();
+                
+                scatter.selectAll('path')
+                    .data(scat_country)
+                    .enter().append('path')
+                    .attrs({'d': function(d){return content_shape(d.content_domain)}, 
+                            'fill': function(d){return cognitive_clr(d.cognitive_domain)},
+                            'stroke': 'black', 
+                            'transform': function(d){return 'translate(' + scat_x( +d.correct_ratio_per_question) + ',' + scat_y(+d.diff_male_female) + ')'}, 
+                            'class': function(d){return d.question + ' scatter'}})
+                    .on('mouseover', handle_mouse_over)
+                    .on('mouseout', handle_mouse_out);
+                
+                scatter.append('text')
+                    .attrs({'fill': 'black', 'font-size': margin.top/4.5, 'transform': 'translate(0,' + (margin.top/5 * (-1)) +')', 'class': 'scatter' })
+                    .text('Question Success in ' + country_tsv.filter(function(x){return x.country == country})[0].country_full)
+            }
+            
+            create_scatter('usa')
+            
+            
+        }
+    </script>
+</body>
