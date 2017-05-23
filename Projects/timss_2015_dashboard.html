@@ -60,7 +60,6 @@
         
         var heat_x_ordinal = d3.scaleOrdinal();
         
-        
         var scat_y = d3.scaleLinear()
             .range([vis_height, 0]);
         
@@ -68,9 +67,14 @@
             .range([0, scat_width])
             .domain([0, 1]);
         
-        var heat_clr = d3.scaleLinear()
-            .domain([0, .5, 1])
-            .range(['#fc8d59', '#ffffbf', '#91bfdb']);
+//        var heat_clr = d3.scaleLinear()
+//            .domain([0, .5, 1])
+//            .range(['#fc8d59', '#ffffbf', '#91bfdb']);
+
+        heat_clr = d3.scaleOrdinal()
+            .range(['#a50026', '#d73027', '#f46d43', '#fdae61', '#fee090', '#e0f3f8', '#abd9e9', '#74add1', '#4575b4', '#313695'])
+            .domain([ "0-10",  "11-20",  "21-30",  "31-40",  "41-50",  "51-60",  "61-70",  "71-80",  "81-90",  "91-100"])
+        
         
         var div = d3.select('body')
             .append('div')
@@ -110,6 +114,25 @@
             .domain(['Applying', 'Knowing', 'Reasoning'])
             .range(['#66c2a5', '#fc8d62', '#8da0cb']);
         
+        scatter.selectAll('rect.colorkey')
+            .data([ "0-10",  "11-20",  "21-30",  "31-40",  "41-50",  "51-60",  "61-70",  "71-80",  "81-90",  "91-100"])
+            .enter().append('rect')
+            .attrs({'height': 20, 
+                    'width': 10, 
+                    'x': scat_width - 5, 
+                    'y': function(d, i){return 250 + i * 20},
+                    'fill': function(d){return heat_clr(d)}, 
+                    'fill-opacity': .75, 'stroke': 'black', 'stroke-width': 1})
+        
+        scatter.selectAll('text.colorkey')
+            .data([0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100])
+            .enter().append('text')
+            .attrs({'fill': 'black', 
+                    'transform': function(d, i){ return 'translate(' + (scat_width + 10) + ',' + (255 + i * 20) + ')'}, 
+                    'font-size': 10})
+            .text(function(d){ return d + '%'})
+            
+        
         scatter.selectAll('path.contentkey')
             .data(['Algebra', 'Data and Chance', 'Geometry', 'Number'])
             .enter().append('path')
@@ -138,25 +161,40 @@
             .text(function(d){return d});
         
         scatter.append('text')
-            .attrs({'class': 'domainkey', 'fill': 'black', 'transform': 'translate(' + (scat_width) + ',0) rotate(-90) translate(-90, -15)', 'text-anchor': 'middle'})
+            .attrs({'class': 'domainkey', 
+                    'fill': 'black', 
+                    'transform': 'translate(' + (scat_width) + ',0) rotate(-90) translate(-90, -15)', 
+                    'text-anchor': 'middle'})
             .text('Content & Cognitive Domains')
             
+        scatter.append('text')
+            .attrs({'class': 'colorkey', 'fill': 'black', 'transform': 'translate(' + (scat_width) + ',0) rotate(-90) translate(-350, -15)', 'text-anchor': 'middle'})
+            .text('Students Correctly Answered \'?\'')
         
         function handle_mouse_over(d, i){
             chosen = this.className.baseVal.split(' ')[0];
+            
+            console.log(this.className.baseVal)
             
             div.transition()
                 .duration(500)
                 .style('opacity', .8);
             
-            div.html('<b>Country: </b>' + (country_info.filter(function(x){return x.country == d.country})[0].country_full) + '<br><b>Question ID: </b>' + d.question + '<br><b>Question: </b>' + d.label + '<br><b>Topic Area: </b>' + d.topic_area + '<br><b>Question Ranked Nationally: </b>' + d.question_rank  + '<br><b>% Students Correctly Answered Question: </b>' + (Math.round(d.correct_ratio_per_question * 10000) / 100) + '%'+ '<br><b>% Males Correctly Answered Question: </b>' + Math.round(d.correct_ratio_per_question_male * 10000)/100 + '<br><b>% Females Correctly Answered Question: </b>' + Math.round(d.correct_ratio_per_question_female * 10000)/100  )
+            div.html('<b>Country: </b>' + (country_info.filter(function(x){return x.country == d.country})[0].country_full) + 
+                     '<br><b>Question ID: </b>' + d.question + 
+                     '<br><b>Question: </b>' + d.label + 
+                     '<br><b>Topic Area: </b>' + d.topic_area + 
+                     '<br><b>Question Ranked Nationally: </b>' + d.question_rank  + 
+                     '<br><b>% Students Correctly Answered Question: </b>' + (Math.round(d.correct_ratio_per_question * 10000) / 100) + '%'+
+                     '<br><b>% Males Correctly Answered Question: </b>' + Math.round(d.correct_ratio_per_question_male * 10000)/100 +
+                     '<br><b>% Females Correctly Answered Question: </b>' + Math.round(d.correct_ratio_per_question_female * 10000)/100 )
             .style('left', (d3.event.pageX) + 'px')
             .style('top', (d3.event.pageY) + 'px');
             
             d3.selectAll('rect.' + chosen)
-                .attr('fill', 'black');
+                .attrs({'fill': 'black', 'fill-opacity': 1});
             
-            d3.select('path.' + chosen)
+            d3.select('path#' + chosen + 'scatter')
                 .attrs({'transform': 'translate(' + scat_x( +d.correct_ratio_per_question) + ',' + scat_y(+d.diff_male_female) + ') scale(3)'})
                 .raise();
             
@@ -185,13 +223,13 @@
                 //node is selected
                 if(d3.selectAll('rect#' + chosen + x.country)._groups[0].length){
                     d3.selectAll('rect#' + chosen + x.country)
-                    .attr('fill', heat_clr(data.filter(function(z){return z.country == x.country}).filter(function(y){return y.question == chosen})[0].correct_ratio_per_question))    
+                    .attrs({'fill': heat_clr(data.filter(function(z){return z.country == x.country}).filter(function(y){return y.question == chosen})[0].correct_ratio_per_question_range), 'fill-opacity': .75})    
                 }
             
             })
             
             if(d3.select('path.' + chosen)._groups[0].length){
-                d3.select('path.' + chosen)
+                d3.select('path#' + chosen + 'scatter')
                     .attrs({'transform':'translate(' + scat_x( +d.correct_ratio_per_question) + ',' + scat_y(+d.diff_male_female) + ') scale(1)'})
                     .lower()
             }
@@ -239,10 +277,12 @@
                 .enter().append('rect')
                 .attrs({'height': heat_y(1) - heat_y(2),
                         'width': heat_x(2) - heat_x(1),
-                        'fill': function(d){return heat_clr( +d.correct_ratio_per_question)},
+//                        'fill': function(d){return heat_clr( +d.correct_ratio_per_question)},
+                        'fill': function(d){return heat_clr(d.correct_ratio_per_question_range)},
+                        'fill-opacity': .75,
                         'x': function(d){return heat_x(+d.international_rank - 1)},
                         'y': function(d){return heat_y(+d.question_rank + 1)},
-                        'class': function(d){return d.question},
+                        'class': function(d){return d.question + ' ' + d.country},
                         'id': function(d){return d.question + d.country}
                         })
                 .on('mouseover', handle_mouse_over)
@@ -255,7 +295,10 @@
                         'height': 40, 
                         'x': function(d){return heat_x(+d.international_rank -1)}, 
                         'y': heat_y(0), 
-                        'class': 'country', 'id': function(d){return d.country }, 'fill': 'yellow', 'fill-opacity': .33})
+                        'class': 'country', 
+                        'id': function(d){return d.country }, 
+                        'fill': 'yellow', 
+                        'fill-opacity': .33})
                 .on('mouseover', handle_mouse_over_country)
                 .on('click', function(d){create_scatter(d.country)});
             
@@ -332,14 +375,16 @@
                 scatter.selectAll('text.scatter')
                     .remove();
                 
-                scatter.selectAll('path')
+                scatter.selectAll('path.scatter')
                     .data(scat_country)
                     .enter().append('path')
                     .attrs({'d': function(d){return content_shape(d.content_domain)}, 
                             'fill': function(d){return cognitive_clr(d.cognitive_domain)},
                             'stroke': 'black', 
                             'transform': function(d){return 'translate(' + scat_x( +d.correct_ratio_per_question) + ',' + scat_y(+d.diff_male_female) + ')'}, 
-                            'class': function(d){return d.question + ' scatter'}})
+                            'class': function(d){return d.question + ' scatter'},
+                            'id': function(d){return d.question + 'scatter'}
+                           })
                     .on('mouseover', handle_mouse_over)
                     .on('mouseout', handle_mouse_out);
                 
