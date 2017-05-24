@@ -20,6 +20,9 @@
     <script src = 'd3.js'></script>
     <script src = 'd3v4+jetpack.js'></script>
     <script>
+        
+//============== setup ===================//
+        
         var width = 1300,
             height = 700,
             symbol_size = 40;
@@ -51,6 +54,42 @@
                     'height': vis_height, 
                     'transform': 'translate(' + (margin.left + heat_width + margin.gap) + ',' + margin.top + ')',
                     'id': 'scatter'});  
+        
+        var div = d3.select('body')
+            .append('div')
+            .attr('class', 'tooltip')
+            .style('opacity', 0);
+        
+        var star_generator = d3.symbol()
+            .type(d3.symbolStar)
+            .size(symbol_size);
+        
+        var wye_generator = d3.symbol()
+            .type(d3.symbolWye)
+            .size(symbol_size);
+        
+        var diamond_generator = d3.symbol()
+            .type(d3.symbolDiamond)
+            .size(symbol_size);
+        
+        var cross_generator = d3.symbol()
+            .type(d3.symbolCross)
+            .size(symbol_size)
+        
+        function content_shape(content_domain){
+            switch(content_domain){
+                case 'Algebra':
+                    return wye_generator();
+                case 'Data and Chance':
+                    return diamond_generator();
+                case 'Geometry':
+                    return star_generator();
+                case 'Number':
+                    return cross_generator();
+            }
+        }
+        
+//=========== create scales ==============//
                 
         var heat_y = d3.scaleLinear()
             .range([vis_height, 0]);
@@ -74,45 +113,12 @@
         heat_clr = d3.scaleOrdinal()
             .range(['#a50026', '#d73027', '#f46d43', '#fdae61', '#fee090', '#e0f3f8', '#abd9e9', '#74add1', '#4575b4', '#313695'])
             .domain([ "0-10",  "11-20",  "21-30",  "31-40",  "41-50",  "51-60",  "61-70",  "71-80",  "81-90",  "91-100"])
-        
-        
-        var div = d3.select('body')
-            .append('div')
-            .attr('class', 'tooltip')
-            .style('opacity', 0);
-        
-        var star_generator = d3.symbol()
-            .type(d3.symbolStar)
-            .size(symbol_size);
-        
-        var wye_generator = d3.symbol()
-            .type(d3.symbolWye)
-            .size(symbol_size);
-        
-        var diamond_generator = d3.symbol()
-            .type(d3.symbolDiamond)
-            .size(symbol_size);
-        
-        var cross_generator = d3.symbol()
-            .type(d3.symbolCross)
-            .size(symbol_size)
-       
-        function content_shape(content_domain){
-            switch(content_domain){
-                case 'Algebra':
-                    return wye_generator();
-                case 'Data and Chance':
-                    return diamond_generator();
-                case 'Geometry':
-                    return star_generator();
-                case 'Number':
-                    return cross_generator();
-            }
-        }
+
         
         var cognitive_clr = d3.scaleOrdinal()
             .domain(['Applying', 'Knowing', 'Reasoning'])
             .range(['#66c2a5', '#fc8d62', '#8da0cb']);
+       
         
         scatter.selectAll('rect.colorkey')
             .data([ "0-10",  "11-20",  "21-30",  "31-40",  "41-50",  "51-60",  "61-70",  "71-80",  "81-90",  "91-100"])
@@ -124,14 +130,15 @@
                     'fill': function(d){return heat_clr(d)}, 
                     'fill-opacity': .75, 'stroke': 'black', 'stroke-width': 1})
         
+//============== create keys =============//
+        
         scatter.selectAll('text.colorkey')
             .data([0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100])
             .enter().append('text')
             .attrs({'fill': 'black', 
                     'transform': function(d, i){ return 'translate(' + (scat_width + 10) + ',' + (255 + i * 20) + ')'}, 
                     'font-size': 10})
-            .text(function(d){ return d + '%'})
-            
+            .text(function(d){ return d + '%'});    
         
         scatter.selectAll('path.contentkey')
             .data(['Algebra', 'Data and Chance', 'Geometry', 'Number'])
@@ -170,6 +177,32 @@
         scatter.append('text')
             .attrs({'class': 'colorkey', 'fill': 'black', 'transform': 'translate(' + (scat_width) + ',0) rotate(-90) translate(-350, -15)', 'text-anchor': 'middle'})
             .text('Students Correctly Answered \'?\'')
+
+        svg.append('text')
+            .attrs({'transform': 'translate(' + margin.left + ',' + margin.top/2 + ')', 'font-size': margin.top/2.5, 'fill': 'black' })
+            .text('2015 TIMSS: International Comparison of Math Questions')
+             
+        heatmap.append('g')
+            .append('text')
+            .attrs({'fill': 'black', 'transform': 'translate(0,' +( margin.top/5 * (-1)) + ')', 'font-size': margin.top/4.5, 'class': 'heatmap' })
+            .text('Question Success per Country');
+            
+        heatmap.append('g')
+            .append('text')
+            .attrs({'transform': 'rotate(-90) translate(' + (-1 * vis_height/2) + ', -35)', 'font-size': margin.left/6.5, 'fill': 'black', 'text-anchor': 'middle'})
+            .text('National Question Ranking From Most Successfully Answered To Least')
+
+        scatter.append('g')
+            .append('text')
+            .attrs({'transform': 'rotate(-90) translate(' + (-1 * vis_height/2) + ', -40)', 'font-size': margin.left/6.5, 'fill': 'black', 'text-anchor': 'middle'})
+            .text('Question Success Rate Male - Success Rate Female');
+            
+        scatter.append('g')
+            .append('text')
+            .attrs(({transform: 'translate(' + (scat_width/2) + ','+ (vis_height + 35) + ')', 'font-size': margin.left/6.5, 'fill': 'black', 'text-anchor': 'middle'}))
+            .text('National Question Success Rate')
+        
+//============ interactivity =============//
         
         function handle_mouse_over(d, i){
             chosen = this.className.baseVal.split(' ')[0];
@@ -194,8 +227,10 @@
             d3.selectAll('rect.' + chosen)
                 .attrs({'fill': 'black', 'fill-opacity': 1});
             
-            d3.select('path#' + chosen + 'scatter')
-                .attrs({'transform': 'translate(' + scat_x( +d.correct_ratio_per_question) + ',' + scat_y(+d.diff_male_female) + ') scale(3)'})
+            var scat_point_info = scat_country.filter(function(x){return x.question == chosen})[0];
+            
+            scatter.select('.' + chosen )
+                .attrs({'transform': 'translate(' + scat_x( +scat_point_info.correct_ratio_per_question) + ',' + scat_y(+scat_point_info.diff_male_female) + ') scale(3)'})
                 .raise();
             
             if(d3.event.pageX < width/2){
@@ -228,9 +263,11 @@
             
             })
             
-            if(d3.select('path.' + chosen)._groups[0].length){
-                d3.select('path#' + chosen + 'scatter')
-                    .attrs({'transform':'translate(' + scat_x( +d.correct_ratio_per_question) + ',' + scat_y(+d.diff_male_female) + ') scale(1)'})
+            var scat_point_info = scat_country.filter(function(x){return x.question == chosen})[0];
+            
+            if(scatter.select('.' + chosen)._groups[0].length){
+                scatter.select('.' + chosen )
+                    .attrs({'transform':'translate(' + scat_x( +scat_point_info.correct_ratio_per_question) + ',' + scat_y(+scat_point_info.diff_male_female) + ') scale(1)'})
                     .lower()
             }
         }
@@ -247,6 +284,9 @@
             
             console.log(d.country);
         }
+        
+        
+//============== load data ===============//
         
         d3.queue()
             .defer(d3.tsv, 'TIMSS_2015_NO_BM.tsv')
@@ -267,10 +307,6 @@
                 .range(country_info.map(function(x, i){return (heat_x(2) - heat_x(1)) * i + (heat_x(2) - heat_x(1))/2}));
             
             scat_y.domain(d3.extent(tsv.map(function(x){return +x.diff_male_female})));
-            
-            svg.append('text')
-                .attrs({'transform': 'translate(' + margin.left + ',' + margin.top/2 + ')', 'font-size': margin.top/2.5, 'fill': 'black' })
-                .text('2015 TIMSS: International Comparison of Math Questions')
             
             heatmap.selectAll('rect')
                 .data(tsv)
@@ -327,11 +363,7 @@
             svg.append('g')
                 .attr('transform', 'translate(' + (margin.left + heat_width + margin.gap) + ',' + (margin.top + vis_height) + ')')
                 .call(scat_x_axis);
-             
-            heatmap.append('g')
-                .append('text')
-                .attrs({'fill': 'black', 'transform': 'translate(0,' +( margin.top/5 * (-1)) + ')', 'font-size': margin.top/4.5, 'class': 'heatmap' })
-                .text('Question Success per Country');
+            
             
             scatter.append('g')
                 .append('path')
@@ -342,21 +374,6 @@
                 .append('path')
                 .attrs({'d': 'M ' + scat_x(.5) + ' 0 v ' + vis_height, 
                         'stroke':'black' });
-            
-            heatmap.append('g')
-                .append('text')
-                .attrs({'transform': 'rotate(-90) translate(' + (-1 * vis_height/2) + ', -35)', 'font-size': margin.left/6.5, 'fill': 'black', 'text-anchor': 'middle'})
-                .text('National Question Ranking From Most Successfully Answered To Least')
-
-            scatter.append('g')
-                .append('text')
-                .attrs({'transform': 'rotate(-90) translate(' + (-1 * vis_height/2) + ', -40)', 'font-size': margin.left/6.5, 'fill': 'black', 'text-anchor': 'middle'})
-                .text('Question Success Rate Male - Success Rate Female');
-            
-            scatter.append('g')
-                .append('text')
-                .attrs(({transform: 'translate(' + (scat_width/2) + ','+ (vis_height + 35) + ')', 'font-size': margin.left/6.5, 'fill': 'black', 'text-anchor': 'middle'}))
-                .text('National Question Success Rate')
             
             function create_scatter(country){
                 scat_country = tsv.filter(function(x){return x.country == country})
