@@ -190,3 +190,20 @@ for(i in 1:length(charts)){
 }
 
 project <- project %>% select(-`Which of these charts have you used in production in the last 6 months:`)
+
+factorColumns <- c(1, 3, 10, 11, 13, 14, 15)
+factorColumns <- c("How did you learn to create data visualization?",
+                    "What focus is data visualization in your work?",
+                    "Is there a separate group that does data visualizations or are you embedded in another group? (data science UX UI web data engineering IT etc)",
+                    "Did you set out to work in data visualization or did you fall into it?",
+                    "Are you able to choose your own tools or are the choices made for you?",
+                    "How often do they consume your data visualizations?",
+                    "How would you describe the relationship?" )
+
+for(i in 1:length(factorColumns)){
+  project[[factorColumns[i]]] <- project[[factorColumns[i]]] %>% as.factor()
+}
+
+project$`Percent of your day focused on design?` <- project$`Percent of your day focused on design?` %>% as.numeric()
+
+project[1:15] %>% summary()

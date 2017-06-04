@@ -34,34 +34,7 @@
 <script src = 'd3.js'></script>
 <script src = 'd3v4+jetpack.js'></script>
 <script>
-//    var bioethics = [
-//        {name: 'Nuremburg Trials', begin: 1934, end: 1946, description: 'Lorem Ipsum', type: 'Research Ethics', id: 1},   
-//        {name: 'Tuskagee Syphalis Studies', begin: 1932, end: 1972, description: 'Lorem Ipsum', type: 'Research Ethics', id: 2},
-//        {name: 'Roe v Wade', begin: 1969, end: 1973, description: 'Lorem Ipsum', type: 'Reproductive Ethics', id: 3},
-//        {name: 'Belmont Report', begin: 1974, end: 1978, description: 'Lorem Ipsum', type: 'Research Ethics', id: 4},
-//        {name: 'DAX', begin: 1973, end: 1974, description: 'Lorem Ipsum', type: 'End of Life Ethics', id: 5},
-//        {name: 'Terry Schiavo', begin: 1990, end: 2005, description: 'Lorem Ipsum', type: 'End of Life Ethics', id: 6},
-//        {name: 'Willbrook State School', begin: 1950, end: 1972, description: 'Lorem Ipsum', type: 'Research Ethics', id: 7},
-//        {name: 'MKULTRA', begin: 1953, end: 1973, description: 'Lorem Ipsum', type: 'Research Ethics', id: 8},
-//        {name: 'Octomom', begin: 1997, end: 2011, description: 'Lorem Ipsum', type: 'Reproductive Ethics', id: 9},
-//        {name: 'Johnson v. Calvert', begin: 1990, end: 1993, description: 'Lorem Ipsum', type: 'Reproductive Ethics', id: 10},
-//        {name: 'Doctor Kavorkian', begin: 1989, end: 1998, description: 'Lorem Ipsum', type: 'End of Life Ethics', id: 11},
-//    ]
-//    
-//    var links= [
-//        {source: 1, target: 2},
-//        {source: 1, target: 4},
-//        {source: 1, target: 7},
-//        {source: 1, target: 8},
-//        {source: 2, target: 4},
-//        {source: 7, target: 4},
-//        {source: 8, target: 4},
-//        {source: 3, target: 9},
-//        {source: 3, target: 10},
-//        {source: 5, target: 6},
-//        {source: 5, target: 11}
-//    ]
-//    
+    
     var tooltip = d3.select('body')
         .append('div#tooltip')
         .st({opacity: 0});
@@ -70,107 +43,63 @@
         .append('div#info')
         .st({opacity: 0});
     
+    info.append('div#text');
+        
     var svg = d3.select('body')
         .append('div#chart')
         .append('svg')
         .at({width: 1000, height: 700});
 
-        var color = d3.scaleOrdinal()
-            .range(['#a6cee3','#1f78b4','#b2df8a','#33a02c'])
-            .domain(['Reproductive Ethics', 'Research Ethics', 'Medical Ethics', 'Animal Ethics']);    
-    
-    function timeLine(){
-
-        var yScale = d3.scaleLinear()
-//            .domain(['Reproductive Ethics', 'Research Ethics', 'End of Life Ethics'])
-            .range([400, 100])
-            .domain([0, bioethics.length]);
-
-        function toDateTime(year){
-            return new Date(year, 0, 1);
-        }
-        
-        var xScale = d3.scaleTime()
-            .domain([toDateTime(d3.min(bioethics, d => d.begin)), toDateTime(d3.max(bioethics, d => d.end))])
-            .range([50, 900]);
-        
-        var xAxis = d3.axisBottom(xScale);
-        
-        svg.append('g')
-            .translate([0, 400])
-            .call(xAxis);
-
-        svg.appendMany(bioethics, 'rect')
-            .at({x: d => xScale(toDateTime(d.begin)),
-                 y: (d,i) => yScale(i) - (yScale(0) - yScale(1)),
-                 id: (d,i) => 'b'+i,
-                 width: d => xScale(toDateTime(d.end)) - xScale(toDateTime(d.begin)),
-                 height: yScale(0)-yScale(1), 
-                 stroke: 'black',
-                'fill-opacity': .4
-                })
-            .st({fill: d => color(d.type)})
-            .on('mouseover', handleMouseOver)
-            .on('mouseout', handleMouseOut);
-
-        function handleMouseOver(d, i){
-            svg.selectAll('rect')
-                .st({'fill-opacity': p => {if(p.name == d.name){ return 1} else if(p.type == d.type) { return .5} else { return .1}}});
-
-            svg.select('rect#b' + i)
-                .raise()
-
-            tooltip.st({opacity: .7, left: d3.event.pageX, top: d3.event.pageY})
-                .html(d.name + '<br>Began in ' + d.begin + ' and ended in ' + d.end);
-
-        }
-
-        function handleMouseOut(d, i){
-            svg.selectAll('rect')
-                .st({'fill-opacity': .4});
-
-            svg.select('rect#b' + i)
-                .lower();
-
-            tooltip.st({opacity: 0})
-        }
-    }
-    
-//    timeLine();
+    var color = d3.scaleOrdinal()
+        .range(['#a6cee3','#1f78b4','#b2df8a','#33a02c'])
+        .domain(['Reproductive Ethics', 'Research Ethics', 'Medical Ethics', 'Animal Rights']);    
     
     function network(data){
         var bioethics = data.nodes;
         var links = data.links;
-        console.log(bioethics);
         var nodeHash = bioethics.reduce((hash, node) => {hash[node.id] = node; return hash}, {});
-        
+        var normalRadius = 10,
+            enlargedRadius = 15,
+            normalNodeWidth = 1,
+            enlargedNodeWidth = 3,
+            normalLinkWidth = 3,
+            connectedLinkWidth = 5,
+            forceStrength = -150,
+            centerX = 500,
+            centerY = 350,
+            normalLinkStroke = 'black',
+            connectedLinkStroke = 'orange',
+            tooltipOpacity = .75;
+
         links.forEach(edge => {
             edge.source = nodeHash[edge.source];
             edge.target = nodeHash[edge.target];
-        })
-        
+        });
+            
         var linkForce = d3.forceLink();
         
         var simulation = d3.forceSimulation()
-            .force('charge', d3.forceManyBody().strength(-150))
-            .force('center', d3.forceCenter().x(500).y(350))
+            .force('charge', d3.forceManyBody().strength(forceStrength))
+            .force('center', d3.forceCenter().x(centerX).y(centerY))
             .force('link', linkForce)
             .nodes(bioethics)
             .on('tick', forceTick);
         
         simulation.force('link').links(links);
         
-        svg.appendMany(links, 'line.link')
-            .st({opacity: .5, 'stroke-width': 2, stroke: 'black'});
+        var linkEnter = svg.appendMany(links, 'line.link')
+            .st({opacity: .5, 'stroke-width': normalLinkWidth, stroke: 'black'})
+            .on('mouseover', handleLinkHover)
+            .on('mouseout', handleLinkOut);
         
         var nodeEnter = svg.appendMany(bioethics, 'g.node');
         
         nodeEnter.append('circle')
-            .at({r: 10, id: d => 'b' + d.id})
-            .st({fill: d => color(d.tags[0]), stroke: 'black', 'stroke-width': 1})
+            .at({r: normalRadius, id: d =>  d.id})
+            .st({fill: d => color(d.tags[0]), stroke: 'black', 'stroke-width': normalNodeWidth, cursor: 'pointer'})
             .on('mouseover', handleMouseOver)
             .on('mouseout', handleMouseOut)
-            .on('click', handleNodeClick);
+            .on('click', handleNodeClick);        
         
         function forceTick(){
             d3.selectAll('line.link')
@@ -185,36 +114,68 @@
         
         function handleMouseOver(d, i){
             svg.select('circle#' + d.id)
-                .at({r: 15})
-                .st({'stroke-width': 4});
+                .at({r: enlargedRadius})
+                .st({'stroke-width': enlargedNodeWidth});
 
-            tooltip.st({opacity: .7, left: d3.event.pageX, top: d3.event.pageY})
+            tooltip.st({opacity: tooltipOpacity, left: d3.event.pageX, top: d3.event.pageY})
                 .html('<b>' + d.name + '</b>');
+            
+            linkEnter.filter(p => d.id == p.source.id || d.id == p.target.id)
+                .st({stroke: connectedLinkStroke, 'stroke-width': connectedLinkWidth});
 
         }
 
         function handleMouseOut(d, i){
             svg.select('circle#' + d.id)
-                .at({r: 10})
-                .st({'stroke-width': 1})
+                .at({r: normalRadius})
+                .st({'stroke-width': normalNodeWidth})
 
+            linkEnter.filter(p => d.id == p.source.id || d.id == p.target.id)
+                .st({stroke: normalLinkStroke, 'stroke-width': normalLinkWidth});
+            
             tooltip.st({opacity: 0})
         }
         
         function handleNodeClick(d, i){
+            var hoverHtml = `<h1><b>${d.name}</b></h1><br>${d.description}<br><p><i>Reference: <a href =${d.ref[0]}>${d.ref[0]}</a></i></p>`;
+            
             info.st({'z-index': 2, opacity: .9, width: 1000, height: 700})
+                .select('#text')
+                .html(hoverHtml);
+        }
+        
+        function handleLinkHover(d){
+            tooltip.st({opacity: tooltipOpacity, left: d3.event.pageX, top: d3.event.pageY})
                 .html(d.description);
             
+            d3.select(this)
+                .st({stroke: connectedLinkStroke, 'stroke-width': connectedLinkWidth})
+            
+            svg.selectAll('circle')
+                .filter(p => { return p.id == d.target.id || p.id == d.source.id})
+                .at({r: enlargedRadius})
+                .st({'stroke-width': enlargedNodeWidth});
+        }
+        
+        function handleLinkOut(d){
+            tooltip.st({opacity: 0})
+            
+            d3.select(this)
+                .st({stroke: normalLinkStroke, 'stroke-width': normalLinkWidth})
+                .lower();
+            
+            svg.selectAll('circle')
+                .at({r: normalRadius})
+                .st({'stroke-width': normalNodeWidth});
         }
         
         info.on('click', handleInfoClick);
         
         function handleInfoClick(){
             info.st({'z-index': 0, opacity: 0, width: 0, height: 0});
-            
         }
+        
     }
     
-//    network();
     d3.json('bioethics.json', network)
 </script>
