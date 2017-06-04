@@ -13,12 +13,15 @@
             pointer-events: none;
         }
         
+        #return{
+        }
+        
         div#info{
             position: absolute;
-            width: 0;
-            height: 0;
+            width: 1200;
+            height: 600;
             padding: 10px;
-            font-size: 20px;
+            font-size: 18px;
             background: white;
             border: 0px;  
             z-index: 0;
@@ -30,7 +33,29 @@
         
     </style>
 </head>
-<body></body>
+<body>
+    <div id = 'info'>
+        <h1>Educational Use of Network Graphs: Bioethics</h1>
+        <p class = 'demo'><b>Click here when ready to see the demo.</b></p>        
+        <p>Network graphs are often used to show relationships in social and business contexts. A typical use case for network graphs is to show similiarities and differences in Twitter accounts with regards to sentiments on a certain #topic. Another typical use case for network graphs is to show the buying patterns of customers. Both use cases are useful for businesses and scholars for gaining new insights within their respective fields - that is, the network graph is typically used for exploratory purposes.</p>
+        <p>I have not, however, seen many cases of network graphs being used for pedagogical purposes. Most teachers would probably not consider the network graph as an educational tool. However, here I would like to show an example of how network graphs - with their interactivity and focus on the adjacency of concepts - can be used to convey the overall themes of a course.</p>
+        <p>A typical university course will provide a a syllabus which is a linear display of information. A syllabus generally has the following layout:</p>
+        <ol>
+            <li><b>First Theme of the Course:</b><ul><li>topic</li><li>topic</li></ul></li>
+            <li><b>Second Theme of the Course:</b><ul><li>topic</li><li>topic</li></ul></li>
+            <li><b>Third Theme of the Course:</b><ul><li>topic</li><li>topic</li></ul></li>
+        </ol>
+        <p>The syllabus layout provides a brief summary of a courses offering and maybe suggests a hierarchy of information (the first theme is probably more fundamental than the second theme which is more fundamental than the third...). However, when it comes time to review the information, it only serves as a temporal reminder of what was learned and when it was learned - it does not show how individual topics within different themes relate to eachother</p>
+        <p>The following demo that I present will show how a teacher can both provide structure to a course syllabus, while allowing a student to explore and visualize the overal relationships and themse of a course. While exploring the demo please pay attention to:</p>
+        <ol>
+            <li>How hovering over a link allows a teacher to engage the student with questions regarding the connected nodes.</li>
+            <li>How the network structure allows for the student to make connections between concepts that are not directly related.</li>
+            <li>And how the student can drag the nodes to clarify different connections.</li>
+        </ol>
+        <p class = 'demo'><b>Click here when ready to see the demo.</b></p>
+        <br>
+    </div>
+</body>
 <script src = 'd3.js'></script>
 <script src = 'd3v4+jetpack.js'></script>
 <script>
@@ -39,12 +64,8 @@
         .append('div#tooltip')
         .st({opacity: 0});
     
-    var info = d3.select('body')
-        .append('div#info')
-        .st({opacity: 0});
-    
-    info.append('div#text');
-        
+    var info = d3.select('#info');
+            
     var svg = d3.select('body')
         .append('div#chart')
         .append('svg')
@@ -53,6 +74,12 @@
     var color = d3.scaleOrdinal()
         .range(['#a6cee3','#1f78b4','#b2df8a','#33a02c'])
         .domain(['Reproductive Ethics', 'Research Ethics', 'Medical Ethics', 'Animal Rights']);    
+    
+    d3.selectAll('.demo')
+        .st({cursor: 'pointer', color: 'green'})
+        .on('mouseover', () => d3.selectAll('.demo').st({color: 'black', 'font-size': 20}))
+        .on('mouseout', () => d3.selectAll('.demo').st({color: 'green', 'font-size': 18}))
+        .on('click', () => {d3.json('bioethics.json', network)});
     
     function network(data){
         var bioethics = data.nodes;
@@ -70,6 +97,14 @@
             normalLinkStroke = 'black',
             connectedLinkStroke = 'orange',
             tooltipOpacity = .75;
+        
+        svg.append('text')
+            .at({x: 50, y: 50, stroke: 'black', 'font-size': 50})
+            .text('BioEthics 101')
+        info.st({'z-index': 0, opacity: 0, width: 0, height: 0})
+            .html('')
+        
+        info.append('div#text');
 
         links.forEach(edge => {
             edge.source = nodeHash[edge.source];
@@ -137,12 +172,20 @@
         }
         
         function handleNodeClick(d, i){
-            var hoverHtml = `<h1><b>${d.name}</b></h1><br>${d.description}<br><p><i>Reference: <a href =${d.ref[0]}>${d.ref[0]}</a></i></p>`;
+            var hoverHtml = `<h1><b>${d.name}</b></h1><p><span class = 'return'>Return to overview</span></p><br>${d.description}<p><i>Reference: <a href =${d.ref[0]}>${d.ref[0]}</a></i></p><p><span class = 'return'>Return to overview</span></p><br>`;
             
             info.st({'z-index': 2, opacity: .9, width: 1000, height: 700})
                 .select('#text')
                 .html(hoverHtml);
+            
+            d3.selectAll('.return')
+                .st({cursor: 'pointer', color: 'red'})
+                .on('click', handleReturnClick)
+                .on('mouseover', () => d3.selectAll('.return').st({color: 'black', 'font-size': 20}))
+                .on('mouseout', () => d3.selectAll('.return').st({color: 'red', 'font-size': 18}));
+
         }
+
         
         function handleLinkHover(d){
             tooltip.st({opacity: tooltipOpacity, left: d3.event.pageX, top: d3.event.pageY})
@@ -169,13 +212,24 @@
                 .st({'stroke-width': normalNodeWidth});
         }
         
-        info.on('click', handleInfoClick);
         
-        function handleInfoClick(){
+        function handleReturnClick(){
             info.st({'z-index': 0, opacity: 0, width: 0, height: 0});
         }
         
+        var drag = d3.drag();
+        drag.on('drag', dragging);
+        function dragging(d){
+            var e = d3.event;
+            d.fx = e.x;
+            d.fy = e.y;
+            if(simulation.alpha() < .1){
+                simulation.alpha(.1);
+                simulation.restart();
+            }
+        }
+        
+        d3.selectAll('g.node').call(drag)
+        
     }
-    
-    d3.json('bioethics.json', network)
 </script>
