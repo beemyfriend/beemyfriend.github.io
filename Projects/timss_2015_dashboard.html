@@ -227,6 +227,13 @@
             d3.selectAll('rect.' + chosen)
                 .attrs({'fill': 'black', 'fill-opacity': 1});
             
+            //the handle_mouse_out function can potentially pull info
+            //from a rect. the d from a rect is the data from a specific
+            //country-question combo. The coordinates of the scatter point,
+            //if the rect data is used, will be dependent on the country-question
+            //combo of the rect instead of the country-question combo of the 
+            //the scatterplot displayed. Therefore we use a scat_point_info variable
+            
             var scat_point_info = scat_country.filter(function(x){return x.question == chosen})[0];
             
             scatter.select('.' + chosen )
@@ -262,6 +269,13 @@
                 }
             
             })
+
+            //the handle_mouse_out function can potentially pull info
+            //from a rect. the d from a rect is the data from a specific
+            //country-question combo. The coordinates of the scatter point,
+            //if the rect data is used, will be dependent on the country-question
+            //combo of the rect instead of the country-question combo of the 
+            //the scatterplot displayed. Therefore we use a scat_point_info variable            
             
             var scat_point_info = scat_country.filter(function(x){return x.question == chosen})[0];
             
