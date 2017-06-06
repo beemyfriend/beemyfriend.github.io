@@ -18,7 +18,7 @@
 <body>
     <div id= 'explanation'>
         <h1>An Exploration of the TIMSS 2015 Math Question Performance</h1>
-        <p>The <b>Trends in International Math and Science Study (TIMSS)</b> is a series of international assessments of the mathematics and science knowledge of students around the world. It is administered by both the <b>International Association for the Evaluation of Educational achievement (IEA)</b> and <b>Boston College (BC)</b> who first conducted the assessments in 1995 and re-administered them every 4 years after that (1999, 2003, 2007, 2011, and 2015). Different versions of the assessments are given to 4th graders and 8th graders of participating countries. Each question in the assessment test the students’ grasp of different cognitive and content domains. Every assessment contains both multiple-choice and free-response style questions.</p>
+        <p>The <b>Trends in International Math and Science Study (TIMSS)</b> is a series of international assessments of the mathematics and science knowledge of students around the world. It is administered by both the <b>International Association for the Evaluation of Educational Achievement (IEA)</b> and <b>Boston College (BC)</b> who first conducted the assessments in 1995 and re-administered them every 4 years after that (1999, 2003, 2007, 2011, and 2015). Different versions of the assessments are given to 4th graders and 8th graders of participating countries. Each question in the assessment test the students’ grasp of different cognitive and content domains. Every assessment contains both multiple-choice and free-response style questions.</p>
         <p>The following visualization is my attempt at comparing question performance among the diferent participating countries on the 8th grade math assesment. The information shown is typically displayed in tabular format such that a table represents a country and each row represents a question or vice versa. The visualization is split into two panels:</p>
         <ul>
             <li>The left panel displays all question data organized by country rank and question rank. A country is ranked by how the average student performed on all the questions. Singapore is the highest ranked country because the average student was able to answer most questions correctly. A question is ranked by the percentage of students within a country who correctly answered the question. The question "Pizzas sold by a shop" is Singapore's highest ranked question with 95.86% of all students correctly answering it.</li>
@@ -129,6 +129,7 @@
         
         
 //============== create keys =============//
+        
         function createKeys(){
             scatter.selectAll('rect.colorkey')
                 .data([ "0-10",  "11-20",  "21-30",  "31-40",  "41-50",  "51-60",  "61-70",  "71-80",  "81-90",  "91-100"])
@@ -334,7 +335,6 @@
                 .enter().append('rect')
                 .attrs({'height': heat_y(1) - heat_y(2),
                         'width': heat_x(2) - heat_x(1),
-//                        'fill': function(d){return heat_clr( +d.correct_ratio_per_question)},
                         'fill': function(d){return heat_clr(d.correct_ratio_per_question_range)},
                         'fill-opacity': .75,
                         'x': function(d){return heat_x(+d.international_rank - 1)},
@@ -434,8 +434,6 @@
             
             createKeys()
             create_scatter('usa')
-            
-            
         }
     </script>
 </body>
