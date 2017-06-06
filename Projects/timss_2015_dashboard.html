@@ -16,6 +16,17 @@
     </style>
 </head>
 <body>
+    <div id= 'explanation'>
+        <h1>An Exploration of the TIMSS 2015 Math Question Performance</h1>
+        <p>The <b>Trends in International Math and Science Study (TIMSS)</b> is a series of international assessments of the mathematics and science knowledge of students around the world. It is administered by both the <b>International Association for the Evaluation of Educational achievement (IEA)</b> and <b>Boston College (BC)</b> who first conducted the assessments in 1995 and re-administered them every 4 years after that (1999, 2003, 2007, 2011, and 2015). Different versions of the assessments are given to 4th graders and 8th graders of participating countries. Each question in the assessment test the students’ grasp of different cognitive and content domains. Every assessment contains both multiple-choice and free-response style questions.</p>
+        <p>The following visualization is my attempt at comparing question performance among the diferent participating countries on the 8th grade math assesment. The information shown is typically displayed in tabular format such that a table represents a country and each row represents a question or vice versa. The visualization is split into two panels:</p>
+        <ul>
+            <li>The left panel displays all question data organized by country rank and question rank. A country is ranked by how the average student performed on all the questions. Singapore is the highest ranked country because the average student was able to answer most questions correctly. A question is ranked by the percentage of students within a country who correctly answered the question. The question "Pizzas sold by a shop" is Singapore's highest ranked question with 95.86% of all students correctly answering it.</li>
+            <li>The right panel displays question data specific to a country and is organized by national success rate and gender dominance. National success rate is the percentage of students given who successfully answered a question. Gender dominance is calculated by the percentage of total males who successfully answered a question subtracted by the percentage of total females who successfully answered a question. A country can be displayed by clicking on the country's abreviation on the bottom axis of left panel.</li>
+        </ul>
+        <p>While there are a total of 57 different countries that participated in TIMSS during 2015, I chose to visualize only the 34 countries that also participated in the 2011 assesment. There are a total of 7306 different datapoints on display at any given time. It would be difficult to display such a large amount of information on a static chart. While a lot of information can actually be discovered by simply looking at the color, shape, and positional encodings in the chart, even more information can be gained by hovering over a datapoint and seeing how a question compares internationally.</p>
+        <p>There is a lot of information here. Please take your time and enjoy exploring through the data.</p>
+    </div>
     <div id='dashboard'></div>
     <script src = 'd3.js'></script>
     <script src = 'd3v4+jetpack.js'></script>
@@ -106,10 +117,6 @@
             .range([0, scat_width])
             .domain([0, 1]);
         
-//        var heat_clr = d3.scaleLinear()
-//            .domain([0, .5, 1])
-//            .range(['#fc8d59', '#ffffbf', '#91bfdb']);
-
         heat_clr = d3.scaleOrdinal()
             .range(['#a50026', '#d73027', '#f46d43', '#fdae61', '#fee090', '#e0f3f8', '#abd9e9', '#74add1', '#4575b4', '#313695'])
             .domain([ "0-10",  "11-20",  "21-30",  "31-40",  "41-50",  "51-60",  "61-70",  "71-80",  "81-90",  "91-100"])
@@ -120,94 +127,95 @@
             .range(['#66c2a5', '#fc8d62', '#8da0cb']);
        
         
-        scatter.selectAll('rect.colorkey')
-            .data([ "0-10",  "11-20",  "21-30",  "31-40",  "41-50",  "51-60",  "61-70",  "71-80",  "81-90",  "91-100"])
-            .enter().append('rect')
-            .attrs({'height': 20, 
-                    'width': 10, 
-                    'x': scat_width - 5, 
-                    'y': function(d, i){return 250 + i * 20},
-                    'fill': function(d){return heat_clr(d)}, 
-                    'fill-opacity': .75, 'stroke': 'black', 'stroke-width': 1})
         
 //============== create keys =============//
-        
-        scatter.selectAll('text.colorkey')
-            .data([0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100])
-            .enter().append('text')
-            .attrs({'fill': 'black', 
-                    'transform': function(d, i){ return 'translate(' + (scat_width + 10) + ',' + (255 + i * 20) + ')'}, 
-                    'font-size': 10})
-            .text(function(d){ return d + '%'});    
-        
-        scatter.selectAll('path.contentkey')
-            .data(['Algebra', 'Data and Chance', 'Geometry', 'Number'])
-            .enter().append('path')
-            .attrs({'d': function(d){return content_shape(d)}, 
-                   'class': 'contentkey', 
-                    'stroke': 'black',
-                   'fill': 'black', 
-                   'transform': function(d,i){return 'translate(' + scat_width +',' + (30 * i) + ')'}});
-        
-        scatter.selectAll('circle.cognitivekey')
-            .data(['Applying', 'Knowing', 'Reasoning'])
-            .enter().append('circle')
-            .attrs({'class': 'cognitivekey', 
-                    'fill': function(d){return cognitive_clr(d)}, 
-                    'stroke': 'black', 
-                    'cx': scat_width, 
-                    'cy': function(d,i){ return (120 + i * 30)}, 
-                    'r': 5})
-        
-        scatter.selectAll('text.domainkey')
-            .data(['Algebra', 'Data and Chance', 'Geometry', 'Number', 'Applying', 'Knowing', 'Reasoning'])
-            .enter().append('text')
-            .attrs({'class': 'domainkey', 
-                    'fill': 'black', 
-                    'transform': function(d,i){ return 'translate(' + (scat_width + 10) + ',' + (5 + 30 * i) + ')'}})
-            .text(function(d){return d});
-        
-        scatter.append('text')
-            .attrs({'class': 'domainkey', 
-                    'fill': 'black', 
-                    'transform': 'translate(' + (scat_width) + ',0) rotate(-90) translate(-90, -15)', 
-                    'text-anchor': 'middle'})
-            .text('Content & Cognitive Domains')
+        function createKeys(){
+            scatter.selectAll('rect.colorkey')
+                .data([ "0-10",  "11-20",  "21-30",  "31-40",  "41-50",  "51-60",  "61-70",  "71-80",  "81-90",  "91-100"])
+                .enter().append('rect')
+                .attrs({'height': 20, 
+                        'width': 10, 
+                        'x': scat_width - 5, 
+                        'y': function(d, i){return 250 + i * 20},
+                        'fill': function(d){return heat_clr(d)}, 
+                        'fill-opacity': .75, 'stroke': 'black', 'stroke-width': 1});
             
-        scatter.append('text')
-            .attrs({'class': 'colorkey', 'fill': 'black', 'transform': 'translate(' + (scat_width) + ',0) rotate(-90) translate(-350, -15)', 'text-anchor': 'middle'})
-            .text('Students Correctly Answered \'?\'')
+            scatter.selectAll('text.colorkey')
+                .data([0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100])
+                .enter().append('text')
+                .attrs({'fill': 'black', 
+                        'transform': function(d, i){ return 'translate(' + (scat_width + 10) + ',' + (255 + i * 20) + ')'}, 
+                        'font-size': 10})
+                .text(function(d){ return d + '%'});    
 
-        svg.append('text')
-            .attrs({'transform': 'translate(' + margin.left + ',' + margin.top/2 + ')', 'font-size': margin.top/2.5, 'fill': 'black' })
-            .text('2015 TIMSS: International Comparison of Math Questions')
-             
-        heatmap.append('g')
-            .append('text')
-            .attrs({'fill': 'black', 'transform': 'translate(0,' +( margin.top/5 * (-1)) + ')', 'font-size': margin.top/4.5, 'class': 'heatmap' })
-            .text('Question Success per Country');
-            
-        heatmap.append('g')
-            .append('text')
-            .attrs({'transform': 'rotate(-90) translate(' + (-1 * vis_height/2) + ', -35)', 'font-size': margin.left/6.5, 'fill': 'black', 'text-anchor': 'middle'})
-            .text('National Question Ranking From Most Successfully Answered To Least')
+            scatter.selectAll('path.contentkey')
+                .data(['Algebra', 'Data and Chance', 'Geometry', 'Number'])
+                .enter().append('path')
+                .attrs({'d': function(d){return content_shape(d)}, 
+                       'class': 'contentkey', 
+                        'stroke': 'black',
+                       'fill': 'black', 
+                       'transform': function(d,i){return 'translate(' + scat_width +',' + (30 * i) + ')'}});
 
-        scatter.append('g')
-            .append('text')
-            .attrs({'transform': 'rotate(-90) translate(' + (-1 * vis_height/2) + ', -40)', 'font-size': margin.left/6.5, 'fill': 'black', 'text-anchor': 'middle'})
-            .text('Question Success Rate Male - Success Rate Female');
-            
-        scatter.append('g')
-            .append('text')
-            .attrs(({transform: 'translate(' + (scat_width/2) + ','+ (vis_height + 35) + ')', 'font-size': margin.left/6.5, 'fill': 'black', 'text-anchor': 'middle'}))
-            .text('National Question Success Rate')
+            scatter.selectAll('circle.cognitivekey')
+                .data(['Applying', 'Knowing', 'Reasoning'])
+                .enter().append('circle')
+                .attrs({'class': 'cognitivekey', 
+                        'fill': function(d){return cognitive_clr(d)}, 
+                        'stroke': 'black', 
+                        'cx': scat_width, 
+                        'cy': function(d,i){ return (120 + i * 30)}, 
+                        'r': 5})
+
+            scatter.selectAll('text.domainkey')
+                .data(['Algebra', 'Data and Chance', 'Geometry', 'Number', 'Applying', 'Knowing', 'Reasoning'])
+                .enter().append('text')
+                .attrs({'class': 'domainkey', 
+                        'fill': 'black', 
+                        'transform': function(d,i){ return 'translate(' + (scat_width + 10) + ',' + (5 + 30 * i) + ')'}})
+                .text(function(d){return d});
+
+            scatter.append('text')
+                .attrs({'class': 'domainkey', 
+                        'fill': 'black', 
+                        'transform': 'translate(' + (scat_width) + ',0) rotate(-90) translate(-90, -15)', 
+                        'text-anchor': 'middle'})
+                .text('Content & Cognitive Domains')
+
+            scatter.append('text')
+                .attrs({'class': 'colorkey', 'fill': 'black', 'transform': 'translate(' + (scat_width) + ',0) rotate(-90) translate(-350, -15)', 'text-anchor': 'middle'})
+                .text('Students Correctly Answered \'?\'')
+
+            svg.append('text')
+                .attrs({'transform': 'translate(' + margin.left + ',' + margin.top/2 + ')', 'font-size': margin.top/2.5, 'fill': 'black' })
+                .text('2015 TIMSS: International Comparison of Math Questions')
+
+            heatmap.append('g')
+                .append('text')
+                .attrs({'fill': 'black', 'transform': 'translate(0,' +( margin.top/5 * (-1)) + ')', 'font-size': margin.top/4.5, 'class': 'heatmap' })
+                .text('Question Success per Country');
+
+            heatmap.append('g')
+                .append('text')
+                .attrs({'transform': 'rotate(-90) translate(' + (-1 * vis_height/2) + ', -35)', 'font-size': margin.left/6.5, 'fill': 'black', 'text-anchor': 'middle'})
+                .text('National Question Ranking From Most Successfully Answered To Least')
+
+            scatter.append('g')
+                .append('text')
+                .attrs({'transform': 'rotate(-90) translate(' + (-1 * vis_height/2) + ', -40)', 'font-size': margin.left/6.5, 'fill': 'black', 'text-anchor': 'middle'})
+                .text('Question Success Rate Male - Success Rate Female');
+
+            scatter.append('g')
+                .append('text')
+                .attrs(({transform: 'translate(' + (scat_width/2) + ','+ (vis_height + 35) + ')', 'font-size': margin.left/6.5, 'fill': 'black', 'text-anchor': 'middle'}))
+                .text('National Question Success Rate')
+        }
+                
         
 //============ interactivity =============//
         
         function handle_mouse_over(d, i){
             chosen = this.className.baseVal.split(' ')[0];
-            
-            console.log(this.className.baseVal)
             
             div.transition()
                 .duration(500)
@@ -296,7 +304,6 @@
             d3.select('rect#' + d.country)
                 .attr('fill-opacity', .6);
             
-            console.log(d.country);
         }
         
         
@@ -341,6 +348,7 @@
             heatmap.selectAll('rect.country')
                 .data(country_tsv)
                 .enter().append('rect')
+                .st({cursor: 'pointer'})
                 .attrs({'width': heat_x(2) - heat_x(1), 
                         'height': 40, 
                         'x': function(d){return heat_x(+d.international_rank -1)}, 
@@ -424,6 +432,7 @@
                     .text('Question Success in ' + country_tsv.filter(function(x){return x.country == country})[0].country_full)
             }
             
+            createKeys()
             create_scatter('usa')
             
             

@@ -86,46 +86,6 @@
 <body>
     <div id = 'container'>
         <div id = 'sections'>
-            <div>
-                <br><br><br><br><br><br><br><br><br><br>
-                <br><br><br><br><br><br><br><br><br><br>
-                <br><br><br><br><br><br><br><br><br><br>
-            </div>
-            <div>
-                <br><br><br><br><br><br><br><br><br><br>
-                <br><br><br><br><br><br><br><br><br><br>
-                <br><br><br><br><br><br><br><br><br><br>
-            </div>
-            <div>
-                <br><br><br><br><br><br><br><br><br><br>
-                <br><br><br><br><br><br><br><br><br><br>
-                <br><br><br><br><br><br><br><br><br><br>
-            </div>
-            <div>
-                <br><br><br><br><br><br><br><br><br><br>
-                <br><br><br><br><br><br><br><br><br><br>
-                <br><br><br><br><br><br><br><br><br><br>
-            </div>
-            <div>
-                <br><br><br><br><br><br><br><br><br><br>
-                <br><br><br><br><br><br><br><br><br><br>
-                <br><br><br><br><br><br><br><br><br><br>
-            </div>
-            <div>
-                <br><br><br><br><br><br><br><br><br><br>
-                <br><br><br><br><br><br><br><br><br><br>
-                <br><br><br><br><br><br><br><br><br><br>
-            </div>
-            <div>
-                <br><br><br><br><br><br><br><br><br><br>
-                <br><br><br><br><br><br><br><br><br><br>
-                <br><br><br><br><br><br><br><br><br><br>
-            </div>
-            <div>
-                <br><br><br><br><br><br><br><br><br><br>
-                <br><br><br><br><br><br><br><br><br><br>
-                <br><br><br><br><br><br><br><br><br><br>
-            </div>
         </div>
         <div id = 'graph'></div>
     </div>
@@ -133,6 +93,7 @@
     <script src = 'graph-scroll.js'></script>
     <script src = 'd3-annotation.js'></script>
     <script>
+        
         var width = 1100,
             height = 600,
             margin = {
@@ -146,7 +107,15 @@
         
         var data = [[1, 1, 25], [20, 10, 50], [40, 100, 100], [60, 1000, 0], [80, 10000, 0], [100, 100000, 0]]
         
-        var index = ['.scaleLinear(good)', '.scaleLinear(bad)', '.scaleLog(good)', '.scaleLog(bad)', '.scaleLinear(bad_radius)', '   ---', '.scaleSqrt(good_radius)', '   ---']
+        var index = [['.scaleLinear(good)', 10], ['.scaleLinear(bad)', 500], ['.scaleLog(good)', 1000], ['.scaleLog(bad)', 1500], ['.scaleLinear(bad_radius)', 2000], ['   ---', 2600], ['.scaleSqrt(good_radius)', 3100], ['   ---', 3600]]
+        
+        d3.select('#sections')
+            .selectAll('div')
+            .data(index.map(function(x){return x[0]}))
+            .enter().append('div')
+            .attr('height', 400)
+            .attr('id', function(d,i){return 'id'+i})
+            .html('<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>')
         
         var lineScaleX0 = d3.scaleLinear()
             .range([margin.left, width - margin.right - 150])
@@ -187,13 +156,13 @@
         
         function indexMaker(){
             svg.selectAll('text')
-                .data(index)
+                .data(index.map(function(x){return x[0]}))
                 .enter().append('text')
                 .attr('class', function(d, i){ return 'index'})
-                .attr('font-size', 18)
+                .style('font-size', 18)
                 .attr('x', (width-margin.right - 30))
                 .attr('y', function(d, i){return margin.top + margin.top + (i * 18) })
-                .text(function(d){ return d})
+                .text(function(d){ return d});
         }
         
         function highlightIndex(index){
