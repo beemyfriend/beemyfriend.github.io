@@ -46,6 +46,8 @@ project <- survey %>% select(`How did you learn to create data visualization?`, 
   filter(`What's your employment status` == 'Full-time' &  `For your current role or the majority of your projects: were you hired to do data visualization only or is data visualization a part of your job/project description?` == "Hired to do data visualization") %>%
   mutate(id = 1:nrow(.)) 
 
+# need to try 'extract' from tidyr
+
 project$`Data visualization roles at your organization are found in what part of the organization?` <- project$`Data visualization roles at your organization are found in what part of the organization?` %>%
   str_replace('News|Specific department for news graphics|Editorial office|Editorial|editorial', 'Newsroom') %>%
   str_replace('Data Explorer|Algorithms', 'Data_Science') %>%
@@ -66,6 +68,10 @@ project$`Who do you make data visualizations for?` <- project$`Who do you make d
   str_replace('Medical Professionals', 'MP') %>%
   str_replace('Product Managers|Project Managers', 'PM') %>%
   str_replace('clients for sales team', 'Clients')
+
+
+
+
 
 audience <- c('GP', 'Engineers', 'Scientists', 'MP', 'PM', 'Executives', 'Analysts', 'Clients')
 
@@ -206,4 +212,29 @@ for(i in 1:length(factorColumns)){
 
 project$`Percent of your day focused on design?` <- project$`Percent of your day focused on design?` %>% as.numeric()
 
-project[1:15] %>% summary()
+project_names <- project %>% 
+  names() %>%
+  str_replace_all('\\s', '_')
+
+names(project) <- project_names 
+
+project_factors <- project %>% Filter(f = is.factor)
+
+project_numeric <- project %>% Filter(f = is.numeric)
+
+project_logical <- project %>% Filter(f = is.logical)
+
+for(i in 1:ncol(project_factors)){
+  
+  assign(str_c('pf_', i), 
+         ggplot(project_factors) +
+           geom_bar(aes_(project_factors[[i]])))
+  
+  assign(str_c('pf_', i, '_title'), names(project_factors)[i])
+  
+  assign(str_c('pf_', i, '_levels'), levels(project_factors[[i]]))
+}
+
+project_numeric <- project_numeric %>% gather(key, value, -id)
+
+ggplot(project_numeric) + geom_boxplot(aes(key, value))

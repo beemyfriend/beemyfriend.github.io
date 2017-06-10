@@ -1,0 +1,118 @@
+---
+title: "Exploring Data Viz Survey"
+author: "Benjamin Ortiz"
+date: "June 7, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r echo = F}
+setwd('d://Websites/beemyfriend.github.io/Projects/')
+library(stringr)
+library(tidyverse)
+project <- read_csv('fulltime_viz_jobs.csv')
+
+project_names <- project %>% 
+  names() %>%
+  str_replace_all('\\s', '_')
+
+names(project) <- project_names 
+
+project_factors <- project %>% Filter(f = is.character) %>% mutate_all(as.factor)
+
+project_numeric <- project %>% Filter(f = is.numeric)
+
+project_logical <- project %>% Filter(f = is.logical)
+
+for(i in 1:ncol(project_factors)){
+  
+  assign(str_c('pf_', i), 
+         ggplot(project_factors) +
+           geom_bar(aes_(project_factors[[i]])))
+  
+  assign(str_c('pf_', i, '_title'), names(project_factors)[i])
+  
+  assign(str_c('pf_', i, '_levels'), levels(project_factors[[i]]))
+}
+
+
+get(str_c('pf_', 1, '_title'))
+get(str_c('pf_', 1))
+get(str_c('pf_', 1, '_levels'))
+
+get(str_c('pf_', 2, '_title'))
+get(str_c('pf_', 2))
+get(str_c('pf_', 2, '_levels'))
+
+get(str_c('pf_', 3, '_title'))
+get(str_c('pf_', 3))
+get(str_c('pf_', 3, '_levels'))
+
+get(str_c('pf_', 4, '_title'))
+get(str_c('pf_', 4))
+get(str_c('pf_', 4, '_levels'))
+
+get(str_c('pf_', 5, '_title'))
+get(str_c('pf_', 5))
+get(str_c('pf_', 5, '_levels'))
+
+get(str_c('pf_', 6, '_title'))
+get(str_c('pf_', 6))
+get(str_c('pf_', 6, '_levels'))
+
+get(str_c('pf_', 7, '_title'))
+get(str_c('pf_', 7))
+get(str_c('pf_', 7, '_levels'))
+
+get(str_c('pf_', 8, '_title'))
+get(str_c('pf_', 8))
+get(str_c('pf_', 8, '_levels'))
+
+get(str_c('pf_', 9, '_title'))
+get(str_c('pf_', 9))
+get(str_c('pf_', 9, '_levels'))
+
+for(i in 1:ncol(project_numeric)){
+  
+  assign(str_c('pn_', i), 
+         ggplot(project_numeric) +
+           geom_boxplot(aes_('', project_numeric[[i]])))
+  
+  assign(str_c('pn_', i, '_title'), names(project_numeric)[i])
+  
+  assign(str_c('pn_', i, '_levels'), levels(project_numeric[[i]]))
+}
+
+get(str_c('pn_', 1, '_title'))
+get(str_c('pn_', 1))
+get(str_c('pn_', 1, '_levels'))
+
+get(str_c('pn_', 2, '_title'))
+get(str_c('pn_', 2))
+get(str_c('pn_', 2, '_levels'))
+
+get(str_c('pn_', 3, '_title'))
+get(str_c('pn_', 3))
+get(str_c('pn_', 3, '_levels'))
+
+get(str_c('pn_', 4, '_title'))
+get(str_c('pn_', 4))
+get(str_c('pn_', 4, '_levels'))
+
+get(str_c('pn_', 5, '_title'))
+get(str_c('pn_', 5))
+get(str_c('pn_', 5, '_levels'))
+
+get(str_c('pn_', 6, '_title'))
+get(str_c('pn_', 6))
+get(str_c('pn_', 6, '_levels'))
+
+
+
+
+```
+

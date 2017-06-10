@@ -1,0 +1,64 @@
+<head>
+    <style>
+        div.tooltip{
+            position: absolute;
+            text-align: left;
+            width: 360px;
+            height: 130px;
+            padding: 5px;
+            font-size: 14px;
+            background: lightsteelblue;
+            border: 0px;
+            border-radius: 8px;
+            pointer-events: none;
+            z-index: 4;
+        }
+    </style>
+</head>
+<body></body>
+<script src = 'd3.js'></script>
+<script src = 'd3v4+jetpack.js'></script>
+<script>
+    var div = d3.select('body')
+        .append('div.tooltip')
+        .st({opacity: 0});
+    
+    var svg = d3.select('body')
+        .append('svg')
+        .at({width: 1000, height: 600});
+    
+    var mainstreet_g = svg.append('g#mainstreet');
+    
+    mainstreet_g.append('image#mainstreet')
+        .at({x: 100, y: 100, width: 400, height: 400, 'xlink:href': 'fuzzy_maps/mainstreet.png'});
+    
+    var mainstreet_info = [
+        {x: 170, y: 250, title: "home", description: "This was the house in which I grew up. I lived here until I moved to college. By the time I graduated college, it was no longer ours..."},  
+        {x: 230, y: 405, title: "limit", description: "When I was really young, my parents told me to never pass this point. There was a big sign that said 'Main Street' and also a sculpture of one of those old timey big-front-wheeled bikes. This was my bus stop from kindergarden to 12th grade."}, 
+        {x: 347, y: 273, title: "accident", description: "When I was really young I fell off my bike. As I was falling my calf got caught on the gear that holds the bike-chain. There was a lot of blood and some white stuff which I think was fat. My older sister heard me crying and helped me get back home, cleaned the wound, and calmed me down. This was one of two major accidents during my childhood."}];
+    
+    mainstreet_g.appendMany(mainstreet_info, 'circle')
+        .at({cx: function(d){return d.x}, cy: function(d){return d.y}, id: function(d){return d.title}, r: 4})
+        .st({fill: 'white', stroke: 'black'})
+        .on('mouseover', handleMouseOver)
+        .on('mouseout', handleMouseOut);
+    
+    function handleMouseOver(d){
+        mainstreet_g.select('circle#' + d.title)
+            .st({fill: 'blue'});
+        
+        div.st({
+            left: d3.event.pageX, 
+            top: d3.event.pageY, 
+            opacity: .8})
+            .html(d.description)
+    }
+    
+    function handleMouseOut(d){
+        mainstreet_g.select('circle#' + d.title)
+            .st({fill: 'white'});
+        
+        div.st({opacity: 0})
+    }
+    
+</script>
