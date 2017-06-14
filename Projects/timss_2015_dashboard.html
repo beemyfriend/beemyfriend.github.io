@@ -386,7 +386,6 @@
                 .attr('transform', 'translate(' + (margin.left + heat_width + margin.gap) + ',' + (margin.top + vis_height) + ')')
                 .call(scat_x_axis);
             
-            
             scatter.append('g')
                 .append('path')
                 .attrs({'d': 'M ' + scat_x(0) + ' ' + scat_y(0) + ' h ' + scat_width, 

@@ -1,0 +1,170 @@
+<head></head>
+<body></body>
+<script src = 'd3.js'></script>
+<script src = 'd3v4+jetpack.js'></script>
+<script>
+    var data = [],
+        r = 0,
+        c = 0,
+        width = 1000,
+        height = 1000,
+        r_width = 20,
+        r_height = 20;
+    
+    var margin = {
+        top: 100,
+        right: 100,
+        left: 100,
+        bottom: 100
+    }
+    
+    for(var i = 0; i < 980 ; i++){
+        var r0 = r,
+            c0 = c;
+        
+        data.push([r0, c0, i]);
+        
+        r++
+        
+        if(r > 25){
+            r = 0;
+            c++;
+        }
+    }
+    
+    var svg = d3.select('body')
+        .append('svg')
+        .at({width: width, height: height});
+    
+    var rect = svg.appendMany(data, 'rect')
+        .at({
+            y: function(d){return margin.top + d[0] * r_height}, 
+            x: function(d){return margin.left + d[1] * r_width}, 
+            width: r_width, 
+            height: r_height})
+        .st({fill: 'purple', stroke: 'grey'});
+    
+    function randomSubset(array, size){
+        var temp = array.map(function(x){return x});
+        var subset = [];
+        for(var i = 0; i < size; i++){
+            var random = Math.floor(Math.random() * temp.length)
+            var sampled = temp.splice(random, 1);
+            subset.push(sampled[0][2]);
+        }
+        return subset;
+    }
+    
+    var random_full_subset = randomSubset(data, 98);
+    
+    //10% of 980 is 98
+    //Strat by gender
+    var random_men_subset = randomSubset(data.slice(0, 708), 71);
+    var random_women_subset = randomSubset(data.slice(708, 905), 20);
+    var random_other_subset = randomSubset(data.slice(905), 7)
+    var gendered_subset = random_men_subset.concat(random_women_subset).concat(random_other_subset);
+    
+    //Strat by education
+    var masters = randomSubset(data.slice(0, 410), 41);
+    var bachelors = randomSubset(data.slice(410, 719), 31);
+    var phd = randomSubset(data.slice(719, 902), 18);
+    var other = randomSubset(data.slice(902), 8);
+    var education_subset = masters.concat(bachelors).concat(phd).concat(other);
+    
+    rect.transition()
+        .delay(1000)
+        .duration(1000)
+        .st({'fill-opacity': function(d,i){
+            if(random_full_subset.indexOf(i) === -1){
+                return .1;
+            } else {
+                return 1;
+            }
+        }})
+        .transition()
+        .delay(500)
+        .duration(500)
+        .st({'fill-opacity': 1})
+        .transition()
+        .delay(500)
+        .duration(500)
+        .at({x: function(d, i){if(i < 708){
+                return margin.left - 50 + d[1] * r_width;
+            } else if (i < 905) { 
+                return margin.left + d[1] * r_width
+            } else {
+                return margin.left + 50 + d[1] * r_width
+            }}})
+        .st({fill: function(d, i){if(i < 708){
+                return '#1b9e77';
+            } else if ( i < 905){ 
+                return '#d95f02'
+            } else {
+                return '#7570b3'}}})
+        .transition()
+        .delay(500)
+        .duration(500)
+        .st({'fill-opacity': function(d,i){
+            if(gendered_subset.indexOf(i) === -1){
+                return .1;
+            } else {
+                return 1;
+            }
+        }})
+        .transition()
+        .delay(500)
+        .duration(500)
+        .at({
+            y: function(d){return margin.top + d[0] * r_height}, 
+            x: function(d){return margin.left + d[1] * r_width}})
+        .st({fill: 'purple', 'fill-opacity': 1})
+        .transition()
+        .delay(500)
+        .duration(500)
+        .at({x: function(d, i){
+            if(i < 410){
+                return margin.left - 90 + d[1] * r_width;
+            } else if (i < 719) { 
+                return margin.left - 50 + d[1] * r_width
+            } else if (i < 902){
+                return margin.left + d[1] * r_width
+            } else {
+                return margin.left + 50 + d[1] * r_width
+            }}})
+        .st({fill: function(d, i){
+            if(i < 410){
+                return '#a6cee3';
+            } else if (i < 719) { 
+                return '#1f78b4'
+            } else if (i < 902){
+                return '#b2df8a'
+            } else {
+                return '#33a02c'
+            }}})
+        .transition()
+        .delay(500)
+        .duration(500)
+        .st({'fill-opacity': function(d,i){
+            if(education_subset.indexOf(i) === -1){
+                return .1;
+            } else {
+                return 1;
+            }
+        }})
+        .transition()
+        .delay(500)
+        .duration(500)
+        .st({'fill-opacity': function(d,i){return 1}})
+        .transition()
+        .delay(500)
+        .duration(500)
+        .st({'fill-opacity': function(d,i){
+            if(random_full_subset.indexOf(i) === -1){
+                return .1;
+            } else {
+                return 1;
+            }
+        }})
+        
+    
+</script>

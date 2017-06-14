@@ -238,3 +238,7 @@ for(i in 1:ncol(project_factors)){
 project_numeric <- project_numeric %>% gather(key, value, -id)
 
 ggplot(project_numeric) + geom_boxplot(aes(key, value))
+
+project2 <- survey
+project2 %>% names()
+project2$Gender %>% as.factor() %>% summary()

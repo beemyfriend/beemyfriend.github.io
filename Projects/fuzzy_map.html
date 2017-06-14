@@ -16,8 +16,8 @@
     </style>
 </head>
 <body></body>
-<script src = 'd3.js'></script>
-<script src = 'd3v4+jetpack.js'></script>
+<script src = 'https://d3js.org/d3.v4.min.js'></script>
+<script src = 'https://rawgit.com/gka/d3-jetpack/master/build/d3v4%2Bjetpack.js'></script>
 <script>
     var div = d3.select('body')
         .append('div.tooltip')
@@ -30,7 +30,7 @@
     var mainstreet_g = svg.append('g#mainstreet');
     
     mainstreet_g.append('image#mainstreet')
-        .at({x: 100, y: 100, width: 400, height: 400, 'xlink:href': 'fuzzy_maps/mainstreet.png'});
+        .at({x: 100, y: 100, width: 400, height: 400, 'xlink:href': 'https://beemyfriend.github.io/Projects/fuzzy_maps/mainstreet.png'});
     
     var mainstreet_info = [
         {x: 170, y: 250, title: "home", description: "This was the house in which I grew up. I lived here until I moved to college. By the time I graduated college, it was no longer ours..."},  

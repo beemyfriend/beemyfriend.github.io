@@ -1,0 +1,403 @@
+<head>
+    <style>
+        div.tooltip{
+            position: absolute;
+            text-align: left;
+            width: 360px;
+            height: 60px;
+            padding: 5px;
+            font-size: 14px;
+            background: lightsteelblue;
+            border: 0px;
+            border-radius: 8px;
+            pointer-events: none;
+            z-index: 4;
+        }
+    </style>
+</head>
+<body></body>
+<script src = 'd3.js'></script>
+<script src = 'd3v4+jetpack.js'></script>
+<script src="https://d3js.org/topojson.v2.min.js"></script>
+<script>
+    var width = 900,
+        height = 600,
+        data = [],
+        svg,
+        path,
+        county,
+        district,
+        school,
+        districtMedals,
+        districtData,
+        schoolData,
+        keyText;
+    
+    var margin = {
+        top: 100,
+        bottom: 100,
+        left: 100, 
+        right: 100
+    }
+    
+    var square = 'm 0 0 h 40 v 40 h -40 z',
+        triangle = 'm 20 0 l 20 40 h -40 z',
+        pentagon = 'm 20 0 l 20 15 l -10 25 h -20 l -10 -25 z',
+        hexagon = 'm 20 0 l 20 13 v 16 l -20 11 l -20 -11 v -16 z';
+    
+    var shapeGenerator = d3.scaleOrdinal()
+        .domain([0, 1, 2, 3])
+        .range([square, triangle, pentagon, hexagon]);
+    
+    var colorGenerator = d3.scaleOrdinal()
+        .domain([0, 1, 2])
+        .range(['#66c2a5', '#fc8d62', '#8da0cb']);
+    
+    function createDistrictData(numDistrict){
+        var counter = 0;
+        var row = -1;
+        var districtData = [];
+        for(var i = 0; i < numDistrict; i++){
+            var id = i;
+            var column = i % 10;
+            var rcolor = colorGenerator(Math.floor(Math.random() * 3));
+            var rshape = shapeGenerator(Math.floor(Math.random() * 4))
+            if(i % 10 == 0){row++}
+            districtData.push([row, column, rshape, rcolor, id]);
+        }
+        return districtData;
+    }
+    
+    districtData = createDistrictData(78);
+    
+    //[elementary, middle, high]
+    function createSchoolData(schoolArray){
+        var counter = 0;
+        var row = -1;
+        var schoolData = [];
+        
+        for(var i =0; i <schoolArray[0]; i++){
+            var id = i;
+            var column = i % 10;
+            var rcolor = colorGenerator(Math.floor(Math.random() * 3));
+            var rshape = shapeGenerator(Math.floor(Math.random()  * 4));
+            if(i % 10 == 0){row ++}
+            schoolData.push([row, column, rshape, rcolor, id])
+        }
+        row += 2;
+        for(var i = 0; i<schoolArray[1]; i++){
+            var id = i;
+            var column = i % 10;
+            var rcolor = colorGenerator(Math.floor(Math.random() * 3));
+            var rshape = shapeGenerator(Math.floor(Math.random()  * 4));
+            if(i % 10 == 0){row ++}
+            schoolData.push([row, column, rshape, rcolor, id])
+        }
+        row +=2;
+        for(var i = 0; i<schoolArray[2]; i++){
+            var id = i;
+            var column = i % 10;
+            var rcolor = colorGenerator(Math.floor(Math.random() * 3));
+            var rshape = shapeGenerator(Math.floor(Math.random()  * 4));
+            if(i % 10 == 0){row ++}
+            schoolData.push([row, column, rshape, rcolor, id])
+        }
+        return schoolData;
+    }
+    
+    schoolData = createSchoolData([12, 3, 2]); 
+    
+    var line = d3.line();
+    
+    var div = d3.select('body')
+        .append('div.tooltip')
+        .st({opacity: 0});
+
+    d3.xml("rrcc_school_districts.svg")
+        .mimeType("image/svg+xml")
+        .get(function(error, xml) {
+            if (error) throw error;
+            document
+                .body
+                .appendChild(xml.documentElement);
+        
+            county = d3.select('svg')
+                .at({height: height, width: width, id: 'countyMap'});
+        
+            map2Cart = county.append('g')
+                .translate([-300, 200])
+           
+            map2Cart.append('text')
+                .at({'font-size': 50, fill: 'black'})
+                .text('See Bespoke');
+        
+            map2Cart.append('rect#cartoButton')
+                .at({width: 300, height: 50, x: 0, y: -45})
+                .st({fill: 'blue', 'fill-opacity': .5, cursor: 'pointer'})
+                .on('mouseover', function(){
+                    d3.select('#cartoButton')
+                        .st({fill: 'yellow'})
+
+                    div.st({opacity: .8, left: d3.event.pageX, top: d3.event.pageY})
+                        .html("Click here to get an alternative, less traditional view of the county. The idea is to show the districts, which all take up very different amount of space on the map, equally. Such a visualization encourages exploration of the data.");
+                    
+                })
+                .on('mouseout', function(){
+                    d3.select('#cartoButton')
+                        .st({fill: 'blue'})
+                    
+                    div.st({opacity: 0})
+                })
+                .on('click', medalClick);
+            
+            path = county.selectAll('path');
+
+            d3.selectAll('path')
+                .each(function(d, i){ data.push([i, d3.select(this).attr('d')])});
+
+            path.st({fill: 'grey', stroke: 'black', class: 'districtMap', cursor: 'pointer'});
+            
+            path.data(data)
+                .at({id: function(d){return 'district' + d[0]}})
+                .on('mouseover', function(d){
+                    d3.select('#'+this.id).st({fill: 'blue'});
+                
+                    div.st({opacity: .8, left: d3.event.pageX, top: d3.event.pageY})
+                        .html("The name of this particular district will be here. Maybe some brief information as well. Click the district to get more information on it's schools");
+                })
+                .on('mouseout', function(d){
+                    d3.select('#'+this.id).st({fill: 'grey'});
+                    
+                    div.st({opacity: 0})
+                })
+                .on('click', districtClick);
+            
+            districtMedals = d3.select('body')
+                .append('svg#districtMedals')
+                .at({width: 0, height: 0});
+        
+            cart2Map = districtMedals.append('g')
+                .translate([200, 50])
+           
+            cart2Map.append('text')
+                .at({'font-size': 25, fill: 'black'})
+                .text('See Map');
+        
+            cart2Map.append('rect#mapButton')
+                .at({width: 100, height: 25, x: 0, y: -20})
+                .st({fill: 'blue', 'fill-opacity': .5, cursor: 'pointer'})
+                .on('mouseover', function(){
+                    d3.select('#mapButton')
+                        .st({fill: 'yellow'})
+
+                    div.st({opacity: .8, left: d3.event.pageX, top: d3.event.pageY})
+                        .html("The bespoke representation of the county may be confusing so the user can always move back to the traditional county map. The traditional county map may be easier for those who just want quick access to the data.");
+                })
+                .on('mouseout', function(){
+                    d3.select('#mapButton')
+                        .st({fill: 'blue'});
+                
+                    div.st({opacity: 0});
+                })
+                .on('click', returnCounty);
+            
+            districtMedals.appendMany(districtData, 'g.medals')
+                .translate(function(d){return [(50 + d[1] * (width-100)/10), (100 + d[0] * 45)]})
+                .append('path.medals')
+                .at({d: function(d){return d[2]}, id: function(d){return 'medal'+d[4]}})
+                .st({fill: function(d){return d[3]},stroke: 'black', cursor: 'pointer'})
+                .on('mouseover', function(d){                
+                    div.st({opacity: .8, left: d3.event.pageX, top: d3.event.pageY})
+                        .html("Instead of using a map layout we can use a bespoke chart and have the shape, color and other features of a figure to represent the traits of a district. Another option is a cartogram. A lot of district information can be displayed this way.");
+                
+                    d3.select('#' + this.id).st({stroke: 'yellow'});
+                })
+                .on('mouseout', function(d){
+                    div.st({opacity: 0});
+                
+                    d3.select('#' + this.id).st({stroke: 'black'});                
+                })
+                .on('click', districtClick);
+            
+            districtMedals.appendMany([0, 1, 2, 3], 'g.shapeKey')
+                .translate(function(d){return [[50 + d * 200], 500]})
+                .append('path.keys')
+                .at({d: function(d){return shapeGenerator(d)}});
+        
+            districtMedals.appendMany([0, 1, 2], 'circle.colorKey')
+                .at({r: 15, cx: function(d){return 150 + d * 200}, cy: 575})
+                .st({stroke: 'black', fill: function(d){return colorGenerator(d)}});
+            
+            keyText = [[100, 525, 'Numeric Range'], [300, 525, 'Numeric Range'], [500, 525, 'Numeric Range'], [700, 525, 'Numeric Range'], [180, 585, 'Categorical Var.'], [380, 585, 'Categorical Var.'], [580, 585, 'Categorical Var.']];
+            
+            districtMedals.appendMany(keyText, 'text.textKey')
+                .at({x: function(d){return d[0]}, y: function(d){return d[1]}})
+                .st({'font-size': 20})
+                .text(function(d){return d[2]});
+        
+            district = d3.select('body')
+                .append('svg#district')
+                .at({width: 0, height: 0});
+        
+            district.append('text')
+                .at({x: 50, y: 25})
+                .st({'font-size': 25})
+                .text("Elementary Schools");
+        
+            district.append('text')
+                .at({x: 50, y: 200})
+                .st({'font-size': 25})
+                .text("Middle Schools");
+        
+            district.append('text')
+                .at({x: 50, y: 325})
+                .st({'font-size': 25})
+                .text("High Schools");
+        
+            district.appendMany(schoolData, 'g.school')
+                .translate(function(d){return [(50 + d[1] * (width-100)/10), (50 + d[0] * 45)]})
+                .append('path.school')
+                .at({d: function(d){return d[2]}, id: function(d){return 'medal' + d[4]}})
+                .st({fill: function(d){return d[3]}, stroke: 'black', cursor: 'pointer'})
+                .on('mouseover', function(d){                
+                    d3.select('#' + this.id).st({stroke:'gold'});
+                
+                    div.st({opacity: .8, left: d3.event.pageX, top: d3.event.pageY})
+                        .html("The name of this particular school will be here. Maybe some brief information as well. The schools are grouped according to level (elementary, middle, high). Within the groupings they can be ordered alphabetically.");
+                })
+                .on('mouseout', function(d){
+                    d3.select('#' + this.id).st({stroke:'grey'});
+                
+                    div.st({opacity: 0})
+                })
+                .on('click', schoolClick);
+                
+            district.appendMany([0, 1, 2, 3], 'g.shapeKey')
+                .translate(function(d){return [[50 + d * 200], 500]})
+                .append('path.keys')
+                .at({d: function(d){return shapeGenerator(d)}});
+        
+            district.appendMany([0, 1, 2], 'circle.colorKey')
+                .at({r: 15, cx: function(d){return 150 + d * 200}, cy: 575})
+                .st({stroke: 'black', fill: function(d){return colorGenerator(d)}});
+                        
+            district.appendMany(keyText, 'text.textKey')
+                .at({x: function(d){return d[0]}, y: function(d){return d[1]}})
+                .st({'font-size': 20})
+                .text(function(d){return d[2]});
+        
+            school = d3.select('body')
+                .append('svg#school')
+                .at({width: 0, height: 0});
+            
+            school.appendMany([50, 100, 500, 400, 200, 25], 'rect')
+                .at({x: function(d,i){return margin.left + i * 20}, y: function(d){return height - margin.bottom - d}, width: 20, height: function(d){return d}, id: function(d){return 'statistic'+d}})
+                .st({fill: 'grey', stroke: 'black'})
+                .on('mouseover', function(d){
+                    d3.select('#' + this.id).st({fill:'blue'});
+                
+                    div.st({opacity: .8, left: d3.event.pageX, top: d3.event.pageY})
+                        .html('A barchart or histogram to display discrete or normal data.');
+                })
+                .on('mouseout', function(d){
+                    d3.select('#' + this.id).st({fill:'grey'});
+                    
+                    div.st({opacity: 0});
+                });
+        
+            school.appendMany([[[300, height/3], [350, height - margin.bottom], [400, height/2], [500, height/4], [550, height/3]]], 'path.stat')
+                .at({d: d3.line().curve(d3.curveCardinal), id: 'randomStatLine'})
+                .st({fill: 'none', stroke: 'black', 'stroke-width': 4})
+                .on('mouseover', function(d){
+                    d3.select('#' + this.id).st({stroke:'blue'});
+                
+                    div.st({opacity: .8, left: d3.event.pageX, top: d3.event.pageY})
+                        .html('A line chart to explain some kind of continuous data.');
+                })
+                .on('mouseout', function(d){
+                    d3.select('#' + this.id).st({stroke:'black'});
+                
+                    div.st({opacity: 0});
+                });
+        
+            school.append('path')
+                .at({d: 'M 600 ' + (height - margin.bottom - 300) + 'v 300 h 300'})
+                .st({stroke: 'black', fill: 'none'});
+            
+            school.appendMany([[630, (height - margin.bottom - 250)], [660, (height-margin.bottom - 50)], [850, (height-margin.bottom - 200)]], 'circle.scatterPlot')
+                .at({cx: function(d){return  d[0]}, cy: function(d){return d[1]}, r: 10})
+                .st({fill: 'grey', stroke: 'black'})
+                .on('mouseover', function(){
+                    d3.selectAll('.scatterPlot')
+                        .st({fill: 'blue'});
+                
+                    div.st({opacity: .8, left: d3.event.pageX, top: d3.event.pageY})
+                        .html('A scatterplot to explain virtually anything.');
+                })
+                .on('mouseout', function(){
+                    d3.selectAll('.scatterPlot')
+                        .st({fill: 'grey'});
+                    
+                    div.st({opacity: 0});
+                });
+            
+            school.append('text')
+                .at({x: width/2, y: height - margin.bottom/2, 'font-size': 40, 'text-anchor': 'middle'})
+                .text('School Summary Information');
+        
+            school.append('text')
+                .at({x: 300, y: margin.top, 'font-size': 25})
+                .text('Return to map');
+        
+            school.append('rect#mapReturn')
+                .at({x: 300, y: margin.top - 25, width: 160, height: 25})
+                .st({fill: 'blue', 'fill-opacity': .5, cursor: 'pointer'})
+                .on('mouseover', function(d){ d3.selectAll('#mapReturn').st({fill: 'yellow'})})
+                .on('mouseout', function(d){ d3.selectAll('#mapReturn').st({fill: 'blue'})})
+                .on('click', returnCounty)
+        });
+    
+    function districtClick(){
+        d3.select('#countyMap')
+            .at({height: 0, width: 0});
+        
+        d3.select('#district')
+            .at({height: height, width: width});
+        
+        d3.select('#districtMedals')
+            .at({height: 0, width: 0});
+    }
+    
+    function medalClick(){
+        d3.select('#countyMap')
+            .at({height: 0, width: 0});
+        
+        d3.select('.alt')
+            .st({opacity: 1, 'z-index': 4});
+        
+        d3.select('#districtMedals')
+            .at({height: height, width: width});
+    }
+    
+    function schoolClick(){
+        d3.select('#district')
+            .at({height: 0, width: 0});
+     
+        d3.select('#school')
+            .at({height: height, width: width});
+        
+        d3.select('#districtMedals')
+            .at({height: 0, width: 0});
+    }
+    
+    function returnCounty(){
+        d3.select('#school')
+            .at({height: 0, width: 0});
+        
+        d3.select('#countyMap')
+            .at({height: height, width: width});
+        
+        d3.select('#districtMedals')
+            .at({height: 0, width: 0});
+    }    
+</script>
