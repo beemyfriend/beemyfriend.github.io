@@ -166,7 +166,7 @@
                         .html("The name of this particular district will be here. Maybe some brief information as well. Click the district to get more information on it's schools");
                 })
                 .on('mouseout', function(d){
-                    d3.select('#'+this.id).st({fill: 'grey'});
+                    d3.select('#'+this.id).st({fill: 'black'});
                     
                     div.st({opacity: 0})
                 })
@@ -257,16 +257,16 @@
             district.appendMany(schoolData, 'g.school')
                 .translate(function(d){return [(50 + d[1] * (width-100)/10), (50 + d[0] * 45)]})
                 .append('path.school')
-                .at({d: function(d){return d[2]}, id: function(d){return 'medal' + d[4]}})
+                .at({d: function(d){return d[2]}, id: function(d, i){return 'medal' + i}})
                 .st({fill: function(d){return d[3]}, stroke: 'black', cursor: 'pointer'})
                 .on('mouseover', function(d){                
-                    d3.select('#' + this.id).st({stroke:'gold'});
+                    d3.selectAll('#' + this.id).st({stroke:'gold'});
                 
                     div.st({opacity: .8, left: d3.event.pageX, top: d3.event.pageY})
                         .html("The name of this particular school will be here. Maybe some brief information as well. The schools are grouped according to level (elementary, middle, high). Within the groupings they can be ordered alphabetically.");
                 })
                 .on('mouseout', function(d){
-                    d3.select('#' + this.id).st({stroke:'grey'});
+                    d3.selectAll('#' + this.id).st({stroke:'black'});
                 
                     div.st({opacity: 0})
                 })
@@ -285,6 +285,17 @@
                 .at({x: function(d){return d[0]}, y: function(d){return d[1]}})
                 .st({'font-size': 20})
                 .text(function(d){return d[2]});
+        
+            district.append('text')
+                .at({x: 500, y: margin.top + 100, 'font-size': 25})
+                .text('Compare district info.');
+        
+            district.append('rect#altSchoolComp')
+                .at({x: 500, y: margin.top - 25 + 100, width: 200, height: 25})
+                .st({fill: 'blue', 'fill-opacity': .5, cursor: 'pointer'})
+                .on('mouseover', function(d){ d3.selectAll('#altSchoolComp').st({fill: 'yellow'})})
+                .on('mouseout', function(d){ d3.selectAll('#altSchoolComp').st({fill: 'blue'})})
+                .on('click', altSchoolClick);
         
             school = d3.select('body')
                 .append('svg#school')
@@ -354,7 +365,222 @@
                 .st({fill: 'blue', 'fill-opacity': .5, cursor: 'pointer'})
                 .on('mouseover', function(d){ d3.selectAll('#mapReturn').st({fill: 'yellow'})})
                 .on('mouseout', function(d){ d3.selectAll('#mapReturn').st({fill: 'blue'})})
-                .on('click', returnCounty)
+                .on('click', returnCounty);
+        
+            school.append('text')
+                .at({x: 500, y: margin.top, 'font-size': 25})
+                .text('Compare school info.');
+        
+            school.append('rect#altSchoolComp')
+                .at({x: 500, y: margin.top - 25, width: 200, height: 25})
+                .st({fill: 'blue', 'fill-opacity': .5, cursor: 'pointer'})
+                .on('mouseover', function(d){ d3.selectAll('#altSchoolComp').st({fill: 'yellow'})})
+                .on('mouseout', function(d){ d3.selectAll('#altSchoolComp').st({fill: 'blue'})})
+                .on('click', altSchoolClick);            
+        
+            altSchool = d3.select('body')
+                .append('svg#altSchool')
+                .at({width: 0, height: 0});
+            
+            altSchool.appendMany([10, 20, 100, 80, 40, 30], 'rect')
+                .at({x: function(d,i){return margin.left + i * 20}, y: function(d){return height - margin.bottom - d}, width: 20, height: function(d){return d}, class: function(d){return 'statistic'+d}})
+                .st({fill: 'grey', stroke: 'black'})
+                .on('mouseover', function(d){
+                    d3.selectAll('.' + this.className.baseVal).st({fill:'blue'});
+                
+                    div.st({opacity: .8, left: d3.event.pageX, top: d3.event.pageY})
+                        .html('A barchart or histogram to display discrete or normal data. Compare with other schools or districts!');
+                })
+                .on('mouseout', function(d){
+                    d3.selectAll('.' + this.className.baseVal).st({fill:'grey'});
+                    
+                    div.st({opacity: 0});
+                });
+        
+            altSchool.appendMany([10, 20, 100, 80, 40, 30], 'rect')
+                .at({x: function(d,i){return margin.left + i * 20}, y: function(d){return height - margin.bottom - 125 - d}, width: 20, height: function(d){return d}, class: function(d){return 'statistic'+d}})
+                .st({fill: 'grey', stroke: 'black'})
+                .on('mouseover', function(d){
+                    d3.selectAll('.' + this.className.baseVal).st({fill:'blue'});
+                
+                    div.st({opacity: .8, left: d3.event.pageX, top: d3.event.pageY})
+                        .html('A barchart or histogram to display discrete or normal data. Compare with other schools or districts!');
+                })
+                .on('mouseout', function(d){
+                    d3.selectAll('.' + this.className.baseVal).st({fill:'grey'});
+                    
+                    div.st({opacity: 0});
+                });
+    
+            altSchool.appendMany([10, 20, 100, 80, 40, 30], 'rect')
+                .at({x: function(d,i){return margin.left + i * 20}, y: function(d){return height - margin.bottom - 250 - d}, width: 20, height: function(d){return d}, class: function(d){return 'statistic'+d}})
+                .st({fill: 'grey', stroke: 'black'})
+                .on('mouseover', function(d){
+                    d3.selectAll('.' + this.className.baseVal).st({fill:'blue'});
+                
+                    div.st({opacity: .8, left: d3.event.pageX, top: d3.event.pageY})
+                        .html('A barchart or histogram to display discrete or normal data. Compare with other schools or districts!');
+                })
+                .on('mouseout', function(d){
+                    d3.selectAll('.' + this.className.baseVal).st({fill:'grey'});
+                    
+                    div.st({opacity: 0});
+                });        
+            
+            altSchool.append('path')
+                .at({d: 'M ' + (margin.left + 150) + ' ' + (height - margin.bottom - 100) + ' v 100 h 150'})
+                .st({stroke: 'black', fill: 'none'});
+            
+            altSchool.appendMany([[(margin.left + 160), (height - margin.bottom - 75)], [(margin.left + 200), (height-margin.bottom - 25)], [(margin.left + 250), (height-margin.bottom - 50)]], 'circle')
+                .at({cx: function(d){return  d[0]}, cy: function(d){return d[1]}, r: 5, class: function(d,i){return 'scatter' + i}})
+                .st({fill: 'grey', stroke: 'black'})
+                .on('mouseover', function(){
+                    d3.selectAll('.' + this.className.baseVal)
+                        .st({fill: 'blue'});
+                
+                    div.st({opacity: .8, left: d3.event.pageX, top: d3.event.pageY})
+                        .html('A scatterplot to explain virtually anything. Compare with other schools or districts!');
+                })
+                .on('mouseout', function(){
+                    d3.selectAll('.' + this.className.baseVal)
+                        .st({fill: 'grey'});
+                    
+                    div.st({opacity: 0});
+                });
+        
+            altSchool.append('path')
+                .at({d: 'M ' + (margin.left + 150) + ' ' + (height - margin.bottom - 100 - 125) + ' v 100 h 150'})
+                .st({stroke: 'black', fill: 'none'});
+            
+            altSchool.appendMany([[(margin.left + 160), (height - margin.bottom - 75 - 125)], [(margin.left + 200), (height-margin.bottom - 25 - 125)], [(margin.left + 250), (height-margin.bottom - 50 - 125)]], 'circle')
+                .at({cx: function(d){return  d[0]}, cy: function(d){return d[1]}, r: 5, class: function(d,i){return 'scatter' + i}})
+                .st({fill: 'grey', stroke: 'black'})
+                .on('mouseover', function(){
+                    d3.selectAll('.' + this.className.baseVal)
+                        .st({fill: 'blue'});
+                
+                    div.st({opacity: .8, left: d3.event.pageX, top: d3.event.pageY})
+                        .html('A scatterplot to explain virtually anything. Compare with other schools or districts!');
+                })
+                .on('mouseout', function(){
+                    d3.selectAll('.' + this.className.baseVal)
+                        .st({fill: 'grey'});
+                    
+                    div.st({opacity: 0});
+                });
+
+            altSchool.append('path')
+                .at({d: 'M ' + (margin.left + 150) + ' ' + (height - margin.bottom - 100 - 125 - 125) + ' v 100 h 150'})
+                .st({stroke: 'black', fill: 'none'});
+            
+            altSchool.appendMany([[(margin.left + 160), (height - margin.bottom - 75 - 125 - 125)], [(margin.left + 200), (height-margin.bottom - 25 - 125 - 125)], [(margin.left + 250), (height-margin.bottom - 50 - 125 - 125)]], 'circle')
+                .at({cx: function(d){return  d[0]}, cy: function(d){return d[1]}, r: 5, class: function(d,i){return 'scatter' + i}})
+                .st({fill: 'grey', stroke: 'black'})
+                .on('mouseover', function(){
+                    d3.selectAll('.' + this.className.baseVal)
+                        .st({fill: 'blue'});
+                
+                    div.st({opacity: .8, left: d3.event.pageX, top: d3.event.pageY})
+                        .html('A scatterplot to explain virtually anything. Compare with other schools or districts!');
+                })
+                .on('mouseout', function(){
+                    d3.selectAll('.' + this.className.baseVal)
+                        .st({fill: 'grey'});
+                    
+                    div.st({opacity: 0});
+                });
+        
+            altSchool.appendMany([[[450, height/3], [550, height - margin.bottom], [650, height/2], [750, height/4], [850, height/3]]], 'path.stat')
+                .at({d: d3.line().curve(d3.curveCardinal), id: 'randomStatLine1'})
+                .st({fill: 'none', stroke: 'black', 'stroke-width': 4})
+                .on('mouseover', function(d){
+                    d3.select('#' + this.id).st({stroke:'blue'});
+                
+                    div.st({opacity: .8, left: d3.event.pageX, top: d3.event.pageY})
+                        .html('A line chart to explain some kind of continuous data.');
+                })
+                .on('mouseout', function(d){
+                    d3.select('#' + this.id).st({stroke:'black'});
+                
+                    div.st({opacity: 0});
+                });
+            altSchool.appendMany([[[450, height/2], [550, height - margin.bottom], [650, height/4], [750, height/3], [850, height/3]]], 'path.stat')
+                .at({d: d3.line().curve(d3.curveCardinal), id: 'randomStatLine2'})
+                .st({fill: 'none', stroke: 'black', 'stroke-width': 4})
+                .on('mouseover', function(d){
+                    d3.select('#' + this.id).st({stroke:'blue'});
+                
+                    div.st({opacity: .8, left: d3.event.pageX, top: d3.event.pageY})
+                        .html('A line chart to explain some kind of continuous data.');
+                })
+                .on('mouseout', function(d){
+                    d3.select('#' + this.id).st({stroke:'black'});
+                
+                    div.st({opacity: 0});
+                });
+        
+            altSchool.appendMany([[[450, height/5], [550, height/4], [650, height/2], [750, height/3], [850, height * .75]]], 'path.stat')
+                .at({d: d3.line().curve(d3.curveCardinal), id: 'randomStatLine3'})
+                .st({fill: 'none', stroke: 'black', 'stroke-width': 4})
+                .on('mouseover', function(d){
+                    d3.select('#' + this.id).st({stroke:'blue'});
+                
+                    div.st({opacity: .8, left: d3.event.pageX, top: d3.event.pageY})
+                        .html('A line chart to explain some kind of continuous data.');
+                })
+                .on('mouseout', function(d){
+                    d3.select('#' + this.id).st({stroke:'black'});
+                
+                    div.st({opacity: 0});
+                });
+                
+        
+            altSchool.append('text')
+                .at({x: 300, y: margin.top, 'font-size': 25})
+                .text('Return to map');            
+        
+            altSchool.append('rect#mapReturn')
+                .at({x: 300, y: margin.top - 25, width: 160, height: 25})
+                .st({fill: 'blue', 'fill-opacity': .5, cursor: 'pointer'})
+                .on('mouseover', function(d){ d3.selectAll('#mapReturn').st({fill: 'yellow'})})
+                .on('mouseout', function(d){ d3.selectAll('#mapReturn').st({fill: 'blue'})})
+                .on('click', returnCounty);
+        
+            school.appendMany([[[300, height/3], [350, height - margin.bottom], [400, height/2], [500, height/4], [550, height/3]]], 'path.stat')
+                .at({d: d3.line().curve(d3.curveCardinal), id: 'randomStatLine'})
+                .st({fill: 'none', stroke: 'black', 'stroke-width': 4})
+                .on('mouseover', function(d){
+                    d3.select('#' + this.id).st({stroke:'blue'});
+                
+                    div.st({opacity: .8, left: d3.event.pageX, top: d3.event.pageY})
+                        .html('A line chart to explain some kind of continuous data.');
+                })
+                .on('mouseout', function(d){
+                    d3.select('#' + this.id).st({stroke:'black'});
+                
+                    div.st({opacity: 0});
+                });
+        
+            school.append('path')
+                .at({d: 'M 600 ' + (height - margin.bottom - 300) + 'v 300 h 300'})
+                .st({stroke: 'black', fill: 'none'});
+            
+            school.appendMany([[630, (height - margin.bottom - 250)], [660, (height-margin.bottom - 50)], [850, (height-margin.bottom - 200)]], 'circle.scatterPlot')
+                .at({cx: function(d){return  d[0]}, cy: function(d){return d[1]}, r: 10})
+                .st({fill: 'grey', stroke: 'black'})
+                .on('mouseover', function(){
+                    d3.selectAll('.scatterPlot')
+                        .st({fill: 'blue'});
+                
+                    div.st({opacity: .8, left: d3.event.pageX, top: d3.event.pageY})
+                        .html('A scatterplot to explain virtually anything.');
+                })
+                .on('mouseout', function(){
+                    d3.selectAll('.scatterPlot')
+                        .st({fill: 'grey'});
+                    
+                    div.st({opacity: 0});
+                });
         });
     
     function districtClick(){
@@ -390,8 +616,22 @@
             .at({height: 0, width: 0});
     }
     
+    function altSchoolClick(){
+        d3.select('#school')
+            .at({height: 0, width: 0});
+        
+        d3.select('#altSchool')
+            .at({height: height, width: width});
+        
+        d3.select('#district')
+            .at({height: 0, width: 0})
+    }
+    
     function returnCounty(){
         d3.select('#school')
+            .at({height: 0, width: 0});
+        
+        d3.select('#altSchool')
             .at({height: 0, width: 0});
         
         d3.select('#countyMap')

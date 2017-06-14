@@ -16,32 +16,32 @@ knitr::opts_chunk$set(echo = TRUE)
 
 This is my response to the Los Angeles County Arts Commission's (**LACAC**) Request for Proposals (**RFP**) for a Los Angeles County Arts Education  Data Visualization. This document includes a brief summary of my skill set & abilities, a project proposal, and an estimated budget. 
 
-Matthew Agustin, the Arts Education Research Coordinator, explained that the data is not ready and that there is no sample dataset for me to conduct a preliminary exploration. The proposal and budget below, then, are created from what I imagine can be done with the future dataset. Everything is dependant on the data and is subject to change once I recieve the dataset.
+Matthew Agustin, the *Arts Education Research Coordinator*, explained that the data is not ready and that there is no sample dataset for me to conduct a preliminary exploration. The proposal and budget below, then, are created from what I imagine can be done with the future dataset. Everything is dependant on the data and is subject to change once I recieve the dataset.
 
 ## Skill-Set & Relevant Work
 
-I am a Yale educated data engineer who specializes in data visualization. I use R when working on projects requiring data manipulation and use D3.js when working on projects requiring interactive data visualization. 
+I am a Yale educated data engineer who specializes in data visualization. I use **R** when working on projects requiring data manipulation and use **D3.js** when working on projects requiring interactive data visualization. 
 
-My research interests include trends in international STEM education and the use of data visualization as a teaching tool. I will be presenting my poster on "*Exploring TIMSS at the Question-Level With R*" at the **UseR!** conference. 
+My research interests include trends in international STEM education and the use of data visualization as a teaching tool. I will be presenting my poster on "*Exploring TIMSS at the Question-Level With R*" at the [UseR! conference](https://user2017.brussels/). 
 
-Below are previous and current projects that relate to the **LACAC** visualization project. It is best to open them in either Chrome or Firefox as they have not been optimized for Internet Explorer:
+Below are previous and current projects that relate to the **LACAC** visualization project. I provide a **summary** description to explain the nature of the project and provide a **relation** description to connect it with your project. It is best to open them in either Chrome or Firefox as they have not been optimized for Internet Explorer:
 
 * [Cleaning and Visualizing 2011 TIMSS Question Level Data With R](https://benjaminortizulloa.github.io/pages/Visualizing_2011_TIMSS.html)
-    + **Summary:** I use R to clean the **TIMSS** dataset for 4 different countries, manipulate the data to compare the countries' performance on the math questions, and explore different static visualizations to highlight the countries' differences.
+    + **Summary:** I use **R** to clean the **TIMSS** dataset for 4 different countries, manipulate the data to compare the countries' performance on the math questions, and explore different static visualizations to highlight the countries' differences.
     + **Relation:** Data exploration of a multi-level educational dataset.
 * [2015 TIMSS: International Comparison of Math Questions](https://benjaminortizulloa.github.io/pages/timss_2015_math_questions.html)
-    + **Summary:** After exploring the **TIMSS** dataset I used D3.js to create an interactive visualization that provides an international comparison of 34 different countries and their performance on specific questions.This project displays two charts: a bespoke chart on the left and a standard scatter-plot on the right. Every data point on both charts represent a question answered by a country. When a user hovers over a datapoint, then all points representing that question are highlighted. 
-    + **Relation:** Creation of interactive visualization to understand and explore data from multiple geographical locations. 
-* [ONE LAPTOP PER CHILD](https://benjaminortizulloa.github.io/pages/d3mo1.html)
+    + **Summary:** After exploring the **TIMSS** dataset I use **D3.js** to create an interactive visualization that provides an international comparison of 34 different countries and their performance on specific questions. This project displays two charts: a bespoke chart on the left and a standard scatter-plot on the right. A connection between the two charts is displayed when a user hovers over a data point.
+    + **Relation:** Creation of interactive visualization to understand and explore data from multiple geographic locations in multiple charts.
+* [One Laptop Per Child](https://benjaminortizulloa.github.io/pages/d3mo1.html)
     + **Summary:** I explore data from **One Laptop Per Child** in a scrollstory. This project utilizes a map and animations to display information about the organization. It uses the scrollstory format which allows the user to control the pacing of the information being displayed.
-    + **Relation:** Use of geographic information systems and animation to show information about an organization.
+    + **Relation:** Use of geographic information systems, animation, and scrollytelling to show information about an organization.
 * [Introduction to Fractals](https://benjaminortizulloa.github.io/pages/fractals.html)
-    + **Summary:** I teach the idea of self-similar fractals in a scrollstory. This project utlizes the scrollstory format and animation to explain a somewhat confusing subject. It also allows the user to explore what they learned at the end of the scrollstory.
-    + **Relation:** Explain a difficult concept to a user and allow for him or her to explore further.
+    + **Summary:** I teach the idea of self-similar fractals in a scrollstory. This project utlizes the scrollstory format and animation to explain a confusing topic. It also allows the user to explore what he or she learned at the end of the scrollstory.
+    + **Relation:** Explain difficult concepts to a user and allow him or her to further explore the topic.
 
 ## Project Proposal & Timeline
 
-The **RFP* listed 3 tasks and deliverables:
+The **RFP** listed three tasks and deliverables:
 
 1. Design interactive data visualizations utilizing data provided by **LACAC**. This will
 include flat files in tabular format and will draw from **LACAC**’s CRM
@@ -50,36 +50,35 @@ and feel of **LACAC**’s site: https://www.lacountyarts.org
 3. Create mechanisms that will permit staff to append and make edits to the data so
 that the visualizations update automatically.
 
-These 3 deliverables will be approached in three parts: the exploratory data analysis, the interactive visualization, and the documentation.
+These three deliverables will be approached in three parts: the *exploratory data analysis*, the *interactive visualization*, and the *documentation*.
 
 #### Exploratory Data Analysis
 
-Once the data is recieved it is important for me to understand how the different variables relate to one another. The 
-*LACAC** expects there to be about 100 columns and 1,000 rows of data. It is not realistic to display all 100,000 datapoints in a single data visualization. Luckily, a CSV of all the information will be made available to anyone interested. Exploring the data and exposing interesting insights will take up a majority of my time. Once I explored the data I will provide you with a document of my discoveries. This document will include all possible visualizations and how the different levels of data (county, district, school, and grades) relate to one another. Considering the multiple levels of data, this document could be anywhere from 50 to 100 pages. The exploration will be done in R.
+The **LACAC** expects there to be about 100 columns and 1,000 rows of data. Exploring the data and exposing interesting insights from the data will take up a majority of my time. I will provide you with a document of my discoveries once I am done exploring the data . This document will include all possible visualizations and how the different levels of data (county, district, school, and grades) relate to one another. Considering the multiple levels of data, this document could be anywhere from 50 to 100 pages. A primary purpose of this exploration is to determine what data should and should not be displayed. It is not realistic to display all 100,000 datapoints in a single data visualization. Luckily, this won't necessary because we will provide a CSV of all the data. Anyone interested in exploring information that we choose not to display can do so on his or her own. The exploration will be done in **R**.
 
-Around the time I complete the document I would like to go to LA county and speak to the parents, arts instructors, and community arts partners in person. These are the people who have the most intimate knowledge of what we are trying to show. It is therefore important that I get their input on whether or not they understand the visualizations, whether or not they agree with the information the visualizations display, and whether or not there is another angle to approach the data. I would also like to see a sampling of the programs being offered to get a better understanding of what I am working on.
+Around the time I complete the document I plan to go to LA county and speak to the parents, arts instructors, and community arts partners. These are the people who have intimate knowledge of what we are trying to show. It is therefore important that I get their input on whether or not they understand the visualizations, whether or not they agree with the information the visualizations display, and whether or not there is another angle to approach the data. I would also like to see a sampling of the programs offered to get a better understanding of the project I will be working on.
 
 #### Creating Interactive Visualization
 
-I imagine that the visualization will have at least three main visual levels (county, district, and school) each with an alternative display for comparisons (i.e. a visualization that compares a selected school district with the county's average or another school district.). Each display will come with an option to dowload a CSV of the data being represented. The interactive graphic will be created with D3.js and will pull information from a single CSV file.
+The visualization will have at least three main visual displays (county, district, and school) each with an alternative display for comparisons (i.e. a visualization that compares a selected school district with the county's average or another school district.). Each display will come with an option to download a CSV of the data being represented. The interactive graphic will be created with **D3.js** and will pull information from a single CSV file.
 
 * A county level display could be a map of LA county with a summary statistic showing up when a user hovers over a district. An alternative county display could be a bespoke representation of each of the districts such as a [NPR's hex cartogram](http://blog.apps.npr.org/2015/05/11/hex-tile-maps.html) or something akin to [Shirley Wu's film flowers](http://bl.ocks.org/sxywu/raw/d612c6c653fb8b4d7ff3d422be164a5d/) .
-* A district level display could show school insignias or bespoke representations of the school with a summary statistic showing up when a user hovers over it. An alternative county display could be a comparison of the district's general statistics in comparison to a second selected district or an average of all the districts. 
+* A district level display could show school insignias or bespoke representations of the school with a summary statistic showing up when a user hovers over it. An alternative district display could be a comparison of the district's general statistics in comparison to a second selected district or an average of all the districts. 
 * A school level display could be multiple displays of multiple different statistics of interest with regards to the school. An alternative school display could be a comparison of the school's multiple statistics to the statistics of other schools in the district or the county as a whole.
 
-Please [click here](https://beemyfriend.github.io/Projects/LACAC.html) to see how the flow of the visualization could potentially look like. 
+Please [click here](https://beemyfriend.github.io/Projects/LACAC.html) to see how the flow of the visualization will potentially feel like. 
 
-I would like to go to LA county a second time - near the completion of the project - to speak to the parents, arts instructors, and community arts partners and see how they interact with the visualization. This will help me identify any changes that need to be made before opening the visualization to the public.
+I plan to go to LA county a second time - near the completion of the project - to speak to the parents, arts instructors, and community arts partners and see how they interact with the visualization. This will help me identify any changes that need to be made before opening the visualization to the public.
 
 #### Documentation
 
-The 2 previous parts - exploratory data analysis and creating the interactive visualization - are related and code intensive. The interactive visualization cannot be created unless the data has been explored and formatted in a certain way - the formatting will be done in R and the visualization will be done in D3.js. I do not expect the staff of **LACAC** to understand R. However, I need to show and explain the code I used in formatting the data from its raw format to its final format. The explanation will explicitly state the logic of the code used in creating the final CSV. This is so that the staff can recreate the logic in whichever language or program they are comfortable with (Excel, SAS, SPSS, etc.). Understanding the logic is important when updating the CSV because the format will be directly linked to the code for the interactive visualization.
+The two previous parts - exploratory data analysis and creating the interactive visualization - are related and code intensive. The interactive visualization cannot be created unless the data has been explored and formatted in a certain way - the formatting will be done in **R** and the visualization will be done in **D3.js**. I do not expect the staff of **LACAC** to understand **R**. However, I need to show and explain the code used in formatting the data from its raw format to its final format. The explanation will explicitly state the logic of the code used in creating the final CSV. This is so that the staff can recreate the logic in whichever language or program they are comfortable with (*Excel*, *SAS*, *SPSS*, etc.). Understanding the logic is important when updating the CSV because the format will be directly linked to the interactive visualization's code.
 
-A similiar explanation will be produced for the D3.js code used in creating the interactive visualization. Again, I do not expect the staff of LACAC to understand this code. However, such a document is necesary if LACAC wants to contract another programmer to tweak the visualization in the future. Editing someone else's code is never easy - I will attempt to reduce this pain-point as much as possible. 
+I will also provide a similar explanation for the **D3.js** code used in creating the interactive visualization. Again, I do not expect the staff of **LACAC** to understand this code. However, such a document is necesary if **LACAC** wants to contract another programmer after the project's completion. Editing someone else's code is never easy - I will attempt to reduce this pain-point as much as possible. 
 
 #### Timeline
 
-It is difficult to create a timeline without looking at the data. However, if I were to work on this project for 2-3 hours a day, for 5 days a week, from the first week of July to the first week of November, then I would clock about 200 hours. I don't think this project will require that much time, however I'd prefer to overestimate my hours considering that I have no clue what the data looks like. The estimate of 200 hours is what I will use when calculating the budget below. Also, it is important to note that the completion date is set (November 15th, 2017) the start date of this project is when I recieve the data. That is, I cannot start working on this project until I recieve the complete dataset. 
+It is difficult to create a timeline without looking at the data. However, if I were to work on this project for 2-3 hours a day, for 5 days a week, from the first week of July to the first week of November, then I would clock about 200 hours. I don't think this project will require that much time, but I'd prefer to overestimate my hours. The estimate of 200 hours is what I will use when calculating the budget below. Also, it is important to note that the start date of this project is when I recieve the data. That is, I cannot start working on this project until I recieve the complete dataset. 
 
 ## Budget
 
@@ -88,8 +87,8 @@ Below is my proposed budget for this project. I would like to be paid in three p
 ```{r echo = F}
 
 item_ <- c('Working Hours', 'Flights', 'Accomodation', 'Food', 'Transportation', 'Outsourced Work', 'Total')
-min_ <- c(10000, 1000, 840, 1120, 500, 0, 13460)
-max_ <- c(15000, 3000, 2100, 1120, 1000, 2000, 24220)
+min_ <- c('$10,000', '$1,000', '$840', '$1,120', '$500', '$0', '$13,460')
+max_ <- c('$15,000', '$3,000', '$3,500', '$1,120', '$1,000', '$2,000', '$25,620')
 
 budget <- data.frame(Item = item_, Min = min_, Max = max_)
 
@@ -99,7 +98,7 @@ knitr::kable(budget)
 
 #### Working Hours
 
-I don't expect to spend more than 200 hours on this project. However, because there is an absolute completion date, my pricing depends on the date I recieve the data. If I get the data early, then I can explore the data at a relaxed pace (~2 hours/day) and have more opportunities to get feedback from you. If I get the data late, then I rushed and have to work more hours in fewer days (~4 hours/day) and will have less oportunities to get feedback from you. With this in mind, I have set my rate to \$50/hour if I get the data before August 15th and \$75/hour if I get the data on or after August 15th. A timesheet will be provided with each invoice.
+I don't expect to spend more than 200 hours on this project. However, because there is an absolute completion date, my pricing depends on the date I recieve the data. If I get the data early, then I can explore the data at a relaxed pace (~2 hours/day) and have more opportunities to get feedback from you. If I get the data late, then I am rushed and have to work more hours in fewer days (~4 hours/day) and will have less oportunities to get feedback from you. With this in mind, I have set my rate to \$50/hour if I get the data before August 15th and \$75/hour if I get the data on or after August 15th. A timesheet will be provided with each invoice.
 
 #### Flights
 
@@ -107,7 +106,7 @@ I plan on making two round trips to LA: the first about halfway throught the pro
 
 #### Accomodation
 
-I plan on staying in LA for a week during each trip. A quick search of hostels and Airbnb show a price range of \$60-\$150 per night. Proof of purchases will be provided with the second and third invoices.
+I plan on staying in LA for a week during each trip. A quick search of hostels and Airbnb show a price range of \$60-\$250 per night. Proof of purchases will be provided with the second and third invoices.
 
 #### Food
 
@@ -115,7 +114,7 @@ For my trip to LA I would like $80 per diem for food. Due to the high probabilit
 
 #### Transportation
 
-I will most likely use a taxi, Uber, or Lyft to travel in LA. I am unsure how much I will be traveling once I'm there. Once I have the data I will select a sampling of programs to visit. These figures are just placeholders. I don't imagine I'll be spending more than \$500 on transportation, but I set the max to \$1,000 just in case. Proof of purchases will be provided.
+I will most likely use a taxi, Uber, or Lyft to travel in LA. I am unsure how much I will be traveling once I'm there. These figures are just placeholders. I don't imagine I'll be spending more than \$500 on transportation, but I set the max to \$1,000 just in case. Proof of purchases will be provided.
 
 #### Outsourcing
 
