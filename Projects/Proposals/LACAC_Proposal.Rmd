@@ -67,7 +67,7 @@ I imagine that the visualization will have at least three main visual levels (co
 * A district level display could show school insignias or bespoke representations of the school with a summary statistic showing up when a user hovers over it. An alternative county display could be a comparison of the district's general statistics in comparison to a second selected district or an average of all the districts. 
 * A school level display could be multiple displays of multiple different statistics of interest with regards to the school. An alternative school display could be a comparison of the school's multiple statistics to the statistics of other schools in the district or the county as a whole.
 
-Please [click here](beemyfriend.github.io/Projects/LACAC.html) to see how the flow of the visualization could potentially look like. 
+Please [click here](https://beemyfriend.github.io/Projects/LACAC.html) to see how the flow of the visualization could potentially look like. 
 
 I would like to go to LA county a second time - near the completion of the project - to speak to the parents, arts instructors, and community arts partners and see how they interact with the visualization. This will help me identify any changes that need to be made before opening the visualization to the public.
 
