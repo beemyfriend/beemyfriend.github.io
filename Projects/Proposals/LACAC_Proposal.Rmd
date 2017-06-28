@@ -20,7 +20,7 @@ Matthew Agustin, the *Arts Education Research Coordinator*, explained that the d
 
 ## Skill-Set & Relevant Work
 
-I am a Yale educated data engineer who specializes in data visualization. I use **R** when working on projects requiring data manipulation and use **D3.js** when working on projects requiring interactive data visualization. 
+I am a Yale educated, bilingual (Spanish & English) data engineer who specializes in data visualization. I use **R** when working on projects requiring data manipulation and use **D3.js** when working on projects requiring interactive data visualization. 
 
 My research interests include trends in international STEM education and the use of data visualization as a teaching tool. I will be presenting my poster on "*Exploring TIMSS at the Question-Level With R*" at the [UseR! conference](https://user2017.brussels/). 
 
@@ -36,7 +36,7 @@ Below are previous and current projects that relate to the **LACAC** visualizati
     + **Summary:** I explore data from **One Laptop Per Child** in a scrollstory. This project utilizes a map and animations to display information about the organization. It uses the scrollstory format which allows the user to control the pacing of the information being displayed.
     + **Relation:** Use of geographic information systems, animation, and scrollytelling to show information about an organization.
 * [Introduction to Fractals](https://benjaminortizulloa.github.io/pages/fractals.html)
-    + **Summary:** I teach the idea of self-similar fractals in a scrollstory. This project utlizes the scrollstory format and animation to explain a confusing topic. It also allows the user to explore what he or she learned at the end of the scrollstory.
+    + **Summary:** I explain the idea of self-similar fractals in a scrollstory. This project utlizes the scrollstory format and animation to explain a confusing topic. It also allows the user to explore what he or she learned at the end of the scrollstory.
     + **Relation:** Explain difficult concepts to a user and allow him or her to further explore the topic.
 
 ## Project Proposal & Timeline
@@ -66,7 +66,7 @@ The visualization will have at least three main visual displays (county, distric
 * A district level display could show school insignias or bespoke representations of the school with a summary statistic showing up when a user hovers over it. An alternative district display could be a comparison of the district's general statistics in comparison to a second selected district or an average of all the districts. 
 * A school level display could be multiple displays of multiple different statistics of interest with regards to the school. An alternative school display could be a comparison of the school's multiple statistics to the statistics of other schools in the district or the county as a whole.
 
-Please [click here](https://beemyfriend.github.io/Projects/LACAC.html) to see how the flow of the visualization will potentially feel like. 
+Please [click here](https://benjaminortizulloa.github.io/proposals/LACAC.html) to see how the flow of the visualization will potentially feel like. 
 
 I plan to go to LA county a second time - near the completion of the project - to speak to the parents, arts instructors, and community arts partners and see how they interact with the visualization. This will help me identify any changes that need to be made before opening the visualization to the public.
 
@@ -87,8 +87,8 @@ Below is my proposed budget for this project. I would like to be paid in three p
 ```{r echo = F}
 
 item_ <- c('Working Hours', 'Flights', 'Accomodation', 'Food', 'Transportation', 'Outsourced Work', 'Total')
-min_ <- c('$10,000', '$1,000', '$840', '$1,120', '$500', '$0', '$13,460')
-max_ <- c('$15,000', '$3,000', '$3,500', '$1,120', '$1,000', '$2,000', '$25,620')
+min_ <- c('$10,000', '$1,000', '$840', '$1,120', '$1000', '$0', '$13,960')
+max_ <- c('$15,000', '$3,000', '$3,500', '$1,120', '$2,000', '$2,000', '$26,620')
 
 budget <- data.frame(Item = item_, Min = min_, Max = max_)
 
@@ -110,11 +110,11 @@ I plan on staying in LA for a week during each trip. A quick search of hostels a
 
 #### Food
 
-For my trip to LA I would like $80 per diem for food. Due to the high probability of me ordering food from a food cart (no reciepts) I will set this as a fix fee. No proof of purchases will be provided. The second and third invoice will include this fixed rate for food.
+For my trips to LA I would like an $80 per diem for food. Due to the high probability of me ordering food from a food cart (no reciepts) I will set this as a fix fee. No proof of purchases will be provided. The second and third invoice will include this fixed rate for food.
 
 #### Transportation
 
-I will most likely use a taxi, Uber, or Lyft to travel in LA. I am unsure how much I will be traveling once I'm there. These figures are just placeholders. I don't imagine I'll be spending more than \$500 on transportation, but I set the max to \$1,000 just in case. Proof of purchases will be provided.
+I will most likely use a taxi, Uber, or Lyft to travel in LA. I am unsure how much I will be traveling once I'm there. These figures are just placeholders. I don't imagine I'll be spending more than \$1000 on transportation, but I set the max to \$2,000 just in case. Proof of purchases will be provided.
 
 #### Outsourcing
 

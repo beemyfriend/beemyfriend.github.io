@@ -16,8 +16,8 @@
     </style>
 </head>
 <body></body>
-<script src = 'd3.js'></script>
-<script src = 'd3v4+jetpack.js'></script>
+<script src = '../libraries/d3.js'></script>
+<script src = '../libraries/d3v4+jetpack.js'></script>
 <script src="https://d3js.org/topojson.v2.min.js"></script>
 <script>
     var width = 900,
@@ -113,7 +113,7 @@
         .append('div.tooltip')
         .st({opacity: 0});
 
-    d3.xml("rrcc_school_districts.svg")
+    d3.xml("../images/rrcc_school_districts.svg")
         .mimeType("image/svg+xml")
         .get(function(error, xml) {
             if (error) throw error;
@@ -547,7 +547,7 @@
                 .on('click', returnCounty);
         
             school.appendMany([[[300, height/3], [350, height - margin.bottom], [400, height/2], [500, height/4], [550, height/3]]], 'path.stat')
-                .at({d: d3.line().curve(d3.curveCardinal), id: 'randomStatLine'})
+                .at({d: d3.line().curve(d3.curveCardinal), id: 'randomStatLineSchool'})
                 .st({fill: 'none', stroke: 'black', 'stroke-width': 4})
                 .on('mouseover', function(d){
                     d3.select('#' + this.id).st({stroke:'blue'});

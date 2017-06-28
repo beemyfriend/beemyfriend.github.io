@@ -54,11 +54,14 @@
             .append('svg')
             .attrs({'height': height, 'width': width});
         
-        var heatmap = svg.append('g')
+        var heatmap = svg.append('g#heatmap')
             .attrs({'width': heat_width, 
                     'height': vis_height, 
-                    'transform': 'translate(' + margin.left + ',' + margin.top + ')',
-                    'id': 'heatmap'});
+                    'transform': 'translate(' + margin.left + ',' + margin.top + ')'});
+        
+        heatmap.append('rect#heatmap_cover')
+            .attrs({width: heat_width, height: vis_height+10, x: 0, y: -10, fill: 'white', 'fill-opacity': 0})
+        
         
         var scatter = svg.append('g')
             .attrs({'width': scat_width, 
@@ -232,9 +235,22 @@
                      '<br><b>% Females Correctly Answered Question: </b>' + Math.round(d.correct_ratio_per_question_female * 10000)/100 )
             .style('left', (d3.event.pageX) + 'px')
             .style('top', (d3.event.pageY) + 'px');
+
+            d3.select('rect#heatmap_cover')
+                .raise()
+                .transition()
+                .duration(1000)
+                .st({'fill-opacity': .8});
             
-            d3.selectAll('rect.' + chosen)
-                .attrs({'fill': 'black', 'fill-opacity': 1});
+            d3.selectAll('rect.'+ chosen )
+//                .attrs({'fill': 'black', 'fill-opacity': 1})
+                .st({'fill-opacity': 1})
+                .raise()
+            
+//            d3.selectAll('.heatquestion')
+//                .attrs({'fill-opacity': .1})
+//            d3.selectAll('rect.' + chosen)
+//                .attrs({'fill-opacity': 1});
             
             //the handle_mouse_out function can potentially pull info
             //from a rect. the d from a rect is the data from a specific
@@ -266,18 +282,35 @@
             div.transition()
                 .duration(500)
                 .style('opacity', 0)
+//
+//            d3.selectAll('.heatquestion')
+//                .attrs({'fill-opacity': 1})
+
+            d3.select('rect#heatmap_cover')
+                .transition()
+                .duration(1000)
+                .st({'fill-opacity': 0})
+                .on('end', function(){
+                    d3.selectAll('rect#heatmap_cover')
+                        .lower();
+                })
             
-            country_info.map(function(x){
-                //not every question is given to every country
-                //the below if statement confirms that the node exists
-                //before changing the color. Else the code breaks when a non-existing
-                //node is selected
-                if(d3.selectAll('rect#' + chosen + x.country)._groups[0].length){
-                    d3.selectAll('rect#' + chosen + x.country)
-                    .attrs({'fill': heat_clr(data.filter(function(z){return z.country == x.country}).filter(function(y){return y.question == chosen})[0].correct_ratio_per_question_range), 'fill-opacity': .75})    
-                }
             
-            })
+            d3.selectAll('rect.'+chosen)
+                .st({'fill-opacity': .75})
+//            
+//            country_info.map(function(x){
+//                //not every question is given to every country
+//                //the below if statement confirms that the node exists
+//                //before changing the color. Else the code breaks when a non-existing
+//                //node is selected
+//    
+//                if(d3.selectAll('rect#' + chosen + x.country)._groups[0].length){
+//                    d3.selectAll('rect#' + chosen + x.country)
+//                    .attrs({'fill': heat_clr(data.filter(function(z){return z.country == x.country}).filter(function(y){return y.question == chosen})[0].correct_ratio_per_question_range), 'fill-opacity': .75})    
+//                }
+//            
+//            })
 
             //the handle_mouse_out function can potentially pull info
             //from a rect. the d from a rect is the data from a specific
@@ -339,7 +372,7 @@
                         'fill-opacity': .75,
                         'x': function(d){return heat_x(+d.international_rank - 1)},
                         'y': function(d){return heat_y(+d.question_rank + 1)},
-                        'class': function(d){return d.question + ' ' + d.country},
+                        'class': function(d){return d.question + ' ' + d.country + ' heatquestion'},
                         'id': function(d){return d.question + d.country}
                         })
                 .on('mouseover', handle_mouse_over)
