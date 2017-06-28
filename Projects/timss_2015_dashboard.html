@@ -60,14 +60,16 @@
                     'transform': 'translate(' + margin.left + ',' + margin.top + ')'});
         
         heatmap.append('rect#heatmap_cover')
-            .attrs({width: heat_width, height: vis_height+10, x: 0, y: -10, fill: 'white', 'fill-opacity': 0})
+            .attrs({width: heat_width, height: vis_height+10, x: 0, y: -10, fill: 'white', 'fill-opacity': 0});
         
         
-        var scatter = svg.append('g')
+        var scatter = svg.append('g#scatter')
             .attrs({'width': scat_width, 
                     'height': vis_height, 
-                    'transform': 'translate(' + (margin.left + heat_width + margin.gap) + ',' + margin.top + ')',
-                    'id': 'scatter'});  
+                    'transform': 'translate(' + (margin.left + heat_width + margin.gap) + ',' + margin.top + ')'});  
+        
+        scatter.append('rect#scatter_cover')
+            .at({width: scat_width - 30, height: vis_height, x: 0, y: 0, 'fill-opacity': 0, fill: 'white'});
         
         var div = d3.select('body')
             .append('div')
@@ -153,13 +155,29 @@
                 .text(function(d){ return d + '%'});    
 
             scatter.selectAll('path.contentkey')
-                .data(['Algebra', 'Data and Chance', 'Geometry', 'Number'])
+                .data([['Algebra', 'algebra'], ['Data and Chance', 'data_and_chance'], ['Geometry', 'geometry'], ['Number', 'number']])
                 .enter().append('path')
-                .attrs({'d': function(d){return content_shape(d)}, 
+                .attrs({'d': function(d){return content_shape(d[0])}, 
                        'class': 'contentkey', 
                         'stroke': 'black',
                        'fill': 'black', 
-                       'transform': function(d,i){return 'translate(' + scat_width +',' + (30 * i) + ')'}});
+                       'transform': function(d,i){return 'translate(' + scat_width +',' + (30 * i) + ')'}})
+                .on('mouseover', function(d){
+                    d3.select('rect#scatter_cover')
+                        .st({'fill-opacity': .8})
+                        .raise()
+                    d3.select('rect#heatmap_cover')
+                        .st({'fill-opacity': .8})
+                        .raise()
+                    d3.selectAll('.'+ d[1])
+                        .raise()})
+                .on('mouseout', function(){
+                    d3.select('rect#scatter_cover')
+                        .st({'fill-opacity': .8})
+                        .lower()
+                    d3.select('rect#heatmap_cover')
+                        .st({'fill-opacity': .8})
+                        .lower()})
 
             scatter.selectAll('circle.cognitivekey')
                 .data(['Applying', 'Knowing', 'Reasoning'])
@@ -170,6 +188,22 @@
                         'cx': scat_width, 
                         'cy': function(d,i){ return (120 + i * 30)}, 
                         'r': 5})
+                .on('mouseover', function(d){
+                    d3.select('rect#scatter_cover')
+                        .st({'fill-opacity': .8})
+                        .raise()
+                    d3.select('rect#heatmap_cover')
+                        .st({'fill-opacity': .8})
+                        .raise()
+                    d3.selectAll('.'+ d)
+                        .raise()})
+                .on('mouseout', function(){
+                    d3.select('rect#scatter_cover')
+                        .st({'fill-opacity': .8})
+                        .lower()
+                    d3.select('rect#heatmap_cover')
+                        .st({'fill-opacity': .8})
+                        .lower()})
 
             scatter.selectAll('text.domainkey')
                 .data(['Algebra', 'Data and Chance', 'Geometry', 'Number', 'Applying', 'Knowing', 'Reasoning'])
@@ -326,6 +360,9 @@
                     .attrs({'transform':'translate(' + scat_x( +scat_point_info.correct_ratio_per_question) + ',' + scat_y(+scat_point_info.diff_male_female) + ') scale(1)'})
                     .lower()
             }
+            
+            d3.select('rect#scatter_cover')
+                .lower()
         }
         
         function handle_mouse_over_country(d, i){
@@ -372,7 +409,7 @@
                         'fill-opacity': .75,
                         'x': function(d){return heat_x(+d.international_rank - 1)},
                         'y': function(d){return heat_y(+d.question_rank + 1)},
-                        'class': function(d){return d.question + ' ' + d.country + ' heatquestion'},
+                        'class': function(d){return d.question + ' ' + d.country + ' heatquestion' + ' '+ d.content_domain.replace(/ /g, '_') + ' ' + d.cognitive_domain},
                         'id': function(d){return d.question + d.country}
                         })
                 .on('mouseover', handle_mouse_over)
@@ -453,7 +490,7 @@
                             'fill': function(d){return cognitive_clr(d.cognitive_domain)},
                             'stroke': 'black', 
                             'transform': function(d){return 'translate(' + scat_x( +d.correct_ratio_per_question) + ',' + scat_y(+d.diff_male_female) + ')'}, 
-                            'class': function(d){return d.question + ' scatter'},
+                            'class': function(d){return d.question + ' scatter' + ' '+ d.content_domain.replace(/ /g, '_') + ' ' + d.cognitive_domain},
                             'id': function(d){return d.question + 'scatter'}
                            })
                     .on('mouseover', handle_mouse_over)
