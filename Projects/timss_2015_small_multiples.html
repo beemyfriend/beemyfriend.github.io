@@ -1,0 +1,220 @@
+<head></head>
+<body></body>
+<script src = 'd3.js'></script>
+<script src = 'd3v4+jetpack.js'></script>
+<script>
+    var width = 1300,
+        height = 700;
+        
+    var margin = {
+        top: 75,
+        right: 75,
+        bottom: 75,
+        left: 75,
+        gap: 5
+    };
+    
+    var country_width = (width - margin.left - margin.right)/9,
+        country_height = (height - margin.top - margin.bottom)/4,
+        domain_width = (country_width - margin.gap)/4,
+        domain_height = (country_height - margin.gap)/4;
+    
+    var small_multiples = d3.select('body')
+        .append('svg.sm')
+        .at({height: height, width: width});
+
+    var country_row = -1
+
+    function country_location(d, i){
+        if(i% 9 == 0){country_row += 1}
+        var row = margin.top + (country_row * country_height)
+        var column = margin.left + ((i%9) * country_width);
+        return [column, row]
+    }
+    
+    var sm_location = d3.scaleOrdinal();
+    
+    var success_color = d3.scaleLinear()
+        .range(['red', 'green']);
+    
+    var rank_color = d3.scaleLinear()
+        .range(['red', 'green']);
+    
+    var sm_content_domain = d3.scaleOrdinal()
+        .domain(['Algebra', 'Data and Chance', 'Geometry', 'Number'])
+        .range([0, (country_width - margin.gap)/4, (country_width - margin.gap)/2, (country_width - margin.gap) * 3/4]);
+    
+    var sm_cognitive_domain = d3.scaleOrdinal()
+        .domain(['Applying', 'Knowing', 'Reasoning'])
+        .range([(country_height - margin.gap)/4, (country_height - margin.gap)/2, (country_height - margin.gap)* 3/4]);
+
+    var sm_correct_bin = d3.scaleOrdinal();
+    var sm_correct_count = d3.scaleLinear();
+    var sm_gender_bin = d3.scaleOrdinal();
+    var sm_gender_count = d3.scaleLinear();
+
+    d3.queue()
+        .defer(d3.tsv, '2015_timss_country.tsv')
+        .defer(d3.tsv, 'small_multiple_domains.tsv')
+        .defer(d3.tsv, 'small_multiples_correct_hist.tsv')
+        .defer(d3.tsv, 'small_multiples_gender_hist.tsv')
+        .defer(d3.tsv, 'hist_bins.tsv')
+        .await(ready);
+    
+    function ready(error, country, domain_info, correct_info, gender_info, hist_bins){
+        if(error) throw error;
+        data1 = country;
+        data2 = domain_info;
+        data3 = correct_info;
+        data4 = gender_info;
+        data5 = hist_bins
+        
+        sm_correct_bin.domain(hist_bins.map(function(x){return x.correct_bins}))
+            .range(hist_bins.map(function(x,i){return i * country_width/25 }));
+        
+        sm_gender_bin.domain(hist_bins.map(function(x){return x.gender_bins}))
+            .range(hist_bins.map(function(x,i){return  i * country_height/25}));
+        
+        sm_correct_count.domain([0, d3.max(correct_info.map(function(x){return +x.correct_count}))])
+            .range([country_height, 0]);
+        
+        sm_gender_count.domain([0, d3.max(gender_info.map(function(x){return +x.gender_count}))])
+            .range([0, country_width]);
+        
+        sm_location.domain(country.map(function(d){return d.country}))
+            .range(country.map(country_location));
+        
+        success_color.domain(d3.extent(data2.map(function(x){return +x.mean_success_rate})));
+
+        rank_color.domain(d3.extent(data2.map(function(x){ return +x.mean_rank})));
+
+        function sm_selection(){
+            var text_y = margin.top * 7/8;
+            
+            small_multiples.append('rect.countries')
+                .at({x: margin.left, y: margin.top/2, width: 200, height: margin.top/2})
+                .st({fill: 'blue', 'fill-opacity': .5, cursor: 'pointer'})
+                .on('click', function(){sm_gender_hist()});
+
+            small_multiples.append('text.countries')
+                .translate([margin.left + 100, text_y])
+                .at({'text-anchor': 'middle'})
+                .st({'pointer-events': 'none'})
+                .text('Gender-Hist');
+            
+            small_multiples.append('rect.countries')
+                .at({x: margin.left + 200, y: margin.top/2, width: 200, height: margin.top/2})
+                .st({fill: 'green', 'fill-opacity': .5, cursor: 'pointer'})
+                .on('click', function(){sm_correct_hist()});
+            
+            small_multiples.append('text.countries')
+                .translate([margin.left + 300, text_y])
+                .at({'text-anchor': 'middle'})
+                .st({'pointer-events': 'none'})
+                .text('Total-Hist');
+
+            small_multiples.append('rect.countries')
+                .at({x: margin.left + 400, y: margin.top/2, width: 200, height: margin.top/2})
+                .st({fill: 'pink', 'fill-opacity': .5, cursor: 'pointer'})
+                .on('click', function(){sm_domain()});            
+            
+            small_multiples.append('text.countries')
+                .translate([margin.left + 500, text_y])
+                .at({'text-anchor': 'middle'})
+                .st({'pointer-events': 'none'})
+                .text('Domain-Heat');            
+        }
+                
+        function sm_gender_hist(){
+            d3.selectAll('.countries')
+                .remove();
+            
+            sm_selection();
+            
+            var sm_countries_gender = small_multiples.appendMany(gender_info, 'g.countries')
+                .translate(function(d){return sm_location(d.country)});
+            
+            var sm_lines_gender = sm_countries_gender.append('path')
+                .at({d: function(d){return 'M ' + sm_gender_count(0) + ' ' + sm_gender_bin(d.gender_bins) + 'H ' + sm_gender_count(+d.gender_count)}})
+                .st({fill: 'none', stroke: 'black'});
+        }
+        
+        sm_gender_hist();
+        
+        function sm_correct_hist(){
+            d3.selectAll('.countries')
+                .remove();
+            
+            sm_selection();
+            
+            var sm_countries_correct = small_multiples.appendMany(correct_info, 'g.countries')
+                .translate(function(d){return sm_location(d.country)});
+            
+            var sm_lines = sm_countries_correct.append('path')
+                .at({d: function(d){return 'M' + 
+                    sm_correct_bin(d.correct_bins) + 
+                    ' ' + sm_correct_count(0)  + 'V ' + sm_correct_count(+d.correct_count)}})
+                .st({fill: 'none', stroke: 'black'});
+        }
+        
+//        sm_correct_hist();
+        
+        
+        
+        function sm_domain(){
+
+            d3.selectAll('.countries')
+                .remove();
+            
+            sm_selection();
+            
+            var sm_countries = small_multiples.appendMany(domain_info, 'g.countries')
+                .translate(function(d){return sm_location(d.country)});
+
+            var sm_rects = sm_countries.append('rect.countries')
+                .at({width: domain_width, height: domain_height, 
+                     x: function(d){return sm_content_domain(d.content_domain)},
+                     y: function(d){return sm_cognitive_domain(d.cognitive_domain)}})
+                .st({stroke: 'white', 'fill-opacity': .5, fill: function(d){return rank_color(+d.mean_rank)}}); 
+            
+            sm_countries.append('text.countries')
+                .translate([country_width/2, country_height/4 - margin.gap])
+                .at({'text-anchor': 'middle'})
+                .text(function(d){return d.country});
+            
+            small_multiples.append('rect.countries')
+                .at({x: width * 3/4, y: margin.top/2, width: width/8, height: margin.top/2})
+                .st({fill: 'red', cursor: 'pointer', 'fill-opacity': .5})
+                .on('click', function(){
+                    sm_rects
+                        .transition()
+                        .duration(1000)
+                        .st({fill: function(d){return success_color(+d.mean_success_rate)}})});
+            
+            small_multiples.append('text.countries')
+                .translate([width * 3/4 + width/16, margin.top * 13/16])
+                .at({'text-anchor': 'middle'})
+                .st({'pointer-events': 'none'})
+                .text('Mean Success Rate')
+            
+            small_multiples.append('rect.countries')
+                .at({x: width * 7/8, y: margin.top/2, width: width/8, height: margin.top/2})
+                .st({fill: 'blue', cursor: 'pointer', 'fill-opacity': .5})
+                .on('click', function(){
+                    sm_rects
+                        .transition()
+                        .duration(1000)
+                        .st({fill: function(d){return rank_color(+d.mean_rank)}})});
+            
+            small_multiples.append('text.countries')
+                .translate([width * 7/8 + width/16, margin.top * 13/16])
+                .at({'text-anchor': 'middle'})
+                .st({'pointer-events': 'none'})
+                .text('Mean Rank')
+        }
+        
+//        sm_domain();
+        
+        
+    }
+</script>

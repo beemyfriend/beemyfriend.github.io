@@ -36,7 +36,9 @@
         
         var width = 1300,
             height = 700,
-            symbol_size = 40;
+            symbol_size = 40,
+            heat_rect_width,
+            heat_rect_height;
         
         var margin = {
             top: 100,
@@ -61,8 +63,7 @@
         
         heatmap.append('rect#heatmap_cover')
             .attrs({width: heat_width, height: vis_height+10, x: 0, y: -10, fill: 'white', 'fill-opacity': 0});
-        
-        
+                
         var scatter = svg.append('g#scatter')
             .attrs({'width': scat_width, 
                     'height': vis_height, 
@@ -118,9 +119,15 @@
         var scat_y = d3.scaleLinear()
             .range([vis_height, 0]);
         
+        var scat_y_correct_ratio_order = d3.scaleLinear()
+            .range([vis_height-5, 0]);
+        
         var scat_x = d3.scaleLinear()
             .range([0, scat_width])
             .domain([0, 1]);
+        
+        var scat_x_gender_order = d3.scaleLinear()
+            .range([5, scat_width]);
         
         heat_clr = d3.scaleOrdinal()
             .range(['#a50026', '#d73027', '#f46d43', '#fdae61', '#fee090', '#e0f3f8', '#abd9e9', '#74add1', '#4575b4', '#313695'])
@@ -157,7 +164,7 @@
             scatter.selectAll('path.contentkey')
                 .data([['Algebra', 'algebra'], ['Data and Chance', 'data_and_chance'], ['Geometry', 'geometry'], ['Number', 'number']])
                 .enter().append('path')
-                .attrs({'d': function(d){return content_shape(d[0])}, 
+                .at({'d': function(d){return content_shape(d[0])}, 
                        'class': 'contentkey', 
                         'stroke': 'black',
                        'fill': 'black', 
@@ -170,7 +177,9 @@
                         .st({'fill-opacity': .8})
                         .raise()
                     d3.selectAll('.'+ d[1])
-                        .raise()})
+                        .raise()
+                    scatter.selectAll('.referenceLine')
+                        .raise();})
                 .on('mouseout', function(){
                     d3.select('rect#scatter_cover')
                         .st({'fill-opacity': .8})
@@ -191,12 +200,14 @@
                 .on('mouseover', function(d){
                     d3.select('rect#scatter_cover')
                         .st({'fill-opacity': .8})
-                        .raise()
+                        .raise();
                     d3.select('rect#heatmap_cover')
                         .st({'fill-opacity': .8})
-                        .raise()
+                        .raise();
                     d3.selectAll('.'+ d)
-                        .raise()})
+                        .raise();
+                    scatter.selectAll('.referenceLine')
+                        .raise();})
                 .on('mouseout', function(){
                     d3.select('rect#scatter_cover')
                         .st({'fill-opacity': .8})
@@ -235,18 +246,20 @@
 
             heatmap.append('g')
                 .append('text')
-                .attrs({'transform': 'rotate(-90) translate(' + (-1 * vis_height/2) + ', -35)', 'font-size': margin.left/6.5, 'fill': 'black', 'text-anchor': 'middle'})
-                .text('National Question Ranking From Most Successfully Answered To Least')
+                .at({'transform': 'rotate(-90) translate(' + (-1 * vis_height/2) + ', -35)', 'font-size': margin.left/6.5, 'fill': 'black', 'text-anchor': 'middle'})
+                .text('National Question Ranking From Most Successfully Answered To Least');
 
             scatter.append('g')
-                .append('text')
-                .attrs({'transform': 'rotate(-90) translate(' + (-1 * vis_height/2) + ', -40)', 'font-size': margin.left/6.5, 'fill': 'black', 'text-anchor': 'middle'})
-                .text('Question Success Rate Male - Success Rate Female');
+                .append('text#yLabel')
+                .at({'transform': 'rotate(-90) translate(' + (-1 * vis_height/2) + ', -40)', 'font-size': margin.left/6.5, 'fill': 'black', 'text-anchor': 'middle'})
+                .st({'pointer-events': 'none'})
+                .text('Question Success Rate Male - Success Rate Female');       
 
             scatter.append('g')
-                .append('text')
+                .append('text#xLabel')
                 .attrs(({transform: 'translate(' + (scat_width/2) + ','+ (vis_height + 35) + ')', 'font-size': margin.left/6.5, 'fill': 'black', 'text-anchor': 'middle'}))
-                .text('National Question Success Rate')
+                .st({'pointer-events': 'none'})
+                .text('National Question Success Rate');
         }
                 
         
@@ -274,17 +287,18 @@
                 .raise()
                 .transition()
                 .duration(1000)
-                .st({'fill-opacity': .8});
+                .st({'fill-opacity': .3});
             
             d3.selectAll('rect.'+ chosen )
-//                .attrs({'fill': 'black', 'fill-opacity': 1})
-                .st({'fill-opacity': 1})
                 .raise()
-            
-//            d3.selectAll('.heatquestion')
-//                .attrs({'fill-opacity': .1})
-//            d3.selectAll('rect.' + chosen)
-//                .attrs({'fill-opacity': 1});
+                .transition()
+                .duration(1000)
+                .st({'fill-opacity': 1, 'fill': 'black'})
+                
+            d3.select('#'+chosen+scat_displayed)
+                .transition()
+                .duration(1000)
+                .st({'fill': 'red'})
             
             //the handle_mouse_out function can potentially pull info
             //from a rect. the d from a rect is the data from a specific
@@ -316,9 +330,6 @@
             div.transition()
                 .duration(500)
                 .style('opacity', 0)
-//
-//            d3.selectAll('.heatquestion')
-//                .attrs({'fill-opacity': 1})
 
             d3.select('rect#heatmap_cover')
                 .transition()
@@ -328,23 +339,21 @@
                     d3.selectAll('rect#heatmap_cover')
                         .lower();
                 })
+                        
+            country_info.map(function(x){
+                //not every question is given to every country
+                //the below if statement confirms that the node exists
+                //before changing the color. Else the code breaks when a non-existing
+                //node is selected
+    
+                if(d3.selectAll('rect#' + chosen + x.country)._groups[0].length){
+                    d3.selectAll('rect#' + chosen + x.country)
+                        .transition()
+                        .duration(1000)
+                        .st({'fill': heat_clr(data.filter(function(z){return z.country == x.country}).filter(function(y){return y.question == chosen})[0].correct_ratio_per_question_range), 'fill-opacity': .75})
+                }
             
-            
-            d3.selectAll('rect.'+chosen)
-                .st({'fill-opacity': .75})
-//            
-//            country_info.map(function(x){
-//                //not every question is given to every country
-//                //the below if statement confirms that the node exists
-//                //before changing the color. Else the code breaks when a non-existing
-//                //node is selected
-//    
-//                if(d3.selectAll('rect#' + chosen + x.country)._groups[0].length){
-//                    d3.selectAll('rect#' + chosen + x.country)
-//                    .attrs({'fill': heat_clr(data.filter(function(z){return z.country == x.country}).filter(function(y){return y.question == chosen})[0].correct_ratio_per_question_range), 'fill-opacity': .75})    
-//                }
-//            
-//            })
+            })
 
             //the handle_mouse_out function can potentially pull info
             //from a rect. the d from a rect is the data from a specific
@@ -381,7 +390,7 @@
 //============== load data ===============//
         
         d3.queue()
-            .defer(d3.tsv, 'TIMSS_2015_NO_BM.tsv')
+            .defer(d3.tsv, 'TIMSS_Dashboard_data.tsv')
             .defer(d3.tsv, '2015_timss_country.tsv')
             .await(ready);
         
@@ -400,11 +409,18 @@
             
             scat_y.domain(d3.extent(tsv.map(function(x){return +x.diff_male_female})));
             
+            scat_x_gender_order.domain(d3.extent(tsv.map(function(x){return +x.gender_bins_order})));
+            
+            scat_y_correct_ratio_order.domain(d3.extent(tsv.map(function(x){return +x.correct_ratio_per_question_range_order})))
+            
+            heat_rect_height = heat_y(1) - heat_y(2);
+            heat_rect_width = heat_x(2) - heat_x(1);
+            
             heatmap.selectAll('rect')
                 .data(tsv)
                 .enter().append('rect')
-                .attrs({'height': heat_y(1) - heat_y(2),
-                        'width': heat_x(2) - heat_x(1),
+                .attrs({'height': heat_rect_height,
+                        'width': heat_rect_width,
                         'fill': function(d){return heat_clr(d.correct_ratio_per_question_range)},
                         'fill-opacity': .75,
                         'x': function(d){return heat_x(+d.international_rank - 1)},
@@ -442,29 +458,43 @@
                 .attr('transform', 'translate(' + margin.left + ',' + (margin.top + vis_height) + ')')
                 .call(heat_x_axis)
                 .selectAll('text')
-                .attrs({'transform': 'rotate(-90) translate( -8,' + (heat_x(1) - heat_x(2)) + ')', 'text-anchor': 'end', });
+                .at({'transform': 'rotate(-90) translate( -8,' + (heat_x(1) - heat_x(2)) + ')', 'text-anchor': 'end', })
+                .st({'pointer-events': 'none'})
                 
             var scat_y_axis = d3.axisLeft(scat_y);
-            
+            var count_y_axis = d3.axisLeft(scat_y_correct_ratio_order);
+            var count_x_axis = d3.axisBottom(scat_x_gender_order);
             var scat_x_axis = d3.axisBottom(scat_x);
             
-            svg.append('g')
+            scatYAxis = svg.append('g')
                 .attr('transform', 'translate(' + (margin.left + heat_width + margin.gap) + ',' + (margin.top) +')')
                 .call(scat_y_axis);
             
-            svg.append('g')
+            scatXAxis = svg.append('g')
                 .attr('transform', 'translate(' + (margin.left + heat_width + margin.gap) + ',' + (margin.top + vis_height) + ')')
                 .call(scat_x_axis);
             
-            scatter.append('g')
+            scatter.append('g.referenceLine')
                 .append('path')
                 .attrs({'d': 'M ' + scat_x(0) + ' ' + scat_y(0) + ' h ' + scat_width, 
                         'stroke': 'black'});
             
-            scatter.append('g')
+            scatter.append('g.referenceLine')
                 .append('path')
                 .attrs({'d': 'M ' + scat_x(.5) + ' 0 v ' + vis_height, 
                         'stroke':'black' });
+            
+           scatter.append('rect.overLabel#overXLabel')
+                .at({x: scat_width/3, y: vis_height + 20, width: 200, height: 25})
+                .st({fill: 'white'})
+                .on('mouseover', create_correct_hist)
+                .on('mouseout', return_2_scatter);
+
+            scatter.append('rect.overLabel#overYLabel')
+                .at({x: -55, y: vis_height/7, width: 25, height: vis_height * 3/4})
+                .st({fill: 'white'})
+                .on('mouseover', create_gender_hist)
+                .on('mouseout', return_2_scatter);
             
             function create_scatter(country){
                 scat_country = tsv.filter(function(x){return x.country == country})
@@ -489,7 +519,7 @@
                     .attrs({'d': function(d){return content_shape(d.content_domain)}, 
                             'fill': function(d){return cognitive_clr(d.cognitive_domain)},
                             'stroke': 'black', 
-                            'transform': function(d){return 'translate(' + scat_x( +d.correct_ratio_per_question) + ',' + scat_y(+d.diff_male_female) + ')'}, 
+                            'transform': function(d){return 'translate(' + scat_x( +d.correct_ratio_per_question) + ',' + scat_y(+d.diff_male_female) + ')'},
                             'class': function(d){return d.question + ' scatter' + ' '+ d.content_domain.replace(/ /g, '_') + ' ' + d.cognitive_domain},
                             'id': function(d){return d.question + 'scatter'}
                            })
@@ -499,6 +529,61 @@
                 scatter.append('text')
                     .attrs({'fill': 'black', 'font-size': margin.top/4.5, 'transform': 'translate(0,' + (margin.top/5 * (-1)) +')', 'class': 'scatter' })
                     .text('Question Success in ' + country_tsv.filter(function(x){return x.country == country})[0].country_full)
+            }
+            
+            function return_2_scatter(){
+                scatter.selectAll('path.scatter')
+                    .transition()
+                    .duration(1000)
+                    .translate(function(d){return [scat_x( +d.correct_ratio_per_question), scat_y(+d.diff_male_female)]})
+                
+                scatter.selectAll('text#xLabel')
+                    .text('National Question Success Rate')
+                
+                scatter.selectAll('text#yLabel')
+                    .text('Question Success Rate Male - Success Rate Female')
+                
+                scatXAxis.call(scat_x_axis);
+                scatYAxis.call(scat_y_axis);   
+                
+                scatter.selectAll('.referenceLine')
+                    .transition()
+                    .duration(1000)
+                    .st({'stroke-opacity': 1});
+            }
+            
+            function create_correct_hist(){
+                scatter.selectAll('path.scatter')
+                    .transition()
+                    .duration(1000)
+                    .translate(function(d){ return [scat_x( +d.correct_ratio_per_question),  scat_y_correct_ratio_order(+d.correct_ratio_per_question_range_order)]});
+
+                scatter.select('text#yLabel')
+                    .text('Count');            
+                
+                scatYAxis.call(count_y_axis);
+                
+                scatter.selectAll('.referenceLine')
+                    .transition()
+                    .duration(1000)
+                    .st({'stroke-opacity': 0});
+            }            
+            
+            function create_gender_hist(){                
+                scatter.selectAll('path.scatter')
+                    .transition()
+                    .duration(1000)
+                    .translate(function(d){return [scat_x_gender_order( +d.gender_bins_order), scat_y(+d.diff_male_female) ]});
+                
+                scatter.select('text#xLabel')
+                    .text('Count');
+                
+                scatXAxis.call(count_x_axis);
+                
+                scatter.selectAll('.referenceLine')
+                    .transition()
+                    .duration(1000)
+                    .st({'stroke-opacity': 0});
             }
             
             createKeys()
