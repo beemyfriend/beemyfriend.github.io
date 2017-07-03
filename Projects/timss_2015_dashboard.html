@@ -95,7 +95,7 @@
 
             svg.append('rect')
                 .at(hm_button)
-                .st({fill: 'grey', 'fill-opacity': .5, cursor: 'none'});
+                .st({fill: 'grey', 'fill-opacity': .5, cursor: 'none', stroke: 'black'});
             
             svg.append('text')
                 .translate(hm_text)
@@ -105,7 +105,7 @@
             
             svg.append('rect')
                 .at(sm_button)
-                .st({fill: 'white', 'fill-opacity': .5, cursor: 'pointer'})
+                .st({fill: 'white', 'fill-opacity': .5, cursor: 'pointer', stroke: 'black'})
                 .on('click', small_multiples_screen);
             
             svg.append('text')
@@ -699,7 +699,7 @@
                 
                 svg.append('rect#info')
                     .at({x: width-margin.right, y: 0, height: 75/2, width: 75/2})
-                    .st({fill: 'blue', 'fill-opacity': .25})
+                    .st({fill: 'blue', 'fill-opacity': .25, stroke: 'black'})
                     .on('mouseover', function(){   
                         d3.selectAll('g.annotation-group')
                             .st({'stroke-opacity': 1, 'fill-opacity': 1});})
@@ -737,7 +737,7 @@
             
             small_multiples.append('rect')
                 .at(hm_button)
-                .st({fill: 'white', 'fill-opacity': .5, cursor: 'pointer'})
+                .st({fill: 'white', 'fill-opacity': .5, cursor: 'pointer', stroke: 'black'})
                 .on('click', heat_map_screen);
             
             small_multiples.append('text')
@@ -748,7 +748,7 @@
             
             small_multiples.append('rect')
                 .at(sm_button)
-                .st({fill: 'grey', 'fill-opacity': .5, cursor: 'none'});
+                .st({fill: 'grey', 'fill-opacity': .5, cursor: 'none', stroke: 'black'});
             
             small_multiples.append('text')
                 .translate(sm_text)
@@ -824,7 +824,7 @@
                     var text_y = 75/4;
 
                     small_multiples.append('rect.countries#HistButton')
-                        .at({x: margin.left + 350, y: 0, width: 150, height: margin.top/2})
+                        .at({x: margin.left + 350, y: 0, width: 150, height: margin.top/2, stroke: 'black'})
                         .st({'fill-opacity': .5})
                         .on('click', function(){sm_hist(); 
                                                 sm_correct_hist();});
@@ -836,7 +836,7 @@
                         .text('Histograms');
 
                     small_multiples.append('rect.countries#domainButton')
-                        .at({x: margin.left + 500, y: 0, width: 150, height: margin.top/2})
+                        .at({x: margin.left + 500, y: 0, width: 150, height: margin.top/2, stroke: 'black'})
                         .st({'fill-opacity': .5})
                         .on('click', function(){sm_domain()});            
 
@@ -858,7 +858,7 @@
                     
                     small_multiples.append('rect.countries#genderHist')
                         .at(thirdFirstButton)
-                        .st({fill: 'white', cursor: 'pointer', 'fill-opacity': .5})
+                        .st({fill: 'white', cursor: 'pointer', 'fill-opacity': .5, stroke: 'black'})
                         .on('click', sm_gender_hist);
 
                     small_multiples.append('text.countries')
@@ -869,7 +869,7 @@
 
                     small_multiples.append('rect.countries#correctHist')
                         .at(thirdSecondButton)
-                        .st({fill: 'white', cursor: 'pointer', 'fill-opacity': .5})
+                        .st({fill: 'white', cursor: 'pointer', 'fill-opacity': .5, stroke: 'black'})
                         .on('click', sm_correct_hist);
 
                     small_multiples.append('text.countries')
@@ -994,7 +994,7 @@
 
                     small_multiples.append('rect.countries#success')
                         .at(thirdFirstButton)
-                        .st({fill: 'white', cursor: 'pointer', 'fill-opacity': .5})
+                        .st({fill: 'white', cursor: 'pointer', 'fill-opacity': .5, stroke: 'black'})
                         .on('click', function(){
                             sm_rects
                                 .transition()
@@ -1016,7 +1016,7 @@
 
                     small_multiples.append('rect.countries#rank')
                         .at(thirdSecondButton)
-                        .st({fill: 'grey', cursor: 'pointer', 'fill-opacity': .5})
+                        .st({fill: 'grey', cursor: 'pointer', 'fill-opacity': .5, stroke: 'black'})
                         .on('click', function(){
                             sm_rects
                                 .transition()
@@ -1035,6 +1035,74 @@
                         .at({'text-anchor': 'middle'})
                         .st({'pointer-events': 'none'})
                         .text('Mean Rank')
+                    
+                    var annotations_sm_hm = [
+                        {
+                            type: d3.annotationCalloutRect,
+                            note: {label: 'Reasoning'},
+                            subject: {width: -(country_width * 7), height: country_height/4},
+                            x: 7 * country_width + margin.left, y: 4 * country_height + margin.top - country_height/4, dy: 30, dx: 15
+                        },
+                        {
+                            type: d3.annotationCalloutRect,
+                            note: {label: 'Knowing'},
+                            subject: {width: -(country_width * 7), height: country_height/4},
+                            x: 7 * country_width + margin.left, y: 4 * country_height + margin.top - country_height/2, dy: 30, dx: 15
+                        },
+                        {
+                            type: d3.annotationCalloutRect,
+                            note: {label: 'Applying'},
+                            subject: {width: -(country_width * 7), height: country_height/4},
+                            x: 7 * country_width + margin.left, y: 4 * country_height + margin.top - country_height * 3/4, dy: 30, dx: 15
+                        },
+                        {
+                            type: d3.annotationCalloutRect,
+                            note: {label: 'Algebra'},
+                            subject: {width: country_width/4, height: -(country_height * 3)},
+                            x: 7 * country_width + margin.left, y: 3 * country_height + margin.top, dy: 65, dx: 240
+                        },
+                        {
+                            type: d3.annotationCalloutRect,
+                            note: {label: 'Data and Chance'},
+                            subject: {width: country_width/4, height: -(country_height * 3)},
+                            x: 7 * country_width + margin.left + country_width/4, y: 3 * country_height + margin.top, dy: 45, dx: 180 
+                        },
+                        {
+                            type: d3.annotationCalloutRect,
+                            note: {label: 'Geometry'},
+                            subject: {width: country_width/4, height: -(country_height * 3)},
+                            x: 7 * country_width + margin.left + country_width/2, y: 3 * country_height + margin.top, dy: 25, dx: 120 
+                        },
+                        {
+                            type: d3.annotationCalloutRect,
+                            note: {label: 'Number'},
+                            subject: {width: country_width/4, height: -(country_height * 3)},
+                            x: 7 * country_width + margin.left + country_width * 3/4, y: 3 * country_height + margin.top, dy: 5, dx: 60 
+                        }];
+
+                    var makeAnnotations_sm_hm = d3.annotation().annotations(annotations_sm_hm);
+
+                    small_multiples.append('g.annotation-group')
+                        .call(makeAnnotations_sm_hm);
+                    
+                                    d3.selectAll('g.annotation-group')
+                    .st({'stroke-opacity': 0, 'fill-opacity': 0});
+                
+                    small_multiples.append('rect#info.countries')
+                        .at({x: width-margin.right, y: 0, height: 75/2, width: 75/2})
+                        .st({fill: 'blue', 'fill-opacity': .25, stroke: 'black'})
+                        .on('mouseover', function(){   
+                            d3.selectAll('g.annotation-group')
+                                .st({'stroke-opacity': 1, 'fill-opacity': 1});})
+                        .on('mouseout', function(){
+                            d3.selectAll('g.annotation-group')
+                                .st({'stroke-opacity': 0, 'fill-opacity': 0});})
+
+                    small_multiples.append('text.countries')
+                        .at({x: width-margin.right + 20, y: 75/4, 'text-anchor': 'middle'})
+                        .st({'pointer-events': 'none'})
+                        .text('???')
+                    
                 }
             }
         }
