@@ -13,6 +13,33 @@
             pointer-events: none;
             z-index: 4;
         }
+
+        :root {
+          --annotation-color: #E8336D;
+        }
+        
+        .annotation path {
+          stroke: var(--annotation-color);
+          fill: none;
+        }
+
+        .annotation path.connector-arrow, 
+        .annotation path.connector-dot, 
+        .title text, .annotation text {
+          fill: var(--annotation-color);
+        }
+
+        .annotation-note-bg {
+          fill: rgba(0, 0, 0, 0);
+        }
+
+        .annotation-note-title, text.title {
+          font-weight: bold;
+        }
+
+        text.title {
+          font-size: 1.2em;
+        }
     </style>
 </head>
 <body>
@@ -31,8 +58,8 @@
     <div id='dashboard'></div>
     <script src = 'd3.js'></script>
     <script src = 'd3v4+jetpack.js'></script>
-    <script>
-        
+    <script src = 'd3-annotation.js'></script>
+    <script>      
 //============== setup ===================//
         
         var width = 1300,
@@ -61,7 +88,7 @@
                 symbol_size = 40,
                 heat_rect_width,
                 heat_rect_height;
-
+            
             var svg = d3.select('#dashboard')
                 .append('svg')
                 .attrs({'height': height, 'width': width});
@@ -613,9 +640,77 @@
                         .duration(1000)
                         .st({'stroke-opacity': 0});
                 }
+                
+                
+            var annotations1 = [
+                {
+                    type: d3.annotationCalloutRect,
+                    note: { label: "Hover over the y-axis' label to see a histogram for gender differences"},
+                    subject: {width: 25, height: 340},
+                    x: -55, y: 70, dy: -5, dx: 100
+                }, 
+                {
+                    type: d3.annotationCalloutRect,
+                    note: {label: "Hover over the x-axis' label to see a histogram for success rate"},
+                    subject: {width: 210, height: -25},
+                    x: scat_width/2 - 105, y: vis_height + 40, dy: -100, dx: -50
+                },
+                {
+                    type: d3.annotationCalloutRect,
+                    note: {label: "Hover over the symbols in the key to filter for a specific type of question."},
+                    subject: {width: 25, height: 220},
+                    x: scat_width - 10, y: -10, dy: 10, dx: -100
+                },
+                {
+                    type: d3.annotationCalloutCircle,
+                    note: {label: "Hover over a point to see more information about a question and to see how other countries compare on the heat map."},
+                    subject: {radius: 100, radiusPadding: 5},
+                    x: scat_x(.5), y: scat_y(0), dy: 100, dx: 100
+                }];
 
+            var annotations2 = [
+                {
+                    type: d3.annotationCalloutRect,
+                    note: {label: 'Click on the a chart type to toggle between charts'},
+                    subject: {width: -320, height: 40},
+                    x: 300 + margin.left, y: 0, dy: 20, dx: 50
+                },
+                {
+                    type: d3.annotationCalloutRect,
+                    note: {label: 'Click country to change scatter plot'},
+                    subject: {width: -(width/2 - 200), height: 30},
+                    x: width/2 - 125, y: height - margin.bottom, dx: 25, dy: 15
+                }];
+                
+                var makeAnnotations1 = d3.annotation().annotations(annotations1);
+                var makeAnnotations2 = d3.annotation().annotations(annotations2);
+                
                 createKeys()
                 create_scatter('usa')
+                            
+                scatter.append('g.annotation-group')
+                    .call(makeAnnotations1);
+                
+                svg.append('g.annotation-group')
+                    .call(makeAnnotations2);
+                
+                d3.selectAll('g.annotation-group')
+                    .st({'stroke-opacity': 0, 'fill-opacity': 0});
+                
+                svg.append('rect#info')
+                    .at({x: width-margin.right, y: 0, height: 75/2, width: 75/2})
+                    .st({fill: 'blue', 'fill-opacity': .25})
+                    .on('mouseover', function(){   
+                        d3.selectAll('g.annotation-group')
+                            .st({'stroke-opacity': 1, 'fill-opacity': 1});})
+                    .on('mouseout', function(){
+                        d3.selectAll('g.annotation-group')
+                            .st({'stroke-opacity': 0, 'fill-opacity': 0});})
+                
+                svg.append('text')
+                    .at({x: width-margin.right + 20, y: 75/4, 'text-anchor': 'middle'})
+                    .st({'pointer-event': 'none'})
+                    .text('???')   
             }}
         
         function small_multiples_screen(){
@@ -732,24 +827,13 @@
                         .at({x: margin.left + 350, y: 0, width: 150, height: margin.top/2})
                         .st({'fill-opacity': .5})
                         .on('click', function(){sm_hist(); 
-                                                sm_gender_hist();});
+                                                sm_correct_hist();});
 
                     small_multiples.append('text.countries')
                         .translate([margin.left + 425, text_y])
                         .at({'text-anchor': 'middle'})
                         .st({'pointer-events': 'none'})
                         .text('Histograms');
-
-//                    small_multiples.append('rect.countries')
-//                        .at({x: margin.left + 200, y: margin.top/2, width: 200, height: margin.top/2})
-//                        .st({fill: 'green', 'fill-opacity': .5, cursor: 'pointer'})
-//                        .on('click', function(){sm_correct_hist()});
-//
-//                    small_multiples.append('text.countries')
-//                        .translate([margin.left + 300, text_y])
-//                        .at({'text-anchor': 'middle'})
-//                        .st({'pointer-events': 'none'})
-//                        .text('Total-Hist');
 
                     small_multiples.append('rect.countries#domainButton')
                         .at({x: margin.left + 500, y: 0, width: 150, height: margin.top/2})
