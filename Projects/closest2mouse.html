@@ -1,0 +1,47 @@
+<body></body>
+<script src = 'd3v4+jetpack.js'></script>
+<script>
+    var circArr = [
+        [100, 100],
+        [200, 300],
+        [400, 200],
+        [300, 200]
+    ];
+    
+    var svg = d3.select('body')
+        .append('svg')
+        .at({width: 1000, height: 800});
+
+    
+    var circ = svg.appendMany(circArr, 'circle')
+        .at({cx: function(d){return d[0]}, 
+             cy: function(d){return d[1]}, 
+             r: 20,           
+             id: (d,i) => "num"+ i})
+        .st({
+            fill: 'purple', 
+            stroke: 'black'
+        });
+    
+    var allCircles = [];
+    
+    d3.selectAll('circle').each(function(d,i){
+        var cx = +d3.select(this).attr('cx');
+        var cy = +d3.select(this).attr('cy');
+        var id = d3.select(this).attr('id');
+        
+        allCircles.push({cx: cx, cy: cy, id: id, dist: 0});
+    })
+    
+    function closestCircle(x,y){
+        allCircles.map(function(d){ d.dist = Math.sqrt((x-d.cx)**2 + (y - d.cy)**2);})
+    }
+    
+    svg.on(
+        'mousemove',function(){
+            var coordinates = d3.mouse(this);
+            console.log(coordinates);
+    })
+    
+    
+</script>

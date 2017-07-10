@@ -1,0 +1,276 @@
+<head></head>
+<body></body>
+<script src = 'd3v4+jetpack.js'></script>
+<script>
+    var width = 1100,
+        height =600,
+        margin = {
+            top: 20,
+            right: 20, 
+            bottom: 20,
+            left: 20
+        },
+        title_size = 75,
+        font_size = 25,
+        title_location = margin.top + title_size,
+        body_location = margin.top + title_size * 2;
+    
+    function cc_obj(txt, loc, siz){
+        return {text: txt, location: loc, size: siz}
+    }
+    
+    var privacy1 = cc_obj('Respect For Privacy', [width/2, title_location], title_size),
+        privacy2 = cc_obj('This is a safe space. There may be a number of people who wish to remain anonymous.', [width/2, body_location], font_size),
+        privacy3 = cc_obj("It is important that we respect these wishes and not push them to identify themselves.", [width/2, body_location + (2 * font_size)], font_size),
+        privacy4 = cc_obj("Also, many conversations held in this slack may be considered private", [width/2, body_location + (4 * font_size)], font_size),
+        privacy5 = cc_obj("Therefore, do not share any conversations found here without explicit permission from those involved", [width/2, body_location + (6 * font_size)], font_size),
+        privacy = [privacy1, privacy2, privacy3, privacy4, privacy5];
+    
+    var patience1 = {
+            text: 'Patience For Others',
+            location: [width/2, title_location],
+            size: title_size},
+        patience2 = {
+            text: 'LGBTQ+ is a big group. There are a lot of different perspectives and misunderstandings on many issues.',
+            location: [width/2, body_location],
+            size: font_size},
+        patience3 = {
+            text: 'It is very possible for a member to use offensive language or ideas without realizing that they are offensive.',
+            location: [width/2, body_location + (2 * font_size)],
+            size: font_size},
+        patience4 = {
+            text: "Many people were raised to think certain language and ideas are normal.",
+            location: [width/2, body_location + (4 * font_size)],
+            size: font_size},
+        patience5 = {
+            text: "It is everyone's duty to help them understand why offensive language and ideas are indeed offensive.",
+            location: [width/2, body_location + (6 * font_size)],
+            size: font_size},
+        patience6 = {
+            text: "Be patient and educate.",
+            location: [width/2, body_location + (8 * font_size)],
+            size: font_size},
+        patience7= {
+            text: "Don't explode when people need time to understand and make conscience changes to unconscience thinking.",
+            location: [width/2, body_location + (10 * font_size)],
+            size: font_size};
+    
+    var humility1 = {
+            text: 'Humility',
+            location: [width/2, title_location],
+            size: title_size},
+        humility2 = {
+            text: 'Everyone is capable of offending others without any intent to offend.',
+            location: [width/2, body_location],
+            size: font_size},
+        humility3 = {
+            text: 'If someone tells you that you have offended them, and explained why they were offended...',
+            location: [width/2, body_location + (2 * font_size)],
+            size: font_size},
+        humility4 = {
+            text: 'then appologize. A proper apology contains 3 essential parts:',
+            location: [width/2, body_location + (4 * font_size)],
+            size: font_size},
+        humility5 = {
+            text: 'A proper apology expresses that you understand what is wrong: "I was wrong because..."',
+            location: [width/2, body_location + (6 * font_size)],
+            size: font_size},
+        humility6 = {
+            text: 'A proper apology contains a plan to change one\'s behaviour: "I will try to be better by..."',
+            location: [width/2, body_location + (8 * font_size)],
+            size: font_size},
+        humility7 = {
+            text: 'A proper apology ends with a request for forgiveness: "Can you forgive me?"',
+            location: [width/2, body_location + (10 * font_size)],
+            size: font_size},
+        humility8 = {
+            text: 'Apologizing is hard, but it is absolutely essential if we are to create a safe space for eachother.',
+            location: [width/2, body_location + (12 * font_size)],
+            size: font_size};
+    
+    var harassment1 = cc_obj('Anti-Harassment', [width/2, title_location], title_size),
+        harassment2 = cc_obj('We understand harassment as acting contrary to the groups previously mentioned values.', [width/2, body_location], font_size),
+        harassment3 = cc_obj('Exposing a private conversation or private information without consent may be considered harassment.', [width/2, body_location + (2 * font_size)], font_size),
+        harassment4 = cc_obj('Calling out someone as being offensive without explaining why may be considered harassment.', [width/2, body_location + (4 * font_size)], font_size),
+        harassment5 = cc_obj('Not apologizing after it has been explained that you have offended someone may be considered harassment.', [width/2, body_location + (6 * font_size)], font_size),
+        harassment6 = cc_obj('If the administrators believe your actions are in line with what they believe are harassment...', [width/2, body_location + (8 * font_size)], font_size),
+        harassment7 = cc_obj('then they reserve the right to remove you from the slack channel.', [width/2, body_location + (10 * font_size)], font_size)
+    
+    var final1 = cc_obj('Access To The Slack Channel', [width/2, title_location], title_size),
+        final2 = cc_obj('If you understand and agree to the values of the group, then join by clicking the link below', [width/2, body_location], font_size)
+    
+    var svg = d3.select('body')
+        .append('svg')
+        .at({width: width, height: height})
+    
+    priv_1();
+    
+    function nextScreen(obj){
+        svg.append('text')
+            .translate(obj.location)
+            .st({'font-size': obj.size, 
+                 'text-anchor': 'middle', 
+                 fill: 'black', stroke: 'black', 'fill-opacity': 0, 'stroke-opacity': 0})
+            .text(obj.text)
+            .transition()
+            .duration(1200)
+            .st({'fill-opacity': 1, 'stroke-opacity': 1});       
+    }
+    
+    function connectScreen(obj, func){
+        nextScreen(obj);
+        svg.on('click', func)
+    }
+    
+    function priv_1(){
+        connectScreen(privacy1, priv_2)
+    }
+    
+    function priv_2(){
+        connectScreen(privacy2, priv_3)
+    }
+    
+    function priv_3(){
+        connectScreen(privacy3, priv_4)
+    }
+    
+    function priv_4(){
+        connectScreen(privacy4, priv_5)
+    }
+    
+    function priv_5(){
+        connectScreen(privacy5, pat_1)
+    }
+    
+    function pat_1(){
+        svg.selectAll('text')
+            .lower()
+            .transition()
+            .duration(1000)
+            .st({'fill-opacity': 0, 'stroke-opacity': 0})
+            .on('end', connectScreen(patience1, pat_2));
+    }
+    
+    function pat_2(){
+        connectScreen(patience2, pat_3);
+    }
+    
+    function pat_3(){
+        connectScreen(patience3, pat_4);
+    }
+    
+    function pat_4(){
+        connectScreen(patience4, pat_5)
+    }
+    
+    function pat_5(){
+        connectScreen(patience5, pat_6)
+    }
+    
+    function pat_6(){
+        connectScreen(patience6, pat_7)
+    }
+    
+    function pat_7(){
+        connectScreen(patience7, hum_1)
+    }
+    
+    function hum_1(){
+        svg.selectAll('text')
+            .lower()
+            .transition()
+            .duration(1000)
+            .st({'fill-opacity': 0, 'stroke-opacity': 0})
+            .on('end', connectScreen(humility1, hum_2))
+    }
+    
+    function hum_2(){
+        connectScreen(humility2, hum_3)
+    }
+    
+    function hum_3(){
+        connectScreen(humility3, hum_4)
+    }
+    
+    function hum_4(){
+        connectScreen(humility4, hum_5)
+    }
+    
+    function hum_5(){
+        connectScreen(humility5, hum_6)
+    }
+    
+    function hum_6(){
+        connectScreen(humility6, hum_7)
+    }
+    
+    function hum_7(){
+        connectScreen(humility7, hum_8)
+    }
+    
+    function hum_8(){
+        connectScreen(humility8, har_1)
+    }
+    
+    function har_1(){
+        svg.selectAll('text')
+            .lower()
+            .transition()
+            .duration(1000)
+            .st({'fill-opacity': 0, 'stroke-opacity': 0})
+            .on('end', connectScreen(harassment1, har_2));
+    }
+    
+    function har_2(){
+        connectScreen(harassment2, har_3)
+    }
+    
+    function har_3(){
+        connectScreen(harassment3, har_4)
+    }
+    
+    function har_4(){
+        connectScreen(harassment4, har_5)
+    }
+    
+    function har_5(){
+        connectScreen(harassment5, har_6)
+    }
+    
+    function har_6(){
+        connectScreen(harassment6, har_7)
+    }
+    
+    function har_7(){
+        connectScreen(harassment7, fin_1)
+    }
+    
+    function fin_1(){
+        svg.selectAll('text')
+            .lower()
+            .transition()
+            .duration(1000)
+            .st({'fill-opacity': 0, 'stroke-opacity': 0})
+            .on('end', connectScreen(final1, fin_2))
+    }
+    
+    function fin_2(){
+        connectScreen(final2, fin_3)
+    }
+    
+    function fin_3(){
+        svg.append('text.link')
+            .at({x: width/2, y: height/2})
+            .st({fill: 'white', stroke: 'white', 'text-anchor': 'middle'})
+            .text('NAME OF SLACK')
+            .transition()
+            .duration(1200)
+            .st({fill: 'black', stroke: 'black'});
+        
+        svg.append('rect.link')
+            .at({x: width/2 - 100, y: height/2 - 50, width: 200, height: 100})
+            .st({'fill-opacity': 0, 'stroke': 'black', cursor: 'pointer'});
+    }
+    
+    
+</script>
