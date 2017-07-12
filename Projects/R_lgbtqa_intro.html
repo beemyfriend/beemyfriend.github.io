@@ -45,36 +45,56 @@
     <div id = 'container'>
         <div id = 'sections'>
             <div>
-                <b>Everyone is a current or an aspiring useR!</b>
-                <br><br><br><br><br><br><br><br>
-                <br><br><br><br><br><br><br><br>
+                <br><br>
+                <b>Everyone  at a useR conference is either a current or an aspiring useR!</b>
+                <br><br>
+                <b>While we may all come from different background, we all have one amazing connection to each other.</b>
+                <br><br>
+                <b>We are all very passionate about R</b>
+                <br><br>
+                <b>But as this year's useR conference has shown, there are a lot of useRs and it is easy to get lost within the crowd.</b>
+                <br><br>
+                <b>Because of this, some people might want to find people they can relate with in ways deeper than the language they use.</b>
+                <br><br><br><br><br><br>
+            </div>
+            <div>
+                <br><br>
+                <b>For example, many people identify more with their gender than they do with their programming language.</b>
+                <br><br>
+                <b>And while it is not necessarily obvious, many people can identify people of their own gender within a larger group simply by looking around</b>
+                <br><br>
+                <b>So even though the larger group is mixed...</b>
                 <br><br><br><br><br><br><br><br>
                 <br><br><br><br><br><br>
             </div>
             <div>
-                <b>While it is not necessarily obvious, the useRs can be split into gender groups</b>
-                <br><br><br><br><br><br><br><br>
-                <br><br><br><br><br><br><br><br>
-                <br><br><br><br><br><br><br><br>
-                <br><br><br><br><br><br>
-            </div>
-            <div>
-                <b>Home country is another important combo</b>
-                <br><br><br><br><br><br><br><br>
-                <br><br><br><br><br><br><br><br>
+                <br><br>
+                <b>People can be comforted by the fact that the sub-group they belong to exists.</b>
+                <br><br>
+                <b>At least if gender was what they cared about.</b>
                 <br><br><br><br><br><br><br><br>
                 <br><br><br><br><br><br>
             </div>
             <div>
-                <b>Even if these groups split up...</b>
-                <br><br><br><br><br><br><br><br>
-                <br><br><br><br><br><br><br><br>
-                <br><br><br><br><br><br><br><br>
+                <br><br>
+                <b>But maybe some people don't particuarly care about gender.</b>
+                <br><br>
+                <b>Sometimes people identify more with their language and culture than they do with their gender.</b>
+                <br><br>
+                <b>While one cannot simply identify a person's background simply by looking at him or her.</b>
+                <br><br>
+                <b>Many conferences provide badges with country information.</b>
+                <br><br>
+                <b>And after reading enough badges, one becomes aware of the cultural sub-groups.</b>
+                <br><br>
+                <b>So even though the larger group is mixed...</b>
                 <br><br><br><br><br><br>
             </div>
             <div>
-                <b>They can be comforted by the fact that they can always find eachother</b>
-                <br><br><br><br><br><br><br><br>
+                <b>People can be comforted by the fact that the sub-group they belong to exists.</b>
+                <br><br>
+                <b>At least if culture and language is what they cared about.</b>
+                <br><br><br><br><br><br>
                 <br><br><br><br><br><br><br><br>
                 <br><br><br><br><br><br><br><br>
                 <br><br><br><br><br><br>
@@ -131,9 +151,9 @@
         .domain([0, 14])
         .range([margin.left, animation_width - margin.right]);
     
-    var color_gender = d3.scaleOrdinal()
+    var round_gender = d3.scaleOrdinal()
         .domain(['Male', 'Female', 'Other/Unknown'])
-        .range(['blue', 'red', 'brown']);
+        .range([0, 100, 15]);
     
     var color_country = d3.scaleOrdinal()
         .domain(['USA', 'New Zealand', 'United Kingdom', 'Ireland', 'Germany', 'Other'])
@@ -150,30 +170,55 @@
         data = tsv;
         
         var useRs = svg.appendMany(tsv, 'rect')
-            .at({y: function(d){return rows(+d.point_row)}, x: function(d){return columns(+d.point_column)}, width: rect_width, height: rect_height, id: function(d){return 'id'+d.id}})
+            .at({y: function(d){return rows(+d.mixed_row)}, x: function(d){return columns(+d.mixed_column)}, width: rect_width, height: rect_height, id: function(d){return 'id'+d.id}})
             .st({fill: 'grey', stroke: 'white'});
+        
+        var text = svg.appendMany(tsv, 'text')
+            .at({y: function(d){return rows(+d.mixed_row) + rect_height/2}, 
+                 x: function(d){return columns(+d.mixed_column) + rect_width/2},
+                 'font-size': 20, 
+                 'text-anchor': 'middle'})
+            .st({fill: 'black', stroke: 'black'})
+            .text('R')
         
         function gender_groups(){
             useRs.transition()
                 .duration(1000)
-                .at({x: function(d){return columns(+d.gender_column)}})
-                .st({fill: function(d){return color_gender(d.gender)}})
+                .at({x: function(d){return columns(+d.gender_column)}, 
+                     y: function(d){return rows(+d.point_row)}, 
+                     rx: function(d){return round_gender(d.gender)}, 
+                     ry: function(d){return round_gender(d.gender)}})
+                .st({fill: 'grey'})
+            
+            text.transition()
+                .duration(1000)
+                .at({x: function(d){return columns(+d.gender_column) + rect_width/2}, 
+                     y: function(d){return rows(+d.point_row) + rect_height/2}})
+            
         }
         
         function user_group(){
             useRs.transition()
                 .duration(1000)
-                .at({y: function(d){return rows(+d.point_row)}, x: function(d){return columns(+d.point_column)}})
+                .at({y: function(d){return rows(+d.mixed_row)}, x: function(d){return columns(+d.mixed_column)}, rx: 0, ry: 0})
                 .st({fill: 'grey', stroke: 'white', 'fill-opacity': 1});
+
+            text.transition()
+                .duration(1000)
+                .at({x: function(d){return columns(+d.mixed_column) + rect_width/2}, 
+                     y: function(d){return rows(+d.mixed_row) + rect_height/2}})
         }
         
         function country_groups(){
-            user_group();
             useRs.transition()
-                .delay(1000)
                 .duration(1000)
                 .at({y: function(d){return rows(+d.country_row)}, x: function(d){return columns(+d.country_column)}})
                 .st({fill: function(d){return color_country(d.country)}});
+            
+            text.transition()
+                .duration(1000)
+                .at({x: function(d){return columns(+d.country_column) + rect_width/2}, 
+                     y: function(d){return rows(+d.country_row) + rect_height/2}})            
         }
         
         function mixed_country(){
@@ -181,30 +226,61 @@
                 .duration(1000)
                 .at({y: function(d){return rows(+d.mixed_row)}, x: function(d){return columns(+d.mixed_column)}})
                 .st({fill: function(d){return color_country(d.country)}, 'fill-opacity': 1});
+            
+            text.transition()
+                .duration(1000)
+                .at({y: function(d){return rows(+d.mixed_row) + rect_height/2}, x: function(d){return columns(+d.mixed_column) + rect_width/2}})
         }
         
         function mixed_gender(){
             useRs.transition()
                 .duration(1000)
-                .st({fill: function(d){return color_gender(d.gender)}, 'fill-opacity': 1});
+                .at({y: function(d){return rows(+d.mixed_row)}, 
+                     x: function(d){return columns(+d.mixed_column)}, 
+                     rx: function(d){return round_gender(d.gender)}, 
+                     ry: function(d){return round_gender(d.gender)}})
+                .st({fill: 'grey', 'fill-opacity': 1});
+            
+            text.transition()
+                .duration(1000)
+                .at({y: function(d){return rows(+d.mixed_row) + rect_height/2}, 
+                     x: function(d){return columns(+d.mixed_column) + rect_width/2}})            
         }
         
         function lgbtq(){
             useRs.transition()
                 .duration(1000)
                 .at({y: function(d){return rows(+d.mixed_row)}, x: function(d){return columns(+d.mixed_column)}})
-                .st({'fill-opacity': function(d){return opacity_lgbtq(d.conversation)}});
+                .st({fill: 'grey', 'fill-opacity': function(d){return opacity_lgbtq(d.conversation)}});
+            
+            text.transition()
+                .duration(1000)
+                .at({y: function(d){return rows(+d.mixed_row) + rect_height/2}, 
+                     x: function(d){return columns(+d.mixed_column) + rect_width/2}})            
+
         }
         
         function conversation(){
             useRs.transition()
-                .delay(1000)
                 .duration(1000)
                 .at({y: function(d){return rows(+d.point_row)}, x: function(d){return columns(+d.point_column)}});
+            
+            text.transition()
+                .duration(1000)
+                .at({y: function(d){return rows(+d.point_row) + rect_height/2}, 
+                     x: function(d){return columns(+d.point_column) + rect_width/2}})            
+
         }
         
-        animations = [gender_groups, country_groups, mixed_country, mixed_gender, lgbtq, conversation]
+        animations = [user_group, mixed_gender, gender_groups, mixed_country, country_groups, lgbtq, conversation, conversation]
             
+        var gs = d3.graphScroll()
+                .container(d3.select('#container'))
+                .graph(d3.selectAll('#graph'))
+                .sections(d3.selectAll('#sections > div'))
+                .on('active', function(i){
+                    animations[i]()
+                })
     })
     
 </script>
