@@ -77,7 +77,7 @@
             .translate(obj.location)
             .st({'font-size': obj.size, 
                  'text-anchor': 'middle', 
-                 fill: 'black', stroke: 'black', 'fill-opacity': 0, 'stroke-opacity': 0})
+                 fill: 'black', stroke: 'none', 'fill-opacity': 0, 'stroke-opacity': 0})
             .text(obj.text)
             .transition()
             .duration(1200)
@@ -242,14 +242,11 @@
             })
     }
     
-    function fin_2(){
-        connectScreen(final2, fin_3)
-    }
     
     function fin_3(){
         svg.append('text.link')
             .at({x: width/2, y: height/2})
-            .st({fill: 'white', stroke: 'white', 'text-anchor': 'middle'})
+            .st({fill: 'white', stroke: 'white', 'text-anchor': 'middle', 'font-size': font_size})
             .text('rlgbtq@gmail.com')
             .transition()
             .duration(1200)
