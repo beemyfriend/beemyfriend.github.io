@@ -54,13 +54,20 @@
         humility7 = cc_obj('A proper apology ends with a request for forgiveness: "Can you forgive me?"', [width/2, body_location + (10 * font_size)], font_size),
         humility8 = cc_obj('Apologizing is hard, but it is absolutely essential if we are to create a safe space for each other.', [width/2, body_location + (12 * font_size)], font_size);
     
+//    var harassment1 = cc_obj('Anti-Harassment', [width/2, title_location], title_size),
+//        harassment2 = cc_obj('We understand harassment as acting contrary to the group\'s previously mentioned values.', [width/2, body_location], font_size),
+//        harassment3 = cc_obj('Exposing a private conversation or private information without consent may be considered harassment.', [width/2, body_location + (2 * font_size)], font_size),
+//        harassment4 = cc_obj('Calling out someone as being offensive without explaining why may be considered harassment.', [width/2, body_location + (4 * font_size)], font_size),
+//        harassment5 = cc_obj('Not apologizing after it has been explained that you have offended someone may be considered harassment.', [width/2, body_location + (6 * font_size)], font_size),
+//        harassment6 = cc_obj('If the administrators believe your actions are in line with what they believe are harassment...', [width/2, body_location + (8 * font_size)], font_size),
+//        harassment7 = cc_obj('then they reserve the right to remove you from the slack channel.', [width/2, body_location + (10 * font_size)], font_size)
+
+
     var harassment1 = cc_obj('Anti-Harassment', [width/2, title_location], title_size),
-        harassment2 = cc_obj('We understand harassment as acting contrary to the group\'s previously mentioned values.', [width/2, body_location], font_size),
-        harassment3 = cc_obj('Exposing a private conversation or private information without consent may be considered harassment.', [width/2, body_location + (2 * font_size)], font_size),
-        harassment4 = cc_obj('Calling out someone as being offensive without explaining why may be considered harassment.', [width/2, body_location + (4 * font_size)], font_size),
-        harassment5 = cc_obj('Not apologizing after it has been explained that you have offended someone may be considered harassment.', [width/2, body_location + (6 * font_size)], font_size),
-        harassment6 = cc_obj('If the administrators believe your actions are in line with what they believe are harassment...', [width/2, body_location + (8 * font_size)], font_size),
-        harassment7 = cc_obj('then they reserve the right to remove you from the slack channel.', [width/2, body_location + (10 * font_size)], font_size)
+        harassment2 = cc_obj('The organisers of this slack will not tolerate any form of harassment in RainbowR', [width/2, body_location], font_size),
+        harassment3 = cc_obj('They reserve the right to remove anyone who behaves in a threatening or abusive manner.', [width/2, body_location + (2 * font_size)], font_size),
+        harassment4 = cc_obj('Moreover, we expect all group members to adhere to this code of conduct and reserve the right to', [width/2, body_location + (4 * font_size)], font_size),
+        harassment5 = cc_obj('remove anyone who does not.', [width/2, body_location + (6 * font_size)], font_size);
     
     var final1 = cc_obj('Access To The Slack Channel', [width/2, title_location], title_size),
         final2 = cc_obj('If you understand and agree to the values of the group, then join by emailing the address below.', [width/2, body_location], font_size)
@@ -214,16 +221,16 @@
     }
     
     function har_5(){
-        connectScreen(harassment5, har_6)
+        connectScreen(harassment5, fin_1)
     }
     
-    function har_6(){
-        connectScreen(harassment6, har_7)
-    }
-    
-    function har_7(){
-        connectScreen(harassment7, fin_1)
-    }
+//    function har_6(){
+//        connectScreen(harassment6, har_7)
+//    }
+//    
+//    function har_7(){
+//        connectScreen(harassment7, fin_1)
+//    }
     
     function fin_1(){
         svg.selectAll('text')
