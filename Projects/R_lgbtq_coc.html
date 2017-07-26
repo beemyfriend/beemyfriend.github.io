@@ -1,237 +1,176 @@
 <head>
     <style>
-        p, h1, h2, #joinus{
-            font-family: Georgia, Verdana, serif;
-            text-align: center;
-        }
-        
-        html, body {
-            margin: 0;
-            height: 100%;
-            width: 100%;
-            min-height: 100%;
-        }
-    </style>    
+    p, h1, h2, div{
+      font-family: Georgia, Verdana, serif;
+      text-align: center;
+      padding: 0px 10px 0px 10px
+    }
+
+    html, body {;
+        width: 100%;
+        height: 100%;
+        min-height: 100%;
+    }
+
+    </style>
 </head>
 <body>
     <h1>RainbowR Code of Conduct</h1>
 </body>
 <script src = 'd3v4+jetpack.js'></script>
 <script>
-    var body = d3.select('body');
-    
-    var intro1 = 'Please click the screen to continue',
-        intro2 = 'RainbowR seeks to cultivate a safe space for everyone. Part of cultivating a safe space is by discouraging harassment and providing a system where harassment can be reported and prosecuted.',
-        intro3 = 'While most people would agree that "harassment" is wrong,  there is no clear consensus of what actions consist of harassment. This is because our assumptions of what is "good" and "bad" behavior is very personal and dependent on factors such as geolocation, religion, and family upbringing.',
-        intro4 = 'This document does not intend to list every possible instance of harassment, but does take the stance that if a person feels that he/she/they is being harassed, then the harassment exists.  Instead of providing a long list of what can be defined as harassment, we provide a list of ‘Hard and Fast Rules’ of how to behave,  provide the contact information of the Anti-Harassment Team to report instances of harassment, as well as provide a description of how the Anti-Harassment Team plans on dealing with reports of harassment.',
-        intro5 = 'Anyone who wishes to join the RainbowR slack group must read through this document in its entirety. (It should not take more than 3 minutes to get through).';
-    
-    var behave1 = '<b>Hard and Fast Rules:</b><br>',
-        behave2 = 'Be kind',
-        behave3 = 'Be respectful of communication of boundaries, such as “leave me alone,” “go away,” or “I’m not discussing this with you.”',
-        behave4 = 'Do not reveal a person\'s private information or expose private conversations to people who are not members of the RainbowR Slack group.',
-        behave5 = 'Do not intentionally or repeatedly refer to people in a way that rejects the validity of their gender identity; for instance, by using incorrect pronouns or forms of address (misgendering).',
-        behave6 = 'Gratuitous or off-topic sexual images or behaviour will not be accepted.',
-        behave7 = 'Racist, sexist, or transphobic conduct will not be tolerated.',
-        behave8 = '<b>Impact Vs. Intent</b><br>',
-        behave9 = 'If someone takes issue with something you said or did, resist the urge to be defensive. Just stop doing what it was they complained about and apologize. Even if you feel you were misinterpreted or unfairly accused, chances are good there was something you could’ve communicated better — remember that it’s your responsibility to make your fellow useRs comfortable.';
-    
-    var report1 = 'If you are experiencing abusive or harassing behavior, then report the issue by emailing the admins at: rlgbtq@gmail.com',
-        report2 = 'You can also directly contact any member of the RainbowR Anti-Abuse Team:',
-        report3 = 'Elected member\'s name / elected_member@email.com / @elected_member_username<br>Elected member\'s name / elected_member@email.com / @elected_member_username<br>Elected member\'s name / elected_member@email.com / @elected_member_username',
-        report4 = 'Please note, the Anti-Abuse Team is committed to maintaining a ‘safe’ environment but cannot guarantee every person’s ‘comfort.\’',
-        report5 = 'They will not address complaints of ‘reverse-isms’ such as ‘reverse sexism,’ ‘reverse racism,’ and ‘cisphobia.’',
-        report6 = 'And they will not police tone.';
-    
-    var conseq1 = '<b>If a complaint of a member\'s actions reaches the Anti-Abuse Team, then they will judge the action based on:</b>',
-        conseq2 = 'Whether the member was given a proper explanation as to why he or she was being offensive.',
-        conseq3 = 'Whether the member provided a proper apology.',
-        conseq4 = 'Whether the member\'s action can be considered Trolling.',
-        conseq5 = '<b>If the member\'s actions were deemed offensive then:</b>',
-        conseq6 = 'If the action was considered trolling, then the member will be booted from the group immediately.',
-        conseq7 = 'Otherwise the member will be subject to the 3-Strike Rule:',
-        conseq8 = '<b>First occurance:</b> The member will receive a friendly, but public, reminder that the behavior is inappropriate according to our guidelines.',
-        conseq9 = '<b>Second occurrence:</b> The member will receive a private message with a warning that any additional violations will result in removal from the community.',
-        conseq10 = '<b>Third occurrence:</b> Depending on the violation, we might need to delete or ban your account.',
-        conseq11 = 'If you have any questions with regards to how the Anti-Abuse Team handles reports of abuse, then please email the admins at: rlgbtq@gmail.com';
-    
-    function newText(txt, func){
-        body.append('p')
-            .html(txt);
-        
-        body.on('click', func);
-    }
-    
-    function newBody(head, func){
-        body.selectAll('p')
+  var body = d3.select('body');
+
+  var intro1 = 'Welcome to RainbowR, a community of R enthusiasts who identify as LGBTQ+. RainbowR seeks to cultivate a safe space for its members to discuss R and all things related to R. Part of cultivating a safe space is by promoting a positive ethos, discouraging harassment and providing a system where harassment can be reported and addressed. Therefore, before we take you to the sign-up page for the RainbowR slack team, we ask you to read through and agree to the following Code of Conduct.<br><br>While most people would agree that harassment is wrong,  there is no clear consensus of what actions consist of harassment. This document does not intend to list every possible instance of harassment, but does take the stance that if a person feels that they are being harassed, then the harassment exists. The only exceptions to this are that we will not address complaints of reverse-isms such as reverse sexism, ‘reverse racism, and cisphobia. We will also not police tone.<br><br>Instead of providing a long list of what can be defined as harassment, we provide a list of ‘Hard and Fast Rules,  provide the contact information of the CoC Team to report instances of harassment, as well as provide a description of how the CoC Team plans on dealing with reports of harassment.';
+
+  var behave1 = '<b>Hard and Fast Rules:</b><br>Do not reveal a person\'s private information or expose private conversations to people who are not members of the RainbowR Slack group.<br><br>Be respectful of communication of boundaries, such as “leave me alone,” “go away,” or “I’m not discussing this with you.”<br><br>Do not intentionally refer to people in a way that rejects the validity of their gender identity; for instance, by using incorrect pronouns or forms of address (misgendering).<br><br>Gratuitous or off-topic sexual images or behaviour will not be accepted.<br><br>We will not tolerate racist, sexist, or transphobic conduct.<br><br><b>Impact Vs. Intent</b><br><br><br>If someone takes issue with something you said or did, resist the urge to be defensive. Just stop doing what it was they complained about and apologize. Even if you feel you were misinterpreted or unfairly accused, chances are good there was something you could’ve communicated better — remember that it’s your responsibility to make your fellow useRs comfortable.';
+
+  var report1 = 'If you are experiencing abusive or harassing behavior, then report the issue by emailing the RainbowR CoC Team at: rlgbtq@gmail.com<br><br>You can also directly contact any member of the RainbowR CoC Team:<br><br><b>CoC Team Member</b> | <b>Slack Handle</b><br> Elected member\'s name | @elected_member_username<br>Elected member\'s name | @elected_member_username<br>Elected member\'s name | @elected_member_username';
+
+  var conseq1 = '<b>If a complaint of a member\'s actions reaches the RainbowR CoC Team, then they will judge the action based on:</b><br><br>Whether the member was given a proper explanation as to why he or she was being offensive.<br><br>Whether the member provided a proper apology.<br><br>Whether the member\'s action can be considered Trolling.<br><br><b>If the member\'s actions were deemed offensive then:</b><br><br>If the action was considered trolling, then the member will be booted from the group immediately.<br><br>Otherwise the member will be subject to the 3-Strike Rule:<br><br><b>First occurance:</b> The member will receive a friendly, but public, reminder that the behavior is inappropriate according to our guidelines.<br><b>Second occurrence:</b> The member will receive a private message with a warning that any additional violations will result in removal from the community.<br><b>Third occurrence:</b> Depending on the violation, we might need to delete or ban your account.<br><br>If you have any questions with regards to how the RainbowR CoC Team handles reports of abuse, then please email them at: rlgbtq@gmail.com';
+
+  var  transTime = 750;
+
+
+  function newBody(head, para, func){
+      body.on('click', null);
+
+      body.selectAll('p')
+        .transition()
+        .duration(2 * transTime)
+        .st({opacity: 0})
+        .remove();
+
+      body.selectAll('h2')
+          .transition()
+          .duration(2 * transTime)
+          .st({'opacity': 0})
+          .remove();
+
+          body.selectAll('div')
+            .transition()
+            .duration(2 * transTime)
+            .st({opacity: 0})
             .remove();
 
-        body.selectAll('h2')
-            .remove();
-      
+      body.transition()
+        .delay(2 * transTime+1)
+        .on('end', newPage)
+
+      function newPage(){
         body.append('h2')
-            .html(head);
-        
-        func();
-    }
-    
-    function joinus(){
-        body.selectAll('p')
-            .remove();
-        
-        body.selectAll('h2')
-            .remove();
-        
-        body.append('h2')
-            .html('Join Us!');
-        
+          .html(head)
+          .st({opacity: 0})
+          .transition()
+          .duration(transTime)
+          .st({opacity: 1});
+
         body.append('p')
-            .html('If you have reached this point and agree to RainbowR\'s Code of Conduct, then click on the button below to join us.');
-        
-        body.on('click', console.log('nothing to do...'))
-        
-        body.append('div#joinus')
+          .html(para)
+          .st({opacity: 0})
+          .transition()
+          .duration(transTime)
+          .st({opacity: 1});
+
+        body.append('div#next')
             .append('a')
-            .attr('href', 'http://rainbowr.herokuapp.com/')
             .append('button')
-            .html('Join RainbowR!');
-    }
-    
-    function intro1f(){
-        newText(intro1, intro2f)
-    }
-    
-    function intro2f(){
-        newText(intro2, intro3f)
-    }
-    
-    function intro3f(){
-        newText(intro3, intro4f)
-    }
-    
-    function intro4f(){
-        newText(intro4, intro5f)
-    }
-    
-    function intro5f(){
-        newText(intro5, behavior)
-    }
-    
-    function behavior(){
-        newBody('Behavior', behave1f)
-    }
-    
-    function behave1f(){
-        newText(behave1, behave2f)
-    }
-    
-    function behave2f(){
-        newText(behave2, behave3f)
-    }
-    
-    function behave3f(){
-        newText(behave3, behave4f)
-    }
-    
-    function behave4f(){
-        newText(behave4, behave5f)
-    }
-    
-    function behave5f(){
-        newText(behave5, behave6f)
-    }
-    
-    function behave6f(){
-        newText(behave5, behave7f)
-    }
-    
-    function behave7f(){
-        newText(behave7, behave8f)
-    }
-    
-    function behave8f(){
-        newText(behave8, behave9f)
-    }
-    
-    function behave9f(){
-        newText(behave9, reporting)
-    }
-    
-    function reporting(){
-        newBody('Reporting', report1f)
-    }
-    
-    function report1f(){
-        newText(report1, report2f)
-    }
-    
-    function report2f(){
-        newText(report2, report3f)
-    }
-    
-    function report3f(){
-        newText(report3, report4f)
-    }
-    
-    function report4f(){
-        newText(report4, report5f)
-    }
-    
-    function report5f(){
-        newText(report5, report6f)
-    }
-    
-    function report6f(){
-        newText(report6, consequences)
-    }
-    
-    function consequences(){
-        newBody('Consequences', conseq1f)
-    }
-    
-    function conseq1f(){
-        newText(conseq1, conseq2f)
-    }
-    
-    function conseq2f(){
-        newText(conseq2, conseq3f)
-    }
-    
-    function conseq3f(){
-        newText(conseq3, conseq4f)
-    }
-    
-    function conseq4f(){
-        newText(conseq4, conseq5f)
-    }
-    
-    function conseq5f(){
-        newText(conseq5, conseq6f)
-    }
-    
-    function conseq6f(){
-        newText(conseq6, conseq7f)
-    }
-    
-    function conseq7f(){
-        newText(conseq7, conseq8f)
-    }
-    
-    function conseq8f(){
-        newText(conseq8, conseq9f)
-    }
-    
-    function conseq9f(){
-        newText(conseq9, conseq10f)
-    }
-    
-    function conseq10f(){
-        newText(conseq10, conseq11f)
-    }
-    
-    function conseq11f(){
-        newText(conseq11, joinus)
-    }
-    
-    intro1f();
+            .on('click', func)
+            .html('Next Page')
+            .st({cursor: 'pointer'})
+            .st({opacity: 0})
+            .transition()
+            .delay(2*transTime+1)
+            .duration(2*transTime)
+            .st({opacity: 1})
+      }
+  }
+
+  function joinus(){
+    body.selectAll('p')
+      .transition()
+      .duration(2 * transTime)
+      .st({opacity: 0})
+      .remove();
+
+    body.selectAll('h2')
+        .transition()
+        .duration(2 * transTime)
+        .st({'opacity': 0})
+        .remove();
+
+        body.selectAll('div')
+          .transition()
+          .duration(2 * transTime)
+          .st({opacity: 0})
+          .remove();
+
+      body.append('h2')
+        .html('Join Us!')
+        .st({opacity: 0})
+        .transition()
+        .delay(2*transTime+1)
+        .duration(2*transTime)
+        .st({opacity: 1})
+
+      body.append('p')
+        .html('You\'re almost there! Click on the button below to join RainbowR!')
+        .st({opacity: 0})
+        .transition()
+        .delay(2*transTime+1)
+        .duration(2*transTime)
+        .st({opacity: 1})
+
+      body.on('click', null)
+
+      body.append('div#rainbowr')
+          // .append('a')
+          // .at({href: '/join'})
+          .append('img')
+          .st({opacity: 0})
+          .at({
+            src: 'rainbowr_small_square.png',
+            alt: 'A faboulous rainbow-colored R!',
+            // title: 'A faboulous rainbow-colored R'
+          })
+          .transition()
+          .delay(2*transTime+1)
+          .duration(2*transTime)
+          .st({opacity: 1})
+
+          // .st({cursor: 'pointer'})
+
+
+     body.append('div#joinus')
+         .append('a')
+         .attr('href', 'http://rainbowr.herokuapp.com/join')
+         .append('button')
+         .html('I agree to the Code of Conduct. Sign me up to RainbowR!')
+         .st({cursor: 'pointer'})
+         .st({opacity: 0})
+         .transition()
+         .delay(2*transTime+1)
+         .duration(2*transTime)
+         .st({opacity: 1})
+  }
+
+  function intro(){
+    newBody("Introduction", intro1, behavior);
+  };
+
+  function behavior(){
+    newBody("Behavior", behave1, reporting)
+  }
+
+  function reporting(){
+    newBody('Reporting', report1, consequences)
+  }
+
+  function consequences(){
+    newBody('Consequences', conseq1, joinus)
+  }
+
+  intro();
+
+
 </script>
