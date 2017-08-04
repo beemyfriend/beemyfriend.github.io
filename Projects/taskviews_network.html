@@ -1,0 +1,111 @@
+<head>
+    <style>
+        canvas {
+            position: absolute;
+        }
+        
+        svg {
+            position: absolute;
+            width: 1000px;
+            height: 600px;
+        }
+        
+        line.link {
+            stroke-width: 1px;
+            stroke: #4F442B;
+            stroke-opacity: .2;
+        }
+        
+        circle.node {
+            fill: purple;
+            stroke: #EBD8C1;
+            stroke-width: 1px;
+        }
+
+        .tooltip {
+          top: -1000px;
+          position: fixed;
+          padding: 10px;
+          background: rgba(255, 255, 255, .90);
+          border: 1px solid lightgray;
+          pointer-events: none;
+        }
+
+        .tooltip-hidden{
+          opacity: 0;
+          transition: all .3s;
+          transition-delay: .1s;
+        }
+
+        @media (max-width: 590px){
+          div.tooltip{
+            bottom: -1px;
+            width: calc(100%);
+            left: -1px !important;
+            right: -1px !important;
+            top: auto !important;
+            width: auto !important;
+          }
+        }
+    </style>
+</head>
+<body>
+    <canvas width = 1000, height = 600></canvas>
+    <svg></svg>
+    <div class = 'tooltip'></div>
+
+</body>
+<script src = 'https://rawgit.com/gka/d3-jetpack/master/build/d3v4%2Bjetpack.js'></script>
+<script>
+    
+    var svg = d3.select('svg');
+    
+    d3.queue()
+        .defer(d3.tsv, 'task_view_nodes.tsv')
+        .defer(d3.tsv, 'task_view_links.tsv')
+        .await(ready);
+
+    function ready(error, nodes, links){
+        if(error) throw (error);
+
+        data_n = nodes;
+        data_l = links;
+        
+        var force = d3.forceSimulation()
+            .nodes(nodes)
+            .force('x', d3.forceX(500).strength(.025))
+            .force('y', d3.forceY(300).strength(.025))
+            .force('charge', d3.forceManyBody())
+            .force('link', d3.forceLink().id(d => d.id))
+            .on('tick', forceTick);
+
+        force.force('link').links(links)
+        
+        svg.appendMany(nodes, 'circle.node')
+            .attr('r', 3)
+            .call(d3.attachTooltip);
+                
+        function forceTick(){
+            var context = d3.select('canvas')
+                .node()
+                .getContext('2d');
+
+            context.clearRect(0, 0, 1000, 600)
+            context.lineWidth = 1;
+            context.strokeStyle = 'rgba(0, 0, 0, .01)';
+            links.forEach(function(link){
+                context.beginPath();
+                context.moveTo(link.source.x, link.source.y)
+                context.lineTo(link.target.x, link.target.y)
+                context.stroke();
+            })
+
+            d3.selectAll('circle.node')
+                .at({
+                    cx: d => d.x,
+                    cy: d => d.y
+                })        
+        }        
+    }
+        
+</script>

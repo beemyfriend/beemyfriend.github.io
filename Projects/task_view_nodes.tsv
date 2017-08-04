@@ -1,0 +1,478 @@
+id	topics
+abn	Bayesian gR
+AdMit	Bayesian Cluster Distributions
+arm	Bayesian SocialSciences
+AtelieR	Bayesian Distributions
+bayesGARCH	Bayesian Finance
+bayesImageS	Bayesian MedicalImaging
+bayesm	Bayesian Cluster Distributions Econometrics HighPerformanceComputing MedicalImaging Multivariate
+bayesmeta	Bayesian MetaAnalysis
+bayesmix	Bayesian Cluster gR
+bayesSurv	Bayesian Survival
+BayesTree	Bayesian MachineLearning
+BayHaz	Bayesian Survival
+BAYSTAR	Bayesian TimeSeries
+bclust	Bayesian Cluster
+bcp	Bayesian HighPerformanceComputing
+BMA	Bayesian Econometrics SocialSciences Survival
+Bmix	Bayesian Cluster
+BMS	Bayesian Econometrics
+bnlearn	Bayesian HighPerformanceComputing gR
+boa	Bayesian gR
+bqtl	Bayesian Genetics
+bspec	Bayesian TimeSeries
+bspmma	Bayesian MetaAnalysis
+bsts	Bayesian TimeSeries
+catnet	Bayesian gR
+coda	Bayesian gR
+cudaBayesreg	Bayesian HighPerformanceComputing MedicalImaging
+dclone	Bayesian HighPerformanceComputing Optimization gR
+deal	Bayesian gR
+dlm	Bayesian Finance TimeSeries
+DPpackage	Bayesian Survival
+eco	Bayesian Environmetrics
+ensembleBMA	Bayesian TimeSeries
+evdbayes	Bayesian Distributions Environmetrics ExtremeValue
+exactLoglinTest	Bayesian SocialSciences
+FME	Bayesian DifferentialEquations
+geoR	Bayesian Distributions Spatial
+geoRglm	Bayesian Spatial
+glmmBUGS	Bayesian Spatial
+gRain	Bayesian gR
+hbsae	Bayesian OfficialStatistics
+HI	Bayesian Distributions
+Hmisc	Bayesian ClinicalTrials Econometrics Multivariate OfficialStatistics ReproducibleResearch SocialSciences
+LearnBayes	Bayesian Distributions Survival
+lme4	Bayesian Econometrics Environmetrics OfficialStatistics Psychometrics SocialSciences SpatioTemporal
+lmm	Bayesian SocialSciences
+matchingMarkets	Bayesian Econometrics Finance Optimization
+MCMCglmm	Bayesian Phylogenetics Psychometrics SocialSciences Survival
+MCMCpack	Bayesian Distributions Multivariate Psychometrics Survival
+mgcv	Bayesian Econometrics Environmetrics SocialSciences
+MNP	Bayesian Econometrics Multivariate SocialSciences
+monomvn	Bayesian Multivariate
+MSBVAR	Bayesian Econometrics Finance TimeSeries
+PReMiuM	Bayesian Cluster Spatial Survival
+profdpm	Bayesian Cluster
+pscl	Bayesian Econometrics Environmetrics Psychometrics SocialSciences
+R2WinBUGS	Bayesian gR
+ramps	Bayesian Spatial
+rbugs	Bayesian gR
+revdbayes	Bayesian Distributions ExtremeValue
+rjags	Bayesian Cluster gR
+RSGHB	Bayesian Bayesian Econometrics
+Runuran	Bayesian Distributions
+sna	Bayesian Optimization SocialSciences
+spBayes	Bayesian Spatial SpatioTemporal
+spTimer	Bayesian Spatial SpatioTemporal TimeSeries
+stochvol	Bayesian Finance TimeSeries
+tgp	Bayesian ExperimentalDesign MachineLearning Spatial
+AnalyzeFMRI	ChemPhys MedicalImaging Psychometrics
+bvls	ChemPhys Optimization
+clustvarsel	ChemPhys Cluster Multivariate
+elasticnet	ChemPhys MachineLearning Psychometrics
+fastICA	ChemPhys Multivariate Psychometrics
+fmri	ChemPhys MedicalImaging
+fpca	ChemPhys FunctionalData
+homals	ChemPhys Multivariate Psychometrics
+kohonen	ChemPhys Multivariate
+leaps	ChemPhys SocialSciences
+minpack.lm	ChemPhys Optimization
+nlme	ChemPhys Econometrics Environmetrics Finance OfficialStatistics Psychometrics SocialSciences Spatial SpatioTemporal
+nnls	ChemPhys Optimization
+pcaPP	ChemPhys Multivariate Psychometrics
+PET	ChemPhys MedicalImaging
+pls	ChemPhys HighPerformanceComputing Multivariate Psychometrics
+plspm	ChemPhys Psychometrics
+ppls	ChemPhys Multivariate
+psy	ChemPhys Multivariate Psychometrics
+PTAk	ChemPhys MedicalImaging Multivariate Psychometrics
+RobPer	ChemPhys Robust
+simecol	ChemPhys DifferentialEquations Environmetrics
+solaR	ChemPhys SpatioTemporal
+som	ChemPhys Cluster
+varSelRF	ChemPhys HighPerformanceComputing MachineLearning
+asd	ClinicalTrials ExperimentalDesign
+bcrm	ClinicalTrials ExperimentalDesign
+clinfun	ClinicalTrials Survival
+coin	ClinicalTrials Survival
+conf.design	ClinicalTrials ExperimentalDesign
+CRTSize	ClinicalTrials MetaAnalysis
+dfcrm	ClinicalTrials ExperimentalDesign
+DoseFinding	ClinicalTrials ExperimentalDesign
+experiment	ClinicalTrials ExperimentalDesign
+FrF2	ClinicalTrials ExperimentalDesign
+GroupSeq	ClinicalTrials ExperimentalDesign
+gsDesign	ClinicalTrials ExperimentalDesign
+meta	ClinicalTrials MetaAnalysis
+metafor	ClinicalTrials MetaAnalysis Phylogenetics
+metaLik	ClinicalTrials MetaAnalysis
+metasens	ClinicalTrials MetaAnalysis
+multcomp	ClinicalTrials SocialSciences Survival
+PwrGSD	ClinicalTrials ExperimentalDesign
+qtlDesign	ClinicalTrials ExperimentalDesign
+rmeta	ClinicalTrials MetaAnalysis
+survival	ClinicalTrials Econometrics SocialSciences Survival
+TEQR	ClinicalTrials ExperimentalDesign
+amap	Cluster Environmetrics Multivariate
+BayesLCA	Cluster Psychometrics
+biclust	Cluster Graphics
+bmixture	Cluster Distributions
+cba	Cluster Graphics
+clue	Cluster Multivariate Optimization
+cluster	Cluster Environmetrics Multivariate
+clusterGeneration	Cluster Multivariate
+clusterSim	Cluster Multivariate
+clv	Cluster Multivariate
+dendextend	Cluster Phylogenetics
+depmix	Cluster TimeSeries
+depmixS4	Cluster TimeSeries
+dpmixsim	Cluster MedicalImaging
+e1071	Cluster Distributions Environmetrics MachineLearning Multivariate Psychometrics
+flexmix	Cluster Environmetrics Psychometrics
+fpc	Cluster Multivariate
+funFEM	Cluster FunctionalData
+funHDDC	Cluster FunctionalData
+gamlss.mx	Cluster Distributions
+GLDEX	Cluster Distributions
+GSM	Cluster Distributions
+hybridHclust	Cluster Multivariate
+idendr0	Cluster Phylogenetics
+kernlab	Cluster MachineLearning Multivariate NaturalLanguageProcessing Optimization
+latentnet	Cluster HighPerformanceComputing SocialSciences
+mclust	Cluster Distributions Environmetrics Multivariate
+mixAK	Cluster Survival
+mixPHM	Cluster Survival
+mixRasch	Cluster Psychometrics
+mixtools	Cluster Distributions
+movMF	Cluster Distributions NaturalLanguageProcessing
+mritc	Cluster MedicalImaging
+nor1mix	Cluster Distributions
+pmclust	Cluster HighPerformanceComputing
+poLCA	Cluster Multivariate Psychometrics
+prabclus	Cluster Environmetrics
+psychomix	Cluster Psychometrics
+pvclust	Cluster Environmetrics HighPerformanceComputing
+randomLCA	Cluster Psychometrics
+RPMM	Cluster MachineLearning
+seriation	Cluster Graphics Multivariate
+skmeans	Cluster NaturalLanguageProcessing
+trimcluster	Cluster Multivariate
+wle	Cluster Robust
+PBSmodelling	DifferentialEquations Spatial
+pomp	DifferentialEquations TimeSeries
+pracma	DifferentialEquations NumericalMathematics
+primer	DifferentialEquations Environmetrics
+scaRabee	DifferentialEquations Pharmacokinetics
+sde	DifferentialEquations Finance TimeSeries
+Sim.DiffProc	DifferentialEquations Finance TimeSeries
+actuar	Distributions Finance
+agricolae	Distributions ExperimentalDesign
+copula	Distributions ExtremeValue Finance Multivariate
+distr	Distributions Robust
+EnvStats	Distributions Environmetrics
+evd	Distributions Environmetrics ExtremeValue
+evir	Distributions Environmetrics ExtremeValue
+extremefit	Distributions ExtremeValue
+FatTailsR	Distributions Finance
+fBasics	Distributions Finance
+fCopulae	Distributions Finance
+fExtremes	Distributions ExtremeValue Finance
+fgac	Distributions Finance Multivariate
+fitdistrplus	Distributions Survival
+flexsurv	Distributions Survival
+frmqa	Distributions Finance
+ghyp	Distributions Finance
+HistogramTools	Distributions HighPerformanceComputing
+lhs	Distributions ExperimentalDesign
+lmom	Distributions ExtremeValue
+lmomco	Distributions ExtremeValue
+MASS	Distributions Econometrics Environmetrics Multivariate NumericalMathematics Psychometrics Robust SocialSciences
+mnormt	Distributions Multivariate
+msm	Distributions Survival
+mvtnorm	Distributions Finance Multivariate
+QRM	Distributions ExtremeValue
+ReIns	Distributions ExtremeValue
+Renext	Distributions ExtremeValue
+rlecuyer	Distributions HighPerformanceComputing
+RTDE	Distributions ExtremeValue
+sn	Distributions Multivariate
+STAR	Distributions HighPerformanceComputing
+statmod	Distributions NumericalMathematics
+TSA	Distributions TimeSeries
+VGAM	Distributions Econometrics Environmetrics ExtremeValue Multivariate Psychometrics SocialSciences Survival
+zipfR	Distributions NaturalLanguageProcessing
+AER	Econometrics Survival TimeSeries
+aod	Econometrics Environmetrics SocialSciences
+betareg	Econometrics Psychometrics SocialSciences
+boot	Econometrics Optimization SocialSciences Survival TimeSeries
+bootstrap	Econometrics SocialSciences
+brglm	Econometrics SocialSciences
+CADFtest	Econometrics Finance TimeSeries
+car	Econometrics Finance Multivariate SocialSciences
+censReg	Econometrics Survival
+dynlm	Econometrics Environmetrics Finance TimeSeries
+Ecdat	Econometrics TimeSeries
+effects	Econometrics MachineLearning SocialSciences
+expsmooth	Econometrics TimeSeries
+fma	Econometrics TimeSeries
+forecast	Econometrics Environmetrics Finance TimeSeries
+gam	Econometrics Environmetrics SocialSciences
+geepack	Econometrics SocialSciences
+gets	Econometrics Finance
+gmm	Econometrics Finance
+ineq	Econometrics OfficialStatistics
+lavaan	Econometrics OfficialStatistics Psychometrics
+lmtest	Econometrics Finance SocialSciences
+Matrix	Econometrics Multivariate NumericalMathematics
+Mcomp	Econometrics TimeSeries
+meboot	Econometrics TimeSeries
+mlogit	Econometrics SocialSciences
+nnet	Econometrics MachineLearning SocialSciences
+np	Econometrics SocialSciences
+ordinal	Econometrics Psychometrics
+plm	Econometrics SpatioTemporal
+quantreg	Econometrics Environmetrics Optimization ReproducibleResearch Robust SocialSciences Survival
+rms	Econometrics ReproducibleResearch SocialSciences Survival
+sandwich	Econometrics Finance Robust SocialSciences
+segmented	Econometrics Environmetrics
+sem	Econometrics Multivariate Psychometrics
+simpleboot	Econometrics SocialSciences
+SparseM	Econometrics Multivariate NumericalMathematics
+spatialprobit	Econometrics Spatial
+spdep	Econometrics Spatial
+sphet	Econometrics Spatial SpatioTemporal
+splm	Econometrics Spatial SpatioTemporal
+strucchange	Econometrics Environmetrics Finance TimeSeries
+systemfit	Econometrics Psychometrics
+tsDyn	Econometrics Finance TimeSeries
+tseries	Econometrics Environmetrics Finance TimeSeries
+tsfa	Econometrics Finance Multivariate TimeSeries
+urca	Econometrics Finance TimeSeries
+vars	Econometrics Finance TimeSeries
+xts	Econometrics Finance SpatioTemporal TimeSeries
+Zelig	Econometrics Finance SocialSciences
+zoo	Econometrics Environmetrics Finance TimeSeries
+ade4	Environmetrics Graphics Multivariate Psychometrics Spatial
+adehabitat	Environmetrics Spatial
+ape	Environmetrics Genetics Graphics Phylogenetics
+cocorresp	Environmetrics Multivariate Psychometrics
+diveMove	Environmetrics SpatioTemporal
+dse	Environmetrics Finance TimeSeries
+DSpat	Environmetrics Spatial
+dyn	Environmetrics Finance TimeSeries
+earth	Environmetrics MachineLearning Multivariate
+ecodist	Environmetrics Psychometrics
+extRemes	Environmetrics ExtremeValue
+fso	Environmetrics Multivariate
+hydroPSO	Environmetrics Optimization
+ipred	Environmetrics MachineLearning Survival
+ismev	Environmetrics ExtremeValue
+labdsv	Environmetrics Psychometrics
+latticeDensity	Environmetrics Spatial
+maptree	Environmetrics MachineLearning
+mda	Environmetrics Multivariate
+openair	Environmetrics SpatioTemporal
+ouch	Environmetrics Genetics Phylogenetics
+party	Environmetrics MachineLearning Multivariate Survival
+pastecs	Environmetrics Spatial SpatioTemporal TimeSeries
+randomForest	Environmetrics MachineLearning
+RMAWGEN	Environmetrics TimeSeries
+rpart	Environmetrics MachineLearning Multivariate Survival
+rtop	Environmetrics Spatial
+seas	Environmetrics TimeSeries
+simba	Environmetrics Multivariate
+siplab	Environmetrics Spatial
+SpatialExtremes	Environmetrics ExtremeValue Spatial
+surveillance	Environmetrics SpatioTemporal TimeSeries
+tiger	Environmetrics TimeSeries
+untb	Environmetrics Genetics
+vegan	Environmetrics Multivariate Phylogenetics Psychometrics Spatial
+BatchExperiments	ExperimentalDesign HighPerformanceComputing
+desirability	ExperimentalDesign Multivariate Optimization
+dfpk	ExperimentalDesign Pharmacokinetics
+geospt	ExperimentalDesign Spatial
+SensoMineR	ExperimentalDesign Multivariate Psychometrics
+data.table	Finance HighPerformanceComputing
+factorstochvol	Finance TimeSeries
+fame	Finance TimeSeries
+fArma	Finance TimeSeries
+fGarch	Finance TimeSeries
+fNonlinear	Finance TimeSeries
+fracdiff	Finance TimeSeries
+fractal	Finance TimeSeries
+NMOF	Finance Optimization ReproducibleResearch
+parma	Finance Optimization
+Rbitcoin	Finance WebTechnologies
+Rblpapi	Finance WebTechnologies
+restimizeapi	Finance WebTechnologies
+rugarch	Finance TimeSeries
+rwt	Finance TimeSeries
+timeDate	Finance TimeSeries
+timeSeries	Finance TimeSeries
+timsac	Finance TimeSeries
+tis	Finance TimeSeries
+TSdbi	Finance TimeSeries
+tseriesChaos	Finance TimeSeries
+wavelets	Finance TimeSeries
+waveslim	Finance MedicalImaging TimeSeries
+wavethresh	Finance TimeSeries
+pcdpca	FunctionalData TimeSeries
+roahd	FunctionalData Robust
+gap	Genetics MetaAnalysis
+phangorn	Genetics Phylogenetics
+rmetasim	Genetics Phylogenetics
+animation	Graphics ReproducibleResearch
+aplpack	Graphics Multivariate
+ash	Graphics Multivariate Spatial
+diagram	Graphics gR
+gclus	Graphics Multivariate
+ggplot2	Graphics Phylogenetics
+igraph	Graphics Optimization Spatial gR
+iplots	Graphics Multivariate
+klaR	Graphics MachineLearning Multivariate
+lattice	Graphics Multivariate
+misc3d	Graphics Multivariate
+onion	Graphics NumericalMathematics
+RColorBrewer	Graphics Spatial
+rggobi	Graphics Multivariate
+rgl	Graphics Multivariate SpatioTemporal
+scatterplot3d	Graphics Multivariate
+vcd	Graphics Multivariate SocialSciences
+xgobi	Graphics Multivariate Psychometrics
+biglm	HighPerformanceComputing SocialSciences
+caret	HighPerformanceComputing MachineLearning Multivariate
+GAMBoost	HighPerformanceComputing MachineLearning
+h2o	HighPerformanceComputing MachineLearning
+Matching	HighPerformanceComputing SocialSciences
+pbdNCDF4	HighPerformanceComputing SpatioTemporal
+peperr	HighPerformanceComputing Survival
+randomForestSRC	HighPerformanceComputing MachineLearning Survival
+Rborist	HighPerformanceComputing MachineLearning
+Rcpp	HighPerformanceComputing NumericalMathematics
+rgenoud	HighPerformanceComputing MachineLearning Optimization
+tm	HighPerformanceComputing NaturalLanguageProcessing
+ahaz	MachineLearning Survival
+CoxBoost	MachineLearning Survival
+gbm	MachineLearning Survival
+glmnet	MachineLearning Survival
+glmpath	MachineLearning Survival
+LogicReg	MachineLearning Survival
+LTRCtrees	MachineLearning Survival
+mboost	MachineLearning Survival
+pamr	MachineLearning Survival
+penalized	MachineLearning Survival
+ranger	MachineLearning Survival
+rda	MachineLearning Multivariate
+Rmalschains	MachineLearning Optimization
+ROCR	MachineLearning Multivariate
+RWeka	MachineLearning NaturalLanguageProcessing
+brainwaver	MedicalImaging TimeSeries
+eegkit	MedicalImaging Psychometrics
+epiR	MetaAnalysis Survival
+ipdmeta	MetaAnalysis Survival
+joint.Cox	MetaAnalysis Survival
+metaSEM	MetaAnalysis Psychometrics
+psychometric	MetaAnalysis Psychometrics
+robumeta	MetaAnalysis Robust
+ca	Multivariate Psychometrics
+class	Multivariate SocialSciences
+covRobust	Multivariate Robust
+dr	Multivariate SocialSciences
+eRm	Multivariate Psychometrics
+FactoMineR	Multivariate Psychometrics
+FAiR	Multivariate Psychometrics
+gmodels	Multivariate SocialSciences
+GPArotation	Multivariate Psychometrics
+ltm	Multivariate Psychometrics
+mAr	Multivariate TimeSeries
+matrixcalc	Multivariate NumericalMathematics
+mice	Multivariate OfficialStatistics SocialSciences
+mitools	Multivariate OfficialStatistics SocialSciences
+mix	Multivariate OfficialStatistics SocialSciences
+mvnmle	Multivariate SocialSciences
+mvoutlier	Multivariate Robust
+nFactors	Multivariate Psychometrics
+pan	Multivariate OfficialStatistics SocialSciences
+paran	Multivariate Psychometrics
+polycor	Multivariate Psychometrics
+robustbase	Multivariate Robust
+rrcov	Multivariate Robust
+superpc	Multivariate Survival
+VIM	Multivariate OfficialStatistics SocialSciences
+boilerpipeR	NaturalLanguageProcessing WebTechnologies
+mscstexta4r	NaturalLanguageProcessing WebTechnologies
+mscsweblm4r	NaturalLanguageProcessing WebTechnologies
+tm.plugin.webmining	NaturalLanguageProcessing WebTechnologies
+akima	NumericalMathematics Spatial
+BB	NumericalMathematics Optimization
+gsl	NumericalMathematics Optimization
+nleqslv	NumericalMathematics Optimization
+Rserve	NumericalMathematics WebTechnologies
+tripack	NumericalMathematics Spatial
+Amelia	OfficialStatistics SocialSciences
+GeomComb	OfficialStatistics TimeSeries
+lavaan.survey	OfficialStatistics Psychometrics
+MatchIt	OfficialStatistics SocialSciences
+memisc	OfficialStatistics ReproducibleResearch
+mi	OfficialStatistics SocialSciences
+MicSim	OfficialStatistics Survival
+missMDA	OfficialStatistics Psychometrics
+norm	OfficialStatistics SocialSciences
+odfWeave	OfficialStatistics ReproducibleResearch
+odfWeave.survey	OfficialStatistics ReproducibleResearch
+rrcovNA	OfficialStatistics Robust
+rworldmap	OfficialStatistics Spatial
+seasonal	OfficialStatistics TimeSeries
+spsurvey	OfficialStatistics Spatial
+survey	OfficialStatistics SocialSciences Survival
+TeachingSampling	OfficialStatistics ReproducibleResearch
+tmap	OfficialStatistics Spatial
+x12	OfficialStatistics TimeSeries
+x12GUI	OfficialStatistics TimeSeries
+optmatch	Optimization SocialSciences
+paleoTS	Phylogenetics TimeSeries
+lava.tobit	Psychometrics Survival
+multiplex	Psychometrics SocialSciences
+lubridate	ReproducibleResearch TimeSeries
+rapport	ReproducibleResearch WebTechnologies
+RefManageR	ReproducibleResearch WebTechnologies
+coxrobust	Robust Survival
+georob	Robust Spatial
+multinomRob	Robust SocialSciences
+OutlierDC	Robust Survival
+robfilter	Robust TimeSeries
+RobustAFT	Robust Survival
+rsig	Robust Survival
+ergm	SocialSciences gR
+gss	SocialSciences Survival
+locfit	SocialSciences Survival
+lsmeans	SocialSciences Survival
+network	SocialSciences gR
+spatial	SocialSciences Spatial
+adehabitatLT	Spatial SpatioTemporal
+cshapes	Spatial SpatioTemporal
+ggmap	Spatial WebTechnologies
+gstat	Spatial SpatioTemporal
+leafletR	Spatial WebTechnologies
+ncdf4	Spatial SpatioTemporal
+osmar	Spatial WebTechnologies
+plotGoogleMaps	Spatial WebTechnologies
+plotKML	Spatial SpatioTemporal WebTechnologies
+RandomFields	Spatial SpatioTemporal
+raster	Spatial SpatioTemporal
+rasterVis	Spatial SpatioTemporal
+RgoogleMaps	Spatial WebTechnologies
+RNetCDF	Spatial SpatioTemporal
+sp	Spatial SpatioTemporal
+spacetime	Spatial SpatioTemporal
+spatstat	Spatial SpatioTemporal Survival
+spatsurv	Spatial Survival
+spBayesSurv	Spatial Survival
+splancs	Spatial SpatioTemporal
+Stem	Spatial SpatioTemporal
+trip	Spatial SpatioTemporal
+tripEstimation	Spatial SpatioTemporal
+googleVis	SpatioTemporal WebTechnologies
+parfm	Survival Survival
+tpr	Survival TimeSeries
