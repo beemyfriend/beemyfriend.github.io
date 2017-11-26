@@ -1,5 +1,5 @@
 ---
-title: "Creating a Network from the CRAN Task Views"
+title: '"A Call to Contribute" or "Creating a Network from the CRAN Task Views"'
 author: "beemyfriend"
 date: "August 6, 2017"
 output: html_document
@@ -11,27 +11,41 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Intro
 
-[There was a talk at useR2017](https://juliasilge.com/blog/navigating-packages/) about how useRs discover packages in CRAN's 11,000+ package ecosystem. The goal was to start a conversation and make the package discovery process easier. The discussed approaches to improving discovery are **Unification** (create wrappers for packages so their are less packages to choose from), **Search** (rely on sites like [RDocumentation](https://www.rdocumentation.org/) and improve their search algorithms), and **Guidance** (read the [task views](https://cran.r-project.org/web/views/) and the [R Journal](https://journal.r-project.org/) or even follow the community on social media and blogs).
+[There was a talk at useR2017](https://juliasilge.com/blog/navigating-packages/) about how useRs discover packages in CRAN's 11,000+ package ecosystem. The goal was to start a conversation and make the package discovery process easier. The discussed approaches to improving discovery are **Unification** (create wrappers for packages so there are less packages to choose from), **Search** (rely on sites like [RDocumentation](https://www.rdocumentation.org/) and improve their search algorithms), and **Guidance** (read the [task views](https://cran.r-project.org/web/views/) and the [R Journal](https://journal.r-project.org/) or even follow the community on social media and blogs).
 
-After the talk a group lead by [Julia Silge](https://twitter.com/juliasilge) discussed **Guidance**. A few of us within the group talked about how we weren't lucky enough to have an **R** mentor as we were learning the language. Luckily, the **R** community is great and there are a number of wonderful and free resources online, but it still isn't easy. 
+After the talk a group lead by [Julia Silge](https://twitter.com/juliasilge) discussed **Guidance**. A few of us within the group talked about how we weren't lucky enough to have an **R** mentor as we were learning the language. Luckily, the **R** community is great and there are a number of wonderful and free resources online, but it still wasn't easy. Sometimes the tutorials were outdated. Sometimes there weren't enough examples on a particular concept. And sometimes there wasn't a clear connection between what a tutorial is trying to explain and what we actually want to do. So what can we - the mentorless - do?
 
-Packages get updated while the tutorials stay the same. A person might need multiple examples to understand a concept, but there is just one example provided. 
+We can contribute. 
 
-I want to explore the task views with you. I want to show you how I scrape data and munge it to create a network visuallization. But most importantly, I want to share my thought process with you so you can either learn from me or tell me what I"m doing wrong.
+And while . We are blessed as a community to have amazing tools such as **knitr**, **blogdown**, and even **bookdown**. Showing people our work is as simple as copy/pasting the code we already have and adding minor formatting ticks. And while it may be scary to show people our code - it is absolutely necessary if we want to learn. The community cannot give us advice on our work if we do not show it to them.
+
+An even more important point, however, is that people cannot learn from our code if we don't show it to them. The community needs as many examples as possible. This is because everyone thinks differently. Everyone approaches problems differently. An example that might work for one person, might not work for another. Variety in our examples, then, is necessary if we want **R** to be accessible to everyone. 
+
+And the examples do not need to be long tutorials providing a line-by-line explanation of the code. Even something as simple as tweaking a vignette or an example to work with a different dataset could be monumental in helping someone understand a package, a function, or even a concept.
+
+So, in light of all this, I want to show you a project I've been working on. I want to show you how I explored the task views. I want to show you how I scrape data and munge it to create a network visuallization. But most importantly, I want you to see my thought process so you can either learn from me or tell me what I"m doing wrong.
+
+Here is my code...
 
 ## Research
 
-First we should go to the main page to explore how the `html` is layed out. This is best done by using the [selector gadget](http://selectorgadget.com/). If we check the links to the different task views, then we realize the nodes we want to select are identified simply by `a`. Notice how the node contains `Bayesian.html` - this gets appended to the main site's link to create the link `https://cran.r-project.org/web/views/Bayesian.html` which we can use to acces the task view relating to Bayesian Economics.
+First we should go to the main page to explore how the *html* is layed out. This is best done by using the [selector gadget](http://selectorgadget.com/). If we check the links to the different task views, then we realize the nodes we want to select are identified simply by `a`. Notice how the node contains *Bayesian.html* - this gets appended to the main site's link to create the link *https://cran.r-project.org/web/views/Bayesian.html* which we can use to acces the task view relating to Bayesian Economics.
+
 
 ![](main.png)
 
-We then want to look into a few of these task views and look for any similarities between the task view pages with regards to the packages they promote. For now, the easiest option is `h3+ ul:nth-child(5) a`. Notice how the node contains `/packages/abc/index.html` - every link in the taskview contains the name of a package between `/package/` and `/index.html`.
+
+We then want to look into a few of these task views and look for any similarities between the task view pages with regards to the packages they promote. For now, the easiest option is *h3+ ul:nth-child(5) a*. Notice how the node contains */packages/abc/index.html* - every link in the taskview contains the name of a package between */packages/* and */index.html*.
+
+
 
 ![](taskview.png)
 
+
 ## Packages
 
-I'm relatively new to web scraping so I don't really know what my options are - one of the more popular packages is **rvest** and so I'll just go with that. In most of my projects I know that I'm going to use `dplyr`, `magrittr`, and `tidyr`. Since I'm just exploring and don't really know what else I'll need, I just load the **tidyverse** package and stop worrying about it. Another must have is **stringr**- html data is text data and **stringr** is my go-to regex tool. **igraph** is how we are going to visualize the network...(and if you're interested I'll share d3 code in the end :heart:)
+I'm relatively new to web scraping so I don't really know what my options are - one of the more popular packages is **rvest** and so I'll just go with that. In most of my projects I know that I'm going to use `dplyr`, `magrittr`, and `tidyr`. Since I'm just exploring and don't really know what else I'll need, I just load the **tidyverse** package and stop worrying about it. Another must have is **stringr**- html data is text data and **stringr** is my go-to regex tool. **igraph** is how we are going to visualize the network.
+
 
 ```{r message = F}
 library(tidyverse)
@@ -40,9 +54,11 @@ library(stringr)
 library(igraph)
 ```
 
+
 ## Web Scraping
 
 First, we'll need to scrape the links to all of the different task views. Using the information we gained from the research section, we can easily do this by searching all of the nodes tha contain an `a`. 
+
 
 ```{r}
 tv <- 'https://cran.r-project.org/web/views/'
@@ -53,7 +69,9 @@ topics <- html_nodes(html, 'a')
 head(topics)
 ```
 
+
 An example of what we get from **topics** is `r topics[1]`. We want a full link so we will need to extract the link information from `href="link_info"` and then paste it on to the root `r tv` using the **stringr** package.
+
 
 ```{r}
 topics <- topics %>%
@@ -65,7 +83,9 @@ taskviews <- str_c(tv, topics)
 head(taskviews)
 ```
 
+
 Now we want to pull the html information from each of the task view pages and extract information to each of the packages they refer to. Again, we will use the information we pulled from the task view to extract information. The information we will extract are the names of the packages and the task views the packages belong to.
+
 
 ```{r}
 topic_packages <- function(link){
@@ -93,13 +113,16 @@ for(i in 1:length(taskviews)){
 head(nodes)
 ```
 
+
 The `nodes` data frame contains `r nrow(nodes)` rows. This is because many packages belong to more than one task view.
+
 
 ## Munging
 
 A network graph needs two data frames. A **nodes** data frame that contains a reference to every package and a **links** data frame that connects a *source* package to a *target* package. We're going to simply create links to any two packages that share a taskview. 
 
 Our first task is to convert the variables of our **nodes** data frame from `factors` to `characters`. This will prevent issues later on with regards to filtering the data frame.
+
 
 ```{r}
 str(nodes)
@@ -113,7 +136,9 @@ nodes <- nodes %>%
 str(nodes)
 ```
 
+
 I then want to create a variable that contains all the task views a package belongs to. We can do this by using **tidyr**'s `nest()` function to combine all the task views into a single nested column. We can then use **dplyr**'s `mutate()` to create a new variable using `sapply()` and **stringr**'s `str_c()` function. This will create a variable that is a string combining all of a package's task views. This variable is not tidy, but it will be useful to quickly glance over a package's information in the future.
+
 
 ```{r}
 nodes <- nodes %>%
@@ -128,6 +153,7 @@ nodes <- nodes %>%
 head(nodes)
 ```
 
+
 There are a total of `r nrow(nodes)` different packages mentioned in the task views and of those packages `r nrow(nodes %>% filter(str_detect(topics, ' ')))` belong to more than one task view. To make this network graph more manageable, we will only show packages that belong to multiple task views.
 
 
@@ -138,6 +164,7 @@ nodes <- nodes %>%
 
 head(nodes)
 ```
+
 
 We will get rid of the **topic** variable soon, but we will need it in order to identify links between packages. Links are created between any two packages that share a task view topic. So what we will need to do is:
 
@@ -196,7 +223,9 @@ for(i in 1:length(unique_packages)){
 head(links)
 ```
 
+
 Now we can clean up the **nodes** data frame by removing the **topic** variable.
+
 
 ```{r}
 nodes <- nodes %>%
@@ -206,12 +235,15 @@ nodes <- nodes %>%
 head(nodes)
 ```
 
+
 Finally, we can create TSV files so we can use this data for future analysis.
+
 
 ```{r}
 write_tsv(nodes, 'task_view_nodes.tsv')
 write_tsv(links, 'task_view_links.tsv')
 ```
+
 
 ## Visualize
 
@@ -222,6 +254,7 @@ The `d` argument takes on a data frame with the first column representing the **
 The `vertices` argument takes on a data frame with the first column representing the **nodes**. Any other columns will be saved as a node attribute which we could use to manipulate the nodes. 
 
 If `directed` is set to `TRUE` then the links become directed arrows. We don't want that so we set it to `FALSE`
+
 
 ```{r}
 set.seed(203)
@@ -234,7 +267,9 @@ plot(net,
      vertex.size = 5)
 ```
 
+
 Another way to represent networks is through an adjacency matrix. We will need to reformat the **igraph** we created before we can do that.
+
 
 ```{r}
 netm <- get.adjacency(net, sparse = F)
@@ -242,8 +277,12 @@ heatmap(netm)
 
 ```
 
+
 There's a bunch of cool things you can do with `igraph` and it is definitely worth exploring. The best resource I know of for learning `igraph` is [Katherine Ognyanova's tutorial](http://kateto.net/networks-r-igraph). In it she even explains how to create an interactive network graph. 
+
 
 ## D3
 
+
 I'm not going to lie, the previous section was a surprise to me. The data cleaning I showed you was really so I can visualize the data in `D3.js`, but I figured most people don't know `d3.js` and it would be cruel to walk you through all that data munging without showing you how to make a network graph in `R`. Well, if you're interested, then here is [the code to my network graph in D3.js](https://bl.ocks.org/beemyfriend/e27d2103f6b0264044c2f8a15dd09e10)
+

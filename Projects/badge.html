@@ -1,0 +1,61 @@
+<head></head>
+<body>
+    <svg height = '1050px' width = '1500px'>
+        <radialGradient id="gr-radial"
+            cx="50%" cy="50%" r="70%">
+
+            <!-- Animation for radius of gradient -->
+            <animate attributeName="r"
+                     values="0%;100%"
+                     dur="8s" repeatCount="indefinite" />
+
+            <!-- Animation for colors of stop-color -->
+            <stop stop-color="#FFF" offset="0">
+              <animate attributeName="stop-color"
+                     values="#333;#FFF"
+                     dur="8s" repeatCount="indefinite" />
+            </stop>
+            <stop stop-color='#333' offset='100%'/>
+        </radialGradient>
+    </svg>
+</body>
+<script src ='d3v4+jetpack.js'></script>
+<script>
+    var svg = d3.select('svg')
+    var height = 1050,
+        width = 1500;
+    
+    svg.st({background: '#333'})
+    svg.append('text')
+        .translate([width/2, height * 1/4])
+        .st({fontSize: 50, fill: 'url(#gr-radial)', textAnchor: 'middle'})
+        .tspans(['D3 is the coolest!', "I'm so happy to finally meet you all!"], 50)
+//        .text("D3 is the coolest!\n I'm glad to finally meet you all!")
+    
+    var heart= svg.append('g.heart')
+        .translate([width/2-150, height/2])
+        .st({fill: 'white'})
+    
+    heart.append('path')
+        .at({d: 'm 150 400 l -200 -200 l 200 -200 l 200 200 l -200 200'})
+//        .st({fill: 'white'})
+    
+    heart.append('circle')
+        .at({cx: 150 -100, cy: 100, r: 143});
+    
+    heart.append('circle')
+        .at({cx: 150 +100, cy: 100, r:143})
+    
+    
+    var image = svg.append('g.bee')
+        .translate([width/2- 150, height/2])
+        .st({background: 'white'})
+    
+    image.append('image')
+        .at({href: "http://cdn.onlinewebfonts.com/svg/img_256890.svg",
+             width: 300,
+             height: 300
+            })
+        .st({fill: 'white'})
+    
+</script>

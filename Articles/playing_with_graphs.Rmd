@@ -1,0 +1,356 @@
+---
+title: "Playing With Graphs"
+author: "beemyfriend"
+date: "November 25, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Intro
+
+I was in New York the other day for the [Open Camps]() specifically for their Open Viz portion. I got there early in the morning because I was really excited for the talks. It turned out, however, that the talks were only in the afternoon. Not really having anything else to do I just stayed in the room where the talks were going to take place and just listened in to the presentations that were going on in the morning. The talks before the viz portion focused on search. Search isn't something that I normally (ever) think about, so I thought it would be a struggle to follow the talks.
+
+I was very wrong.
+
+[Jason Plurad](https://twitter.com/pluradj) was the first speaker and he opened up with something that really got my attention. He said something along the lines of: "when people think graphs they think visualizations, but they're not even scratching the surface. You can do so much more. Query the graphs directly to get the answers you are looking for." This was the beginning of what would turn out to be a mind-blowing talk. As a visualization guy I never really spent too much time thinking about graphs - I just plotted them and hoped to see some kind of structure. 
+
+Jason talked about how graphs are their own data structure and should be queried in a similar way that we query relational databases. But with graph databases we don't need to join different schemas together because everything is already connected. So instead of multiple instances of "person_id" or "object_id" we just have a single instance of a person (a node) a single instance of an object (another node) and connect them together (an edge). Information can be stored in every node and every edge. Two nodes can have multiple edges between them. A person can have an object, or a person can need an object, or a person hate an object. 
+
+
+
+```{r echo=F, results = 'hide', message=F}
+library(diagram)
+openplotmat()
+pos <- coordinates(c(3, 3, 3))
+need1 <-curvedarrow(from = pos[1,], to = pos[6,], curve = .1)
+text(need1[1], need1[2] + .05, 'Needs 5')
+has1 <- curvedarrow(from = pos[1,], to = pos[6,], curve = -.1)
+text(has1[1], has1[2] + .05, 'Has 0' )
+likes2 <- curvedarrow(from = pos[7,], to = pos[6,], curve = .1)
+text(likes2[1]-.02, likes2[2] + .05, 'Really Likes')
+has2 <- curvedarrow(from = pos[7,], to = pos[6,], curve = -.1)
+text(has2[1], has2[2] + .05, 'Has 25')
+dislike <- curvedarrow(from = pos[7,], to = pos[1,], curve = .1 )
+text(dislike[1] -.025, dislike[2], 'Dislikes', srt = 90)
+jealous <- curvedarrow(from=pos[1,], to = pos[7,], curve =.1)
+text(jealous[1] + .03, jealous[2], 'is Jealous of', srt = -90, cex = .8)
+my_edge_length <- .16
+my_text_size <- 1.3
+textrect(mid = pos[1,], radx = my_edge_length, rady = my_edge_length, lab = 'ID: person_1\nNAME: "Jared"' )
+textrect(mid = pos[7,], radx = my_edge_length, rady = my_edge_length, lab = 'ID: person_2\nNAME: "Johnny"')
+textrect(mid = pos[6,], radx = my_edge_length, rady = my_edge_length, lab = 'ID: object_1\nNAME: "Apple"')
+```
+Both the nodes and edges of the graph contain information and that is all we really need. It's incredible!
+
+Graph databases are really cool because the focus more on connections (edges) than they do on any particular object (nodes). Relational databases care more about observations while graph data bases care more about how different observations are connected.
+
+Jason mentioned a [free online tutorial](https://github.com/krlawrence/graph) made by [Kelvin Lawrence](https://twitter.com/gfxman) explaining how to query graphs with the `Gremlin` graph querying language. It's incredibly fun and intuitive. 
+
+I'm writing this article as an exploration of graphs within R. I'm going to go throught this by first creating a network graph with `igraph`, then visualizing the network to get a general idea of what we are working with, I will then show how to query the graph with `igraph`'s functions. After I show how to query the graph with `igraph` I will show how an improved query system based on the `Gremlin` graph querying library. 
+
+## Networking Fairy Tales
+
+To play with network graphs we will need to come up with a story to graph. I'm going to connect three different Fairy Tales: "Goldilocks and the Three Bears", "Little Red Riding Hood", and "Jack and the Beanstalk." I'll summarize them just in case you forgot what they are abou:
+
+**Goldilocks and the Three Bears** is about a girl who terrorizes the home of three innocent bears by making a mess of their home and eating all of their food.
+
+**Little Red Riding Hood** is about a poor girl who was eaten by her grandmother...or a wolf (it's not clear). Luckily a hunter came by and cut the grandmother/wolf's stomache open to save the girl.
+
+**Jack and the Beanstalk** is a boy who steals things from a giant's castle...I don't think the boy get's eaten, but I do think thieves should be eaten out of principle.
+
+These story's don't take place at the same time, but they have very similiar features: all stories have at least one person, one creature, one villain,  one victim, and one item of food. Now let's create a network that follows this story.
+
+## Create Network
+
+`dplyr`, `tidyr`, and `stringr` are packages that are necessary for almost every R project. `igraph` is the defacto standard with making graphs in **R**.
+
+```{r message = F, results = 'hide'}
+packages <- c('dplyr', 'tidyr', 'stringr', 'igraph')
+sapply(packages, library, character.only = T)
+```
+
+To set up we should organize nodes and links. As a general rule of thumb: anything that can be described as a noun (person, place or thing) should be represented as a noun. Anything that can be described as a verb (action or occurance) should be represented as an edge. An even easier generalization is things that can connected are nodes and their connections are edges.
+
+Let's create vectors that organize all nodes together.
+
+```{r}
+#Nodes
+people <- c('Goldilocks', 'Red Riding Hood', 'Grandma', 'Hunter', 'Jack')
+creatures <- c('Mama Bear', 'Papa Bear', 'Baby Bear', 'Big Bad Wolf', 'Giant')
+food <- c('Porridge', 'Person')
+role <- c('Hero', 'Victim', 'Villain')
+```
+
+Let's create vectors that organize how different nodes relate to eachother.
+
+```{r}
+#links
+hero <- c('Hunter')
+victim <- c('Mama Bear', 'Papa Bear', 'Baby Bear', 'Giant', 'Red Riding Hood', 'Grandma')
+villain <- c('Goldilocks', 'Jack', 'Big Bad Wolf', 'Grandma')
+eats_porridge <- c('Goldilocks', 'Mama Bear', 'Papa Bear', 'Baby Bear')
+eats_people <- c('Giant', 'Big Bad Wolf', 'Grandma')
+bear_family <- c('Mama Bear', 'Papa Bear', 'Baby Bear')
+red_family <- c('Red Riding Hood', 'Grandma')
+```
+Now let's make a simple tibble that connects each person to a "Person" node. For exampe: 
+
+1. **Red Riding Hood**
+2. **is a**
+3. **Person**
+
+The order of the tibble is important. The first column represents where the connection is coming from. The second column represents where the connection is going. Anything after the second column will be stored as an attribute to store in the edge - here we store an attribute of `type` to describe what kind of connection the edge represents.
+
+```{r}
+people_links <- tibble(
+  item1 = people,
+  item2 = 'Person',
+  type = 'is a'
+)
+
+people_links
+```
+We will make this kind of tibble for each kind of link. We will be making quite a few so we might as well prepare ourselves by making a helper function.
+
+```{r}
+create_links <- function(item1, item2, type){
+  tibble(
+    item1 = item1, 
+    item2 = item2, 
+    type = type
+  )
+}
+```
+
+Now making the network is slightly less painful...
+
+```{r}
+creature_links <- create_links(creatures, 'Creature', 'is a')
+hero_links <- create_links(hero, 'Hero', 'is a')
+victim_links <- create_links(victim, 'Victim', 'is a')
+villain_links <- create_links(villain, 'Villain', 'is a')
+porridge_links <- create_links(eats_porridge, 'Porridge', 'eats')
+soylent_green_links <- create_links(eats_people, 'Person', 'eats')
+
+#Let's use tidyr's unnest to create the family links
+#lapply creates list output for each row
+#and the data frame must be unnested in order to stay clean
+bear_links <- create_links(bear_family, 
+                           lapply(bear_family, function(x){
+                             bear_family[!bear_family %in% x]
+                           }),
+                           'is related to') %>%
+  unnest()
+red_links <- create_links(red_family,
+                          lapply(red_family, function(x){
+                            red_family[!red_family %in% x]
+                          }),
+                          'is related to') %>%
+  unnest()
+```
+
+Now let's combine the tibbles together in a single large *links* tibble. We can do this by using `lapply()` to `get()` all the link tibbles in our **R** environment. `bind_rows()` will unfold the lists into a single tibble.
+
+```{r}
+#let's grab everything in our environment that has "_links"
+ls()[ls() %>% str_detect('_links')]
+
+#we don't want the function "create_links"
+#so we will use a negative lookbehind regex
+ls()[ls() %>% str_detect('(?<!create)_links')]
+
+links <- ls()[ls() %>% str_detect('(?<!create)_links')] %>%
+  lapply(get) %>%
+  bind_rows()
+
+links
+```
+
+We will need to reaarange the *links* tibble to stay consistent to with the order of "From Node", "To Node", "Attributes..." order that `igraph` expects.
+
+```{r}
+links <- links %>% select(item1, item2, type)
+```
+
+Now let's create a tibble for the nodes. The first column will be read as the *name* of th enode and any following column will be considered an attribute. Let's create a *type* attribute for the
+nodes that explains what they are. 
+
+```{r}
+nodes <- c(links$item1, links$item2) %>%
+  unique() 
+
+define_story_node <- function(x){
+  if(x == 'Person'){
+    'Food & Species'
+  } else if(x %in% c('Hero', 'Villain', 'Victim')){
+    'Role'
+  } else if(x == 'Porridge'){
+    'Food'
+  } else if(x == 'Creature'){
+    'Species'
+  } else {
+    'Character'
+  }
+}
+
+nodes <- tibble(
+  name = nodes,
+  type = sapply(nodes, define_story_node)
+)
+```
+
+Now we can finally create the network graph.
+
+```{r}
+net <- graph_from_data_frame(d = links,
+                             vertices = nodes)
+```
+## Visualize Network
+
+Let's plot a network graph. First let's try to label everything.
+
+```{r}
+set.seed(1234)
+plot(net,
+     #we are explicitly defining the 'vertex.label'
+     #however in our case it isn't necessary
+     #plot automatically labels the vertices by
+     #whatever the first column is called
+     vertex.label = V(net)$name,
+     vertex.label.cex = .75,
+     vertex.size = 5,
+     vertex.label.color ='black',
+     vertex.label.dist = 1.1,
+     
+     edge.label = E(net)$type,
+     edge.label.cex = .75, 
+     edge.label.color = 'black',
+     edge.curved = T,
+     edge.arrow.size = .3,
+     
+     main = 'Fairy Tale Network',
+     frame = T,
+     layout = layout_nicely)
+```
+
+Wow, that's a lot of overlapping text. It's barely legible. Let's get rid of some of the text. Instead of labeling the edges, let's color code them.
+
+```{r}
+define_link_color <- function(x){
+  if(x == 'is related to'){
+    "#1b9e77"
+  } else if(x == 'is a'){
+    "#d95f02"
+  } else if(x == 'eats'){
+    "#7570b3"
+  }
+}
+
+links <- links %>%
+  mutate(color = sapply(type, define_link_color))
+
+net <- graph_from_data_frame(d = links,
+                             vertices = nodes)
+
+
+set.seed(1234)
+plot(net,
+     vertex.label = V(net)$name,
+     vertex.label.cex = .75,
+     vertex.size = 5,
+     vertex.label.color ='black',
+     vertex.label.dist = 1.1,
+     
+     #we named the edge attribute 'color'
+     #so the plot automatically colors the edges
+     #however for completeness we will explicitly define 'edge.color'
+     edge.color = E(net)$color,
+     edge.curved = T,
+     edge.arrow.size = .3,
+     
+     main = 'Fairy Tale Network',
+     frame = T,
+     layout = layout_nicely)
+
+legend('bottomleft',
+       title = 'Link Types',
+       legend = c('is related to', 'is a', 'eats'),
+       lty = 1,
+       lwd = 2,
+       col = c("#1b9e77", "#d95f02", "#7570b3"),
+       cex = .75)
+```
+
+That's a lot better. This is a small network of only 16 nodes. Graphs can easily get to hundreds and thousands of nodes. If we ever visualize that many nodes, then labeling every node will also become unreasonable. A slightly better approach is to color code the nodes by an attribute. Let's color code these nodes by `type`.
+
+```{r}
+define_node_color <- function(x){
+  if(x == 'Character'){
+    "#a6cee3"
+  } else if(x == 'Species'){
+    "#1f78b4"
+  } else if(x == 'Role'){
+    "#b2df8a"
+  } else if(x == 'Food'){
+    "#33a02c"
+  } else if(x == 'Food & Species'){
+    "#fb9a99"
+  }
+}
+
+nodes <- nodes %>%
+  mutate(color = sapply(type, define_node_color))
+
+net <- graph_from_data_frame(d = links,
+                             vertices = nodes)
+
+
+set.seed(1234)
+plot(net,
+     #we named the node attribute 'color'
+     #so the plot automatically colors the nodes
+     #however for completeness we will explicitly define 'edge.color'
+     vertex.color = V(net)$color,
+     vertex.label = NA,
+     vertex.size = 5,
+     vertex.label.color ='black',
+     vertex.label.dist = 1.1,
+     
+     edge.color = E(net)$color,
+     edge.curved = T,
+     edge.arrow.size = .3,
+     
+     main = 'Fairy Tale Network',
+     frame = T,
+     layout = layout_nicely)
+
+legend('bottomleft',
+       title = 'Link Types',
+       legend = c('is related to', 'is a', 'eats'),
+       lty = 1,
+       lwd = 2,
+       col = c("#1b9e77", "#d95f02", "#7570b3"),
+       cex = .75)
+
+legend('topleft', 
+       title = 'Node Types',
+       legend = c('Character', 'Species', 'Role', 'Food', 'Food & Species'),
+       pch = rep(21, 5),
+       pt.bg = c("#a6cee3", "#1f78b4", "#b2df8a", "#33a02c", "#fb9a99"),
+       pt.cex = 1,
+       col = rep('black', 5),
+       cex = .75
+       )
+```
+
+Ok, so we now have a pretty cool graph visualization. Unfortunately, it is a little hard to read. Again, once we get to hundreds and thousands of nodes, then the visualization will be nearly impossible to read unless there is some kind of natural grouping. 
+
+Visualizing networks are cool, but a graph's strength isn't the neat visuals you can create (but might can't read). It's strength lies in the questions you can ask it.
+
+## Query Network Part 1
+
+## Query Network Part 2
+
