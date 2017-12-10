@@ -1,7 +1,7 @@
 ---
 title: "Playing With Graphs"
 author: "beemyfriend"
-date: "November 25, 2017"
+date: "December 10, 2017"
 output: html_document
 ---
 
@@ -43,13 +43,14 @@ textrect(mid = pos[1,], radx = my_edge_length, rady = my_edge_length, lab = 'ID:
 textrect(mid = pos[7,], radx = my_edge_length, rady = my_edge_length, lab = 'ID: person_2\nNAME: "Johnny"')
 textrect(mid = pos[6,], radx = my_edge_length, rady = my_edge_length, lab = 'ID: object_1\nNAME: "Apple"')
 ```
+
 Both the nodes and edges of the graph contain information and that is all we really need. It's incredible!
 
 Graph databases are really cool because the focus more on connections (edges) than they do on any particular object (nodes). Relational databases care more about observations while graph data bases care more about how different observations are connected.
 
 Jason mentioned a [free online tutorial](https://github.com/krlawrence/graph) made by [Kelvin Lawrence](https://twitter.com/gfxman) explaining how to query graphs with the `Gremlin` graph querying language. It's incredibly fun and intuitive. 
 
-I'm writing this article as an exploration of graphs within R. I'm going to go throught this by first creating a network graph with `igraph`, then visualizing the network to get a general idea of what we are working with, I will then show how to query the graph with `igraph`'s functions. After I show how to query the graph with `igraph` I will show how an improved query system based on the `Gremlin` graph querying library. 
+I'm writing this article as a first in a series on exploring graphs within R. Today I'm just going to show how to make a network by using a silly example. I will then visualize it. While visualizing a network isn't the purpose of this series, it does give us a better understanding of how neworks work. 
 
 ## Networking Fairy Tales
 
@@ -96,7 +97,7 @@ eats_people <- c('Giant', 'Big Bad Wolf', 'Grandma')
 bear_family <- c('Mama Bear', 'Papa Bear', 'Baby Bear')
 red_family <- c('Red Riding Hood', 'Grandma')
 ```
-Now let's make a simple tibble that connects each person to a "Person" node. For exampe: 
+Now let's make a simple tibble that connects each person to a "Person" node. For example: 
 
 1. **Red Riding Hood**
 2. **is a**
@@ -169,7 +170,7 @@ links <- ls()[ls() %>% str_detect('(?<!create)_links')] %>%
 links
 ```
 
-We will need to reaarange the *links* tibble to stay consistent to with the order of "From Node", "To Node", "Attributes..." order that `igraph` expects.
+We will need to rearrange the *links* tibble to stay consistent to with the order of "From Node", "To Node", "Attributes..." order that `igraph` expects.
 
 ```{r}
 links <- links %>% select(item1, item2, type)
@@ -348,9 +349,4 @@ legend('topleft',
 
 Ok, so we now have a pretty cool graph visualization. Unfortunately, it is a little hard to read. Again, once we get to hundreds and thousands of nodes, then the visualization will be nearly impossible to read unless there is some kind of natural grouping. 
 
-Visualizing networks are cool, but a graph's strength isn't the neat visuals you can create (but might can't read). It's strength lies in the questions you can ask it.
-
-## Query Network Part 1
-
-## Query Network Part 2
-
+Visualizing networks are cool, but a graph's strength isn't the neat visuals you can create (but maybe can't read). It's strength lies in the questions you can ask it. In my next article we will create a bigger graph network and show how we can *traverse* or query a graph data structure 
