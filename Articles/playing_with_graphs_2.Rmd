@@ -1,0 +1,282 @@
+---
+title: 'Playing with Graphs: Part 2'
+author: "beemyfriend"
+date: "December 14, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Let's load some packages that we know we'll need:
+
+```{r loadingPackages, results = 'hide', message = F}
+packages <- c('dplyr', 'stringr', 'tidyr', 'igraph')
+sapply(packages, library, character.only =T)
+```
+
+This will be the last time I use a made-up example for these articles on graphs. Below we'll create a `tibble` where each observation includes a person, that person's friends, and the type of televison that person likes to watch. While this fake dataset is pretty ugly, it actually looks a lot like data I see in the wild. It's not uncommon to see a dataset where one of the variables is actually a `csv`:
+
+```{r creatingSocialData}
+social_network <- tibble(
+  person = c(
+    'Darnold',
+    'Josh',
+    'Ridley',
+    'Rhonda',
+    'Tremaine',
+    'Miesha'
+  ),
+  friendsWith = c(
+    "Lamar;Jackson;Steve;Logan;Miesha",
+    "Billy;Mayerfield;Allen;Todd;Rhonda",
+    'Marcell;Ozuna;Brandon;Morrow;Josh',
+    "Darnold;Ridley;Marcell;Allen;Tremaine;Logan",
+    "Baker;Mayerfield;Ridley;Josh",
+    "Logan;Todd;Brandon;Macell;Baker"
+  ),
+  likesWatching = c(
+    "MMA;Boxing;Kickball;Football;Rugby",
+    "Table Tennis;Football;WWF;Rugby",
+    "Underwater Basket Weaving;Monster Trucks;Rugby",
+    "My Little Pony;Football;MMA;Table Tennis;Rugby",
+    "Underwater Basket Weaving",
+    "Rugby;MMA;The Cooking Channel"
+  )
+)
+```
+
+`tidyr` is awesome in cases like this because unnesting this data naturally creates a linked pairing. Let's create two links list - one that creates **person-friend** links and another that creates **person-likes** links. We will then combine them in a single **links** variable to use for our network.
+
+```{r creatingSocialLinks}
+person_friends <- social_network %>%
+  select(person, friendsWith) %>%
+  mutate(friendsWith = str_split(friendsWith, ';')) %>%
+  unnest() %>%
+  mutate(type = 'is friends with') %>%
+  rename(source = person,
+         target = friendsWith)
+
+person_likes <- social_network %>%
+  select(person, likesWatching) %>%
+  mutate(likesWatching = str_split(likesWatching, ';')) %>%
+  unnest() %>%
+  mutate(type = 'likes to watch') %>%
+  rename(source = person,
+         target = likesWatching)
+
+links <- rbind(person_likes, person_friends) %>%
+  distinct()
+```
+
+Let's take a look at **links**:
+
+```{r echo = F}
+knitr::kable(links %>% sample_n(10))
+```
+
+We can naturally derive a node list from this link list by pulling all the unique values from the *source* and *target* columns. We will also provide each node with a type and a color. They type is an important attribute to add in larger network graphs because we can filter the nodes by type and then filter the to only nodes we want to query and ignore the nodes we know we won't use in the query. This helps with regards to performance. 
+
+```{r creatingSocialNodes}
+create_nodes <- function(vect, type, color){
+  tibble(
+    name = vect %>% unique,
+    type = type,
+    color = color
+  )%>%
+    filter(!is.na(name))
+}
+
+people_nodes <- create_nodes(c(person_friends$source, person_friends$target) %>% unique, 
+                             type = 'Person', 
+                             color = 'skyblue')
+
+tv_nodes <- create_nodes(person_likes$target %>% unique, 
+                         type = "Televison", 
+                         color = 'purple')
+
+nodes <- rbind(people_nodes, tv_nodes)
+```
+
+Let's take a look at the nodes we created:
+
+```{r echo = F}
+knitr::kable(sample_n(nodes, 10))
+```
+
+We will use `igraph`'s `graph_from_data_frame()` to create the network and then we will plot the network with the a `plot()` function we will use quite a lot:
+
+```{r plotNetwork}
+net <- igraph::graph_from_data_frame(d = links, 
+                                     directed =  F, 
+                                     vertices = nodes)
+
+create_net_plot <- function(net, 
+                            vertex.size = 4,
+                            edge.arrow.size = .3,
+                            vertex.label.cex = .65,
+                            vertex.label.color ='black',
+                            vertex.label.dist = 1.1,
+                            main = 'Social Network',
+                            frame = T,
+                            layout = layout_nicely){
+  
+  set.seed(1234)
+  plot(net,
+       vertex.size = vertex.size,
+       edge.arrow.size = edge.arrow.size,
+       vertex.label.cex = vertex.label.cex,
+       vertex.label.color = vertex.label.color,
+       vertex.label.dist = vertex.label.dist,
+       main = main,
+       frame = frame,
+       layout =  layout)
+}
+
+create_net_plot(net)
+```
+
+Sometimes we will want to only see the links of a particular node or nodes. Let's create a function to do this and then look for everyone that likes watching *MMA*:
+
+```{r findingLinks}
+find_links <- function(nodes, links, type = NA){
+  if(!is.na(type)){
+    links <- links %>%
+      filter(type == type)
+  }
+  
+  links <- links %>%
+    filter(
+      source %in% nodes | target %in% nodes
+    )
+  links
+}
+
+likes_mma <- find_links(nodes = 'MMA', links = links)
+```
+
+We can repeat this process to find the links of the nodes connected to *MMA*
+
+```{r}
+connection_to_likes_mma <- find_links(nodes = likes_mma$source, links)
+```
+
+Now let's consolidate the link list into one **sublinks** variable:
+
+```{r}
+mma_sublinks <- rbind(likes_mma, connection_to_likes_mma) %>%
+  distinct()
+```
+
+Now, we will need to get all the node information for the nodes connected to the links we found:
+
+```{r}
+find_nodes <- function(nodes, links){
+  linked <- c(
+    links$source,
+    links$target
+  ) %>%
+    unique()
+
+  nodes %>%
+    filter(name %in% linked) %>%
+    distinct()
+}
+mma_subnodes <- find_nodes(nodes, mma_sublinks)
+```
+
+Now, let's see the subnetwork
+
+```{r mmaSubnet}
+
+mma_subnet <- igraph::graph_from_data_frame(mma_sublinks, F, mma_subnodes)
+create_net_plot(mma_subnet)
+```
+
+Two things that stand out in this subnetwork are:
+
++ **Rugby** is connected to all of the same people as **MMA** which could lead us to believe that if someone likes **Rugby** then he or she will probably like **MMA**
++ **Logan** is connected to all of the same people as **MMA** then there is a strong chance that Logan might also like watching **MMA**
+
+Let's explore this futher by looking at the connections these nodes have and the connections of those connections. 
+
+```{r rugbySublinks}
+find_links_x2 <- function(query, links){
+  links_query <- find_links(nodes = query, 
+                            links = links)
+  
+  connection_to_links_query <- find_links(nodes = links_query$source, 
+                                          links)
+  
+  query_sublinks <- rbind(links_query, 
+                          connection_to_links_query) %>%
+    distinct()
+}
+
+create_network <- function(subLinks, nodes){
+    subNodes <- find_nodes(nodes, 
+                           subLinks)
+  
+    subNet <- igraph::graph_from_data_frame(subLinks, 
+                                            F,
+                                            subNodes)
+}
+
+find_links_x2('Rugby', links) %>%
+  create_network(nodes) %>%
+  create_net_plot()
+
+find_links_x2('Logan', links) %>%
+  create_network(nodes) %>%
+  create_net_plot()
+```
+
+Let's explore how **Rugby** and **MMA** are different
+
+```{r}
+different_first_layer <- function(wantNodes, notNodes, links){
+  wantLinks <- find_links(wantNodes, links)
+  notLinks <- find_links(notNodes, links)
+  query <- find_links_x2(wantNodes, links)
+  query %>% 
+    filter(!source %in% (c(notLinks$target, notLinks$source) %>% unique),
+           !target %in% (c(notLinks$target, notLinks$source) %>% unique))
+}
+
+different_first_layer(wantNodes = 'Rugby', 
+                      notNodes = 'MMA', 
+                      links = links) %>%
+  create_network(nodes) %>%
+  create_net_plot()
+```
+
+```{r mmaSecondaryCount}
+get_secondary_link_count <- function(query, links){
+  query_connections <- find_links(query, links)
+  
+  secondary_links <- find_links_x2(query, links) %>%
+    anti_join(query_connections)
+  
+  secondary_nodes <- c(secondary_links$source, secondary_links$target) %>% unique
+  
+
+  secondary_link_counts <- tibble(
+    node = secondary_nodes,
+    connections = sapply(secondary_nodes, function(x){
+      secondary_links %>%
+        filter(
+          (target == x & source %in% secondary_nodes) |
+            (target %in% secondary_nodes & source ==x)
+          ) %>%
+        nrow()
+    })) %>%
+    arrange(desc(connections))
+    
+    secondary_link_counts %>%
+      filter(!node %in% c(query_connections$source, query_connections$target))
+}
+knitr::kable(get_secondary_link_count('MMA', links) %>% head)
+knitr::kable(get_secondary_link_count('Rugby', links) %>% head)
+knitr::kable(get_secondary_link_count('Logan', links) %>% head)
+```
