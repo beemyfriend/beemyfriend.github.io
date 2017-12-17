@@ -1,19 +1,116 @@
 ---
 title: 'Playing with Graphs: Part 2'
 author: "beemyfriend"
-date: "December 14, 2017"
+date: "December 17, 2017"
 output: html_document
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(diagram)
+my_edge_length <- .05
+my_text_size <- 1.3
+set.seed(1234)
 ```
+## Intro
+
+Probably one of the most valuable features of a network graph is the ability to see existing connections. However, a more valuable feature is the ability to see *possible* connections that don't exist yet. There is a lot of value in being able to create logical connections. Facebook is valuable not only because you can see your own friend network, but because it can also suggest new friends to add to your network. Google is not only valuable because it can provide you answers to your questions, but because it can also suggest new ways of asking a question that people similar to you have asked. This article will show us how we can explore a network by not only asking about existing connections, but by also asking about potential connections.
+
+For example, in the below network, we have Persons **A**, **B**, **C**, **D**, and **E** connected by **is friends with** links.
+
+```{r, echo = F}
+openplotmat()
+pos <- coordinates(c(5, 5, 5, 5))
+friend1a <- straightarrow(from = pos[5,], to = pos[9,])
+friend1b <- straightarrow(from = pos[9,], to = pos[5,])
+friend2a <- straightarrow(from = pos[14,], to = pos[9,])
+friend2b <- straightarrow(from = pos[9,], to = pos[14,])
+friend3a <- straightarrow(from = pos[11,], to = pos[9,])
+friend3b <- straightarrow(from = pos[9,], to = pos[11,])
+
+textellipse(mid = pos[9,], radx = my_edge_length, lab = 'A', box.col = 'skyblue')
+textellipse(mid = pos[14,], radx = my_edge_length, lab = 'B', box.col = 'skyblue')
+textellipse(mid = pos[11,], radx = my_edge_length, lab = 'C', box.col = 'skyblue')
+textellipse(mid = pos[5,], radx = my_edge_length, lab = 'D', box.col = 'skyblue')
+textellipse(mid = pos[17,], radx = my_edge_length, lab = 'E', box.col = 'skyblue')
+
+```
+
+Everyone except person **E** is connected directly to someone else. **E** does not have any friends in this network. Person **A** is connected with the most people and is friends with three different people. Persons **B**, **C**, and **D** are all friends with person **A**, but not friends with eachother. In theory, it should be easy to create a friendship link between any pairing of **B**, **C**, and **D** because of their indirect connection via person **A**. It would be difficult to connect person **E** with anyone because of the lack of connection.
+
+Let's add **item 1** to the network. **Item 1** is an object that persons **A**, **B**, **C**, and **E** like.  
+
+
+```{r, echo = F}
+openplotmat()
+pos <- coordinates(c(5, 5, 5, 5))
+friend1a <- straightarrow(from = pos[5,], to = pos[9,])
+friend1b <- straightarrow(from = pos[9,], to = pos[5,])
+friend2a <- straightarrow(from = pos[14,], to = pos[9,])
+friend2b <- straightarrow(from = pos[9,], to = pos[14,])
+friend3a <- straightarrow(from = pos[11,], to = pos[9,])
+friend3b <- straightarrow(from = pos[9,], to = pos[11,])
+like1 <- straightarrow(from = pos[11,], to = pos[7,])
+like2 <- straightarrow(from =pos[14,], to = pos[7,])
+like3 <- straightarrow(from = pos[9,], to = pos[7,])
+like4 <- straightarrow(from = pos[17,], to = pos[7,])
+
+textellipse(mid = pos[9,], radx = my_edge_length, lab = 'A', box.col = 'skyblue')
+textellipse(mid = pos[14,], radx = my_edge_length, lab = 'B', box.col = 'skyblue')
+textellipse(mid = pos[11,], radx = my_edge_length, lab = 'C', box.col = 'skyblue')
+textellipse(mid = pos[5,], radx = my_edge_length, lab = 'D', box.col = 'skyblue')
+textellipse(mid = pos[17,], radx = my_edge_length, lab = 'E', box.col = 'skyblue')
+texthexa(mid = pos[7,], radx = my_edge_length, lab = '1', box.col = 'lightpink')
+```
+
+Now we can see that person **E** is indirectly connected with persons **A**, **B**, and **C**. We can say that there is a reasonable chance that **E** can form a friendship link within the network.
+
+Something else that happened is persons **B** and **C** now have two indirect connections (via person **A** and item **1**). This suggests that they are even more likely to form a successful friendship link. 
+
+```{r, echo = F}
+openplotmat()
+pos <- coordinates(c(5, 5, 5, 5))
+friend1a <- straightarrow(from = pos[5,], to = pos[9,])
+friend1b <- straightarrow(from = pos[9,], to = pos[5,])
+friend2a <- straightarrow(from = pos[14,], to = pos[9,])
+friend2b <- straightarrow(from = pos[9,], to = pos[14,])
+friend3a <- straightarrow(from = pos[11,], to = pos[9,])
+friend3b <- straightarrow(from = pos[9,], to = pos[11,])
+like1 <- straightarrow(from = pos[11,], to = pos[7,])
+like2 <- straightarrow(from =pos[14,], to = pos[7,])
+like3 <- straightarrow(from = pos[9,], to = pos[7,])
+like4 <- straightarrow(from = pos[17,], to = pos[7,])
+want1a <- straightarrow(from = pos[11,], to = pos[14,], lty = 3)
+want1b <- straightarrow(from = pos[14,], to = pos[11,], lty = 3)
+textellipse(mid = pos[9,], radx = my_edge_length, lab = 'A', box.col = 'skyblue')
+textellipse(mid = pos[14,], radx = my_edge_length, lab = 'B', box.col = 'skyblue')
+textellipse(mid = pos[11,], radx = my_edge_length, lab = 'C', box.col = 'skyblue')
+textellipse(mid = pos[5,], radx = my_edge_length, lab = 'D', box.col = 'skyblue')
+textellipse(mid = pos[17,], radx = my_edge_length, lab = 'E', box.col = 'skyblue')
+texthexa(mid = pos[7,], radx = my_edge_length, lab = '1', box.col = 'lightpink')
+
+```
+
+Facebook and LinkedIn are valuable because they have enough information about people that they can accurately suggest links between two people via their friendship network, their professional network, and their interests. These suggestions can be derived by querying network graphs. 
+
+In this article we will explore a simple social network of people, their friends, and the type of television they like watching. We are going to attempt to identify possible connections between nodes. 
+
+## Setup
 
 Let's load some packages that we know we'll need:
 
 ```{r loadingPackages, results = 'hide', message = F}
 packages <- c('dplyr', 'stringr', 'tidyr', 'igraph')
 sapply(packages, library, character.only =T)
+```
+
+We'll also work with some custom function I made to traverse link lists and nodes: 
+
+```{r eval = F}
+devtools::install_github("beemyfriend/tinkR")
+```
+```{r loadingTinkR}
+library(tinkR)
 ```
 
 This will be the last time I use a made-up example for these articles on graphs. Below we'll create a `tibble` where each observation includes a person, that person's friends, and the type of televison that person likes to watch. While this fake dataset is pretty ugly, it actually looks a lot like data I see in the wild. It's not uncommon to see a dataset where one of the variables is actually a `csv`:
@@ -79,14 +176,7 @@ knitr::kable(links %>% sample_n(10))
 We can naturally derive a node list from this link list by pulling all the unique values from the *source* and *target* columns. We will also provide each node with a type and a color. They type is an important attribute to add in larger network graphs because we can filter the nodes by type and then filter the to only nodes we want to query and ignore the nodes we know we won't use in the query. This helps with regards to performance. 
 
 ```{r creatingSocialNodes}
-create_nodes <- function(vect, type, color){
-  tibble(
-    name = vect %>% unique,
-    type = type,
-    color = color
-  )%>%
-    filter(!is.na(name))
-}
+
 
 people_nodes <- create_nodes(c(person_friends$source, person_friends$target) %>% unique, 
                              type = 'Person', 
@@ -105,7 +195,8 @@ Let's take a look at the nodes we created:
 knitr::kable(sample_n(nodes, 10))
 ```
 
-We will use `igraph`'s `graph_from_data_frame()` to create the network and then we will plot the network with the a `plot()` function we will use quite a lot:
+We will use `igraph`'s `graph_from_data_frame()` to create the network and then we will plot the network with the a wrapper of the `plot()` function we will use a lot:
+
 
 ```{r plotNetwork}
 net <- igraph::graph_from_data_frame(d = links, 
@@ -120,9 +211,10 @@ create_net_plot <- function(net,
                             vertex.label.dist = 1.1,
                             main = 'Social Network',
                             frame = T,
-                            layout = layout_nicely){
+                            layout = layout_nicely,
+                            seed = 1234){
   
-  set.seed(1234)
+  set.seed(seed)
   plot(net,
        vertex.size = vertex.size,
        edge.arrow.size = edge.arrow.size,
@@ -137,22 +229,11 @@ create_net_plot <- function(net,
 create_net_plot(net)
 ```
 
-Sometimes we will want to only see the links of a particular node or nodes. Let's create a function to do this and then look for everyone that likes watching *MMA*:
+## Querying
+
+Looking at an entire network can be very unwieldy and difficult to navigate. In order to better understand a network, it is often best to filter the network down to only the nodes we are interested in. **tinkR** has a function called `find_links()` which finds all the links attached to a node or nodes of interest. Let's find all the links attached to the **MMA** node:
 
 ```{r findingLinks}
-find_links <- function(nodes, links, type = NA){
-  if(!is.na(type)){
-    links <- links %>%
-      filter(type == type)
-  }
-  
-  links <- links %>%
-    filter(
-      source %in% nodes | target %in% nodes
-    )
-  links
-}
-
 likes_mma <- find_links(nodes = 'MMA', links = links)
 ```
 
@@ -169,27 +250,15 @@ mma_sublinks <- rbind(likes_mma, connection_to_likes_mma) %>%
   distinct()
 ```
 
-Now, we will need to get all the node information for the nodes connected to the links we found:
+This filtered link list does not have any information about the nodes involved. **tinkR** has a function called `find_nodes()` that pulls all the relevant node information from a master node list 
 
 ```{r}
-find_nodes <- function(nodes, links){
-  linked <- c(
-    links$source,
-    links$target
-  ) %>%
-    unique()
-
-  nodes %>%
-    filter(name %in% linked) %>%
-    distinct()
-}
 mma_subnodes <- find_nodes(nodes, mma_sublinks)
 ```
 
 Now, let's see the subnetwork
 
 ```{r mmaSubnet}
-
 mma_subnet <- igraph::graph_from_data_frame(mma_sublinks, F, mma_subnodes)
 create_net_plot(mma_subnet)
 ```
@@ -199,51 +268,35 @@ Two things that stand out in this subnetwork are:
 + **Rugby** is connected to all of the same people as **MMA** which could lead us to believe that if someone likes **Rugby** then he or she will probably like **MMA**
 + **Logan** is connected to all of the same people as **MMA** then there is a strong chance that Logan might also like watching **MMA**
 
-Let's explore this futher by looking at the connections these nodes have and the connections of those connections. 
+Let's explore this futher by looking at the connections these nodes have and the connections of those connections. The above pattern of finding links of links is a common pattern. I consolidated that pattern into a function called `find_links_n()` which finds links of links **n** times. I've also created a wrapper function called `create_network` that creates a subnetwork directly from a link list:
 
-```{r rugbySublinks}
-find_links_x2 <- function(query, links){
-  links_query <- find_links(nodes = query, 
-                            links = links)
-  
-  connection_to_links_query <- find_links(nodes = links_query$source, 
-                                          links)
-  
-  query_sublinks <- rbind(links_query, 
-                          connection_to_links_query) %>%
-    distinct()
-}
 
-create_network <- function(subLinks, nodes){
-    subNodes <- find_nodes(nodes, 
-                           subLinks)
-  
-    subNet <- igraph::graph_from_data_frame(subLinks, 
-                                            F,
-                                            subNodes)
-}
-
-find_links_x2('Rugby', links) %>%
-  create_network(nodes) %>%
-  create_net_plot()
-
-find_links_x2('Logan', links) %>%
+```{r}
+logan_links <- find_links_n('Logan', links, 2) %>%
   create_network(nodes) %>%
   create_net_plot()
 ```
+```{r echo = F}
+knitr::kable(logan_links)
+```
 
-Let's explore how **Rugby** and **MMA** are different
+**Logan**'s personal network is very similar to the **MMA** network. This strongly suggest that **Logan** would be a person who would like **MMA**, or at least fit in with the community of **MMA** lovers.
+
+
+```{r rugbySublinks}
+rugby_links <- find_links_n('Rugby', links, 2) %>%
+  create_network(nodes) %>%
+  create_net_plot()
+```
+```{r echo = F}
+knitr::kable(rugby_links)
+```
+
+The **Rugby** network, however, is very different from the **MMA** network. While it seems that everyone who likes **MMA** likes **Rugby**, it does not seem that everyone who likes **Rugby** likes **MMA**. 
+
+Let's explore how **Rugby** and **MMA** are different by using **tinkR**'s `different_first_layer()` function. This checks for differences between two indirectly connected nodes and only shows the nodes that are connected to the first node, but not the second:
 
 ```{r}
-different_first_layer <- function(wantNodes, notNodes, links){
-  wantLinks <- find_links(wantNodes, links)
-  notLinks <- find_links(notNodes, links)
-  query <- find_links_x2(wantNodes, links)
-  query %>% 
-    filter(!source %in% (c(notLinks$target, notLinks$source) %>% unique),
-           !target %in% (c(notLinks$target, notLinks$source) %>% unique))
-}
-
 different_first_layer(wantNodes = 'Rugby', 
                       notNodes = 'MMA', 
                       links = links) %>%
@@ -251,32 +304,58 @@ different_first_layer(wantNodes = 'Rugby',
   create_net_plot()
 ```
 
-```{r mmaSecondaryCount}
-get_secondary_link_count <- function(query, links){
-  query_connections <- find_links(query, links)
-  
-  secondary_links <- find_links_x2(query, links) %>%
-    anti_join(query_connections)
-  
-  secondary_nodes <- c(secondary_links$source, secondary_links$target) %>% unique
-  
+**Josh** and **Ridley** are two people who like **Rugby**, but do not like **MMA**. Let's check out their networks to see if either of them are indirectly connected to **MMA**:
 
-  secondary_link_counts <- tibble(
-    node = secondary_nodes,
-    connections = sapply(secondary_nodes, function(x){
-      secondary_links %>%
-        filter(
-          (target == x & source %in% secondary_nodes) |
-            (target %in% secondary_nodes & source ==x)
-          ) %>%
-        nrow()
-    })) %>%
-    arrange(desc(connections))
-    
-    secondary_link_counts %>%
-      filter(!node %in% c(query_connections$source, query_connections$target))
-}
+```{r}
+find_links_n(c('Ridley', 'Josh'), links, 2) %>%
+  create_network(nodes) %>%
+  create_net_plot()
+```
+
+It seems that both **Ridley** and **Josh** are indirectly connected to **MMA** via **Rhonda**. Let's check out **Rhonda**'s network to confirm this:
+
+```{r}
+find_links_n('Rhonda', links, 2) %>%
+  create_network(nodes) %>%
+  create_net_plot()
+```
+
+## Quantifying missing connections
+
+As mentioned before, one of the most important features of a network is identifying potential connections that don't exist yet. We just went through a process of filtering the graph down to nodes and links we think are important. However, looking at multiple network graphs can be exhausting. Sometimes we just want to know what the strongest *"almost"* connections are without having to navigate a plotted graph. We can do this with **tinkR**'s `get_secondary_link_count()` function:
+
+
+```{r eval = F}
+get_secondary_link_count('MMA', links) %>% 
+  head()
+```
+```{r echo = F}
 knitr::kable(get_secondary_link_count('MMA', links) %>% head)
+```
+
+With regards to **MMA** it is definitely worth exploring possible connections to **Rugby**, **Logan**, and **Football**.
+
+
+```{r eval = F}
+get_secondary_link_count('Rugby', links) %>% 
+  head
+```
+```{r echo = F}
 knitr::kable(get_secondary_link_count('Rugby', links) %>% head)
+```
+
+With regards to **Rugby** it is definitely worth exploring possible connections to **Tremaine**, **MMA**, **Football**, and **Logan**.
+
+```{r eval = F}
+get_secondary_link_count('Logan', links) %>% 
+  head
+```
+```{r echo = F}
 knitr::kable(get_secondary_link_count('Logan', links) %>% head)
 ```
+
+With regards to **Logan** it is definitely worth exploring possible connetions to **MMA**, **Rugby**, and **Football**.
+
+## Moving Forward
+
+So far we've learned how to explore networks by manipulating the link lists and node lists. However, we haven't actually learned how to manipulate a true `igraph` network graph. `igraph` is optimized for graph searching and so we should learn how to do that. Also, we haven't been storing any information in the nodes and links other than **type** and **color**. In a future article we will explore how we can store data in the **attributes** of nodes and links.
