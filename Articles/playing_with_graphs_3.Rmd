@@ -10,13 +10,13 @@ knitr::opts_chunk$set(echo = TRUE)
 packages <- c('tidyverse', 'rvest', 'stringr', 'igraph')
 lapply(packages, library, character.only = T)
 
-tv_d <- read_csv('topicPackageLinkTitleAuthorDesc.csv')
+tv_d <- read_csv('../Data/topicPackageLinkTitleAuthorDesc.csv')
 ```
 ## CRAN Task Views
 
 If you check out the CRAN website you will find [a page of curated *task views*](https://cran.rstudio.com/web/views/). These are lists of packages important to particular topics. A topic could be *NaturalLanguageProcessing*, *Finance*, or even *Graphics*. I mined these task views and CRAN for these *topic-package* connections. I'm very grateful for all the task view maintainers who organized these well thought out lists.
 
-This article is how I created and explored a **CRAN Task View Network**. You can find the data [here]( beemyfriend.github.io/Data/topicPackageLinkTitleAuthorDesc.csv)
+This article is how I created and explored a **CRAN Task View Network**. You can find the data [here](../Data/topicPackageLinkTitleAuthorDesc.csv)
 
 ## Creating the CRAN Task View Network
 
