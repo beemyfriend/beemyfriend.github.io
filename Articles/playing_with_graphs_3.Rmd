@@ -1,0 +1,461 @@
+---
+title: "Playing With Graphs 3"
+author: "beemyfriend"
+date: "December 30, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+packages <- c('tidyverse', 'rvest', 'stringr', 'igraph')
+lapply(packages, library, character.only = T)
+
+tv_d <- read_csv('topicPackageLinkTitleAuthorDesc.csv')
+```
+## CRAN Task Views
+
+If you check out the CRAN website you will find [a page of curated *task views*](https://cran.rstudio.com/web/views/). These are lists of packages important to particular topics. A topic could be *NaturalLanguageProcessing*, *Finance*, or even *Graphics*. I mined these task views and CRAN for these *topic-package* connections. I'm very grateful for all the task view maintainers who organized these well thought out lists.
+
+This article is how I created and explored a **CRAN Task View Network**. You can find the data [here]( beemyfriend.github.io/Data/topicPackageLinkTitleAuthorDesc.csv)
+
+## Creating the CRAN Task View Network
+
+```{r packages, eval = F}
+packages <- c('tidyverse', 'rvest', 'stringr', 'igraph')
+lapply(packages, library, character.only = T)
+```
+
+```{r loadData, eval = F}
+tv_d <- read_csv('topicPackageLinkTitleAuthorDesc.csv')
+```
+
+Let's take a look at the data:
+
+```{r showData, echo = F}
+tv_d %>% head(10)
+```
+
+If you explore the data a bit, you might find that some packages and topics share the same name. This will cause problems if we want to represent each package and topic with its own node. Let's go ahead and add some identification information to the package names:
+
+```{r add2Name}
+tv_d <- tv_d %>%
+  mutate(package = str_c(package, ' (package)'))
+```
+
+Let's create an edge list connecting packages to their topics:
+
+```{r createLinks}
+pt_links <- tv_d %>%
+  group_by(topic, package) %>%
+  nest() %>% 
+  select(-data) %>%
+  rename(source = topic,
+         target = package) %>%
+  mutate(label = 'includes')
+```
+
+Let's take a look at the edge list we created:
+
+```{r showLinks, echo = F}
+knitr::kable(pt_links %>% head)
+```
+
+Now let's create the node list. The nodes we create will all have a *name* property that will be unique to each node, a *label* to identify the type of node it is, a *color* to show graphically, and *data* that is unique to that particular node type.  
+
+```{r createNodes}
+#we don't have unique data for the topics
+#but we still need to create a data column
+#for when we bind all the nodes together
+t_nodes <- tv_d %>%
+  mutate(placeholder = 'fake') %>%
+  select(topic, placeholder) %>%
+  distinct() %>%
+  group_by(topic) %>%
+  nest() %>%
+  mutate(label = 'topic',
+         color = '#7570b3') %>%
+  rename(name = topic)
+
+p_nodes <- tv_d %>%
+  select(-topic) %>%
+  group_by(package) %>%
+  nest() %>%
+  mutate(label = 'package',
+         color = '#d95f02',
+         data = lapply(data, distinct)) %>%
+  rename(name = package)
+
+pt_nodes <- rbind(p_nodes, t_nodes) %>%
+  select(name, label, color, data)
+```
+
+Let's take a look at these  nodes:
+
+```{r showNodes, echo = F}
+rbind(pt_nodes%>% head, pt_nodes %>% tail)
+```
+
+Now let's create a network and take a look at what kind of mess comes out:
+
+```{r createNetwork}
+pt_network <- graph_from_data_frame(pt_links, T, pt_nodes)
+
+
+set.seed(1234)
+plot(
+  pt_network,
+  vertex.size = 3,
+  vertex.label = sapply(seq_along(V(pt_network)), function(i){
+    if(V(pt_network)$label[i] == 'topic'){
+      V(pt_network)$name[i]
+    } else {
+      NA
+    }
+  }),
+  main = 'R CRAN Task View Network',
+  vertex.label.cex = .65,
+  vertex.label.color = 'black',
+  vertex.label.dist = 1.1,
+  edge.label = NA,
+  edge.arrow.size = .25
+  )
+```
+
+## Exploring the CRAN Task View Network
+
+Now that we have a network graph set up, let's play with some of the tools `igraph` provides to explore networks:
+
+The `degree()` function counts all the links attached to a node. We can specify whether or not we want to only count links that go *in* to the node, links that go *out* of the node, or *all* of the links. The default is all:
+
+```{r exploreDegree}
+ptn_degree <- degree(pt_network)
+
+ptn_degree %>% head
+```
+
+You can sort this list to find the name of the node with the most connections:
+
+```{r topDegree}
+top_degree <- ptn_degree %>% 
+  sort(T) %>% 
+  names() %>% 
+  .[1]
+
+top_degree
+```
+
+The `ego()` function finds all the nodes within a selected distance of a node of interest. Let's find all the nodes within 2 edge connections from `r top_degree`:
+
+```{r topEgo}
+top_ego <- ego(pt_network, 2, top_degree)
+
+top_ego
+```
+
+The `induced_subgraph()` function filters down a network graph down to a subgraph that only contains nodes of interest. Let's create a subgraph from the `r top_degree` ego node list:
+
+```{r topEgoNet}
+top_ego_net <- induced_subgraph(pt_network, top_ego[[1]])
+
+set.seed(1234)
+plot(top_ego_net,
+     vertex.size = 3,
+     vertex.label = sapply(seq_along(V(top_ego_net)), function(i){
+       if(V(top_ego_net)$label[i] == 'topic'){
+         V(top_ego_net)$name[i]
+       } else {
+         NA
+       }
+     }),
+     main = 'R CRAN Task View: Topic with most packages Subgraph',
+     vertex.label.cex = .65,
+     vertex.label.color = 'black',
+     vertex.label.dist = 1.1,
+     edge.label = NA,
+     edge.arrow.size = .25)
+```
+
+This subgraph points out something important -- the `r top_degree` subnetwork includes packages that are unique to `r top_degree`. That is, most packages in the `r top_degree` topic don't belong to any other topics. The purpose of this article is to explore connections, so let's only include package nodes that have more than 1 degree. That is, only include packages that belong to more than one topic:
+
+```{r createGT1Net}
+gt1_deg_net <- induced_subgraph(pt_network, V(pt_network)[ptn_degree > 1])
+```
+
+Now that we've exluded packages that belong to only one topic we should see what topic has the highest degree:
+
+```{r gt1Dgree}
+new_top_degree <- degree(gt1_deg_net) %>% 
+  sort(T) %>%
+  names() %>% 
+  .[1]
+
+new_top_degree
+```
+
+Let's find the subgraph for `r new_top_degree`:
+
+```{r gt1TopEgo}
+new_top_ego <- ego(gt1_deg_net, 2, new_top_degree)
+new_top_ego_net <- induced_subgraph(gt1_deg_net, new_top_ego[[1]])
+
+plot(new_top_ego_net,
+     vertex.size = 3,
+     vertex.label = sapply(seq_along(V(new_top_ego_net)), function(i){
+       if(V(new_top_ego_net)$label[i] == 'topic'){
+         V(new_top_ego_net)$name[i]
+       } else {
+         NA
+       }
+     }),
+     main = 'R CRAN Task View: Most Connected Topic Subgraph',
+     vertex.label.cex = .65,
+     vertex.label.color = 'black',
+     vertex.label.dist = 1.1,
+     edge.label = NA,
+     edge.arrow.size = .25)
+```
+
+The `ego()` function can take look at the ego of more than 1 nodes:
+
+```{r gt1Top2Degree}
+top2_degree <- degree(gt1_deg_net) %>%
+  sort(T) %>%
+  names() %>%
+  .[1:2]
+
+top2_ego <- ego(gt1_deg_net, order = 2, top2_degree)
+
+top2_ego
+
+top2_ego_net <- induced_subgraph(gt1_deg_net, top2_ego %>% unlist %>% names() %>% unique)
+
+set.seed(1234)
+plot(top2_ego_net,
+     vertex.size = 3,
+     vertex.label = sapply(seq_along(V(top2_ego_net)), function(i){
+       if(V(top2_ego_net)$label[i] == 'topic'){
+         V(top2_ego_net)$name[i]
+       } else {
+         NA
+       }
+     }),
+     main = 'R CRAN Task View: Top 2 Connected Topics Subgraph',
+     vertex.label.cex = .65,
+     vertex.label.color = 'black',
+     vertex.label.dist = 1,
+     edge.label = NA,
+     edge.arrow.size = .25)
+```
+
+The `all_shortest_paths()` function can be used if you want to see the easiest/shortest path that connects two nodes. Let's see the quickest way to connect `r str_c(top2_degree, ' and ')`:
+
+```{r gt1Top2Connection}
+top2_connection <- all_shortest_paths(top2_ego_net, 
+                                      from = top2_degree[1], 
+                                      to = top2_degree[2],
+                                      mode = 'all')
+
+top2_connection$res
+
+connection_nodes <- top2_connection$res %>%
+  unlist() %>%
+  names() %>%
+  unique()
+```
+
+Let's visualize this connection:
+
+```{r gt1Top2ConnectionNet}
+  
+top2_connection_net <- induced_subgraph(gt1_deg_net, connection_nodes)
+
+set.seed(1234)
+plot(top2_connection_net,
+     vertex.size = 5,
+     main = 'R CRAN Task View: Top 2 Connected Topics Shortest Path',
+     vertex.label = V(top2_connection_net)$name,
+     vertex.label.cex = .65,
+     vertex.label.color = 'black',
+     vertex.label.dist = 1,
+     edge.arrow.size = 1,
+     edge.label.cex = .5
+     )
+```
+
+
+## Adding Authors to the Cran Task View Network
+
+We just explored how packages are connected to topics. We can do better. The packages have authors. If we can connect authors to their papers we can indirectly figure out who the most prolific authors are for a given topic. Let's update our network:
+
+```{r}
+#Most of the time, but not all the time
+#multiple authors are seperated by commmas
+#so we will simply do a str_split(',')
+#the below author parser is far from perfect 
+author_links <- tv_d %>%
+  group_by(package, pAuthor) %>%
+  nest() %>%
+  mutate(pAuthor = lapply(pAuthor, function(x){
+      x%>%
+        #sometimes ', inc' and `, llc' will throw off the parser
+        str_replace_all(regex('\\[.+\\]|, inc|, llc', ignore_case = T), '') %>%
+        str_split(',') %>%
+        unlist() %>%
+        str_trim
+    })) %>%
+  unnest(pAuthor) %>%
+  rename(source = pAuthor,
+         target = package) %>%
+  mutate(label = 'wrote')
+
+author_nodes <- author_links %>%
+  group_by(source) %>%
+  count(sort = T) %>%
+  mutate(label = 'author',
+         color = '#1b9e77') %>%
+  rename(name = source) %>%
+  group_by(name, label, color) %>%
+  nest()
+
+pta_nodes <- rbind(p_nodes, author_nodes, t_nodes)
+
+pta_links <- rbind(pt_links, author_links)
+
+pta_net <- graph_from_data_frame(pta_links, F, pta_nodes) %>%
+  induced_subgraph(V(.)[degree(.) > 1])
+
+set.seed(1234)
+plot(pta_net,
+     vertex.size = 3,
+     vertex.label = NA,
+     main = 'R CRAN Task View Network: Authors included',
+     vertex.label.cex = .65,
+     vertex.label.color = 'black',
+     vertex.label.dist = 1,
+     edge.label = NA,
+     edge.arrow.size = .25)
+```
+
+Let's explore the top authors by finding the *degree* of all the author nodes:
+
+```{r}
+author_degrees <- pta_net %>%
+  degree(V(.)[V(.)$label == 'author']) %>%
+  sort(T)
+
+author_degrees %>%
+  head(10)
+```
+
+I'm relatively new to the R community, so maybe you recognize more of the top authors than I do. To be honest, I only recognize **Hadley Wickham** and **RStudio**. Let's take a look to see how **Hadley Wickham** and **Kurt Hornik** are connected:
+
+```{r}
+#let's only look at package and author connections
+pa_net <- pta_net %>%
+  induced_subgraph(V(.)[V(.)$label != 'topic'])
+
+hw_kh_nodes <- all_shortest_paths(pa_net,
+                                'Hadley Wickham',
+                                'Kurt Hornik',
+                                'all') %>%
+  .$res %>%
+  unlist() %>%
+  names()
+
+hw_kh_net <- induced_subgraph(pa_net, hw_kh_nodes)
+
+set.seed(43)
+plot(hw_kh_net,
+     vertex.size = 8,
+     main = 'R CRAN Task View: Connecting H. Wickham and K. Hornik',
+     vertex.label = V(hw_kh_net)$name,
+     vertex.label.cex = 1,
+     vertex.label.color = 'black',
+     vertex.label.dist = 1.5,
+     edge.arrow.size = 1,
+     edge.label.cex = .5
+     )
+```
+
+Now Let's take a look to see how all these top ten authors are connected:
+
+```{r}
+top10_author_nodes <- author_degrees %>%
+  head(10) %>%
+  names() %>%
+  lapply(function(x){
+    all_shortest_paths(pa_net,
+                       x,
+                       author_degrees %>% head(10),
+                       mode = 'all') %>%
+      .$res
+  }) %>% 
+  unlist() %>%
+  names() %>%
+  unique()
+
+top10_author_net <- induced_subgraph(pa_net, top10_author_nodes)
+
+set.seed(1234)
+plot(top10_author_net,
+     main = 'R CRAN Task View Network: Top10 Author Subgraph',
+     
+     vertex.size = 3,
+     vertex.label = sapply(seq_along(V(top10_author_net)), function(i){
+       if(V(top10_author_net)$label[i] == 'author'){
+         V(top10_author_net)$name[i]
+       } else {
+         NA
+       }
+     }),
+     vertex.label.cex = .45,
+     vertex.label.color = 'black',
+     vertex.label.dist = 1,
+     edge.label = NA,
+     edge.arrow.size = .25
+     )
+
+  
+```
+
+The network formed by trying to connect the top ten most prolific package authors (at least within our task view network) has exposed two distinct groups of authors. It seems that **Romain Francois** and **Duncan Murdoch** are the two authors connecting these two groups. Let's explore different ways to confirm their centrality within this network.
+
+The `betweeness()` function measures how central a node is with regards to all simple paths between all nodes. That is, if we were to find all the shortest paths between every node and every other node, the nodes with the higher *betweeness* measurment would show up in most of those paths.
+
+```{r}
+top10_network_betweenness <- betweenness(top10_author_net) %>%
+  sort(T)
+
+top10_network_betweenness %>%
+  head(10)
+```
+Let's see if this stays true for the entire `pa_net`:
+
+```{r}
+pa_net_betweenness <- betweenness(pa_net) %>%
+  sort(T) 
+
+pa_net_betweenness %>%
+  head(25)
+```
+
+`Duncan Murdoch` and `Romain Francois` are actually ranked pretty high with top-25 betweenness measurements for the entire `task view network`. With `r V(pa_net) %>% length` unique nodes, being a top-25 node means that they are in the `r 100 - (25/(V(pa_net) %>% length))` percentile of most central nodes. 
+
+A quick google search will show that **Duncan Murdoch** and **Romain Francois** have a pretty strong presence in the R world. The *betweenness* centrality measurement was how I, an ignorant newcomer, identified that they were people worth exploring. The more traditional method of total number of packages authored would not have highlighted how important these two are. Indeed, **Romain Francois** only has 9 which would have put him tied to 30th most prolific author of the network and **Duncan Murdoch** only has 6 which would have him tied for 61st most prolific author. 
+
+When it comes to networks, the number of connections a node has doesn't necessarily indicate how important that node is. The number of paths that require that node might actually be a more important metric. 
+
+The `page_rank()` function is another way to calculate centrality of a network. It is supposed to simulate searching - when someone searches for something on google, he or she rarely searches past the first page of hits. "Page" refers to the algorithm's creator Larry Page:
+
+```{r}
+pa_net_page_rank <- page_rank(pa_net)$vector %>% 
+  sort(T) 
+
+pa_net_page_rank %>%
+  head(10)
+```
+
+
+## Looking forward
+
+There is a lot more information available in the CRAN task view network. For instance, each package has a description field. I plan on using tidy text mining tools to explore this network even further by using this description field.

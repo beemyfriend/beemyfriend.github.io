@@ -8,7 +8,7 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(diagram)
-my_edge_length <- .05
+my_edge_length <- .05zz
 my_text_size <- 1.3
 set.seed(1234)
 ```
