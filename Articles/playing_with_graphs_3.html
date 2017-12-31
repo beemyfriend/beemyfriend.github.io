@@ -133,23 +133,25 @@ $(document).ready(function () {
 <h2>Creating the CRAN Task View Network</h2>
 <pre class="r"><code>packages &lt;- c('tidyverse', 'rvest', 'stringr', 'igraph')
 lapply(packages, library, character.only = T)</code></pre>
-<pre class="r"><code>tv_d &lt;- read_csv('topicPackageLinkTitleAuthorDesc.csv')</code></pre>
+<pre class="r"><code>tv_d &lt;- read_csv('topicPackageLinkTitleAuthorDesc.csv') </code></pre>
 <p>Let’s take a look at the data:</p>
+<pre class="r"><code>tv_d %&gt;% 
+  head(10)</code></pre>
 <pre><code>## # A tibble: 10 x 6
-##    package                                                      link
-##      &lt;chr&gt;                                                     &lt;chr&gt;
-##  1     arm    https://cran.r-project.org/web/packages/arm/index.html
-##  2     arm    https://cran.r-project.org/web/packages/arm/index.html
-##  3   BACCO  https://cran.r-project.org/web/packages/BACCO/index.html
-##  4  bayesm https://cran.r-project.org/web/packages/bayesm/index.html
-##  5  bayesm https://cran.r-project.org/web/packages/bayesm/index.html
-##  6  bayesm https://cran.r-project.org/web/packages/bayesm/index.html
-##  7  bayesm https://cran.r-project.org/web/packages/bayesm/index.html
-##  8  bayesm https://cran.r-project.org/web/packages/bayesm/index.html
-##  9  bayesm https://cran.r-project.org/web/packages/bayesm/index.html
-## 10  bayesm https://cran.r-project.org/web/packages/bayesm/index.html
+##    package                    topic
+##      &lt;chr&gt;                    &lt;chr&gt;
+##  1     arm                 Bayesian
+##  2     arm           SocialSciences
+##  3   BACCO                 Bayesian
+##  4  bayesm                 Bayesian
+##  5  bayesm                  Cluster
+##  6  bayesm            Distributions
+##  7  bayesm             Econometrics
+##  8  bayesm HighPerformanceComputing
+##  9  bayesm           MedicalImaging
+## 10  bayesm             Multivariate
 ## # ... with 4 more variables: pTitle &lt;chr&gt;, pDescription &lt;chr&gt;,
-## #   pAuthor &lt;chr&gt;, topic &lt;chr&gt;</code></pre>
+## #   pAuthor &lt;chr&gt;, link &lt;chr&gt;</code></pre>
 <p>If you explore the data a bit, you might find that some packages and topics share the same name. This will cause problems if we want to represent each package and topic with its own node. Let’s go ahead and add some identification information to the package names:</p>
 <pre class="r"><code>tv_d &lt;- tv_d %&gt;%
   mutate(package = str_c(package, ' (package)'))</code></pre>
@@ -292,7 +294,7 @@ top_degree</code></pre>
 
 top_ego</code></pre>
 <pre><code>## [[1]]
-## + 295/2847 vertices, named, from 1dc0a92:
+## + 295/2847 vertices, named, from 93414c9:
 ##   [1] Survival                       bayesSurv (package)           
 ##   [3] DPpackage (package)            MCMCpack (package)            
 ##   [5] BayHaz (package)               BMA (package)                 
@@ -364,7 +366,7 @@ top2_ego &lt;- ego(gt1_deg_net, order = 2, top2_degree)
 
 top2_ego</code></pre>
 <pre><code>## [[1]]
-## + 118/521 vertices, named, from b5c3a8b:
+## + 118/521 vertices, named, from 654eda4:
 ##   [1] Multivariate                bayesm (package)           
 ##   [3] MCMCpack (package)          Hmisc (package)            
 ##   [5] MNP (package)               monomvn (package)          
@@ -378,7 +380,7 @@ top2_ego</code></pre>
 ## + ... omitted several vertices
 ## 
 ## [[2]]
-## + 91/521 vertices, named, from b5c3a8b:
+## + 91/521 vertices, named, from 654eda4:
 ##  [1] TimeSeries               BAYSTAR (package)       
 ##  [3] ensembleBMA (package)    bspec (package)         
 ##  [5] bsts (package)           dlm (package)           
@@ -417,11 +419,11 @@ plot(top2_ego_net,
 
 top2_connection$res</code></pre>
 <pre><code>## [[1]]
-## + 3/188 vertices, named, from e945d42:
+## + 3/188 vertices, named, from b0c9463:
 ## [1] Multivariate  mAr (package) TimeSeries   
 ## 
 ## [[2]]
-## + 3/188 vertices, named, from e945d42:
+## + 3/188 vertices, named, from b0c9463:
 ## [1] Multivariate   tsfa (package) TimeSeries</code></pre>
 <pre class="r"><code>connection_nodes &lt;- top2_connection$res %&gt;%
   unlist() %&gt;%

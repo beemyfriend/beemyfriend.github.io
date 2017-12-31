@@ -10,7 +10,8 @@ knitr::opts_chunk$set(echo = TRUE)
 packages <- c('tidyverse', 'rvest', 'stringr', 'igraph')
 lapply(packages, library, character.only = T)
 
-tv_d <- read_csv('../Data/topicPackageLinkTitleAuthorDesc.csv')
+tv_d <- read_csv('../Data/topicPackageLinkTitleAuthorDesc.csv') %>%
+  select(package, topic, pTitle, pDescription, pAuthor, link)
 ```
 ## CRAN Task Views
 
@@ -26,13 +27,14 @@ lapply(packages, library, character.only = T)
 ```
 
 ```{r loadData, eval = F}
-tv_d <- read_csv('topicPackageLinkTitleAuthorDesc.csv')
+tv_d <- read_csv('topicPackageLinkTitleAuthorDesc.csv') 
 ```
 
 Let's take a look at the data:
 
-```{r showData, echo = F}
-tv_d %>% head(10)
+```{r showData}
+tv_d %>% 
+  head(10)
 ```
 
 If you explore the data a bit, you might find that some packages and topics share the same name. This will cause problems if we want to represent each package and topic with its own node. Let's go ahead and add some identification information to the package names:
