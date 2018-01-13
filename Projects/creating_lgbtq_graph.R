@@ -25,6 +25,21 @@ genre_catch <- function(x, rx, type){
 }
 
 lgbtq <- lgbtq %>%
+  group_by(mTitle) %>%
+  nest %>%
+  mutate(data = lapply(seq_along(data), function(i){
+    d = .$data[[i]]
+    t = .$mTitle[i]
+    if(d %>% nrow > 1){
+      d %>% 
+        mutate(movie = sapply(seq_along(desc), function(j){
+          str_c(t, ' (movie) ', j)
+        }))
+    } else {
+      d %>%
+        mutate(movie = str_c(t, ' (movie)'))
+    }})) %>% 
+  unnest() %>%
   mutate(genres = sapply(desc, function(x){
     comedy = genre_catch(x, 'comedy|comedic|humor', 'comedy')
     horror = genre_catch(x, 'horror', 'horror')
@@ -40,8 +55,7 @@ lgbtq <- lgbtq %>%
     } else {
       genres
     }
-  }),
-  mTitle = sapply(mTitle, function(x){str_c(x, ' (movie)')}))
+  }))
 
 get_links <- function(df, columnSource, splitSource, columnTarget, splitTarget, type){
   temp <- df %>%
@@ -67,39 +81,35 @@ get_links <- function(df, columnSource, splitSource, columnTarget, splitTarget, 
 
 
 directed_by_links <- lgbtq %>%
-  select(directed_by, mTitle) %>%
+  select(directed_by, movie) %>%
   mutate(directed_by = str_split(directed_by, ';'),
          type = 'directed') %>%
   unnest %>% 
   filter(!is.na(directed_by)) %>%
-  rename(movie = mTitle,
-         person = directed_by) %>%
+  rename(person = directed_by) %>%
   select(person, movie, type)
 
 produced_by_links <- lgbtq%>%
-  select(produced_by, mTitle) %>%
+  select(produced_by, movie) %>%
   mutate(produced_by = str_split(produced_by, ';'),
          type = 'produced') %>%
   unnest %>% 
   filter(!is.na(produced_by)) %>%
-  rename(movie = mTitle,
-         person = produced_by) %>%
+  rename(person = produced_by) %>%
   select(person, movie, type)
 
 written_by_links <- lgbtq %>%
-  select(written_by, mTitle) %>%
+  select(written_by, movie) %>%
   mutate(written_by = str_split(written_by, ';'),
          type = 'wrote') %>%
   unnest %>%
   filter(!is.na(written_by)) %>%
-  rename(movie = mTitle,
-         person = written_by) %>%
+  rename(person = written_by) %>%
   select(person, movie, type)
 
 starring_links <- lgbtq %>%
-  select(starring, mTitle) %>%
-  rename(movie = mTitle,
-         person = starring) %>%
+  select(starring, movie) %>%
+  rename(person = starring) %>%
   mutate(person = str_split(person, ';'),
          type = 'starred in') %>%
   unnest %>%
@@ -107,9 +117,8 @@ starring_links <- lgbtq %>%
   select(person, movie, type)
 
 music_links <- lgbtq %>%
-  select(music_by, mTitle) %>%
-  rename(movie = mTitle,
-         person = music_by) %>%
+  select(music_by, movie) %>%
+  rename(person = music_by) %>%
   mutate(person = str_split(person, ';'),
        type = 'wrote music for') %>%
   unnest %>%
@@ -117,9 +126,8 @@ music_links <- lgbtq %>%
   select(person, movie, type)
   
 cinematography_links <- lgbtq %>%
-  select(cinematography, mTitle) %>%
-  rename(movie = mTitle,
-         person = cinematography) %>%
+  select(cinematography, movie) %>%
+  rename(person = cinematography) %>%
   mutate(person = str_split(person, ';'),
          type = 'did cinematics for') %>%
   unnest %>%
@@ -127,9 +135,8 @@ cinematography_links <- lgbtq %>%
   select(person, movie, type)
 
 edited_by_links <- lgbtq %>%
-  select(edited_by, mTitle) %>%
-  rename(movie = mTitle,
-         person = edited_by) %>%
+  select(edited_by, movie) %>%
+  rename(person = edited_by) %>%
   mutate(person = str_split(person, ';'),
          type = 'edited') %>%
   unnest %>%
@@ -140,39 +147,35 @@ people_edges <- ls()[ls() %>% str_detect('links')] %>%
   lapply(get) %>%
   bind_rows %>% 
   distinct %>% 
-  mutate(person = person %>% sapply(function(x){str_c(x, ' (person)')})) %>%
+  mutate(person = person %>% str_replace_all('\\[.+\\]', '') %>% str_trim %>% sapply(function(x){str_c(x, ' (person)')})) %>%
   filter(!is.na(person))
 
 word_edges <- lgbtq %>%
-  select(mTitle, desc) %>%
-  mutate(desc = str_c(mTitle %>% str_replace(' (movie)', ''), desc, sep = ' ')) %>%
+  select(movie, desc) %>%
   unnest_tokens(word, desc) %>%
   distinct() %>%
   group_by(word) %>%
   nest() %>%
   anti_join(stop_words) %>%
   unnest() %>%
-  rename(movie = mTitle) %>%
   mutate(type = 'is text in') %>% 
   select(word, movie, type)
 
 country_edges <- lgbtq %>%
-  select(mTitle, country) %>%
+  select(movie, country) %>%
   mutate(country = country %>% str_split(',|;')) %>%
   unnest %>%
-  rename(movie = mTitle) %>%
   mutate(type = 'filmed in',
-         country = str_c(country, ' (country)')) %>%
+         country = str_c(country, ' (country)') %>% str_replace_all('\\[.+\\]', '') %>% str_trim) %>%
   select(movie, country, type) %>%
   filter(!is.na(country))
 
 language_edges <- lgbtq %>%
-  select(mTitle, language) %>%
+  select(movie, language) %>%
   mutate(language = language %>% str_split(',|;')) %>%
   unnest %>%
-  rename(movie = mTitle) %>%
   mutate(type = 'spoken in',
-         language = str_c(language, ' (language)')) %>%
+         language = language %>% str_replace_all('\\[.+\\]', '') %>% str_trim %>% str_c(' (language)')) %>%
   filter(!is.na(language))
 
 edge_list <- ls()[ls() %>% str_detect('edges')] %>%
@@ -185,12 +188,11 @@ edge_list <- ls()[ls() %>% str_detect('edges')] %>%
   bind_rows()
 
 movie_nodes <- lgbtq %>%
-  select(mTitle, desc) %>%
-  rename(label = mTitle) %>%
+  select(movie, desc) %>%
+  rename(label = movie) %>%
   mutate(type = 'movie',
          color = 'gold') %>%
-  group_by(label, type, color) %>%
-  nest()
+  select(label, type, color, desc)
 
 country_nodes <- country_edges %>%
   select(country) %>%
@@ -198,7 +200,7 @@ country_nodes <- country_edges %>%
   rename(label = country) %>%
   mutate(type = 'country',
          color = 'blue',
-         data = vector('list', nrow(.)))
+         desc = '')
 
 language_nodes <- language_edges %>%
   select(language) %>%
@@ -206,7 +208,7 @@ language_nodes <- language_edges %>%
   rename(label = language) %>%
   mutate(type = 'language',
          color = 'orange',
-         data = vector('list', nrow(.)))
+         desc = '')
 
 people_nodes <- people_edges %>%
   select(person) %>%
@@ -214,7 +216,7 @@ people_nodes <- people_edges %>%
   rename(label = person) %>%
   mutate(type = 'person',
          color = 'purple',
-         data = vector('list', nrow(.)))
+         desc = '')
 
 word_nodes <- word_edges %>%
   select(word) %>%
@@ -222,4 +224,58 @@ word_nodes <- word_edges %>%
   rename(label = word) %>%
   mutate(type = 'word',
          color = 'lightgrey',
-         data = vector('list', nrow(.)))
+         desc = '')
+
+node_list <- ls()[ls() %>% str_detect('nodes')] %>%
+  lapply(function(x){
+    some_nodes <- x %>%
+      get 
+  }) %>% 
+  bind_rows 
+
+lgbtq_movie_net <- graph_from_data_frame(edge_list, T, node_list %>% distinct)
+
+write_graph(lgbtq_movie_net, 'lgbtq_movie_network.graphml', 'graphml')
+lgbtq_movie_net <- read_graph('lgbtq_movie_network.graphml', 'graphml')
+
+reverse_induced_subgraph <- function(nodes, graph){
+  induced_subgraph(graph = graph, vids = nodes)
+}
+
+reverse_subgraph_edges <- function(edges, graph, delete.vertices = F){
+  subgraph.edges(graph = graph, eids = edges, delete.vertices = delete.vertices)
+}
+
+reverse_ego <- function(nodes, graph, order = 1, mode = 'all' ){
+  ego(graph = graph, order = order, nodes = nodes, mode = mode) %>%
+    unlist %>%
+    names %>%
+    unique
+}
+
+reverse_degree <- function(v, net, mode = 'all'){
+  degree(graph = grap, )
+}
+
+save_graph_as <- function(graph, name){
+  assign(name, graph, envir=globalenv())
+  graph
+}
+
+trial <- lgbtq_movie_net %>%
+  V() %>% 
+  .[type == 'country'] %>%
+  .[name %>% str_detect(regex('chile', ignore_case = T))] %>%
+  reverse_ego(graph = lgbtq_movie_net, order = 2, mode = 'all') %>%
+  reverse_induced_subgraph(graph = lgbtq_movie_net) %>%
+  save_graph_as('test_graph') %>%
+  E() %>%
+  .[type == 'is text in'] %>%
+  reverse_subgraph_edges(graph = test_graph) %>%
+  degree()
+  
+
+
+trial %>%
+  V() %>%
+  .[type == 'country']
