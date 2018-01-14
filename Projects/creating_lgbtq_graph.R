@@ -161,6 +161,17 @@ word_edges <- lgbtq %>%
   mutate(type = 'is text in') %>% 
   select(word, movie, type)
 
+
+word_bigram <- lgbtq %>%
+  select(desc) %>% 
+  unnest_tokens(bigram, desc, token = 'ngrams', n =2) %>%
+  separate(bigram, c('source', 'target'), sep = ' ') %>%
+  group_by(source, target) %>%
+  count(sort = T) %>%
+  mutate(type = 'next') %>%
+  rename(weight = n) %>%
+  select(source, target, type, weight)
+  
 country_edges <- lgbtq %>%
   select(movie, country) %>%
   mutate(country = country %>% str_split(',|;')) %>%
@@ -186,6 +197,9 @@ edge_list <- ls()[ls() %>% str_detect('edges')] %>%
     some_edges
   }) %>%
   bind_rows()
+
+edge_list <- list(edge_list %>% mutate(weight = 1 ), word_bigram) %>%
+  bind_rows
 
 movie_nodes <- lgbtq %>%
   select(movie, desc) %>%
@@ -218,10 +232,8 @@ people_nodes <- people_edges %>%
          color = 'purple',
          desc = '')
 
-word_nodes <- word_edges %>%
-  select(word) %>%
-  distinct() %>%
-  rename(label = word) %>%
+words <- c(word_edges$word, word_bigram$source, word_bigram) %>% unlist %>% unique
+word_nodes <- tibble(label = words) %>%
   mutate(type = 'word',
          color = 'lightgrey',
          desc = '')
@@ -253,8 +265,8 @@ reverse_ego <- function(nodes, graph, order = 1, mode = 'all' ){
     unique
 }
 
-reverse_degree <- function(v, net, mode = 'all'){
-  degree(graph = grap, )
+reverse_degree <- function(v, graph, mode = 'all'){
+  degree(graph = graph, v = v, mode = mode)
 }
 
 save_graph_as <- function(graph, name){
@@ -274,7 +286,16 @@ trial <- lgbtq_movie_net %>%
   reverse_subgraph_edges(graph = test_graph) %>%
   degree()
   
-
+horror_sentence <- lgbtq_movie_net %>%
+  V() %>%
+  .[type == 'word'] %>%
+  .[name %>% str_detect(regex('horror|terror|scare', ignore_case = T))] %>%
+  reverse_ego(graph = lgbtq_movie_net, order = 2, mode = 'all') %>%
+  reverse_induced_subgraph(graph = lgbtq_movie_net) %>%
+  save_graph_as('horror_graph') %>%
+  E() %>%
+  .[type == 'next'] %>%
+  reverse_subgraph_edges(graph = horror_graph)
 
 trial %>%
   V() %>%
