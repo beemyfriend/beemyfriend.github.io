@@ -75,6 +75,7 @@ textellipse(mid = pos[3,], radx = my_edge_length, lab = 'Languages', box.col = '
 textellipse(mid = pos[23,], radx = my_edge_length, lab = 'Countries', box.col = 'skyblue')
 textellipse(mid = pos[15,], radx = my_edge_length, lab = 'People', box.col = 'mediumpurple')
 textellipse(mid = pos[13,], radx = my_edge_length, lab = 'Movies', box.col = 'gold')
+title('LGBTQ Movie Wikipedia GraphML')
 ```
 
 * **Movies** are *spoken in* **Languages**
