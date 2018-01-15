@@ -331,3 +331,7 @@ inlovewith_net_last %>% plot
 ## Closing thoughts
 
 *igraph* is awesome, *magrittr* is awesome, and when you put them together you have an awesome way to traverse graphs that feels pretty natural. We are able to use graphs to explore language structures. By simply traversing a graph we were able to imitate what very smart people have programmed into our phones. We created a language recommendation pattern that does a decent job at creating proper sentences. We didn't even have to train an algorithm to figure out what the words mean or what grammar rules a word should follow. This is a huge deal. This little task got me even more excited about graphs than I was before. 
+
+## Acknowledgements
+
+Data was pulled from wikipedia using **rvest**, data was cleaned with tools from the **tidyverse**, and word-to-word edges were made possible by **tidytext**.
