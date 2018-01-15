@@ -36,26 +36,54 @@ We will explore how **igraph** and **magrittr** play with eachother and see how 
 
 ## Data
 
-The dataset we will explore is a `graphml` document with information on most, but not all, of the movies listed in the [wikipedia page devoted to lgbtq movies](https://en.wikipedia.org/wiki/List_of_LGBT-related_films). The graphml is loaded with information of people who worked on the film, of languages the film was spoken in, of countries the film was filmed in, and a description of the movie (provided by wikipedia).
+The dataset we will explore is a `graphml` document with information on most, but not all, of the movies listed in the [wikipedia page devoted to lgbtq movies](https://en.wikipedia.org/wiki/List_of_LGBT-related_films). The graphml is loaded with information of people who worked on the film, of languages the film was spoken in, of countries the film was filmed in, and a description of the movie (provided by wikipedia). The `graphml` can be [found in my github account](https://github.com/beemyfriend/beemyfriend.github.io/blob/master/Data/lgbtq_movie_network.graphml).
+
+```{r eval = F}
+packages <- c('tidyverse', 'stringr', 'igraph')
+sapply(packages, library, character.only = T)
+lgbtq_movie_net <- read_graph('lgbtq_movie_network.graphml', 'graphml')
+```
 
 The structure of this database resembles the below graph schema:
 
 ```{r schema, echo = F}
-lgbtq_schema_links = tibble(
-  source = c('movie', 'movie', 'word', 'word', rep('person', 7)),
-  target = c('country', 'language', 'movie', 'word', rep('movie', 7)),
-  label = c('filmed in', 'spoken in', 'is text in', 'next', 'edited',
-           'directed', 'did cinematics for', 'wrote music for', 
-           'produced', 'starred in', 'wrote'))
-
-lgbtq_schema_nodes = tibble(
-  label = c('country', 'language', 'movie', 'person', 'word'),
-  color = c('lightblue', 'orange', 'gold', 'mediumpurple', 'lightgrey'))
-
-set.seed(1234)
-graph_from_data_frame(lgbtq_schema_links, T, lgbtq_schema_nodes) %>%
-  plot
+# lgbtq_schema_links = tibble(
+#   source = c('movie', 'movie', 'word', 'word', rep('person', 7)),
+#   target = c('country', 'language', 'movie', 'word', rep('movie', 7)),
+#   label = c('filmed in', 'spoken in', 'is text in', 'next', 'edited',
+#            'directed', 'did cinematics for', 'wrote music for', 
+#            'produced', 'starred in', 'wrote'))
+# 
+# lgbtq_schema_nodes = tibble(
+#   label = c('country', 'language', 'movie', 'person', 'word'),
+#   color = c('lightblue', 'orange', 'gold', 'mediumpurple', 'lightgrey'))
+# 
+# set.seed(1234)
+# graph_from_data_frame(lgbtq_schema_links, T, lgbtq_schema_nodes) %>%
+#   plot
+my_edge_length <- .09
+my_text_size <- 1.3
+openplotmat()
+pos <- coordinates(c(5, 5, 5, 5, 5))
+straightarrow(from = pos[11,], to = pos[13,])
+straightarrow(from = pos[13,], to = pos[3,])
+straightarrow(from = pos[13,], to = pos[23,])
+straightarrow(from = pos[15,], to = pos[13,])
+selfarrow(pos[11,],  curve = -.08, arr.pos = .95, path = 'D')
+textellipse(mid = pos[11,], radx = my_edge_length, lab = 'Words', box.col = 'lightgrey')
+textellipse(mid = pos[3,], radx = my_edge_length, lab = 'Languages', box.col = 'orange')
+textellipse(mid = pos[23,], radx = my_edge_length, lab = 'Countries', box.col = 'skyblue')
+textellipse(mid = pos[15,], radx = my_edge_length, lab = 'People', box.col = 'mediumpurple')
+textellipse(mid = pos[13,], radx = my_edge_length, lab = 'Movies', box.col = 'gold')
 ```
+
+* **Movies** are *spoken in* **Languages**
+* **People** *star in*, *direct*, *write*, *write music for*, *edit*, and *produce* **Movies**
+* **Movies** are *filmed in* **Countries**
+* **Words** can be *found in* **Movie** (descriptions)
+* **Words** can *follow* other **Words** (in descriptions)
+
+
 
 ## igraph functions
 
@@ -129,7 +157,7 @@ smooth_transition <- function(x, y){
 
 ## NLP
 
-Most modern smart phones come with an *autofill* feature where you enter a word and the phone recommend what the next word is. If you trust your smart phone and allow the autofill to fill in words over and over again, you might get a pretty reasonable sentence that sorta-kinda resembles a sentence you would write yourself. We can mimic this feature by traversing a graph of words. The `lgbtq_movie_net` graph contains all the words found in the description of each of its movies. The order of the words can be seen by following the *next*-type edges. 
+Most modern smart phones come with an *autofill* feature where you enter a word and the phone recommend what the next word is. If you trust your smart phone and allow the autofill to fill in words over and over again, you might get a pretty reasonable sentence that sorta-kinda resembles a sentence you would write yourself. We can mimic this feature by traversing a graph of words. The `lgbtq_movie_net` graph contains all the words found in the description of each of its movies. The order of the words can be seen by following the *next*-type edges. *next*-type edges connect one word with another word that has been found after it. 
 
 ```{r findLove}
 love_sentence <- lgbtq_movie_net %>%
