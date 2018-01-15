@@ -1,0 +1,304 @@
+---
+title: 'Playing with graphs 4: NLP'
+author: "beemyfriend"
+date: "January 14, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+packages <- c('tidyverse', 'stringr', 'igraph', 'tidytext', 'diagram')
+sapply(packages, library, character.only = T)
+lgbtq_movie_net <- read_graph('lgbtq_movie_network.graphml', 'graphml')
+```
+
+## Introduction
+
+Today we're going to explore a graph by **traversing** it. Traversing a graph is simply querying a graph in a similar way we would query a SQL database. When researchers explore graphs they typically say something along the lines of "we start at *x node*, then we find all of its *y-typed* connections, and then we explore the nodes on the other side of these connections." There is an intuitive way of traversing graphs that follows a
+
+* First start here
+* Then go there
+* Then go there
+* Then...
+
+kind of logic. If you are familiar with the **magrittr** pipe then you should be able recognize the similarity of syntax
+
+```
+variable %>%
+  function_1 %>%
+  function_2 %>%
+  function_3 %>%
+  ... %>%
+  function_n
+```
+
+We will explore how **igraph** and **magrittr** play with eachother and see how well we can traverse a graph filled with information.
+
+## Data
+
+The dataset we will explore is a `graphml` document with information on most, but not all, of the movies listed in the [wikipedia page devoted to lgbtq movies](https://en.wikipedia.org/wiki/List_of_LGBT-related_films). The graphml is loaded with information of people who worked on the film, of languages the film was spoken in, of countries the film was filmed in, and a description of the movie (provided by wikipedia).
+
+The structure of this database resembles the below graph schema:
+
+```{r schema, echo = F}
+lgbtq_schema_links = tibble(
+  source = c('movie', 'movie', 'word', 'word', rep('person', 7)),
+  target = c('country', 'language', 'movie', 'word', rep('movie', 7)),
+  label = c('filmed in', 'spoken in', 'is text in', 'next', 'edited',
+           'directed', 'did cinematics for', 'wrote music for', 
+           'produced', 'starred in', 'wrote'))
+
+lgbtq_schema_nodes = tibble(
+  label = c('country', 'language', 'movie', 'person', 'word'),
+  color = c('lightblue', 'orange', 'gold', 'mediumpurple', 'lightgrey'))
+
+set.seed(1234)
+graph_from_data_frame(lgbtq_schema_links, T, lgbtq_schema_nodes) %>%
+  plot
+```
+
+## igraph functions
+
+*igraph* has a lot of valuable functions - the documentation is about 460 pages long. If you want to do something to a graph, than *igraph* probably has a function to do that thing. The only functions we will care about for today are:
+
+#### V()
+
+`V()` takes a graph object and returns all the vertices within the graph. The output is an atomic vector (`c()`) and not a graph object. 
+
+#### E() 
+
+`E()` takes a graph object and returns all the edges within the graph. The output is an atomic vector (`c()`) and not a graph object.
+
+#### induced_subgraph()
+
+`induced_subgraph()` takes a graph object and filters it down to include only the vertices provided. The first variable inputted, the one that *magrittr* assumes, is a graph object and the second variable inputted is a vector of vertex ids or names.
+
+#### subgraph.edges()
+
+`subgraph.edges()` takes a graph object and filters it down to include only the edges provided. The first variable inputted, the one that *magrittr* assumes, is a graph object and the second variable inputted is a a vector of edges.
+
+#### ego()
+
+`ego()` takes a graph object, and outputs the vertices provided as well as the nodes within an *n* order of edges of those vertices. The output is a list for each vertex inputted and the nodes with an *n* order of edges of that vertex. 
+
+#### degree()
+
+`degree()` takes a graph object, and outputs the number of edges each of its vertices have. The output is a named number vector.
+
+#### get_diameter()
+
+`get_diameter()` takes a graph object and provides an ordered vector of the nodes that create the largest path.
+
+## Helper functions
+
+The *magrittr* pipe is awesome because it helps you apply functions to an object in a syntactically intuitive way. However, it is limited because it assumes a functions first input is where the data object should go. Many *igraph* functions take a graph data object as the first input, however, they don't always output a graph object - sometimes the output is an edge vector or a vertex vector. The below helper functions are simple wrappers created to adjust for *magrittr*'s assumption as well as other useful tasks:
+
+```{r helperFunctions}
+#same as induced_subgraph() but with the first input being a vertex vector
+reverse_induced_subgraph <- function(nodes, graph){
+  induced_subgraph(graph = graph, vids = nodes)
+}
+
+#same as subgraph.edges() but with the first input being an edge vector
+reverse_subgraph_edges <- function(edges, graph, delete.vertices = T){
+  subgraph.edges(graph = graph, eids = edges, delete.vertices = delete.vertices)
+}
+
+#same as ego() but with the first input being a vertex vector
+reverse_ego <- function(nodes, graph, order = 1, mode = 'all' ){
+  ego(graph = graph, order = order, nodes = nodes, mode = mode) 
+}
+
+#same as degree() but with the first input being vertex vector
+reverse_degree <- function(v, graph, mode = 'all'){
+  degree(graph = graph, v = v, mode = mode)
+}
+
+#saves an object to the global environment to be referenced later
+#does not change the input object and the pipe chain can continue
+save_as <- function(x, name){
+  assign(name, x, envir=globalenv())
+  x
+}
+
+#changes the object being piped to a different object
+smooth_transition <- function(x, y){
+  y
+}
+```
+
+## NLP
+
+Most modern smart phones come with an *autofill* feature where you enter a word and the phone recommend what the next word is. If you trust your smart phone and allow the autofill to fill in words over and over again, you might get a pretty reasonable sentence that sorta-kinda resembles a sentence you would write yourself. We can mimic this feature by traversing a graph of words. The `lgbtq_movie_net` graph contains all the words found in the description of each of its movies. The order of the words can be seen by following the *next*-type edges. 
+
+```{r findLove}
+love_sentence <- lgbtq_movie_net %>%
+  #find all the vertices/nodes
+  V() %>%
+  #filter all those nodes to only those with they type 'word'
+  .[type == 'word'] %>%
+  #filter for the node that represents the word 'love'
+  .[name == 'love'] %>%
+  #find all the nodes connect to the 'love' vertice
+  reverse_ego(lgbtq_movie_net,1, 'all') %>%
+  unlist %>%
+  names %>%
+  unique %>%
+  #create a subgraph of nodes and edges attached to love
+  #by parsing the original graph
+  reverse_induced_subgraph(lgbtq_movie_net) %>%
+  #save the subgraph to the global environment
+  save_as('love_network') %>%
+  #find all the edges of the subgraph
+  E() %>%
+  #filter all the edges down to those with the type 'next'
+  .[type == 'next'] %>%
+  #filter all the edges down to those that are connected to the 'love' node
+  .[V(love_network) %--% V(love_network)[name == 'love']] %>%
+  #save the edges to the global environment to play with later
+  save_as('love_edges') %>%
+  #get outgoing edge with highest weight from love
+  .[V(love_network) %->% V(love_network)[name == 'love']] %>%
+  .[weight == max(weight)] %>%
+  save_as('to_love') %>%
+  #return to the vector of edges we were exploring
+  smooth_transition(love_edges) %>%
+  #get incoming edge with highest weight to love
+  .[V(love_network) %<-% V(love_network)[name == 'love']] %>%
+  .[weight == max(weight)] %>%
+  save_as('from_love') %>%
+  #don't forget that two vectors of the same type can be combined 
+  #by using c()
+  c(to_love) %>%
+  #we want to finish with a new graph filtered
+  #from the subgraph we created earlier
+  reverse_subgraph_edges(love_network)
+
+love_sentence
+
+set.seed(1234)
+love_sentence %>%
+  plot()
+```
+
+So the most common trigram centered around the word *love* is **in love with**. This makes sense to me. Let's filter the *lgbtq_movie_net* graph to only include movies with descriptions that have the words *in*, *love*, and *with* included in it. We will then find the most common word preceeding the word *in* and the most common word following *with*:
+
+before we do that, let's make two more wrapper functions that will save us some typing in the future
+
+```{r wrapperFunctions}
+
+#find highest node with heighest weighted connection in either direction
+find_one_away <- function(edgelist, graph, node, direction, saveas){
+  if(direction == 'in'){
+    el <- edgelist %>%
+      .[V(graph)[name == node] %<-% V(graph)[type == 'word']]
+  } else if(direction == 'out'){
+    el <- edgelist %>%
+      .[V(graph)[name == node] %->% V(graph)[type == 'word']] 
+  } else {
+    el <- edgelist %>%
+      .[V(graph)[name == node] %--% V(graph)[type == 'word']]
+  }
+  
+  el %>%
+    .[weight == max(weight)] %>%
+    save_as(saveas)
+}
+```
+
+
+
+```{r inlovewith}
+inlovewith_net <- lgbtq_movie_net %>%
+  E() %>%
+  .[type == 'is text in'] %>%
+  .[V(lgbtq_movie_net)[type == 'movie'] %<-% V(lgbtq_movie_net)[name %>% str_detect('^love$|^with$|^in$')]] %>%
+  reverse_subgraph_edges(lgbtq_movie_net) %>%
+  #filter for movies that are connected to the three words we care about
+  degree %>% 
+  .[. == 3] %>%
+  names %>%
+  reverse_ego(lgbtq_movie_net, order = 1, 'in') %>%
+  unlist %>%
+  names %>%
+  reverse_induced_subgraph(lgbtq_movie_net) %>%
+  save_as('inlovewith_movies') %>%
+  E() %>%
+  #we only want to see ordered word to word connections
+  .[type == 'next'] %>%
+  save_as('inlovewith_edges') %>%
+  find_one_away(inlovewith_movies, 'love', 'in', 'to_love')  %>%
+  smooth_transition(inlovewith_edges) %>%
+  find_one_away(inlovewith_movies, 'love', 'out', 'from_love') %>%
+  smooth_transition(inlovewith_edges) %>%
+  find_one_away(inlovewith_movies, 'in', 'in', 'to_in') %>%
+  smooth_transition(inlovewith_edges) %>%
+  find_one_away(inlovewith_movies, 'with', 'out', 'from_with') %>%
+  c(to_love, from_love, to_in) %>%
+  reverse_subgraph_edges(inlovewith_movies)
+
+inlovewith_net
+
+set.seed(1234)
+inlovewith_net %>% plot
+```
+
+**released in love with a**: We are looking at movie data, so *released in* is formed because of the description explaining where the film was released. We're also talking about lgbtq movies, so *in love with a* probably came from multiple of a man who was in love with another man or a woman who was in love with another woman. However, *released in* was a more common bigram than *was in*, so that is how we get a wierd sentence that kinda-sorta makes sense...
+
+let's keep on playing...
+
+```{r inlovewith_larger}
+inlovewith_net_larger <- inlovewith_edges %>%
+  find_one_away(inlovewith_movies, 'a', 'out', 'from_a') %>%
+  smooth_transition(inlovewith_edges) %>%
+  find_one_away(inlovewith_movies, 'released', 'in', 'to_released') %>%
+  c(to_love, from_love, to_in, from_with, from_a) %>%
+  reverse_subgraph_edges(inlovewith_movies)
+
+inlovewith_net_larger
+
+inlovewith_net_larger %>% plot
+```
+
+The fact that we pulled this information from movie descriptions seems to be coming out in full force now. Rather than talking about a love story, we seem to be hearing a story of a passion project of a movie. One more...
+
+```{r inlovewith_even_larger}
+inlovewith_net_even_larger <- inlovewith_edges %>%
+  find_one_away(inlovewith_movies, '2004', 'out', 'from_2004') %>%
+  smooth_transition(inlovewith_edges) %>%
+  find_one_away(inlovewith_movies, 'was', 'in', 'to_was') %>%
+  c(to_love, from_love, to_in, from_with, from_a, to_released, from_2004) %>%
+  reverse_subgraph_edges(inlovewith_movies)
+
+inlovewith_net_even_larger
+
+inlovewith_net_even_larger %>% plot
+```
+
+You may have noticed that there is a simple pattern being repeated. We find the leaf nodes (the terminal nodes at both ends), we find the heighest weighted edge to or form those nodes, and we add it to our network. Up until now we have been hard coding this, but this pattern can definitely be streamlined. Let's take a look at the `get_diameter()` function.
+
+```{r seethepattern}
+inlovewith_net_even_larger %>% get_diameter
+```
+
+looks familiar? it matches the network graph we just created. let's pull the first and last verex of this path and use those vertices instead of hardcoding them
+
+```{r streamline}
+inlovewith_net_last <- inlovewith_net_even_larger %>%
+  get_diameter %>%
+  save_as('d_path') %>%
+  smooth_transition(inlovewith_edges) %>%
+  find_one_away(inlovewith_movies, d_path[1] %>% names, 'in', 'var1') %>%
+  smooth_transition(inlovewith_edges) %>%
+  find_one_away(inlovewith_movies, d_path %>% .[length(.)] %>% names, 'out', 'var2') %>%
+  c(to_love, from_love, to_in, from_with, from_a, to_released, from_2004, to_was, var1) %>%
+  reverse_subgraph_edges(inlovewith_movies)
+
+inlovewith_net_last 
+
+inlovewith_net_last %>% plot
+```
+
+## Closing thoughts
+
+*igraph* is awesome, *magrittr* is awesome, and when you put them together you have an awesome way to traverse graphs that feels pretty natural. We are able to use graphs to explore language structures. By simply traversing a graph we were able to imitate what very smart people have programmed into our phones. We created a language recommendation pattern that does a decent job at creating proper sentences. We didn't even have to train an algorithm to figure out what the words mean or what grammar rules a word should follow. This is a huge deal. This little task got me even more excited about graphs than I was before. 
