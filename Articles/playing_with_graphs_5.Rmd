@@ -1,0 +1,75 @@
+---
+title: 'Playing With Graphs 5: Surveys'
+author: "beemyfriend"
+date: "January 20, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+packages <- c('tidyverse', 'stringr', 'igraph', 'tinkR')
+sapply(packages, library, character.only = T)
+g <- read_graph("../Data/data_vis_survey.graphml", 'graphml')
+```
+
+## Introduction
+
+## Setup
+
+### Packages
+
+The packages we will need are **Tidyverse**, **stringr**, and **igraph**. I added the [igraph helper functions from my last post](./playing_with_graphs_4.html) to my package [tinkR](https://github.com/beemyfriend/tinkR). 
+
+```{R loadPackages, eval = F}
+packages <- c('tidyverse', 'stringr', 'igraph', 'tinkR')
+sapply(packages, library, character.only = T)
+```
+
+### Data
+
+The original data can be found in [Elijah Meeks github repository](https://github.com/emeeks/data_visualization_survey/tree/master/data). However, because we will work with a different version of the same dataset. I took the liberty and "graph-it-ize" (or "net-worked", or "node-and-edgitized") the csv so we can explore the survey results as we would a graph database.  You can find the "graph-ee-teed" dataset [in my github repository](https://github.com/beemyfriend/beemyfriend.github.io/blob/master/Data/data_vis_survey.graphml)
+
+
+```{R loadData, eval = F}
+g <- read_graph("Data/data_vis_survey.graphml", 'graphml')
+```
+
+### Graph Schema
+
+## Test Example
+
+```{r tExample}
+#I want to know who gave the same answers as I did for a question
+same_answers <- g %>%
+  #find all edges
+  E() %>%
+  #filter edges that represent the question i'm interested in
+  .[type == 'What technologies do you use to visualize data?'] %>%
+  #create a subgraph from those edges
+  reverse_subgraph_edges(g) %>%
+  #save the subgraph for future reference
+  save_as('question_net') %>%
+  #find all edges of the subgraph
+  E() %>%
+  #filter edges that point towards my answers
+  .[V(question_net) %->% V(question_net)[names(V(question_net)) %in% c("D3", 
+                                                                       "Other Javascript", 
+                                                                       "Other R", 
+                                                                       "Inkscape", 
+                                                                       "ggplot", 
+                                                                       'Javascript',
+                                                                       "JavaScript", 
+                                                                       "R Shiny", 
+                                                                       "R")]] %>%
+  #produce a graph of people who gave the same answers as me
+  reverse_subgraph_edges(question_net)
+```
+
+Let's see which one of my answers is the most common within the data visualization community.
+
+```{r testDegree}
+same_answers %>%
+  degree(mode = 'in') %>%
+  .[. > 0] %>%
+  sort(T)
+```
