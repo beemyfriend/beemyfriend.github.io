@@ -69,7 +69,100 @@ Let's see which one of my answers is the most common within the data visualizati
 
 ```{r testDegree}
 same_answers %>%
+  #find the number of 'in' edges each node has
+  #only answers in this graph have 'in' edges
   degree(mode = 'in') %>%
+  #because people don't have 'in' edges they get a degree of 0
   .[. > 0] %>%
+  #let's sort the results for cleanliness
   sort(T)
+```
+
+We will need to filter the graph multiple times to find people who responded to particular questions in a particular way. So let's wrap this task in a function we can use:
+
+```{r getSameAnswers}
+getSameAnswers <- function(graph, question, answerVect){
+  graph %>%
+    E() %>%
+    .[type == question] %>%
+    reverse_subgraph_edges(graph) %>%
+    save_as('question_net') %>%
+    E() %>%
+    .[V(question_net) %->% V(question_net)[names(V(question_net)) %in% answerVect]] %>%
+    reverse_subgraph_edges(question_net)
+}
+```
+
+## My Answers to Survey Question
+
+```{r myAnswers, results='hide'}
+my_survey_responses <- tibble(
+  questions = c(
+    "What's your employment status",
+    "How many years have you been doing data visualization?",
+    "Is your total compensation in-line with Software Engineers and UX/UI/Designer roles at your level?",
+    "Where do you live?",
+    "How did you learn to create data visualization?",
+    "Is this your first job doing data visualization?",
+    "What is your educational background?",
+    "What’s your ethnicity?",
+    "What focus is data visualization in your work?",
+    "Do you want to spend more time or less time visualizing data in the future?",
+    "Age",
+    "The organization you work for is in which of the following?",
+    "Gender",
+    "What technologies do you use to visualize data?",
+    "Did you set out to work in data visualization or did you fall into it?"
+  ),
+  answers = list(
+    c("Full-time"),
+    c("1", "2"),
+    c("Data Visualization Role has Lower compensation"),
+    c("USA or Canada"),
+    c("Mostly Self-Taught"),
+    c("Yes"),
+    c("Bachelors"), 
+    c("white", "hispanic"),
+    c("Data visualization is the focus of my job"),
+    c("Much more"),
+    c("26 - 35"),
+    c("Mixed"),
+    c('male'),
+    c("D3", "Other Javascript", "Other R", "Inkscape", "ggplot", "JavaScript", "R Shiny", "R"),
+    c('Intended to work in data visualization')
+  )
+)
+```
+
+## Filtering the network for those who are like me
+
+```{r createSubnetworks}
+#create subnetworks of people who answered questions as I did
+same_answers <- lapply(seq_along(my_survey_responses$questions), function(i){
+  getSameAnswers(g,
+                 my_survey_responses$questions[i],
+                 my_survey_responses$answers[[i]])
+})
+```
+
+```{r createEdges}
+edges <- lapply(same_answers, function(x){
+  el <- x %>%
+    #creates  matrix with source in first column and target in second column
+    ends(E(.)) %>%
+    as.tibble() %>%
+    mutate(type = x %>% E() %>% .$type %>% .[1]) %>%
+    rename(source = V1,
+           target = V2)})%>%
+  bind_rows()
+
+networkLikeMe <- graph_from_data_frame(edges)
+```
+
+```{r findPeopleDegree}
+networkLikeMe %>%
+  degree(mode = 'out') %>%
+  .[.>0] %>%
+  sort(T) %>%
+  head(10)
 ```

@@ -172,8 +172,12 @@ same_answers &lt;- g %&gt;%
   reverse_subgraph_edges(question_net)</code></pre>
 <p>Let’s see which one of my answers is the most common within the data visualization community.</p>
 <pre class="r"><code>same_answers %&gt;%
+  #find the number of 'in' edges each node has
+  #only answers in this graph have 'in' edges
   degree(mode = 'in') %&gt;%
+  #because people don't have 'in' edges they get a degree of 0
   .[. &gt; 0] %&gt;%
+  #let's sort the results for cleanliness
   sort(T)</code></pre>
 <pre><code>##               D3           ggplot          Other R Other Javascript 
 ##              535              350              251              241 
@@ -181,6 +185,85 @@ same_answers &lt;- g %&gt;%
 ##                7                1                1                1 
 ##                R 
 ##                1</code></pre>
+<p>We will need to filter the graph multiple times to find people who responded to particular questions in a particular way. So let’s wrap this task in a function we can use:</p>
+<pre class="r"><code>getSameAnswers &lt;- function(graph, question, answerVect){
+  graph %&gt;%
+    E() %&gt;%
+    .[type == question] %&gt;%
+    reverse_subgraph_edges(graph) %&gt;%
+    save_as('question_net') %&gt;%
+    E() %&gt;%
+    .[V(question_net) %-&gt;% V(question_net)[names(V(question_net)) %in% answerVect]] %&gt;%
+    reverse_subgraph_edges(question_net)
+}</code></pre>
+</div>
+<div id="my-answers-to-survey-question" class="section level2">
+<h2>My Answers to Survey Question</h2>
+<pre class="r"><code>my_survey_responses &lt;- tibble(
+  questions = c(
+    &quot;What's your employment status&quot;,
+    &quot;How many years have you been doing data visualization?&quot;,
+    &quot;Is your total compensation in-line with Software Engineers and UX/UI/Designer roles at your level?&quot;,
+    &quot;Where do you live?&quot;,
+    &quot;How did you learn to create data visualization?&quot;,
+    &quot;Is this your first job doing data visualization?&quot;,
+    &quot;What is your educational background?&quot;,
+    &quot;What’s your ethnicity?&quot;,
+    &quot;What focus is data visualization in your work?&quot;,
+    &quot;Do you want to spend more time or less time visualizing data in the future?&quot;,
+    &quot;Age&quot;,
+    &quot;The organization you work for is in which of the following?&quot;,
+    &quot;Gender&quot;,
+    &quot;What technologies do you use to visualize data?&quot;,
+    &quot;Did you set out to work in data visualization or did you fall into it?&quot;
+  ),
+  answers = list(
+    c(&quot;Full-time&quot;),
+    c(&quot;1&quot;, &quot;2&quot;),
+    c(&quot;Data Visualization Role has Lower compensation&quot;),
+    c(&quot;USA or Canada&quot;),
+    c(&quot;Mostly Self-Taught&quot;),
+    c(&quot;Yes&quot;),
+    c(&quot;Bachelors&quot;), 
+    c(&quot;white&quot;, &quot;hispanic&quot;),
+    c(&quot;Data visualization is the focus of my job&quot;),
+    c(&quot;Much more&quot;),
+    c(&quot;26 - 35&quot;),
+    c(&quot;Mixed&quot;),
+    c('male'),
+    c(&quot;D3&quot;, &quot;Other Javascript&quot;, &quot;Other R&quot;, &quot;Inkscape&quot;, &quot;ggplot&quot;, &quot;JavaScript&quot;, &quot;R Shiny&quot;, &quot;R&quot;),
+    c('Intended to work in data visualization')
+  )
+)</code></pre>
+</div>
+<div id="filtering-the-network-for-those-who-are-like-me" class="section level2">
+<h2>Filtering the network for those who are like me</h2>
+<pre class="r"><code>#create subnetworks of people who answered questions as I did
+same_answers &lt;- lapply(seq_along(my_survey_responses$questions), function(i){
+  getSameAnswers(g,
+                 my_survey_responses$questions[i],
+                 my_survey_responses$answers[[i]])
+})</code></pre>
+<pre class="r"><code>edges &lt;- lapply(same_answers, function(x){
+  el &lt;- x %&gt;%
+    #creates  matrix with source in first column and target in second column
+    ends(E(.)) %&gt;%
+    as.tibble() %&gt;%
+    mutate(type = x %&gt;% E() %&gt;% .$type %&gt;% .[1]) %&gt;%
+    rename(source = V1,
+           target = V2)})%&gt;%
+  bind_rows()
+
+networkLikeMe &lt;- graph_from_data_frame(edges)</code></pre>
+<pre class="r"><code>networkLikeMe %&gt;%
+  degree(mode = 'out') %&gt;%
+  .[.&gt;0] %&gt;%
+  sort(T) %&gt;%
+  head(10)</code></pre>
+<pre><code>##  id: 43 id: 170 id: 295 id: 705 id: 775  id: 27 id: 209 id: 240 id: 254 
+##      13      13      13      13      13      12      12      12      12 
+## id: 307 
+##      12</code></pre>
 </div>
 
 
