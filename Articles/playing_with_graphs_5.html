@@ -264,6 +264,231 @@ networkLikeMe &lt;- graph_from_data_frame(edges)</code></pre>
 ##      13      13      13      13      13      12      12      12      12 
 ## id: 307 
 ##      12</code></pre>
+<pre class="r"><code>networkLikeMe_full &lt;- networkLikeMe %&gt;%
+  V() %&gt;%
+  .[degree(networkLikeMe, mode = 'out') &gt;= 12] %&gt;%
+  names() %&gt;%
+  save_as('peopleLikeMe') %&gt;%
+  smooth_transition(networkLikeMe) %&gt;%
+  E() %&gt;%
+  .[peopleLikeMe %-&gt;% V(networkLikeMe)] %&gt;%
+  reverse_subgraph_edges(networkLikeMe)</code></pre>
+<pre class="r"><code>peopleLikeMe</code></pre>
+<pre><code>##  [1] &quot;id: 27&quot;  &quot;id: 43&quot;  &quot;id: 170&quot; &quot;id: 209&quot; &quot;id: 240&quot; &quot;id: 254&quot; &quot;id: 295&quot;
+##  [8] &quot;id: 307&quot; &quot;id: 361&quot; &quot;id: 403&quot; &quot;id: 454&quot; &quot;id: 455&quot; &quot;id: 497&quot; &quot;id: 705&quot;
+## [15] &quot;id: 775&quot; &quot;id: 803&quot; &quot;id: 960&quot;</code></pre>
+<pre class="r"><code>peopleLikeMe_full &lt;- peopleLikeMe %&gt;%
+  reverse_ego(g, 1) %&gt;%
+  unlist %&gt;%
+  names() %&gt;% 
+  unique %&gt;%
+  reverse_induced_subgraph(g)</code></pre>
+<pre class="r"><code>peopleLikeMe_full %&gt;%
+  E() %&gt;%
+  .[type == &quot;What is your official job title?&quot; ] %&gt;%
+  reverse_subgraph_edges(peopleLikeMe_full) %&gt;%
+  degree(mode = 'in') %&gt;%
+  .[. &gt; 0] %&gt;%
+  sort(T)</code></pre>
+<pre><code>##                                                Graphics Editor 
+##                                                              2 
+##                                    Data Visualization Engineer 
+##                                                              2 
+##                                                Data Journalist 
+##                                                              1 
+## Research Associate for Information Synthesis and Dissemination 
+##                                                              1 
+##                                                   Data Analyst 
+##                                                              1 
+##                                     Data Visualization Analyst 
+##                                                              1 
+##                                                 Data Scientist 
+##                                                              1 
+##                                             Research Associate 
+##                                                              1 
+##                                                     Researcher 
+##                                                              1 
+##                                           Senior Urban Planner 
+##                                                              1 
+##            Director Office of Data Research and Accountability 
+##                                                              1 
+##                                               Business Analyst 
+##                                                              1 
+##                                     Faculty Research Associate 
+##                                                              1 
+##                                     Data Visualisation Manager 
+##                                                              1 
+##                                                   Statistician 
+##                                                              1</code></pre>
+<pre class="r"><code>whatTheySaid &lt;- function(g, question){
+  g %&gt;%
+    E() %&gt;%
+    .[type == question] %&gt;%
+    reverse_subgraph_edges(g) %&gt;%
+    degree(mode = 'in') %&gt;%
+    .[.&gt; 0] %&gt;%
+    sort(T)
+}</code></pre>
+<pre class="r"><code>questions &lt;- g %&gt;%
+  E() %&gt;%
+  .$type %&gt;%
+  unique
+
+similarAnswers &lt;- lapply(questions, function(x){
+  q &lt;- x
+  a &lt;- whatTheySaid(peopleLikeMe_full, x)
+  list(
+    question = q,
+    answers = a
+  )})
+
+names(similarAnswers) &lt;- sapply(similarAnswers, function(x){x$question})
+
+similarAnswers &lt;- lapply(similarAnswers, function(x){x$answers})</code></pre>
+<pre class="r"><code>similarAnswers$`Who do you look to as a thought leader in data visualization?`</code></pre>
+<pre><code>##             NA   Mike Bostock Tamara Munzner  Alberto Cairo      Andy Kirk 
+##              5              5              3              2              2 
+## Hadley Wickham   Jeffrey Heer        Tableau     Nathan Yau   Hans Rosling 
+##              2              2              1              1              1 
+##  Nadieh Bremer     Amanda Cox   Andy Kriebel   Elijah Meeks Santiago Ortiz 
+##              1              1              1              1              1 
+##     Chris Viau 
+##              1</code></pre>
+<pre class="r"><code>similarAnswers$`Who do you make data visualizations for?`</code></pre>
+<pre><code>##              Analysts        General Public            Executives 
+##                    12                    10                     9 
+##            Scientists             Engineers      Project Managers 
+##                     5                     4                     4 
+##      Product Managers Medical Professionals               Clients 
+##                     2                     2                     1</code></pre>
+<pre class="r"><code>similarAnswers$`Which of these charts have you used in production in the last 6 months:`</code></pre>
+<pre><code>##      Line Chart       Bar Chart  Choropleth Map         Treemap 
+##              16              15              12               6 
+## Network Diagram    Flow Diagram       Pie Chart    Infographics 
+##               6               5               4               3 
+##      Raster Map      Dendrogram    venn diagram     Scatterplot 
+##               2               1               1               1 
+##     slope chart       cartogram        Heat Map 
+##               1               1               1</code></pre>
+<pre class="r"><code>similarAnswers$`What technologies do you use to visualize data?`</code></pre>
+<pre><code>##                                D3                            ggplot 
+##                                15                                14 
+##                             Excel                  Other Javascript 
+##                                10                                10 
+##                           Other R                           Leaflet 
+##                                10                                 8 
+##                           Tableau                      Other Python 
+##                                 6                                 5 
+##                       Illustrator                        Highcharts 
+##                                 4                                 4 
+##                            Pandas                              QGIS 
+##                                 4                                 4 
+##                            Plotly                            Mapbox 
+##                                 3                                 3 
+##                             React                        Processing 
+##                                 3                                 3 
+##                              Vega                             WebGL 
+##                                 2                                 2 
+##                              Java                          Power BI 
+##                                 2                                 1 
+##                          Other BI                            ArcGIS 
+##                                 1                                 1 
+##                     After Effects                           Angular 
+##                                 1                                 1 
+##                         Other MVC Other Network Visualization Suite 
+##                                 1                                 1 
+##                            Sketch                             Stata 
+##                                 1                                 1 
+##                       google docs                          Recharts 
+##                                 1                                 1 
+##                          Chart.JS 
+##                                 1</code></pre>
+</div>
+<div id="what-do-people-like-me-dislike-about-the-people-they-work-for" class="section level2">
+<h2>What do people like me dislike about the people they work for?</h2>
+<pre class="r"><code>similarAnswers$`What is your biggest frustration with your job?` %&gt;% names</code></pre>
+<pre><code>##  [1] &quot;NA&quot;                                                                                                                                       
+##  [2] &quot;Keeping up with new tools and learning how to use them (steep learning curves- lack of on-the-job training).&quot;                             
+##  [3] &quot;communication with client and co-workers is hard - human interactions are still the biggest challenge in all industries I've encountered.&quot;
+##  [4] &quot;Data cleaning&quot;                                                                                                                            
+##  [5] &quot;Lack of audience knowledge (have to train them!)&quot;                                                                                         
+##  [6] &quot;Too many meetings and difficulties hiring team members&quot;                                                                                   
+##  [7] &quot;Still learning how to do reporting and come up with interesting news ideas&quot;                                                               
+##  [8] &quot;Lack of collaboration&quot;                                                                                                                    
+##  [9] &quot;Dealing with the IT framework of the parent organization.&quot;                                                                                
+## [10] &quot;Data prep takes a long time&quot;                                                                                                              
+## [11] &quot;Data quality&quot;                                                                                                                             
+## [12] &quot;Alienation of labor as a product of capitalism as a mode of labor relations.&quot;                                                             
+## [13] &quot;Missing data&quot;                                                                                                                             
+## [14] &quot;Salary&quot;</code></pre>
+<pre class="r"><code>similarAnswers$`What do you think other people in your organization just don’t get about the data visualization work that you do?` %&gt;% names</code></pre>
+<pre><code>##  [1] &quot;NA&quot;                                                                                                                                                        
+##  [2] &quot;Two things: 1) the amount of time it takes to produce data viz. 2) the breadth of data-viz options available to them.&quot;                                     
+##  [3] &quot;the power of answering questions with the data.&quot;                                                                                                           
+##  [4] &quot;The underlying logic and design philosophy&quot;                                                                                                                
+##  [5] &quot;The time and effort required to create visualizations when working with large transactional systems that require extensive cleaning and preparation.&quot;      
+##  [6] &quot;Leadership totally gets it - Steve/Archie/Amanda/Hannah are all great!&quot;                                                                                    
+##  [7] &quot;Charting types outside of line/bar charts&quot;                                                                                                                 
+##  [8] &quot;The underlying data structure.&quot;                                                                                                                            
+##  [9] &quot;Different viz types tell different stories&quot;                                                                                                                
+## [10] &quot;The importance of avoiding \&quot;fishing expeditions-\&quot; but really having strong statistical arguments and justifications for examining data in specific ways.&quot;
+## [11] &quot;That it requires expertise&quot;                                                                                                                                
+## [12] &quot;How much better it is compared than tables for communication.&quot;                                                                                             
+## [13] &quot;That there is value in making the data more easily human consumable.&quot;</code></pre>
+<pre class="r"><code>similarAnswers$`What one change would make your job better?` %&gt;% names</code></pre>
+<pre><code>##  [1] &quot;NA&quot;                                                                                                                           
+##  [2] &quot;More trainings on new tools- especially R/ggplot- D3- Ruby on Rails- and front end web development--javascript in particular.&quot;
+##  [3] &quot;have time to inject more prediction and analysis into the process.&quot;                                                           
+##  [4] &quot;More focus on designing for the internet- less on antiquated print media&quot;                                                     
+##  [5] &quot;Additional staff&quot;                                                                                                             
+##  [6] &quot;Less money in news/not sure about career path&quot;                                                                                
+##  [7] &quot;more data engineering support&quot;                                                                                                
+##  [8] &quot;An easier data structure to report off of.&quot;                                                                                   
+##  [9] &quot;Open data in good formats&quot;                                                                                                    
+## [10] &quot;A movement away from one-time/one-audience bespoke vis tools- and towards more general frameworks.&quot;                           
+## [11] &quot;More patient users&quot;                                                                                                           
+## [12] &quot;Being able to use any software I want.&quot;</code></pre>
+<pre class="r"><code>similarAnswers$`What is your biggest frustration with doing data visualization in your job?` %&gt;% names</code></pre>
+<pre><code>##  [1] &quot;NA&quot;                                                                                                     
+##  [2] &quot;getting more into webgl&quot;                                                                                
+##  [3] &quot;Not having time to learn all the great tools that are out there.&quot;                                       
+##  [4] &quot;Lack of trust that I am selecting the best and most appropriate method to visualize the data.&quot;          
+##  [5] &quot;The stack is a little complicated. Don't like having to squeeze things inside require/backbone/site css&quot;
+##  [6] &quot;Accessibility&quot;                                                                                          
+##  [7] &quot;Lack of clear use cases.&quot;                                                                               
+##  [8] &quot;garbage in- garbage out&quot;                                                                                
+##  [9] &quot;Limitations of Power BI&quot;                                                                                
+## [10] &quot;Picking the right viz&quot;                                                                                  
+## [11] &quot;Reliance on design \&quot;folklore\&quot; rather than empirical evidence of effectiveness.&quot;                       
+## [12] &quot;Small display media&quot;                                                                                    
+## [13] &quot;Limited tools.&quot;                                                                                         
+## [14] &quot;It is often overlooked&quot;</code></pre>
+</div>
+<div id="what-do-people-like-me-want-to-improve-about-themselves-and-the-community" class="section level2">
+<h2>What do people like me want to improve about themselves and the community?</h2>
+<pre class="r"><code>similarAnswers$`If you could change one thing about your data visualization work what would it be?` %&gt;% names</code></pre>
+<pre><code>##  [1] &quot;NA&quot;                                                                                              
+##  [2] &quot;make it flashier&quot;                                                                                
+##  [3] &quot;Design more interactive-first  and less static materials designed to work on a web page or PDF&quot;  
+##  [4] &quot;more acceptance of visualization decisions&quot;                                                      
+##  [5] &quot;Would like to publish more exploratory/experimental things&quot;                                      
+##  [6] &quot;More interesting charting types&quot;                                                                 
+##  [7] &quot;More resources for guidelines across tools- like the grammar of graphics.&quot;                       
+##  [8] &quot;Educating users in different types of data viz&quot;                                                  
+##  [9] &quot;Being able to present vis as a creative and rhetorical endeavor instead of \&quot;just\&quot; engineering.&quot;
+## [10] &quot;Focus on building software rather than one-off projects&quot;                                         
+## [11] &quot;Access to more visualization tools.&quot;</code></pre>
+<pre class="r"><code>similarAnswers$`What community support / discussions / advice would you want to see from data visualization thought leaders?` %&gt;% names</code></pre>
+<pre><code>##  [1] &quot;NA&quot;                                                                                                                                                                              
+##  [2] &quot;More in-person workshops/training/meetups for beginners where people of all skill levels could  come to talk through ideas and work on projects with help from peers or mentors.&quot;
+##  [3] &quot;move forward data vis literacy.&quot;                                                                                                                                                 
+##  [4] &quot;Strategies for educating the audience about data visualization and why certain choices are made.&quot;                                                                                
+##  [5] &quot;Not sure what I should be working on now to keep ahead of the curve in the future. will vega put us all out work??&quot;                                                              
+##  [6] &quot;More about structuring/feeding data for visualizations and more about good design practices for data vis based web applications.&quot;                                                
+##  [7] &quot;How to structure your data and guidelines for how \&quot;big\&quot; data can get before models need to be reworked.&quot;                                                                       
+##  [8] &quot;Remakes&quot;                                                                                                                                                                         
+##  [9] &quot;More discussion of the ethics of the improper presentation of data. How bad vis can actually impact decision-making and policy for the worse.&quot;                                   
+## [10] &quot;Help networking and finding jobs&quot;</code></pre>
 </div>
 
 

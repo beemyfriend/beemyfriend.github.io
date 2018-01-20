@@ -166,3 +166,91 @@ networkLikeMe %>%
   sort(T) %>%
   head(10)
 ```
+
+```{r fullNetwokr}
+networkLikeMe_full <- networkLikeMe %>%
+  V() %>%
+  .[degree(networkLikeMe, mode = 'out') >= 12] %>%
+  names() %>%
+  save_as('peopleLikeMe') %>%
+  smooth_transition(networkLikeMe) %>%
+  E() %>%
+  .[peopleLikeMe %->% V(networkLikeMe)] %>%
+  reverse_subgraph_edges(networkLikeMe)
+```
+
+```{r peopleLikeMe}
+peopleLikeMe
+```
+
+```{r peopleLikeMeFull}
+peopleLikeMe_full <- peopleLikeMe %>%
+  reverse_ego(g, 1) %>%
+  unlist %>%
+  names() %>% 
+  unique %>%
+  reverse_induced_subgraph(g)
+```
+
+```{r jobTitle}
+peopleLikeMe_full %>%
+  E() %>%
+  .[type == "What is your official job title?" ] %>%
+  reverse_subgraph_edges(peopleLikeMe_full) %>%
+  degree(mode = 'in') %>%
+  .[. > 0] %>%
+  sort(T)
+```
+
+```{r}
+whatTheySaid <- function(g, question){
+  g %>%
+    E() %>%
+    .[type == question] %>%
+    reverse_subgraph_edges(g) %>%
+    degree(mode = 'in') %>%
+    .[.> 0] %>%
+    sort(T)
+}
+```
+
+```{r}
+questions <- g %>%
+  E() %>%
+  .$type %>%
+  unique
+
+similarAnswers <- lapply(questions, function(x){
+  q <- x
+  a <- whatTheySaid(peopleLikeMe_full, x)
+  list(
+    question = q,
+    answers = a
+  )})
+
+names(similarAnswers) <- sapply(similarAnswers, function(x){x$question})
+
+similarAnswers <- lapply(similarAnswers, function(x){x$answers})
+```
+
+```{r howDidTheyAnswer}
+similarAnswers$`Who do you look to as a thought leader in data visualization?`
+similarAnswers$`Who do you make data visualizations for?`
+similarAnswers$`Which of these charts have you used in production in the last 6 months:`
+similarAnswers$`What technologies do you use to visualize data?`
+```
+
+## What do people like me dislike about the people they work for?
+
+```{r }
+similarAnswers$`What is your biggest frustration with your job?` %>% names
+similarAnswers$`What do you think other people in your organization just don’t get about the data visualization work that you do?` %>% names
+similarAnswers$`What one change would make your job better?` %>% names
+similarAnswers$`What is your biggest frustration with doing data visualization in your job?` %>% names
+```
+## What do people like me want to improve about themselves and the community?
+
+```{r }
+similarAnswers$`If you could change one thing about your data visualization work what would it be?` %>% names
+similarAnswers$`What community support / discussions / advice would you want to see from data visualization thought leaders?` %>% names
+```
