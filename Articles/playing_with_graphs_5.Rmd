@@ -7,12 +7,32 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-packages <- c('tidyverse', 'stringr', 'igraph', 'tinkR')
+packages <- c('tidyverse', 'stringr', 'igraph', 'diagram', 'tinkR')
 sapply(packages, library, character.only = T)
 g <- read_graph("../Data/data_vis_survey.graphml", 'graphml')
 ```
 
 ## Introduction
+
+Today we're going to explore survey data as if it were a graph. This exploration was inspired by a talk that [**Ed Finkler** provided at Nodevember 2016](https://www.youtube.com/watch?v=GekQqFZm7mA). The schema uses the following logic: There are **People**, there are **Answers**, and those two things are connected by **questions**.
+
+
+```{r schema, echo = F}
+my_edge_length <- .09
+my_text_size <- 1.3
+openplotmat()
+pos <- coordinates(c(3))
+question <- straightarrow(from = pos[1,], to = pos[3,])
+text(question[1], question[2]+ .05, 'Questions')
+textellipse(mid = pos[1,], radx = my_edge_length, lab = 'People', box.col = 'lightgrey')
+textellipse(mid = pos[3,], radx = my_edge_length, lab = 'Answers', box.col = 'orange')
+title('Data Viz Survey Schema')
+```
+
+The two questions I want to answer by exploring this graph is:
+
+1. What can we learn from the people who spend less than 5% of their time on data visualization, but claim that data visualization is a primary focus of their work? (Inspired by Shirley Wu's closing comments in [655 Frustrations Doing Data Visualization](https://medium.com/visualizing-the-field/655-frustrations-doing-data-visualization-e1087c8176fc))
+2. Who are people similar to me in the datavisualization community?
 
 ## Setup
 
@@ -27,16 +47,17 @@ sapply(packages, library, character.only = T)
 
 ### Data
 
-The original data can be found in [Elijah Meeks github repository](https://github.com/emeeks/data_visualization_survey/tree/master/data). However, because we will work with a different version of the same dataset. I took the liberty and "graph-it-ize" (or "net-worked", or "node-and-edgitized") the csv so we can explore the survey results as we would a graph database.  You can find the "graph-ee-teed" dataset [in my github repository](https://github.com/beemyfriend/beemyfriend.github.io/blob/master/Data/data_vis_survey.graphml)
+The original data can be found in [Elijah Meeks github repository](https://github.com/emeeks/data_visualization_survey/tree/master/data). However, because we will work with a different version of the same dataset. I took the liberty and "graph-it-ized" (or "net-worked", or "node-and-edgitized") the csv so we can explore the survey results as we would a graph database.  You can find the "graph-ee-teed" dataset [in my github repository](https://github.com/beemyfriend/beemyfriend.github.io/blob/master/Data/data_vis_survey.graphml)
 
 
 ```{R loadData, eval = F}
 g <- read_graph("Data/data_vis_survey.graphml", 'graphml')
 ```
 
-### Graph Schema
 
 ## Test Example
+
+Before we dive into the graph, we should try out a test case. 
 
 ```{r tExample}
 #I want to know who gave the same answers as I did for a question
@@ -253,4 +274,58 @@ similarAnswers$`What is your biggest frustration with doing data visualization i
 ```{r }
 similarAnswers$`If you could change one thing about your data visualization work what would it be?` %>% names
 similarAnswers$`What community support / discussions / advice would you want to see from data visualization thought leaders?` %>% names
+```
+
+
+## Shirley's question
+
+```{r sxywuQ}
+lt5_dv <- getSameAnswers(g, 
+               "Percent of your day focused on creating/implementing/productizing data visualizations?",
+               as.character(0:5) ) %>%
+  V() %>%
+  .[type == 'person'] %>%
+  names()
+
+pfocus <- getSameAnswers(g,
+                         "What focus is data visualization in your work?",
+                         "Data visualization is the focus of my job") %>%
+  V() %>%
+  .[type == 'person'] %>%
+  names()
+
+dataViz_atrophy <- lt5_dv %>% 
+  .[. %in% pfocus] %>%
+  reverse_ego(g) %>%
+  unlist %>%
+  names() %>% 
+  unique %>%
+  reverse_induced_subgraph(g)
+
+dataViz_atrophy_answers <- questions %>%
+  lapply(function(x){
+    q = x
+    a = whatTheySaid(dataViz_atrophy, x)
+    list(question = q, answer = a)
+  })
+
+names(dataViz_atrophy_answers) <- sapply(dataViz_atrophy_answers, function(x){x$question})
+
+dataViz_atrophy_answers <- lapply(dataViz_atrophy_answers, function(x){
+  x$answer
+}) 
+```
+
+```{r}
+dataViz_atrophy_answers$`Are data visualization specialists represented in the leadership of your organization?`
+dataViz_atrophy_answers$`Data visualization roles at your organization are found in what part of the organization?`
+dataViz_atrophy_answers$`What level of data visualizations are used at your organization?`
+dataViz_atrophy_answers$`How is your organization using data visualization?`
+dataViz_atrophy_answers$`What's your employment status`
+dataViz_atrophy_answers$`What is your official job title`
+dataViz_atrophy_answers$`How many years have you been doing data visualization?`
+dataViz_atrophy_answers$`What is your biggest frustration with your job?`
+dataViz_atrophy_answers$`What do you think other people in your organization just don’t get about the data visualization work that you do?`
+dataViz_atrophy_answers$`What community support / discussions / advice would you want to see from data visualization thought leaders?`
+dataViz_atrophy_answers$`What do you think other people in your organization just don’t get about the data visualization work that you do?`
 ```
