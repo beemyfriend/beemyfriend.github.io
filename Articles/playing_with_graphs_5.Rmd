@@ -363,7 +363,7 @@ same_answers <- lapply(seq_along(my_survey_responses$questions), function(i){
 ```
 
 
-We want to create a single graph by combining each of the subgraphs together. Combining graphs together is a little tricky and I haven't figured out a more efficient way to combine graphs together. What we will do is create multiple tibbles representing edge lists, bind them together, and then make a completely new graph using `graph_rom_data_frame()`
+We want to create a single graph by combining each of the subgraphs together. Combining graphs together is a little tricky and I haven't figured out a more efficient way to combine graphs together. What we will do is create multiple tibbles representing edge lists, bind them together, and then make a completely new graph using `graph_from_data_frame()`
 
 
 ```{r createEdges}
@@ -417,7 +417,7 @@ peopleLikeMe
 ```
 
 
-There are 17 people who are similar to me out of `V(g)[type =='person'] %>% length`. Let's explore these people:
+There are 17 people who are similar to me out of `r V(g)[type =='person'] %>% length`. Let's explore these people:
 
 
 ```{r peopleLikeMeFull}
@@ -492,10 +492,13 @@ similarAnswers$`What technologies do you use to visualize data?`
 ```
 
 
+# Conclusion
+
+The topic of community was spoken about a lot last year. Julia Silge explored the topic [useR!2017 ](https://juliasilge.com/blog/navigating-packages/). Eric Socolofsky and Elijah Meeks developed a Medium page specifically focusing on [Visualizing, The Field](https://medium.com/visualizing-the-field). Exploring community surveys is important for identifying the health of a community, but also exploring the indiiduals that create those communities. 
+
 # Ending Thoughts
 
-
-This is something I wanted to do for a long time. Before I moved back to the states I lived on a farm in South America. I lived with family, and while I wasn't alone, I definitely felt lonely. I had a lot of free time and I eventually decided to learn how to code. My spanish was pretty bad and I didn't know anyone nearby who could teach me how to code, so I had to learn everything online. And while I am technically "Mostly Self-Taught" I would never be able to do what I can do now if it weren't for the wonderful online **R** and **D3** communities. Very awesome people within these communities took their time to write tutorials so people like me could learn. Some were even kind enough to look at my code and give me advice directly. The [**D3 slack channel**](https://d3-slackin.herokuapp.com/) in particular was a place that provided me with both a place to learn as well as a social outlet. I care very deeply about these communities and being able to find people similar to me within them makes me really happy - it implies that I actually do belong within their ranks.
+Before I moved back to the states I lived on a farm in South America. I lived with family, and while I wasn't alone, I definitely felt lonely. I had a lot of free time and I eventually decided to learn how to code. My spanish was pretty bad and I didn't know anyone nearby who could teach me how to code, so I had to learn everything online. And while I am technically "Mostly Self-Taught" I would never be able to do what I can do now if it weren't for the wonderful online **R** and **D3** communities. Very awesome people within these communities took their time to write tutorials so people like me could learn. Some were even kind enough to look at my code and give me advice directly. The [**D3 slack channel**](https://d3-slackin.herokuapp.com/) in particular was a place that provided me with both a place to learn as well as a social outlet. I care very deeply about these communities and being able to find people similar to me within them makes me really happy - it implies that I actually do belong within their ranks.
 
 
 # Appendix
