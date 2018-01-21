@@ -195,9 +195,12 @@ whatTheySaid <- function(g, question){
 ```
 
 # Shirley's question
+
 ```
 I just want to know, those that replied <5% time spent on visualization, but also answered that it was their primary focus…how does that even 🤔?
 ```
+
+
 How can we try to make sense of people who spend less than 5% of their time on visualization but claiim that it is their primary focus? We have a lot of information at our disposal, but not all of it is useful in answering this question. I propose that we try to find out the following information:
 
 1. What is their job? (maybe their job description can give us hints)
@@ -223,7 +226,9 @@ pfocus <- getSameAnswers(g,
   .[type == 'person'] %>%
   names()
 
-#
+# create a network of people that identify
+# data viz as their primary focus
+# AND spend les than 5% of their tie doing daa viz
 dataViz_atrophy <- lt5_dv %>% 
   .[. %in% pfocus] %>%
   reverse_ego(g) %>%
@@ -232,8 +237,12 @@ dataViz_atrophy <- lt5_dv %>%
   unique %>%
   reverse_induced_subgraph(g)
 ```
-```{r questionsOfInterest}
 
+
+Let's filter the network we created to include only questions that we think will help us understand the people of interest better. 
+
+
+```{r questionsOfInterest}
 questionsOfInterest <- c(
   "What is your official job title?",
   "How many years have you been doing data visualization?",
@@ -259,9 +268,12 @@ dataViz_atrophy_answers <- lapply(dataViz_atrophy_answers, function(x){
 dataViz_atrophy_answers
 ```
 
+
 We have both a Professor and a consultant in this group. They probably spend most of their time in the classroom or in meetings. All but one person in this group have at least 7 years of experience so they could potentially have enough seniority to guide others in data visualization and work on more top-level things rather than the actual craft of data visualization. One person actually spends most of his/her time on design, which brings up a good question -- is data engineering and design not part of the process of "creating/implementing/productizing data visualizations"? Is data visualization not data science?
 
+
 You may have noticed that we are looking at summary statistics of these answers. This is necessary once we start looking at answers provided by larger groups of people. Unfortunatley, whenever we use summary statistics, we lose a lot of important information. For instances, the above summary does not actually let us know who said what. Just for fun, and because the network is small, let's create an edge list for each individual of interest:
+
 
 ```{r lt5}
 dataViz_atrophy %>%
@@ -285,16 +297,15 @@ dataViz_atrophy %>%
       select(person, question, answer)  %>%
       arrange(question) %>%
       knitr::kable()
-    
-      
   })
 ```
 
+
 # Finding myself within the community
 
-Before we move further, I want to mention that the task we will go though is something I wanted to do for a long time. Before I moved back to the states I lived on a farm in South America. I lived with family, and while I wasn't alone, I definitely felt lonely. I had a lot of free time and I eventually decided to learn how to code. My spanish was pretty bad and I didn't know anyone nearby who could teach me how to code, so I had to learn everything online. And while I am technically "Mostly Self-Taught" I would never be able to do what I can do now if it weren't for the wonderful online **R** and **D3** communities. Very awesome people within these communities took their time to write tutorials so people like me could learn. Some were even kind enough to look at my code and give me advice directly. The [**D3 slack channel**](https://d3-slackin.herokuapp.com/) in particular was a place that provided me with both a place to learn as well as a social outlet. I care very deeply about these communities and being able to find people similar to me within them makes me really happy - it implies that I actually do belong within their ranks.
 
-I did not take the survey myself. Below is a tibble with some of my answers to the survey questions. We will use this tibble to find people who answered the same quesions like I did. 
+Traversing a graph lends itself to being a pretty good recommendation system. To test this out, we will try to find people like me within the community. I did not take the survey myself. Below is a tibble with some of my answers to the survey questions. We will use this tibble to find people who answered the same quesions like I did. 
+
 
 ```{r myAnswers, results='hide'}
 my_survey_responses <- tibble(
@@ -335,9 +346,12 @@ my_survey_responses <- tibble(
 )
 ```
 
+
 ## Filtering the network for those who are like me
 
+
 Let's create networks of people who answered questions like I did. The below code creates a list of subgraphs that have only one question represented and only includes people who answered the question like I did. 
+
 
 ```{r createSubnetworks}
 #create subnetworks of people who answered questions as I did
@@ -348,7 +362,9 @@ same_answers <- lapply(seq_along(my_survey_responses$questions), function(i){
 })
 ```
 
+
 We want to create a single graph by combining each of the subgraphs together. Combining graphs together is a little tricky and I haven't figured out a more efficient way to combine graphs together. What we will do is create multiple tibbles representing edge lists, bind them together, and then make a completely new graph using `graph_rom_data_frame()`
+
 
 ```{r createEdges}
 edges <- lapply(same_answers, function(x){
@@ -364,7 +380,9 @@ edges <- lapply(same_answers, function(x){
 networkLikeMe <- graph_from_data_frame(edges)
 ```
  
+ 
 Let's take a look at the ten people who answered these questions like me. The higher the degree, the more question they answered like me. 
+ 
  
 ```{r findPeopleDegree}
 networkLikeMe %>%
@@ -374,7 +392,9 @@ networkLikeMe %>%
   head(10)
 ```
 
+
 I've only answered 15 questions, so people who have at least 12 similar connections to me seems like a decent cut-off point for deciding whether or not someone is similar to me. Let's create a network of people who have at least 12 similar connections to me:
+
 
 ```{r fullNetwokr}
 networkLikeMe_full <- networkLikeMe %>%
@@ -388,13 +408,17 @@ networkLikeMe_full <- networkLikeMe %>%
   reverse_subgraph_edges(networkLikeMe)
 ```
 
+
 Let's identify the people who are similar to me. 
+
 
 ```{r peopleLikeMe}
 peopleLikeMe
 ```
 
+
 There are 17 people who are similar to me out of `V(g)[type =='person'] %>% length`. Let's explore these people:
+
 
 ```{r peopleLikeMeFull}
 peopleLikeMe_full <- peopleLikeMe %>%
@@ -405,7 +429,9 @@ peopleLikeMe_full <- peopleLikeMe %>%
   reverse_induced_subgraph(g)
 ```
 
+
 My current job title is "Data Visualization Programmer", let's check out the jobs of people like me:
+
 
 ```{r jobTitle}
 peopleLikeMe_full %>%
@@ -417,11 +443,23 @@ peopleLikeMe_full %>%
   sort(T)
 ```
 
+
 "Data Visualization Engineer" seem synonymous to "Data Visualization Engineer" so it makes sense as one of the top jobs listed for people like me. "Graphics Editor" and "Data Journalist" are two positions that I would love to have. So it's neat that people with those jobs can be found in a list of people like me. Just for comparison, let's check out what are the top ten jobs of the community:
 
-```{r topJobs}
 
+```{r topJobs}
+g %>%
+  E() %>%
+  .[type == "What is your official job title?"] %>%
+  reverse_subgraph_edges(g) %>%
+  degree(mode = 'in') %>%
+  sort(T) %>%
+  head(10)
 ```
+
+
+Neither "Data Visualization Engineer", "Graphics Editor", nor "Data Journalist" show up as a top ten job for the community. This implies that the people listed in *peopleLikeMe* are actually like me and not just a typical person in the data viz community. Cool, it seems like graph traversal is doing a good job of identifying people like me. Let's create the building blocks to see how people like me answered questions:
+
 
 ```{r}
 questions <- g %>%
@@ -442,6 +480,10 @@ names(similarAnswers) <- sapply(similarAnswers, function(x){x$question})
 similarAnswers <- lapply(similarAnswers, function(x){x$answers})
 ```
 
+
+Let's explore how people like me answered some questions:
+
+
 ```{r howDidTheyAnswer}
 similarAnswers$`Who do you look to as a thought leader in data visualization?`
 similarAnswers$`Who do you make data visualizations for?`
@@ -449,19 +491,45 @@ similarAnswers$`Which of these charts have you used in production in the last 6 
 similarAnswers$`What technologies do you use to visualize data?`
 ```
 
-## What do people like me dislike about the people they work for?
 
-```{r }
-similarAnswers$`What is your biggest frustration with your job?` %>% names
-similarAnswers$`What do you think other people in your organization just don’t get about the data visualization work that you do?` %>% names
-similarAnswers$`What one change would make your job better?` %>% names
-similarAnswers$`What is your biggest frustration with doing data visualization in your job?` %>% names
+# Ending Thoughts
+
+
+This is something I wanted to do for a long time. Before I moved back to the states I lived on a farm in South America. I lived with family, and while I wasn't alone, I definitely felt lonely. I had a lot of free time and I eventually decided to learn how to code. My spanish was pretty bad and I didn't know anyone nearby who could teach me how to code, so I had to learn everything online. And while I am technically "Mostly Self-Taught" I would never be able to do what I can do now if it weren't for the wonderful online **R** and **D3** communities. Very awesome people within these communities took their time to write tutorials so people like me could learn. Some were even kind enough to look at my code and give me advice directly. The [**D3 slack channel**](https://d3-slackin.herokuapp.com/) in particular was a place that provided me with both a place to learn as well as a social outlet. I care very deeply about these communities and being able to find people similar to me within them makes me really happy - it implies that I actually do belong within their ranks.
+
+
+# Appendix
+
+
+Just in case you want to learn more about people like me, below is their answers to all the questions.
+
+
+```{r appendix, results='asis'}
+personProfile <- function(g){
+  g %>%
+    V() %>%
+    .[type == 'person'] %>%
+    reverse_ego(g) %>%
+    lapply(function(x){
+      x %>% 
+        names() %>%
+        reverse_induced_subgraph(g) %>%
+        save_as('individualOfInterest') %>%
+        E() %>%
+        .[type %in% questions] %>%
+        save_as('questionEdge') %>%
+        reverse_subgraph_edges(individualOfInterest) %>%
+        ends(E(.)) %>%
+        as.tibble() %>%
+        rename(person = V1,
+               answer = V2) %>%
+        mutate(question = questionEdge$type) %>%
+        select(person, question, answer)  %>%
+        arrange(question) %>%
+        knitr::kable()
+  })
+}
+
+personProfile(peopleLikeMe_full)
+
 ```
-## What do people like me want to improve about themselves and the community?
-
-```{r }
-similarAnswers$`If you could change one thing about your data visualization work what would it be?` %>% names
-similarAnswers$`What community support / discussions / advice would you want to see from data visualization thought leaders?` %>% names
-```
-
-
