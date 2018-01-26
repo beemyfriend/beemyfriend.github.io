@@ -1,0 +1,99 @@
+---
+title: "Creating Data Viz Jobs"
+author: "beemyfriend"
+date: "January 25, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+packages <- c('tidyverse', 'stringr', 'igraph', 'diagram', 'tinkR')
+sapply(packages, library, character.only = T)
+job_cat_graph <- read_graph('../Data/data_viz_job_category.graphml', 'graphml')
+peopleOfCat <- function(g, category){
+  g %>%
+    V() %>%
+    .[name == category] %>%
+    reverse_ego(g, 2, 'in') %>%
+    unlist %>%
+    names() %>%
+    reverse_induced_subgraph(g) %>%
+    V() %>%
+    .[type == 'person'] %>% 
+    .$name
+}
+
+peopleOfCatAnswered <- function(g, category, question){
+  peopleOfCat(g, category) %>%
+    reverse_ego(g, 2, 'out') %>%
+    unlist %>%
+    names() %>%
+    reverse_induced_subgraph(g) %>%
+    save_as('tempGraph') %>%
+    E() %>%
+    .[type == question] %>%
+    reverse_subgraph_edges(tempGraph) %>%
+    degree(mode = 'in') %>%
+    .[. > 0] %>%
+    sort(T)
+}
+
+categories <- job_cat_graph %>%
+  V() %>%
+  .[type == 'job category'] %>%
+  .$name %>%
+  unique
+
+pquestions <- job_cat_graph %>% E() %>% .[str_detect(type, regex('percent', ignore_case = T))] %>% .$type %>% unique
+
+avePercentDay <- function(x){
+  x <- x %>% .[names(.) != 'NA']
+  n <- names(x) %>% as.numeric
+  rep(n, x) %>% mean
+}
+
+categoryInfo <- lapply(setNames(categories,categories), function(x){
+  tech <-peopleOfCatAnswered(job_cat_graph, x, "What technologies do you use to visualize data?")
+  heros <- peopleOfCatAnswered(job_cat_graph, x, "Who do you look to as a thought leader in data visualization?")
+  presentation <- peopleOfCatAnswered(job_cat_graph, x, "How do you present your data visualizations?")
+  practicioners <- peopleOfCat(job_cat_graph, x)
+  jobs <- peopleOfCatAnswered(job_cat_graph, x, "What is your official job title?")
+  percents <- lapply(setNames(pquestions, pquestions), function(y){
+    peopleOfCatAnswered(job_cat_graph, x, y) %>% avePercentDay()
+  })
+  list(
+    allNodes = c(tech %>% names, 
+                 practicioners#, 
+#                 heros %>% names, 
+#                 presentation %>% names
+  ),
+    topNodes = c(tech %>% .[names(.) != 'NA'] %>% head(10) %>% names#, 
+#                 heros %>% .[names(.) != 'NA'] %>% head(5) %>% names, 
+#                 presentation %>% .[names(.) != 'NA'] %>% head(5)%>% names
+  ),
+    job = x,
+    tech = tech,
+    heros = heros, 
+    practicioners = practicioners,
+    jobs = jobs %>% names %>% sort(),
+    percents = percents
+  )
+})
+
+questionResponsePercent <- categoryInfo %>% lapply(function(x){
+  question = x$percents %>% names
+  aveResponse = x$percents %>% unlist
+  tibble(question, aveResponse)
+  })
+```
+
+
+```{r}
+knitr::kable(questionResponsePercent[[1]], caption = "Journalist")
+knitr::kable(questionResponsePercent[[2]], caption = "Data Scientist")
+knitr::kable(questionResponsePercent[[3]], caption = "Scientist (Not Data Scientist)")
+knitr::kable(questionResponsePercent[[4]], caption = 'GIS')
+knitr::kable(questionResponsePercent[[5]], caption = 'Analyst')
+knitr::kable(questionResponsePercent[[6]], caption = 'Designer')
+knitr::kable(questionResponsePercent[[7]], caption = 'VIS (in the title)')
+```
