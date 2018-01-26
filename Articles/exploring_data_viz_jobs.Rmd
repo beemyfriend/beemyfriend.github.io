@@ -5,6 +5,10 @@ date: "January 25, 2018"
 output: html_document
 ---
 
+
+
+
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 packages <- c('tidyverse', 'stringr', 'igraph', 'diagram', 'tinkR')
@@ -52,6 +56,58 @@ avePercentDay <- function(x){
   rep(n, x) %>% mean
 }
 
+getRepresentative <- function(g, people, tech, heros){
+  tech <- tech %>% .[names(.) != 'NA'] %>% .[. >1] %>% names
+  heros <- heros %>% .[names(.) != 'NA'] %>% .[.>1] %>% names
+  nodes <- c(tech, heros, people) %>% unique
+  induced_subgraph(g, nodes) %>%
+    degree(mode = 'out') %>%
+    sort(T) %>% 
+    .[. == max(.)]
+}
+
+getFreeResponses <- function(g, person){
+  questions <- c(
+    "What is your official job title?",
+    "Who do you make data visualizations for?",
+    "What knowledge level do they have of the data you are visualizing for them?",
+    "How often do they consume your data visualizations?",
+    "What do they use your data visualizations for?",
+    "How would you describe the relationship?",
+    "What is your biggest frustration with your job?",
+    "What is your biggest frustration with doing data visualization in your job?",
+    "If you could change one thing about your job what would it be?",
+    "If you could change one thing about your data visualization work what would it be?",
+    "What do you think other people in your organization just don’t get about the data visualization work that you do?",
+    "What one change would make your job better?",
+    "What community support / discussions / advice would you want to see from data visualization thought leaders?")
+  
+  orderedTibble <- tibble(question = questions)
+  
+  tempTibble <- ego(g, 1, person)[[1]] %>% 
+    reverse_induced_subgraph(g) %>% 
+    save_as('tempGraph') %>%
+    E() %>%
+    .[type %in% questions] %>%
+    save_as('tempEdges') %>%
+    reverse_subgraph_edges(tempGraph) %>%
+    ends(E(.)) %>%
+    as.tibble() %>%
+    rename(person = V1,
+           response = V2) %>%
+    mutate(question = tempEdges$type) 
+  
+  left_join(orderedTibble, tempTibble) %>%
+    select(person, question, response) %>%
+    group_by(person, question) %>%
+    nest %>%
+    mutate(response = sapply(data, function(x){
+      x$response %>%
+        str_c(collapse = ';')
+    })) %>%
+    select(-data)
+}
+
 categoryInfo <- lapply(setNames(categories,categories), function(x){
   tech <-peopleOfCatAnswered(job_cat_graph, x, "What technologies do you use to visualize data?")
   heros <- peopleOfCatAnswered(job_cat_graph, x, "Who do you look to as a thought leader in data visualization?")
@@ -61,6 +117,7 @@ categoryInfo <- lapply(setNames(categories,categories), function(x){
   percents <- lapply(setNames(pquestions, pquestions), function(y){
     peopleOfCatAnswered(job_cat_graph, x, y) %>% avePercentDay()
   })
+  representative <- getRepresentative(job_cat_graph, practicioners, tech, heros)
   list(
     allNodes = c(tech %>% names, 
                  practicioners#, 
@@ -76,7 +133,9 @@ categoryInfo <- lapply(setNames(categories,categories), function(x){
     heros = heros, 
     practicioners = practicioners,
     jobs = jobs %>% names %>% sort(),
-    percents = percents
+    percents = percents,
+    representative = representative,
+    representativeProfile = getFreeResponses(job_cat_graph, representative %>% names)
   )
 })
 
@@ -87,13 +146,51 @@ questionResponsePercent <- categoryInfo %>% lapply(function(x){
   })
 ```
 
+## Journalist
 
-```{r}
+```{r echo=F}
 knitr::kable(questionResponsePercent[[1]], caption = "Journalist")
+knitr::kable(categoryInfo[[1]]$representativeProfile, caption = "Journalist")
+```
+
+## Data Scientist 
+
+```{r echo=F}
 knitr::kable(questionResponsePercent[[2]], caption = "Data Scientist")
+knitr::kable(categoryInfo[[2]]$representativeProfile, caption = "Data Scientist")
+```
+
+## Scientist (Not Data Scientist)
+
+```{r echo=F}
 knitr::kable(questionResponsePercent[[3]], caption = "Scientist (Not Data Scientist)")
+knitr::kable(categoryInfo[[3]]$representativeProfile, caption = "Scientist (Not Data Scientist)")
+```
+
+## GIS
+
+```{r echo=F}
 knitr::kable(questionResponsePercent[[4]], caption = 'GIS')
+knitr::kable(categoryInfo[[4]]$representativeProfile, caption = 'GIS')
+```
+
+## Analyst
+
+```{r echo=F}
 knitr::kable(questionResponsePercent[[5]], caption = 'Analyst')
+knitr::kable(categoryInfo[[5]]$representativeProfile, caption = 'Analyst')
+```
+
+## Designer
+
+```{r echo=F}
 knitr::kable(questionResponsePercent[[6]], caption = 'Designer')
+knitr::kable(categoryInfo[[6]]$representativeProfile, caption = 'Designer')
+```
+
+## VIS (in the title)
+
+```{r echo=F}
 knitr::kable(questionResponsePercent[[7]], caption = 'VIS (in the title)')
+knitr::kable(categoryInfo[[7]]$representativeProfile, caption = 'VIS (in the title)')
 ```
