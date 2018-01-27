@@ -1,0 +1,39 @@
+<body>
+  <div id="graphExplorer">
+    <h1>Data Viz Survey</h1>
+    <template v-if='loaded'>
+      <h2>Find yourself!<h2>
+        <answer-questions></answer-questions>
+    </template>
+    <template v-else>
+      <h2>Loading...</h2>
+    </template>
+  </div>
+</body>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="http://rawgit.com/gka/d3-jetpack/master/build/d3-jetpack.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+<script>
+  graphExplorer = new Vue({
+    el: '#graphExplorer',
+    data: {
+      loaded: false,
+      network: null
+    }
+  })
+
+  Vue.component('answer-questions', {
+    template: "question: <select>\
+    <option v-for='(q, i) in graphExplorer.network.questions' v-bind:value='i'>\
+    {{q.question}}\
+    </option></select>\
+    "
+  })
+
+  d3.loadData('dataVizSurveyGraph.json', (err, data) =>{
+    dat = data[0]
+    graphExplorer.loaded = true
+    graphExplorer.network = data[0]
+  })
+
+</script>
