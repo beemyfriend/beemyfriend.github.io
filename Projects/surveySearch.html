@@ -1,9 +1,17 @@
+<style>
+button {
+  background-color: rgb(192, 192, 192)
+}
+</style>
 <body>
   <div id="graphExplorer">
     <h1>Data Viz Survey</h1>
     <template v-if='loaded'>
-      <h2>Find yourself!<h2>
+      <h2>Find yourself!</h2>
         <answer-questions></answer-questions>
+        <br>
+        <br>
+        <answer-options v-bind:responses='responses'></answer-options>
     </template>
     <template v-else>
       <h2>Loading...</h2>
@@ -18,22 +26,62 @@
     el: '#graphExplorer',
     data: {
       loaded: false,
-      network: null
+      network: null,
+      responses: null
+    },
+    methods: {
+      getResponses: function(){
+        var sQ = d3.select('select#surveyQuestions').node()
+        if(sQ){
+          var index = +sQ.value
+          this.responses = this.network.questions[index].responses
+        }
+      }
     }
   })
 
+  Vue.component('answer-options',{
+    props: ['responses'],
+    data: function(){
+      return {
+        clicked: []
+      }
+    },
+    methods: {
+      responseClick: function(id){
+        var tempSelector = d3.select('button#'+id)
+        var clickedText = tempSelector.text()
+        if(tempSelector.style('background-color') == 'rgb(192, 192, 192)'){
+          tempSelector.style('background-color', "rgb(218, 165, 32)")
+          this.clicked.push(clickedText)
+          console.log(this.clicked)
+        } else {
+          tempSelector.style('background-color', 'rgb(192, 192, 192)')
+          this.clicked = this.clicked.filter(x => x!=clickedText)
+          console.log(this.clicked)
+        }
+      },
+      recordClick: function(){
+
+      }
+    },
+    template: "<div><legend>Choose your responses:</legend><div>\
+    <button v-for='(r,i) in responses' v-bind:value='i' v-bind:id='\"r\"+i' v-on:click='responseClick(\"r\"+i)'>{{r}}</button>\
+    </div><br><br><button>Record Answers</button></div>"
+  })
+
   Vue.component('answer-questions', {
-    template: "question: <select>\
+    mounted: graphExplorer.getResponses(),
+    template: "Question: <select id='surveyQuestions' @change='graphExplorer.getResponses()'>\
     <option v-for='(q, i) in graphExplorer.network.questions' v-bind:value='i'>\
-    {{q.question}}\
-    </option></select>\
-    "
+    {{q.question[0]}}\
+    </option></select>"
   })
 
   d3.loadData('dataVizSurveyGraph.json', (err, data) =>{
-    dat = data[0]
-    graphExplorer.loaded = true
-    graphExplorer.network = data[0]
+    surveyInfo = data[0];
+    graphExplorer.loaded = true;
+    graphExplorer.network = data[0];
   })
 
 </script>
