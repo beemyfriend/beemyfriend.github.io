@@ -8,10 +8,14 @@ button {
     <h1>Data Viz Survey</h1>
     <template v-if='loaded'>
       <h2>Find yourself!</h2>
+        <answers-to-questions v-if='answers.length' v-bind:answers='answers'></answers-to-questions>
         <answer-questions></answer-questions>
         <br>
         <br>
         <answer-options v-bind:responses='responses'></answer-options>
+        <div v-if='answers.length >= 3'>
+          <button @click='filterEdges'>Show Similar People</button>
+        </div>
     </template>
     <template v-else>
       <h2>Loading...</h2>
@@ -21,13 +25,45 @@ button {
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script src="http://rawgit.com/gka/d3-jetpack/master/build/d3-jetpack.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+<script src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js"></script>
 <script>
+  function findQuestionEdge(question, edgeList){
+    return edgeList.filter(x => x.edgeType == question)
+  }
+
+  function findSameAnswer(answers, edgeList){
+    return edgeList.filter(x => answers.indexOf(x.target) >= 0)
+  }
+
+  function findSimilar(question, answers, edgeList){
+    var el = findQuestionEdge(question, edgeList)
+    return findSameAnswer(answers, el)
+  }
+
+  function findMostSimilar(edgeArray){
+    var el = edgeArray.reduce((a,b) => a.concat(b))
+    var el_count = _.countBy(el, 'source')
+    el_count = _.chain(el_count)
+      .map((a,b) => {return {name: b, count: a}})
+      .sortBy('count')
+      .value()
+    console.log(el_count)
+    var maxCount = _.maxBy(el_count, a => a.count).count
+    console.log(maxCount)
+    var similarPeople = el_count.filter(x => x.count == maxCount)
+      .map(x => x.name)
+    console.log(similarPeople)
+    return el.filter(x => similarPeople.indexOf(x.source) >= 0)
+  }
+
   graphExplorer = new Vue({
     el: '#graphExplorer',
     data: {
       loaded: false,
       network: null,
-      responses: null
+      responses: null,
+      answers: [],
+      edges: []
     },
     methods: {
       getResponses: function(){
@@ -35,9 +71,28 @@ button {
         if(sQ){
           var index = +sQ.value
           this.responses = this.network.questions[index].responses
+        } else if (this.network) {
+          this.responses = this.network.questions[0].responses
         }
+      },
+      filterEdges: function(){
+        var edgeArray = this.answers
+          .map(x => findSimilar(x.question, x.answers, this.network.edges))
+
+        this.edges = findMostSimilar(edgeArray)
       }
     }
+  })
+
+  Vue.component('answers-to-questions', {
+    props: ['answers'],
+    template: "\
+    <div>\
+    <template v-for='a in answers'>\
+      <p><b>{{a.question}}</b></p>\
+      <p>{{a.answers.join(';')}}</p>\
+    </template></div>\
+    "
   })
 
   Vue.component('answer-options',{
@@ -62,16 +117,30 @@ button {
         }
       },
       recordClick: function(){
-
+        if(this.clicked.length){
+          var index = d3.select('select#surveyQuestions').node().value
+          graphExplorer.answers.push({
+            question: graphExplorer.network.questions[index].question[0],
+            answers: this.clicked
+          })
+          this.clicked = []
+          d3.selectAll('.responseButton').style('background-color', 'rgb(192, 192, 192)')
+        } else {
+          alert('Please pick an answer to this question or select a new question to answer.')
+        }
       }
     },
     template: "<div><legend>Choose your responses:</legend><div>\
-    <button v-for='(r,i) in responses' v-bind:value='i' v-bind:id='\"r\"+i' v-on:click='responseClick(\"r\"+i)'>{{r}}</button>\
-    </div><br><br><button>Record Answers</button></div>"
+    <button v-for='(r,i) in responses' v-bind:value='i'\
+      v-bind:id='\"r\"+i' \
+      v-on:click='responseClick(\"r\"+i)'\
+      class='responseButton'>{{r}}</button>\
+    </div><br><br>\
+    <button @click='recordClick'>Record Answers</button>\
+    <br></div>"
   })
 
   Vue.component('answer-questions', {
-    mounted: graphExplorer.getResponses(),
     template: "Question: <select id='surveyQuestions' @change='graphExplorer.getResponses()'>\
     <option v-for='(q, i) in graphExplorer.network.questions' v-bind:value='i'>\
     {{q.question[0]}}\
@@ -82,6 +151,6 @@ button {
     surveyInfo = data[0];
     graphExplorer.loaded = true;
     graphExplorer.network = data[0];
+    graphExplorer.getResponses()
   })
-
 </script>
