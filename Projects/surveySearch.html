@@ -8,14 +8,28 @@ button {
     <h1>Data Viz Survey</h1>
     <template v-if='loaded'>
       <h2>Find yourself!</h2>
-        <answers-to-questions v-if='answers.length' v-bind:answers='answers'></answers-to-questions>
         <answer-questions></answer-questions>
         <br>
-        <br>
         <answer-options v-bind:responses='responses'></answer-options>
-        <div v-if='answers.length >= 3'>
+        <br>
+        <!-- <div v-if='answers.length >= 3'>
           <button @click='filterEdges'>Show Similar People</button>
-        </div>
+        </div> -->
+        <svg width='500' height='300'></svg>
+        <template v-if='personProfile.length'>
+          <table>
+            <tr>
+              <th>Question</th>
+              <th>Answer</th>
+            </tr>
+            <tr v-for='(x, i) in personProfile' v-bind:bgcolor='i%2 ? "white" : "lightgrey"'>
+              <td>{{x.q}}</td>
+              <td>{{x.a}}</td>
+            </tr>
+          </table>
+        </template>
+        <br>
+        <answers-to-questions v-if='answers.length' v-bind:answers='answers'></answers-to-questions>
     </template>
     <template v-else>
       <h2>Loading...</h2>
@@ -27,35 +41,6 @@ button {
 <script src="https://cdn.jsdelivr.net/npm/vue"></script>
 <script src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js"></script>
 <script>
-  function findQuestionEdge(question, edgeList){
-    return edgeList.filter(x => x.edgeType == question)
-  }
-
-  function findSameAnswer(answers, edgeList){
-    return edgeList.filter(x => answers.indexOf(x.target) >= 0)
-  }
-
-  function findSimilar(question, answers, edgeList){
-    var el = findQuestionEdge(question, edgeList)
-    return findSameAnswer(answers, el)
-  }
-
-  function findMostSimilar(edgeArray){
-    var el = edgeArray.reduce((a,b) => a.concat(b))
-    var el_count = _.countBy(el, 'source')
-    el_count = _.chain(el_count)
-      .map((a,b) => {return {name: b, count: a}})
-      .sortBy('count')
-      .value()
-    console.log(el_count)
-    var maxCount = _.maxBy(el_count, a => a.count).count
-    console.log(maxCount)
-    var similarPeople = el_count.filter(x => x.count == maxCount)
-      .map(x => x.name)
-    console.log(similarPeople)
-    return el.filter(x => similarPeople.indexOf(x.source) >= 0)
-  }
-
   graphExplorer = new Vue({
     el: '#graphExplorer',
     data: {
@@ -63,7 +48,9 @@ button {
       network: null,
       responses: null,
       answers: [],
-      edges: []
+      edges: [],
+      nodes: [],
+      personProfile: []
     },
     methods: {
       getResponses: function(){
@@ -75,11 +62,140 @@ button {
           this.responses = this.network.questions[0].responses
         }
       },
+      findQuestionEdge: function(question, edgeList){
+        return edgeList.filter(x => x.edgeType == question)
+      },
+      findSameAnswer: function(answers, edgeList){
+        return edgeList.filter(x => answers.indexOf(x.target) >= 0)
+      },
+      findSimilar: function(question, answers, edgeList){
+        var el = this.findQuestionEdge(question, edgeList)
+        return this.findSameAnswer(answers, el)
+      },
+      findMostSimilar: function(edgeArray){
+        var el = edgeArray.reduce((a,b) => a.concat(b))
+        var el_count = _.countBy(el, 'source')
+        el_count = _.chain(el_count)
+          .map((a,b) => {return {name: b, count: a}})
+          .sortBy('count')
+          .value()
+        var maxCount = _.maxBy(el_count, a => a.count).count
+        var similarPeople = el_count.filter(x => x.count == maxCount)
+          .map(x => x.name)
+        return el.filter(x => similarPeople.indexOf(x.source) >= 0)
+      },
+      createNodeList: function(edgeList){
+        var people = edgeList.map(x => x.source)
+        people = [...new Set(people)]
+        people = people.map(x => {return {id: x, type: 'Person'}})
+
+        var answers = edgeList.map(x => x.target)
+        answers = [...new Set(answers)]
+        answers = answers.map(x => {return {id: x, type: 'Answer'}})
+
+        return _.flatten([people, answers])
+      },
       filterEdges: function(){
         var edgeArray = this.answers
-          .map(x => findSimilar(x.question, x.answers, this.network.edges))
+          .map(x => this.findSimilar(x.question, x.answers, this.network.edges))
+        console.log(edgeArray)
+        var edges = this.findMostSimilar(edgeArray)
+        console.log(edges)
+        this.edges = edges
+        this.nodes = this.createNodeList(edges)
+        this.createGraph()
+      },
+      createGraph: function(){
+        d3.select('svg').selectAll('g').remove()
 
-        this.edges = findMostSimilar(edgeArray)
+        var svg = d3.select('svg'),
+          width = +svg.attr('width'),
+          height = +svg.attr('height')
+
+        var simulation = d3.forceSimulation()
+          .force('link', d3.forceLink().id(function(d){return d.id; }))
+          .force('charge', d3.forceManyBody())
+          .force("collide", d3.forceCollide().radius(function(d) { return d.r + 0.5; }).iterations(3))
+          .force('center', d3.forceCenter(width/2, height/2));
+
+        var edges = _.cloneDeep(this.edges)
+        var nodes = _.cloneDeep(this.nodes)
+        var link = svg.append('g')
+          .attr('class', 'links')
+          .selectAll('line')
+          .data(edges)
+          .enter().append('line')
+          .st({
+            stroke: 'black',
+            strokeWidth: 3.5
+          })
+
+        link.append('title')
+          .text(d=>d.edgeType)
+
+        var node = svg.append('g')
+          .attr('class', 'nodes')
+          .selectAll('circle')
+          .data(nodes)
+          .enter().append('circle')
+          .at({r: 10})
+          .st({fill: (d) => {
+            if(d.type == 'Person'){
+              return 'lightblue'
+            } else {
+              return 'lightpink'
+            }
+          }})
+          .on('click', function(d){
+            if(d.type == 'Person'){
+              var personProfile = graphExplorer.network.edges
+                .filter(x => x.source == d.id)
+                .map(x => {return {q: x.edgeType, a: x.target}})
+              graphExplorer.personProfile = personProfile
+            }
+          })
+          .call(d3.drag()
+            .on('start', dragstarted)
+            .on('drag', dragged)
+            .on('end', dragended))
+
+        node.append('title')
+          .text(d=> d.id)
+
+        simulation.nodes(nodes)
+          .on('tick',ticked)
+
+        simulation.force('link')
+          .links(edges)
+
+          function dragstarted(d) {
+            if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+            d.fx = d.x;
+            d.fy = d.y;
+          }
+
+          function dragged(d) {
+            d.fx = d3.event.x;
+            d.fy = d3.event.y;
+          }
+
+          function dragended(d) {
+            if (!d3.event.active) simulation.alphaTarget(0);
+            d.fx = null;
+            d.fy = null;
+          }
+
+          function ticked(){
+            link
+              .attr('x1', d => d.source.x)
+              .attr('y1', d=> d.source.y)
+              .attr('x2', d=> d.target.x)
+              .attr('y2', d=> d.target.y)
+
+            node
+              .attr('cx', d => d.x)
+              .attr('cy', d => d.y)
+          }
       }
     }
   })
@@ -124,7 +240,11 @@ button {
             answers: this.clicked
           })
           this.clicked = []
+          var sQ = d3.select('select#surveyQuestions').node()
+          graphExplorer.network.questions.splice(+sQ, 1)
+          graphExplorer.getResponses()
           d3.selectAll('.responseButton').style('background-color', 'rgb(192, 192, 192)')
+          graphExplorer.filterEdges()
         } else {
           alert('Please pick an answer to this question or select a new question to answer.')
         }
