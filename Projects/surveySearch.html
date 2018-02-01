@@ -15,6 +15,10 @@ button {
         <!-- <div v-if='answers.length >= 3'>
           <button @click='filterEdges'>Show Similar People</button>
         </div> -->
+        <template v-if='answers.length'>
+          <h2>People Similar To You</h2>
+          <p>The blue nodes represent people who answered the most questions like you. Click on a blue node to get the full profile of the person it represents.</p>
+        </template>
         <svg width='500' height='300'></svg>
         <template v-if='personProfile.length'>
           <table>
@@ -22,6 +26,7 @@ button {
               <th>Question</th>
               <th>Answer</th>
             </tr>
+            <h2>{{personProfile[1].p}}</h2>
             <tr v-for='(x, i) in personProfile' v-bind:bgcolor='i%2 ? "white" : "lightgrey"'>
               <td>{{x.q}}</td>
               <td>{{x.a}}</td>
@@ -139,18 +144,20 @@ button {
           .data(nodes)
           .enter().append('circle')
           .at({r: 10})
-          .st({fill: (d) => {
-            if(d.type == 'Person'){
-              return 'lightblue'
-            } else {
-              return 'lightpink'
-            }
-          }})
+          .st({
+            fill: (d) => {
+              if(d.type == 'Person'){
+                return '#7570b3'
+              } else {
+                return '#d95f02'
+              }},
+            stroke: 'black'
+            })
           .on('click', function(d){
             if(d.type == 'Person'){
               var personProfile = graphExplorer.network.edges
                 .filter(x => x.source == d.id)
-                .map(x => {return {q: x.edgeType, a: x.target}})
+                .map(x => {return {p: x.source, q: x.edgeType, a: x.target}})
               graphExplorer.personProfile = personProfile
             }
           })
@@ -204,6 +211,7 @@ button {
     props: ['answers'],
     template: "\
     <div>\
+    <h2>Your Responses</h2>\
     <template v-for='a in answers'>\
       <p><b>{{a.question}}</b></p>\
       <p>{{a.answers.join(';')}}</p>\
@@ -225,11 +233,9 @@ button {
         if(tempSelector.style('background-color') == 'rgb(192, 192, 192)'){
           tempSelector.style('background-color', "rgb(218, 165, 32)")
           this.clicked.push(clickedText)
-          console.log(this.clicked)
         } else {
           tempSelector.style('background-color', 'rgb(192, 192, 192)')
           this.clicked = this.clicked.filter(x => x!=clickedText)
-          console.log(this.clicked)
         }
       },
       recordClick: function(){
@@ -267,7 +273,8 @@ button {
     </option></select>"
   })
 
-  d3.loadData('dataVizSurveyGraph.json', (err, data) =>{
+  // d3.loadData('dataVizSurveyGraph.json', (err, data) =>{
+  d3.loadData('dataVizSurveyGraphFull.json', (err, data) =>{
     surveyInfo = data[0];
     graphExplorer.loaded = true;
     graphExplorer.network = data[0];
