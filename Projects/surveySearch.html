@@ -1,6 +1,7 @@
 <style>
 button {
-  background-color: rgb(192, 192, 192)
+  background-color: rgb(192, 192, 192);
+  cursor: pointer
 }
 </style>
 <body>
@@ -12,9 +13,6 @@ button {
         <br>
         <answer-options v-bind:responses='responses'></answer-options>
         <br>
-        <!-- <div v-if='answers.length >= 3'>
-          <button @click='filterEdges'>Show Similar People</button>
-        </div> -->
         <template v-if='answers.length'>
           <h2>People Similar To You</h2>
           <p>The blue nodes represent people who answered the most questions like you. Click on a blue node to get the full profile of the person it represents.</p>
@@ -151,7 +149,14 @@ button {
               } else {
                 return '#d95f02'
               }},
-            stroke: 'black'
+            stroke: 'black',
+            cursor: (d) => {
+              if(d.type == 'Person'){
+                return 'pointer'
+              } else {
+                return 'auto'
+              }
+            }
             })
           .on('click', function(d){
             if(d.type == 'Person'){
