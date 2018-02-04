@@ -1,48 +1,56 @@
-<style>
-button {
-  background-color: rgb(192, 192, 192);
-  cursor: pointer
-}
-</style>
+<head>
+  <style>
+  button {
+    background-color: rgb(192, 192, 192);
+    cursor: pointer
+  }
+  </style>
+  <script src="https://d3js.org/d3.v4.min.js"></script>
+  <script src="../libraries/d3-jetpack.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js"></script>
+</head>
 <body>
-  <div id="graphExplorer">
-    <h1>Data Viz Survey</h1>
-    <template v-if='loaded'>
-      <h2>Find yourself!</h2>
-        <answer-questions></answer-questions>
-        <br>
-        <answer-options v-bind:responses='responses'></answer-options>
-        <br>
-        <template v-if='answers.length'>
-          <h2>People Similar To You</h2>
-          <p>The blue nodes represent people who answered the most questions like you. Click on a blue node to get the full profile of the person it represents.</p>
-        </template>
-        <svg width='500' height='300'></svg>
-        <template v-if='personProfile.length'>
-          <table>
-            <tr>
-              <th>Question</th>
-              <th>Answer</th>
-            </tr>
-            <h2>{{personProfile[1].p}}</h2>
-            <tr v-for='(x, i) in personProfile' v-bind:bgcolor='i%2 ? "white" : "lightgrey"'>
-              <td>{{x.q}}</td>
-              <td>{{x.a}}</td>
-            </tr>
-          </table>
-        </template>
-        <br>
-        <answers-to-questions v-if='answers.length' v-bind:answers='answers'></answers-to-questions>
-    </template>
-    <template v-else>
-      <h2>Loading...</h2>
-    </template>
+  <div id="graphExplorer" >
+    <div div style='position:fixed;width:50%;top:0px;left:0px;height:100%;overflow-y:scroll;'>
+      <h1>Data Viz Survey</h1>
+      <template v-if='loaded'>
+        <h2>Find yourself!</h2>
+          <answer-questions></answer-questions>
+          <br>
+          <answer-options v-bind:responses='responses'></answer-options>
+          <br>
+          <br>
+          <answers-to-questions v-if='answers.length' v-bind:answers='answers'></answers-to-questions>
+      </template>
+      <template v-else>
+        <h2>Loading...</h2>
+      </template>
+    </div>
+    <div style='position:fixed;width:50%;height:50%;top:0px;right:0px;border: 1px solid black'>
+      <template v-if='answers.length'>
+        <h2>People Similar To You</h2>
+        <p>The blue nodes represent people who answered the most questions like you. Click on a blue node to get the full profile of the person it represents.</p>
+      </template>
+      <svg width='500' height='250'></svg>
+    </div>
+    <div style='position:fixed;width:50%;bottom: 0px;height:50%;right:0px;overflow-y:scroll;border: 1px solid black'>
+      <template v-if='personProfile.length'>
+        <table>
+          <tr>
+            <th>Question</th>
+            <th>Answer</th>
+          </tr>
+          <h2>{{personProfile[1].p}}</h2>
+          <tr v-for='(x, i) in personProfile' v-bind:bgcolor='i%2 ? "white" : "lightgrey"'>
+            <td>{{x.q}}</td>
+            <td>{{x.a}}</td>
+          </tr>
+        </table>
+      </template>
+    </div>
   </div>
 </body>
-<script src="https://d3js.org/d3.v4.min.js"></script>
-<script src="../libraries/d3-jetpack.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/vue"></script>
-<script src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js"></script>
 <script>
   graphExplorer = new Vue({
     el: '#graphExplorer',
@@ -261,7 +269,7 @@ button {
         }
       }
     },
-    template: "<div><legend>Choose your responses:</legend><div>\
+    template: "<div><br><legend>Choose your responses:</legend><br><div>\
     <button v-for='(r,i) in responses' v-bind:value='i'\
       v-bind:id='\"r\"+i' \
       v-on:click='responseClick(\"r\"+i)'\
@@ -272,11 +280,13 @@ button {
   })
 
   Vue.component('answer-questions', {
-    template: "Question: <select id='surveyQuestions' @change='graphExplorer.getResponses()'>\
+    template: "Question: <select id='surveyQuestions' @change='graphExplorer.getResponses()' style='width:100%'>\
     <option v-for='(q, i) in graphExplorer.network.questions' v-bind:value='i'>\
     {{q.question[0]}}\
     </option></select>"
   })
+
+
 
   // d3.loadData('dataVizSurveyGraph.json', (err, data) =>{
   d3.loadData('dataVizSurveyGraphFull.json', (err, data) =>{
