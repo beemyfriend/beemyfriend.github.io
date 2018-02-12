@@ -1,0 +1,354 @@
+---
+title: 'Comparing Traversal Languages: Part 1'
+author: "beemyfriend"
+date: "February 11, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+packages <- c("tidyverse", "igraph", "tinkR", "ggraph");
+sapply(packages, library, character.only = T)
+```
+# Introduction
+
+Today we're going to explore the similarities and differences between two graph traversal languages -- **Gremlin** and **Cypher** -- and we're going to see what we can do to utilize **IGRAPH** in the same way. 
+
+Something to look out for while we explore **IGRAPH** is that, out of the box, it doesn't allow for a users to traverse a graph as easily as they can with either **Gremlin** or **Igraph**. However, it does provide useful functions to traverse a graph. Our goal is to figure out how we can manipulate these functions to imitate those of the query languages. 
+
+A quick note: this tutorial will show code for all three libraries, but will only show the output for **IGRAPH** code. This is because, even though the outputs are different in format, they are the same in substance. Unless told otherwise, **Gremlin** will output a list of vertex or edge IDs for a query. Likewise, **Cypher** will produce a  table. **IGRAPH** produces a vector. The content is the same, but the formats are different.
+
+# Setup
+
+Before we move forward, let's load up some packages. *tidyverse* includes *tibble*, *ggplot*, and *magrittr*. *igraph* is what we will need to work with graphs in **R** and *ggraph* is a neat plotting library for graphs. *tinkR* is just filled with helper functions we can use with *igraph*. Essentially, most of the helper functions are just a wrappers over *igraph* functions, but with the input variables switched.
+
+You can find *tinkR* on [my github page](https://github.com/beemyfriend/tinkR).
+
+```{r eval = F}
+packages <- c("tidvyerse", "igraph", "ggraph", "tinkR")
+sapply(packages, library, character.only = T)
+```
+# Creating A Graph
+
+The first thing we will need to do is learn how to create a graph. The graph we will recreate is a small sample of [Kelvin Lawrence's](https://twitter.com/gfxman?lang=en) "air-routes" graph. The **Gremlin** example below was pulled directly from his book [Practical Gremlin](http://kelvinlawrence.net/book/Gremlin-Graph-Guide.html)
+
+## Gremlin
+
+```
+tg = TinkerGraph.open();
+g =  tg.traversal();
+
+g.addV("airport").property("code", "AUS").property("state", "Texas").as("aus").
+  addV("airport").property("code", "DFW").property("state", "Texas").as("dfw").
+  addV("airport").property("code", "LAX").property("state", "California").as("lax").
+  addV("airport").property("code", "JFK").property("state", "New York").as("jfk").
+  addV("airport").property("code", "ATL").property("state", "Georgia").as("atl").
+  addE("route").from("aus").to("dfw").
+  addE("route").from("aus").to("atl").
+  addE("route").from("atl").to("dfw").
+  addE("route").from("atl").to("jfk").
+  addE("route").from("dfw").to("jfk").
+  addE("route").from("dfw").to("lax").
+  addE("route").from("lax").to("jfk").
+  addE("route").from("lax").to("aus").
+  addE("route").from("lax").to("dfw").
+  iterate();
+```
+
+### Cypher
+
+```
+CREATE (aus:airport {code: "AUS", state: "Texas"}),
+(dfw:airport {code: "DFW", state: "Texas"}),
+(lax:airport {code: "LAX", state: "California"}),
+(jfk:airport {code: "JFK", state: "New York"}),
+(atl:airport {code: "ATL", state: "Georgia"}),
+(aus)-[:route]->(dfw),
+(aus)-[:route]->(atl),
+(atl)-[:route]->(jfk),
+(atl)-[:route]->(dfw),
+(dfw)-[:route]->(jfk),
+(dfw)-[:route]->(lax),
+(lax)-[:route]->(jfk),
+(lax)-[:route]->(aus),
+(lax)-[:route]->(dfw)
+```
+
+### IGRAPH
+
+```{r 'igraphfromemty'}
+g <- make_empty_graph() %>%
+  add_vertices(5, 
+               name = c(
+                 "aus", "dfw", "lax", "jfk", "atl" 
+               ),
+               code = c(
+                 "AUS", "DFW", "LAX", "JFK", "ATL"
+               ),
+               state = c(
+                 "Texas", "Texas", "California", "New York", "Georgia"
+               )) %>%
+  add_edges(c(
+    "aus", "dfw",
+    "aus", "atl",
+    "atl", "dfw",
+    "atl", "jfk",
+    "dfw", "jfk",
+    "dfw", "lax",
+    "lax", "jfk",
+    "lax", "aus",
+    "lax", "dfw"
+  )) %>%
+  set_edge_attr('label', value = "route")
+g
+```
+
+### IGRAPH (From Data Frame)
+
+For those who aren't too comfortable with **IGRAPH**, it is possible to create a graph directly from a data frame. The resulting graphs are the same. I actually feel more comfortable creating a graph from a dataframe. 
+
+```{r 'igraphfromdataframe'}
+nodes <- tibble(
+  name = c(
+    "aus", "dfw", "lax", "jfk", "atl"
+  ),
+  code = c(
+    "AUS", "DFW", "LAX", "JFK", "ATL"
+  ),
+  state = c(
+    "Texas", "Texas", "California", "New York", "Georgia"
+  )
+)
+
+edges <- tibble(
+  source = c(
+    "aus", "aus", "atl", "atl", "dfw", "dfw", "lax", "lax", "lax"
+  ),
+  target = c(
+    "dfw", "atl", "dfw", "jfk", "jfk", "lax", "jfk", "aus", "dfw"
+  ),
+  label = rep('route', 9)
+)
+
+g <- graph_from_data_frame(edges, T, nodes)
+g
+```
+
+# Reference Plot
+
+We will be traversing a graph. As a reference, it would be nice to have a visual depiction of the graph we are traversing. This is to fact check that the results are correct.
+
+```{r message=F}
+set.seed(1234)
+ggraph(g) + 
+  geom_edge_link(arrow = arrow(type = 'closed', 
+                               length = unit(.1, "npc"), 
+                               angle = 10)) + 
+  geom_node_point(aes(fill = state), size = 10, shape = 21) + 
+  geom_node_text(aes(label = code), size = 3) + 
+  theme_void() + 
+  ggtitle("Reference Plot", "A sanity check for the traversals")
+```
+
+# Traversing **Out** 1 Node
+
+Here we will see how we can traverse from one node to an adjacent node. The below traversals will answer the question: "What airports can I get to directly from the Austin-Bergstrom International Airport?"
+
+### Gremlin
+
+```
+g.V().has("code", "AUS").
+  out('route')
+```
+
+### Cypher
+
+```
+MATCH (aus:airport)-[:route]->(destination)
+WHERE aus.code = "AUS"
+RETURN DISTINCT destination
+```
+
+### IGRAPH
+
+```{r 'noout'}
+g %>%
+  V() %>%
+  #Graph any vertex that has the code of "AUS"
+  .[code == "AUS"]%>%
+  #Find any nodes that are the target of any Edge that leaves from "AUS" 
+  reverse_ego(g, mode = 'out')  %>%
+  unlist %>%
+  #names in igraph are similar to ids an identify vertices
+  names() %>%
+  #`ego` can find the subgraph for multiple vertices 
+  #this can result in multiple instances of the same name
+  unique %>%
+  #All we have now are a list of vertex names, 
+  #We don't actually have the vertices themselves
+  #We need to create the vertices by inducing a subgraph
+  reverse_induced_subgraph(g) %>%
+  #reverse_induced_subgraph() creates a new graph 
+  #we will need to refer to this later
+  save_as('g1') %>%
+  #We only want the heads of the edges
+  #We don't want the base (we already know its "AUS")
+  E() %>% 
+  .[V(g1) %>% .[names(.) == "aus"] %->% V(g1)] %>%
+  .[label == "route"] %>%
+  reverse_head_of(g1) %>%
+  names() %>%
+  reverse_induced_subgraph(g) %>%
+  V()
+```
+
+Let's try to streamline this process and make a function called `out()`
+
+```{r 'firstout'}
+out <- function(vertices, graph, edge_req = NULL){
+  tempGraph <- reverse_ego(names(vertices), graph, mode = "out") %>%
+    unlist %>%
+    names() %>%
+    unique %>%
+    reverse_induced_subgraph(graph)
+  
+  tempEdges <- tempGraph %>% E() %>% .[V(tempGraph) %>% .[names(.) %in% names(vertices)] %->% V(tempGraph)] 
+  
+  if(!is.null(edge_req)){
+    tempEdges <- tempEdges %>%
+      .[eval(parse(text = edge_req))]
+  }
+  
+  head_of(tempGraph, tempEdges) %>%
+    names() %>%
+    reverse_induced_subgraph(g) %>%
+    V()
+}
+```
+
+**Let's try it out:**
+
+```{r}
+g %>%
+  V() %>%
+  .[code %in% "AUS"]%>%
+  out(g,  'label == "route"')
+```
+
+Cool now it not only works, but is also concise like the **Gremlin** and **Cypher** traversals. 
+
+# Traversing **Out** 2 Nodes
+
+Now, let's answer the question: "What airports are two flights away from Austin-Bergstrom International Airport?"
+
+### Gremlin
+
+```
+g.V().
+  has("code", "AUS").
+  out('route').
+  out('route').
+  dedup()
+```
+
+### Cypher
+
+```
+MATCH (aus:airport)-[:route]->()-[:route]->(destination)
+WHERE aus.code = "AUS"
+RETURN DISTINCT destination
+```
+
+### IGRAPH
+
+```{r 'secondout'}
+g %>%
+  V() %>%
+  .[code %in% "AUS"] %>%
+  out(g, "label == 'route'") %>%
+  out(g, "label == 'route'")
+```
+
+Cool, so it seems that none of the airports we can fly to from Austin actually go back to Austin, but it does seem that their is a flight from Atlanta that goes to Dallas. So Dallas is a repeating node in both the 1 node traversal and the 2 node traversal. 
+
+# Traversing **In** from 1 Node
+
+Now, let's answer the question of: "Which airports outside of Texas go to airports inside of Texas?" We will add the restriction that the nodes we start this query on are airports inside of Texas and we want to find inward connections from airports outside of texas. 
+
+### Gremlin
+
+```
+g.V().
+  has("state", "Texas").
+  in('route').
+  not(has("state", "Texas")).
+  dedup()
+```
+
+### Cypher
+
+```
+MATCH (departure:airport)-[:route]->(tx:airport)
+WHERE tx.state = "Texas"
+AND NOT departure.state = "Texas"
+RETURN DISTINCT departure
+```
+
+### IGRAPH
+
+We only need to make a few tweaks to the `out()` function to make it work with both incoming and outgoing edges. We will make an entire new `move()` function that will serve this purpose:
+
+```{r}
+#the below function is the same as out() except it now
+#requires a `direction` input that can be used to
+#determine the direction of the ego
+move <- function(vertices, direction, graph, edge_req = NULL){
+  tempGraph <- reverse_ego(names(vertices), graph, mode = direction) %>%
+    unlist %>%
+    names() %>%
+    unique %>%
+    reverse_induced_subgraph(graph)
+  
+  if(direction == "in"){
+    tempEdges <- tempGraph %>% 
+      E() %>% 
+      .[V(tempGraph) %>% .[names(.) %in% names(vertices)] %<-% V(tempGraph)] 
+  } else {
+    tempEdges <- tempGraph %>% 
+      E() %>% 
+      .[V(tempGraph) %>% .[names(.) %in% names(vertices)] %->% V(tempGraph)] 
+  }
+  
+  
+  if(!is.null(edge_req)){
+    tempEdges <- tempEdges %>%
+      .[eval(parse(text = edge_req))]
+  }
+  
+  if(direction == "in"){
+    tail_of(tempGraph, tempEdges) %>%
+      names() %>%
+      reverse_induced_subgraph(graph) %>%
+      V()
+  } else {
+    head_of(tempGraph, tempEdges) %>%
+      names() %>%
+      reverse_induced_subgraph(graph) %>%
+      V()
+  }
+}
+```
+
+**Let's try it out:**
+
+```{r}
+g %>%
+  V() %>%
+  .[state == "Texas"] %>%
+  move('in', g, "label == 'route'") %>%
+  .[state != "Texas"]
+```
+
+# Conclusion
+
+Today we created an imitation of **Gremlins** `out()` and `in()` functions for **IGRAPH**. Those are fundamental functions for **Gremlin** and any traversal language. The similarities between **Gremlin**'s dot notation and **magrittr**'s pipe allow for an easy transition in learning for someone like me who is comfortable with **R**, but new to graphs and graph traversals. That said, I still would like to explore **Cypher** some more. 

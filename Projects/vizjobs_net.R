@@ -20,14 +20,14 @@ removeEdges <- function(g, filter){
     reverse_subgraph_edges(g)
 }
 
-createEdgeList <- function(g, notIncluding){
+createEdgeList <- function(g){#, notIncluding){
   fun.env <- new.env()
   fun.env$g <- g
   
-  sapply(notIncluding, function(x){
-    filterString <- str_c('type !="', x, '"')
-    fun.env$g <- removeEdges(fun.env$g, filterString)
-  })
+  # sapply(notIncluding, function(x){
+  #   filterString <- str_c('type !="', x, '"')
+  #   fun.env$g <- removeEdges(fun.env$g, filterString)
+  # })
   
   edgeList <- fun.env$g %>% ends(E(.)) %>% as.tibble()
   edgeType <- fun.env$g %>% E() %>% .$type
@@ -39,14 +39,14 @@ createEdgeList <- function(g, notIncluding){
   )
 }
 
-createNodeList <- function(g, notIncluding){
+createNodeList <- function(g){#}, notIncluding){
   fun.env <- new.env()
   fun.env$g <- g
   
-  sapply(notIncluding, function(x){
-    filterString <- str_c('type !="', x, '"')
-    fun.env$g <- removeEdges(fun.env$g, filterString)
-  })
+  # sapply(notIncluding, function(x){
+  #   filterString <- str_c('type !="', x, '"')
+  #   fun.env$g <- removeEdges(fun.env$g, filterString)
+  # })
   
   nodeList <- V(fun.env$g)$name
   nodeType <- V(fun.env$g)$type
@@ -56,9 +56,12 @@ createNodeList <- function(g, notIncluding){
   )
 }
 
-el <- createEdgeList(g, dontInclude)
-nl <- createNodeList(g, dontInclude)
-q <- el$edgeType %>% unique
+el <- createEdgeList(g)
+, dontInclude)
+nl <- createNodeList(g)
+, dontInclude)
+allq <- el$edgeType %>% unique
+q <-allq %>% .[!. %in% dontInclude]
 r <- lapply(setNames(q, q), function(x){
   el %>% filter(edgeType == x) %>% .$target %>% unique %>% sort()
 })
@@ -77,7 +80,7 @@ netJson <- list(
 ) %>%
   jsonlite::toJSON()
 
-write(netJson, 'dataVizSurveyGraph.json')
+write(netJson, 'dataVizSurveyGraphFull.json')
 
 jobs <- g %>%
   E() %>%
