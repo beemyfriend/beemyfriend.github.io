@@ -127,7 +127,7 @@ $(document).ready(function () {
 <div id="introduction" class="section level1">
 <h1>Introduction</h1>
 <p>Today we’re going to explore the similarities and differences between two graph traversal languages – <strong>Gremlin</strong> and <strong>Cypher</strong> – and we’re going to see what we can do to utilize <strong>IGRAPH</strong> in the same way.</p>
-<p>Something to look out for while we explore <strong>IGRAPH</strong> is that, out of the box, it doesn’t allow for a users to traverse a graph as easily as they can with either <strong>Gremlin</strong> or <strong>Igraph</strong>. However, it does provide useful functions to traverse a graph. Our goal is to figure out how we can manipulate these functions to imitate those of the query languages.</p>
+<p>Something to look out for while we explore <strong>IGRAPH</strong> is that, out of the box, it doesn’t allow for a users to traverse a graph as easily as they can with either <strong>Gremlin</strong> or <strong>Cypher</strong>. However, it does provide useful functions to traverse a graph. Our goal is to figure out how we can manipulate these functions to imitate those of the query languages.</p>
 <p>A quick note: this tutorial will show code for all three libraries, but will only show the output for <strong>IGRAPH</strong> code. This is because, even though the outputs are different in format, they are the same in substance. Unless told otherwise, <strong>Gremlin</strong> will output a list of vertex or edge IDs for a query. Likewise, <strong>Cypher</strong> will produce a table. <strong>IGRAPH</strong> produces a vector. The content is the same, but the formats are different.</p>
 </div>
 <div id="setup" class="section level1">
@@ -203,9 +203,9 @@ g.addV(&quot;airport&quot;).property(&quot;code&quot;, &quot;AUS&quot;).property
   )) %&gt;%
   set_edge_attr('label', value = &quot;route&quot;)
 g</code></pre>
-<pre><code>## IGRAPH 0011ebf DN-- 5 9 -- 
+<pre><code>## IGRAPH 5eb6887 DN-- 5 9 -- 
 ## + attr: name (v/c), code (v/c), state (v/c), label (e/c)
-## + edges from 0011ebf (vertex names):
+## + edges from 5eb6887 (vertex names):
 ## [1] aus-&gt;dfw aus-&gt;atl atl-&gt;dfw atl-&gt;jfk dfw-&gt;jfk dfw-&gt;lax lax-&gt;jfk lax-&gt;aus
 ## [9] lax-&gt;dfw</code></pre>
 </div>
@@ -236,9 +236,9 @@ edges &lt;- tibble(
 
 g &lt;- graph_from_data_frame(edges, T, nodes)
 g</code></pre>
-<pre><code>## IGRAPH 154746d DN-- 5 9 -- 
+<pre><code>## IGRAPH ac9f647 DN-- 5 9 -- 
 ## + attr: name (v/c), code (v/c), state (v/c), label (e/c)
-## + edges from 154746d (vertex names):
+## + edges from ac9f647 (vertex names):
 ## [1] aus-&gt;dfw aus-&gt;atl atl-&gt;dfw atl-&gt;jfk dfw-&gt;jfk dfw-&gt;lax lax-&gt;jfk lax-&gt;aus
 ## [9] lax-&gt;dfw</code></pre>
 </div>
@@ -302,7 +302,7 @@ RETURN DISTINCT destination</code></pre>
   names() %&gt;%
   reverse_induced_subgraph(g) %&gt;%
   V()</code></pre>
-<pre><code>## + 2/2 vertices, named, from 286c947:
+<pre><code>## + 2/2 vertices, named, from 81e902e:
 ## [1] dfw atl</code></pre>
 <p>Let’s try to streamline this process and make a function called <code>out()</code></p>
 <pre class="r"><code>out &lt;- function(vertices, graph, edge_req = NULL){
@@ -329,7 +329,7 @@ RETURN DISTINCT destination</code></pre>
   V() %&gt;%
   .[code %in% &quot;AUS&quot;]%&gt;%
   out(g,  'label == &quot;route&quot;')</code></pre>
-<pre><code>## + 2/? vertices, named, from 6ba8baf (deleted):
+<pre><code>## + 2/? vertices, named, from 65b356b (deleted):
 ## [1] dfw atl</code></pre>
 <p>Cool now it not only works, but is also concise like the <strong>Gremlin</strong> and <strong>Cypher</strong> traversals.</p>
 </div>
@@ -358,9 +358,9 @@ RETURN DISTINCT destination</code></pre>
   .[code %in% &quot;AUS&quot;] %&gt;%
   out(g, &quot;label == 'route'&quot;) %&gt;%
   out(g, &quot;label == 'route'&quot;)</code></pre>
-<pre><code>## + 3/3 vertices, named, from 1ef611e:
+<pre><code>## + 3/3 vertices, named, from a8967a8:
 ## [1] dfw lax jfk</code></pre>
-<p>Cool, so it seems that none of the airports we can fly to from Austin actually go back to Austin, but it does seem that their is a flight from Atlanta that goes to Dallas. So Dallas is a repeating node in both the 1 node traversal and the 2 node traversal.</p>
+<p>Cool, so it seems that none of the airports we can fly to from Austin actually go back to Austin, but it does seem that there is a flight from Atlanta that goes to Dallas. So Dallas is a repeating node in both the 1 node traversal and the 2 node traversal.</p>
 </div>
 </div>
 <div id="traversing-in-from-1-node" class="section level1">
@@ -428,7 +428,7 @@ move &lt;- function(vertices, direction, graph, edge_req = NULL){
   .[state == &quot;Texas&quot;] %&gt;%
   move('in', g, &quot;label == 'route'&quot;) %&gt;%
   .[state != &quot;Texas&quot;]</code></pre>
-<pre><code>## + 2/3 vertices, named, from 945b8a2:
+<pre><code>## + 2/3 vertices, named, from 05ffaf0:
 ## [1] lax atl</code></pre>
 </div>
 </div>

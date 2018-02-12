@@ -14,7 +14,7 @@ sapply(packages, library, character.only = T)
 
 Today we're going to explore the similarities and differences between two graph traversal languages -- **Gremlin** and **Cypher** -- and we're going to see what we can do to utilize **IGRAPH** in the same way. 
 
-Something to look out for while we explore **IGRAPH** is that, out of the box, it doesn't allow for a users to traverse a graph as easily as they can with either **Gremlin** or **Igraph**. However, it does provide useful functions to traverse a graph. Our goal is to figure out how we can manipulate these functions to imitate those of the query languages. 
+Something to look out for while we explore **IGRAPH** is that, out of the box, it doesn't allow for a users to traverse a graph as easily as they can with either **Gremlin** or **Cypher**. However, it does provide useful functions to traverse a graph. Our goal is to figure out how we can manipulate these functions to imitate those of the query languages. 
 
 A quick note: this tutorial will show code for all three libraries, but will only show the output for **IGRAPH** code. This is because, even though the outputs are different in format, they are the same in substance. Unless told otherwise, **Gremlin** will output a list of vertex or edge IDs for a query. Likewise, **Cypher** will produce a  table. **IGRAPH** produces a vector. The content is the same, but the formats are different.
 
@@ -269,7 +269,7 @@ g %>%
   out(g, "label == 'route'")
 ```
 
-Cool, so it seems that none of the airports we can fly to from Austin actually go back to Austin, but it does seem that their is a flight from Atlanta that goes to Dallas. So Dallas is a repeating node in both the 1 node traversal and the 2 node traversal. 
+Cool, so it seems that none of the airports we can fly to from Austin actually go back to Austin, but it does seem that there is a flight from Atlanta that goes to Dallas. So Dallas is a repeating node in both the 1 node traversal and the 2 node traversal. 
 
 # Traversing **In** from 1 Node
 
