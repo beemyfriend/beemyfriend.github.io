@@ -1,0 +1,265 @@
+---
+title: "Intro to igraph"
+author: '@plzbeemyfriend'
+date: "March 10, 2018"
+output: 
+    ioslides_presentation:
+        widescreen: true
+        smaller: true
+        css: style.css
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(igraph)
+```
+
+## R Markdown
+
+This is an R Markdown presentation. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document.
+
+## Creating graphs from scratch
+1. `make_empty_graph()`: Initialize and empty graph to build on
+2. `vertices()`: Create the vertices/nodes of the graph
+3. `edges()`: Create the edges/links connecting the vertices
+
+## Create an undirected graph from scratch
+```{r undirected_scratch, echo = T}
+library(igraph)
+
+g_undirected <- make_empty_graph(directed = F) +
+  vertices(c("Jack",
+             "Jill",
+             "The Giant"),
+           type = "Character") +
+  edges(c("Jack", "Jill",
+          "Jack", "The Giant"),
+        label = "have met")
+```
+
+## Information from undirected graph
+```{r info_undirected_scratch, echo = T}
+g_undirected
+```
+```{r plot_undirected_scratch, echo = F}
+set.seed(1234)
+plot(g_undirected,
+     layout = layout_nicely,
+     edge.arrow.size = .3)
+```
+
+## Create a directed graph from scratch
+```{r directed_scratch, echo = TRUE}
+g_directed <- make_empty_graph(directed = T) +
+  vertices(c("Jack",
+             "Jill",
+             "The Giant"),
+           type = "Character") +
+  edges(c("Jack", "Jill",
+          "Jill", "Jack",
+          "Jack", "The Giant",
+          "The Giant", "Jack"),
+        label = c("is brother of",
+                  "is sister of",
+                  "steals from",
+                  "wants to eat"))
+```
+
+## Information from directed graph
+```{r info_directed_scratch, echo = T}
+g_directed
+```
+```{r plot_directed_scratch, echo = F}
+set.seed(1234)
+plot(g_directed,
+     edge.curved = T,
+     layout = layout_nicely,
+     edge.arrow.size = .3)
+```
+
+## Creating graphs from data frames
+1. Create and edge list that represents the links of the graph
+    + OPTIONAL: Create a node list with information about each unique node
+2. `graph_from_data_frame()`: Creates a graph from the edge list
+
+## Creating a graph from a data frame
+```{r directed_df, echo=T}
+node_list <- data.frame(
+  name = c("Jack",
+           "Jill",
+           "The Giant"),
+  about = c("Is fast at going down things and uses this skill for theivery",
+            "Is slow at tumbling",
+            "Likes to eat thieves"),
+  gender = c("Male", 
+             "Female", 
+             "Male"),
+  type = "Character"
+)
+
+edge_list <- data.frame(
+  source = c("Jack", "Jill", "Jack", "The Giant"),
+  target = c("Jill", "Jack", "The Giant", "Jack"),
+  label = c("is brother of",
+            "is sister of",
+            "steals from",
+            "wants to eat")
+)
+g_directed <- graph_from_data_frame(d = edge_list, 
+                           directed = T, 
+                           vertices = node_list)
+```
+
+## Information from directed graph
+```{r info_directed_df, echo =T}
+g_directed
+```
+```{r plot_directed_df, echo = F}
+set.seed(1234)
+plot(g_directed,
+     edge.curved = T,
+     layout = layout_nicely,
+     edge.arrow.size = .3)
+```
+
+## Accessing/Manipulating Data from graph components
+- `V()`: provides a vector of all vertices/nodes of a graph
+- `E()`: provides a vector of all edges/links of a graph
+- `vertex_attr_names()`: provides the names of all the attributes stored in vertices/nodes
+- `edge_attr_names()`: provides the names of all the attributes stored in edges/links
+
+## V()
+Vertices can be accessed by their **id**. If the graph is a named graph, then the **name** also functions as an id.
+```{r vertex_access, echo = T}
+V(g_directed)
+V(g_directed)[3]
+V(g_directed)['The Giant']
+```
+
+## V() Continued
+Accessing a vertex using double square bracket notation gives you all the information of the vertex.
+```{r vertex_access2, echo = T}
+V(g_directed)[['The Giant']]
+V(g_directed)[['The Giant']]$about
+V(g_directed)['The Giant']$about <- "A forgiving creature that understand poor Jack's situation"
+V(g_directed)[['The Giant']]
+```
+
+## V() Continued Again
+You can access multiple vertices either by providing a vector of names or ids or by **querying the attributes** of the vertex vector. 
+```{r vertex_access3, echo = T}
+V(g_directed)[[c("Jack", "Jill")]]
+V(g_directed)[[gender == "Male"]]
+```
+
+## E()
+Edges can have names and can be accessed directly using either a name or an id, however, as graphs get larger, the sheer number and variety of edges make it very impractical to do so. 
+
+```{r, edge_access, echo = T}
+E(g_directed)
+E(g_directed)[1]
+E(g_directed)[[1]]
+```
+
+## E() Continued
+Instead edges should be accessed by querying their attributes
+```{r, edge_access2, echo = T}
+E(g_directed)[label == 'is brother of']
+E(g_directed)[[label == 'wants to eat']]
+E(g_directed)[[label == 'wants to eat']]$label <- 'wants to help'
+```
+
+## E() Continued Again
+We can also **query edges for the nodes they connect.**
+```{r, edge_access3, echo = T}
+E(g_directed)['Jack' %--% 'The Giant']
+E(g_directed)[['Jack' %<-% 'The Giant']]
+E(g_directed)[['Jack' %->% V(g_directed)]]
+```
+
+## Subgraphs
+Sometimes you may only want to work with a part of the entire graph.
+
+- `induced_subgraph()`: creates a subgraph that includes only the vertices provided and keeps all the edges between those vertices.
+- `subgraph.edges()`: creates a subgraph that includes only the edges provided and keeps all the vertices they connect to. Unconnected vertices can also be kept if `delete.vertices = F`
+
+```{r subgraphs, echo = T}
+jj_sub <- induced_subgraph(g_directed, c("Jack", "Jill"))
+jj_sub
+beanstalk_sub <- subgraph.edges(g_directed, E(g_directed)["The Giant" %--% "Jack"])
+beanstalk_sub
+```
+
+## Subgraphs Gotchas
+In igraph, subgraphs are completely new graphs and their components are completely different from those of the graphs they were created from. The below won't work:
+
+```{r subgraph_gotcha, eval=F, echo = T}
+E(g_directed)["The Giant" %--% V(jj_sub)]
+```
+
+Instead, you will need to use attributes that you know are in both graphs, like names:
+
+```{r subgraph_gotcha_good, echo = T}
+E(g_directed)["The Giant" %--% V(jj_sub)$name]
+```
+
+## Updating our graph for deeper analysis {.smallest}
+The analysis we will do from here on out will need a slightly more complex graph. Let's add a few features to `g_directed`:
+
+```{r updating, echo = T}
+g_directed <- g_directed +
+  vertices(c("Hansel",
+             "Gretel",
+             "The Witch",
+             "Hansel and Gretel",
+             "Jack and Jill",
+             "Jack and the Beanstalk"),
+           about = c("Eats way too much candy",
+                     "Is learning how to make really good candy",
+                     "Knows how to make healthy food from children",
+                     "Tale of some greedy kids who wants to destroy an old woman's home",
+                     "Kids learn the harway that they should always wear a helmet",
+                     "Kid steals from a big friendly giant"),
+           gender = c('Male', 'Female', 'Female', rep(NA, 3) ),
+           type = c(rep("Character", 3), rep("Story", 3))) +
+  edges(c("Hansel","Jack", "Jack","Hansel",
+          "Hansel","Gretel", "Gretel","Hansel",
+          sapply(c("Hansel", "Gretel"), function(x) c("The Witch", x)),
+          sapply(c("The Witch", "Hansel", "Gretel"), function(x) c(x, "Hansel and Gretel")),
+          sapply(c("Jack", "Jill"), function(x) c(x, "Jack and Jill")),
+          sapply(c("Jack", "The Giant"), function(x) c(x, "Jack and the Beanstalk"))
+          ),
+        label = c(rep('is friend of', 2),
+                  'is brother of', 'is sister of',
+                  rep('wants to eat', 2),
+                  rep("is in", 7)))
+```
+## Updated Graph Info 
+```{r update_plot}
+set.seed(1234)
+plot(g_directed,
+     edge.curved = T,
+     layout = layout_nicely,
+     edge.arrow.size = .3)
+```
+
+## Updated Graph Info Continued
+```{r update_info2, echo = T}
+V(g_directed)[[V(g_directed)]]
+```
+
+## Updated Graph Info Continued (last one :)
+```{r update_info3, echo = T}
+E(g_directed)[[E(g_directed)]]
+```
+
+## Ego
+The ego or neighborhood of a vertex **V** is a vector of vertices that are within a given order or **V**:
+
+```{r ego, echo = T}
+ego(g_directed, order = 1, nodes = 'Jack', mode = 'all')
+ego(g_directed, order = 2, nodes = 'Hansel', mode = 'in')
+ego(g_directed, order = 3, nodes = 'Gretel', mode = 'out')
+```
