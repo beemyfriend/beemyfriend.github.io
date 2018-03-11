@@ -261,6 +261,26 @@ V(g_directed)[[V(g_directed)]]
 E(g_directed)[[E(g_directed)]]
 ```
 
+## Degree
+```{r degree, echo = T}
+degree(g_directed) %>%
+  sort(T)
+
+degree(g_directed, mode = 'in') %>%
+  sort(T)
+
+degree(g_directed, V(g_directed)[type == 'Character']) %>%
+  sort(T)
+```
+
+## Betweeness
+```{r betweeness, echo = T}
+betweenness(g_directed) %>%
+  sort(T)
+betweenness(g_directed, V(g_directed)[type == 'Character']) %>%
+  sort(T)
+```
+
 ## Ego
 The ego or neighborhood of a vertex **V** is a vector of vertices that are within a given order or **V**:
 
