@@ -1,12 +1,12 @@
 ---
 title: "Intro to igraph"
-author: '@plzbeemyfriend'
+twitter: '@plzbeemyfriend'
+github: 'github.com/beemyfriend'
 date: "March 10, 2018"
 output: 
     ioslides_presentation:
         widescreen: true
         smaller: true
-        css: style.css
 ---
 
 ```{r setup, include=FALSE}
@@ -205,10 +205,10 @@ Instead, you will need to use attributes that you know are in both graphs, like 
 E(g_directed)["The Giant" %--% V(jj_sub)$name]
 ```
 
-## Updating our graph for deeper analysis {.smallest}
+## Updating our graph for deeper analysis: Adding New Nodes
 The analysis we will do from here on out will need a slightly more complex graph. Let's add a few features to `g_directed`:
 
-```{r updating, echo = T}
+```{r updating_nodes, echo = T}
 g_directed <- g_directed +
   vertices(c("Hansel",
              "Gretel",
@@ -223,7 +223,12 @@ g_directed <- g_directed +
                      "Kids learn the harway that they should always wear a helmet",
                      "Kid steals from a big friendly giant"),
            gender = c('Male', 'Female', 'Female', rep(NA, 3) ),
-           type = c(rep("Character", 3), rep("Story", 3))) +
+           type = c(rep("Character", 3), rep("Story", 3)))
+```
+
+## Updating our graph for deeper analysis: Adding New Edges
+```{r updating_edges, echo = T}
+g_directed <- g_directed +
   edges(c("Hansel","Jack", "Jack","Hansel",
           "Hansel","Gretel", "Gretel","Hansel",
           sapply(c("Hansel", "Gretel"), function(x) c("The Witch", x)),
@@ -236,6 +241,7 @@ g_directed <- g_directed +
                   rep('wants to eat', 2),
                   rep("is in", 7)))
 ```
+
 ## Updated Graph Info 
 ```{r update_plot}
 set.seed(1234)
@@ -250,7 +256,7 @@ plot(g_directed,
 V(g_directed)[[V(g_directed)]]
 ```
 
-## Updated Graph Info Continued (last one :)
+## Updated Graph Info Continued Again
 ```{r update_info3, echo = T}
 E(g_directed)[[E(g_directed)]]
 ```
@@ -260,6 +266,33 @@ The ego or neighborhood of a vertex **V** is a vector of vertices that are withi
 
 ```{r ego, echo = T}
 ego(g_directed, order = 1, nodes = 'Jack', mode = 'all')
-ego(g_directed, order = 2, nodes = 'Hansel', mode = 'in')
-ego(g_directed, order = 3, nodes = 'Gretel', mode = 'out')
+ego(g_directed, order = 2, nodes = c("Hansel and Gretel", "Jack and Jill", "Jack and the Beanstalk"), mode = 'in')
+```
+
+## Combo
+We can use `V()`, `ego()` and `induced_subgraph()` to get a graph that only includes the nodes of interest. Let's find a **Story** that does not include **Jack** as one of the characters.
+
+```{r combo, echo = T}
+stories <- V(g_directed)[[type == "Story"]]
+ego_stories <- ego(g_directed, 1, stories, 'in')
+ego_noJack <- lapply(ego_stories, function(x){
+  if('Jack' %in% x$name){
+    NULL
+  } else {
+    x
+  }
+})
+ego_noJack
+```
+## Combo Continued
+```{r combo2, echo = T}
+ego_noJack %>%
+  unlist
+
+noJack_nodes <- ego_noJack %>% 
+  unlist() %>%
+  names()
+
+g_noJack <- induced_subgraph(g_directed, noJack_nodes)
+g_noJack
 ```
