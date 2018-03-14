@@ -1,7 +1,6 @@
 ---
 title: "Intro to igraph"
-twitter: '@plzbeemyfriend'
-github: 'github.com/beemyfriend'
+author: '@plzbeemyfriend'
 date: "March 10, 2018"
 output: 
     ioslides_presentation:
@@ -12,6 +11,7 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 library(igraph)
+library(diagram)
 ```
 
 ## R Markdown
@@ -19,6 +19,68 @@ library(igraph)
 This is an R Markdown presentation. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
 
 When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document.
+
+## Why Graph - Data schema is the actual data model
+
+## Why Graph - Graph databases scale really well
+
+## Why Graph - Recommendation Systems
+
+## Why Graph - Recommendation Systems Continued
+
+## Why Graph - Recommendation Systems Continued Again
+
+## Terminology - Undirected Graph
+- **A**, **B**, and **C** are nodes/vertices 
+- **1** and **2** are edges/links
+
+```{r}
+my_edge_length <- .09
+my_text_size <- 1.3
+openplotmat()
+pos <- coordinates(c(3, 3, 3))
+arrow_1 <- straightarrow(from = pos[1,], to = pos[2,], arr.width = 0)
+arrow_2 <- straightarrow(from = pos[2,], to = pos[3,], arr.width = 0)
+textellipse(mid = pos[1,], radx = my_edge_length, lab = "A", box.col = 'lightgrey', cex = 1.5)
+textellipse(mid = pos[2,], radx = my_edge_length, lab = 'B', box.col = 'lightblue', cex = 1.5)
+textellipse(mid = pos[3,], radx = my_edge_length, lab = 'C', box.col = 'lightgrey', cex = 1.5)
+text(arrow_1[1], arrow_2[2] + .1, "1", cex = 1.5)
+text(arrow_2[1], arrow_2[2] + .1, '2', cex = 1.5)
+```
+
+## Terminology - Directed Graph
+- **A**, **B**, and **C** are nodes/vertices 
+- **1** and **2** are edges/links
+- Edge **1** is coming **IN** to node **B**
+- Edge **2** is going **OUT** of node **B**
+- Node **B** is at the **HEAD** of edge **1**
+- Node **B** is at the **TAIL** of edge **2**
+
+```{r terminology}
+my_edge_length <- .09
+my_text_size <- 1.3
+openplotmat()
+pos <- coordinates(c(3, 3, 3))
+arrow_1 <- straightarrow(from = pos[1,], to = pos[2,])
+arrow_2 <- straightarrow(from = pos[2,], to = pos[3,])
+textellipse(mid = pos[1,], radx = my_edge_length, lab = "A", box.col = 'lightgrey', cex = 1.5)
+textellipse(mid = pos[2,], radx = my_edge_length, lab = 'B', box.col = 'lightblue', cex = 1.5)
+textellipse(mid = pos[3,], radx = my_edge_length, lab = 'C', box.col = 'lightgrey', cex = 1.5)
+text(arrow_1[1], arrow_2[2] + .1, "1", cex = 1.5)
+text(arrow_2[1], arrow_2[2] + .1, '2', cex = 1.5)
+```
+## Terminology - Simple Graph
+- unweighted
+- undirected
+- no loops
+- no multiple edges
+
+## Terminology - Multigraph
+- None of the previous restrictions
+
+## Terminology Continued
+- A **walk** is a sequence of vertices and edges
+- A **path** is a walk with no repeating vertices with the possible exception of the first and final vertices.
 
 ## Creating graphs from scratch
 1. `make_empty_graph()`: Initialize and empty graph to build on
@@ -30,13 +92,15 @@ When you click the **Knit** button a document will be generated that includes bo
 library(igraph)
 
 g_undirected <- make_empty_graph(directed = F) +
-  vertices(c("Jack",
-             "Jill",
-             "The Giant"),
-           type = "Character") +
-  edges(c("Jack", "Jill",
-          "Jack", "The Giant"),
-        label = "have met")
+  vertices(c('a', 'b', 'c', 'd', 'e'),
+           type = "letters",
+           order = 1, 2, 3, 4, 5) +
+  edges(c('a', 'b',
+          'b', 'c',
+          'b', 'd',
+          'c', 'e'),
+        type = "connection",
+        weight = c(1, 1, 2, 2))
 ```
 
 ## Information from undirected graph
@@ -53,18 +117,15 @@ plot(g_undirected,
 ## Create a directed graph from scratch
 ```{r directed_scratch, echo = TRUE}
 g_directed <- make_empty_graph(directed = T) +
-  vertices(c("Jack",
-             "Jill",
-             "The Giant"),
-           type = "Character") +
-  edges(c("Jack", "Jill",
-          "Jill", "Jack",
-          "Jack", "The Giant",
-          "The Giant", "Jack"),
-        label = c("is brother of",
-                  "is sister of",
-                  "steals from",
-                  "wants to eat"))
+  vertices(c('a', 'b', 'c', 'd', 'e'),
+           type = "letter",
+           order = c(1, 2, 3, 4, 5)) +
+  edges(c('a', 'b',
+          'b', 'c',
+          'b', 'd',
+          'c', 'e'),
+        type = "connection",
+        weight = c(1, 1, 2, 2))
 ```
 
 ## Information from directed graph
@@ -74,7 +135,7 @@ g_directed
 ```{r plot_directed_scratch, echo = F}
 set.seed(1234)
 plot(g_directed,
-     edge.curved = T,
+     edge.curved = F,
      layout = layout_nicely,
      edge.arrow.size = .3)
 ```
@@ -87,96 +148,97 @@ plot(g_directed,
 ## Creating a graph from a data frame
 ```{r directed_df, echo=T}
 node_list <- data.frame(
-  name = c("Jack",
-           "Jill",
-           "The Giant"),
-  about = c("Is fast at going down things and uses this skill for theivery",
-            "Is slow at tumbling",
-            "Likes to eat thieves"),
-  gender = c("Male", 
-             "Female", 
-             "Male"),
-  type = "Character"
+  name = c('a', 'b', 'c', 'd', 'e'),
+  type = "letter",
+  order = c(1, 2, 3, 4, 5)
 )
-
+edges(c('a', 'b',
+          'b', 'c',
+          'b', 'd',
+          'c', 'e'),
+        type = "connection",
+        weight = c(1, 1, 2, 2))
 edge_list <- data.frame(
-  source = c("Jack", "Jill", "Jack", "The Giant"),
-  target = c("Jill", "Jack", "The Giant", "Jack"),
-  label = c("is brother of",
-            "is sister of",
-            "steals from",
-            "wants to eat")
+  source = c('a', 'b', 'b', 'c'),
+  target = c('b', 'c', 'd', 'e'),
+  type = 'connection',
+  weight = c(1, 1, 2, 2)
 )
-g_directed <- graph_from_data_frame(d = edge_list, 
-                           directed = T, 
+g <- graph_from_data_frame(d = edge_list, 
+                           directed = T,
                            vertices = node_list)
 ```
 
 ## Information from directed graph
 ```{r info_directed_df, echo =T}
-g_directed
+g
 ```
 ```{r plot_directed_df, echo = F}
 set.seed(1234)
-plot(g_directed,
-     edge.curved = T,
+plot(g,
+     edge.curved = F,
      layout = layout_nicely,
      edge.arrow.size = .3)
 ```
 
-## Accessing/Manipulating Data from graph components
-- `V()`: provides a vector of all vertices/nodes of a graph
-- `E()`: provides a vector of all edges/links of a graph
-- `vertex_attr_names()`: provides the names of all the attributes stored in vertices/nodes
-- `edge_attr_names()`: provides the names of all the attributes stored in edges/links
+## Accessing/Manipulating Data from graph 
+given graph **g**
+
+- `V(g)`: provides a vector of all vertices/nodes of a graph
+- `E(g)`: provides a vector of all edges/links of a graph
+- `vcount(g)`: provides the number of vertices/nodes of a graph
+- `ecount(g)`: provides the number of edges/links of a graph
+- `vertex_attr_names(g)`: provides the names of all the attributes stored in vertices/nodes
+- `edge_attr_names(g)`: provides the names of all the attributes stored in edges/links
 
 ## V()
 Vertices can be accessed by their **id**. If the graph is a named graph, then the **name** also functions as an id.
 ```{r vertex_access, echo = T}
-V(g_directed)
-V(g_directed)[3]
-V(g_directed)['The Giant']
+V(g)
+V(g)[3]
+V(g)['c']
 ```
 
 ## V() Continued
 Accessing a vertex using double square bracket notation gives you all the information of the vertex.
 ```{r vertex_access2, echo = T}
-V(g_directed)[['The Giant']]
-V(g_directed)[['The Giant']]$about
-V(g_directed)['The Giant']$about <- "A forgiving creature that understand poor Jack's situation"
-V(g_directed)[['The Giant']]
+V(g)[['c']]
+V(g)[['c']]$order
+V(g)['c']$order <- 29
+V(g)[['c']]
 ```
 
 ## V() Continued Again
 You can access multiple vertices either by providing a vector of names or ids or by **querying the attributes** of the vertex vector. 
 ```{r vertex_access3, echo = T}
-V(g_directed)[[c("Jack", "Jill")]]
-V(g_directed)[[gender == "Male"]]
+V(g)[[c('a', 'e')]]
+V(g)[[order >= 4]]
 ```
 
 ## E()
 Edges can have names and can be accessed directly using either a name or an id, however, as graphs get larger, the sheer number and variety of edges make it very impractical to do so. 
 
 ```{r, edge_access, echo = T}
-E(g_directed)
-E(g_directed)[1]
-E(g_directed)[[1]]
+E(g)
+E(g)[1]
+E(g)[[1]]
 ```
 
 ## E() Continued
 Instead edges should be accessed by querying their attributes
 ```{r, edge_access2, echo = T}
-E(g_directed)[label == 'is brother of']
-E(g_directed)[[label == 'wants to eat']]
-E(g_directed)[[label == 'wants to eat']]$label <- 'wants to help'
+E(g)[weight == 2]
+E(g)[[weight == 2]]
+E(g)[[weight == 2]][1]$weight <- -20000
+E(g)[[weight <= 0]]
 ```
 
 ## E() Continued Again
 We can also **query edges for the nodes they connect.**
 ```{r, edge_access3, echo = T}
-E(g_directed)['Jack' %--% 'The Giant']
-E(g_directed)[['Jack' %<-% 'The Giant']]
-E(g_directed)[['Jack' %->% V(g_directed)]]
+E(g)['a' %--% 'b']
+E(g)[['c' %<-% 'b']]
+E(g)[['b' %->% V(g)]]
 ```
 
 ## Subgraphs
@@ -186,133 +248,161 @@ Sometimes you may only want to work with a part of the entire graph.
 - `subgraph.edges()`: creates a subgraph that includes only the edges provided and keeps all the vertices they connect to. Unconnected vertices can also be kept if `delete.vertices = F`
 
 ```{r subgraphs, echo = T}
-jj_sub <- induced_subgraph(g_directed, c("Jack", "Jill"))
-jj_sub
-beanstalk_sub <- subgraph.edges(g_directed, E(g_directed)["The Giant" %--% "Jack"])
-beanstalk_sub
+abc_sub <- induced_subgraph(g, c('a', 'b', 'c'))
+abc_sub
+b_sub <- subgraph.edges(g, E(g)["b" %--% V(g)])
+b_sub
 ```
 
 ## Subgraphs Gotchas
 In igraph, subgraphs are completely new graphs and their components are completely different from those of the graphs they were created from. The below won't work:
 
 ```{r subgraph_gotcha, eval=F, echo = T}
-E(g_directed)["The Giant" %--% V(jj_sub)]
+E(g)["b" %--% V(b_sub)]
 ```
 
 Instead, you will need to use attributes that you know are in both graphs, like names:
 
 ```{r subgraph_gotcha_good, echo = T}
-E(g_directed)["The Giant" %--% V(jj_sub)$name]
+E(g)["b" %--% V(b_sub)$name]
 ```
 
-## Updating our graph for deeper analysis: Adding New Nodes
-The analysis we will do from here on out will need a slightly more complex graph. Let's add a few features to `g_directed`:
-
-```{r updating_nodes, echo = T}
-g_directed <- g_directed +
-  vertices(c("Hansel",
-             "Gretel",
-             "The Witch",
-             "Hansel and Gretel",
-             "Jack and Jill",
-             "Jack and the Beanstalk"),
-           about = c("Eats way too much candy",
-                     "Is learning how to make really good candy",
-                     "Knows how to make healthy food from children",
-                     "Tale of some greedy kids who wants to destroy an old woman's home",
-                     "Kids learn the harway that they should always wear a helmet",
-                     "Kid steals from a big friendly giant"),
-           gender = c('Male', 'Female', 'Female', rep(NA, 3) ),
-           type = c(rep("Character", 3), rep("Story", 3)))
-```
-
-## Updating our graph for deeper analysis: Adding New Edges
-```{r updating_edges, echo = T}
-g_directed <- g_directed +
-  edges(c("Hansel","Jack", "Jack","Hansel",
-          "Hansel","Gretel", "Gretel","Hansel",
-          sapply(c("Hansel", "Gretel"), function(x) c("The Witch", x)),
-          sapply(c("The Witch", "Hansel", "Gretel"), function(x) c(x, "Hansel and Gretel")),
-          sapply(c("Jack", "Jill"), function(x) c(x, "Jack and Jill")),
-          sapply(c("Jack", "The Giant"), function(x) c(x, "Jack and the Beanstalk"))
-          ),
-        label = c(rep('is friend of', 2),
-                  'is brother of', 'is sister of',
-                  rep('wants to eat', 2),
-                  rep("is in", 7)))
-```
-
-## Updated Graph Info 
-```{r update_plot}
+## Random Graph Generation - Erdos Renyi Game
+```{r ERG, echo =T}
 set.seed(1234)
-plot(g_directed,
-     edge.curved = T,
-     layout = layout_nicely,
-     edge.arrow.size = .3)
-```
-
-## Updated Graph Info Continued
-```{r update_info2, echo = T}
-V(g_directed)[[V(g_directed)]]
-```
-
-## Updated Graph Info Continued Again
-```{r update_info3, echo = T}
-E(g_directed)[[E(g_directed)]]
+g <- erdos.renyi.game(10, .5, directed = T)
+V(g)$name <- letters[1:10]
+V(g)$randomValue <- runif(vcount(g), 0, 100)
+E(g)$randomWeight1 <- runif(ecount(g), 0, 100)
+E(g)$randomWeight2 <- runif(ecount(g), 0, 100)
+plot(g,
+     edge.curved = T)
 ```
 
 ## Degree
-```{r degree, echo = T}
-degree(g_directed) %>%
+```{r echo = T}
+degree(g) %>%
   sort(T)
 
-degree(g_directed, mode = 'in') %>%
+degree(g, mode = 'in') %>%
   sort(T)
 
-degree(g_directed, V(g_directed)[type == 'Character']) %>%
+degree(g, c('b', 'e')) %>%
   sort(T)
 ```
 
+## Strength - Weighted Degree
+```{r echo=T}
+strength(g, mode = 'out', weights = E(g)$randomWeight1)
+strength(g, mode = 'in', weights = E(g)$randomWeight1)
+strength(g, c('b', 'e'), mode = 'in', weights = E(g)$randomWeight1)
+```
+
 ## Betweeness
-```{r betweeness, echo = T}
-betweenness(g_directed) %>%
+```{r echo = T}
+betweenness(g) %>%
   sort(T)
-betweenness(g_directed, V(g_directed)[type == 'Character']) %>%
+page_rank(g)$vector %>%
+  sort(T)
+eigen_centrality(g, directed = T)$vector %>%
   sort(T)
 ```
 
 ## Ego
-The ego or neighborhood of a vertex **V** is a vector of vertices that are within a given order or **V**:
 
-```{r ego, echo = T}
-ego(g_directed, order = 1, nodes = 'Jack', mode = 'all')
-ego(g_directed, order = 2, nodes = c("Hansel and Gretel", "Jack and Jill", "Jack and the Beanstalk"), mode = 'in')
+The ego or neighborhood of a vertex V is a vector of vertices that are within a given order or V:
+```{r echo = T}
+ego(g, order = 1, nodes = 'b', mode = 'all')
+ego(g, order = 2, nodes = c('b', 'e'), mode = 'in')
+```
+
+## Shortest Paths
+```{r echo = T}
+shortest_paths(g, 'h', 'c', mode = 'out', output = 'both', weight = E(g)$randomWeight1)$epath[[1]] %>% .[[1:length(.)]]
+shortest_paths(g, 'h', 'c', mode = 'out', output = 'both', weight = E(g)$randomWeight2)$epath[[1]] %>% .[[1:length(.)]]
 ```
 
 ## Combo
-We can use `V()`, `ego()` and `induced_subgraph()` to get a graph that only includes the nodes of interest. Let's find a **Story** that does not include **Jack** as one of the characters.
 
-```{r combo, echo = T}
-stories <- V(g_directed)[[type == "Story"]]
-ego_stories <- ego(g_directed, 1, stories, 'in')
-ego_noJack <- lapply(ego_stories, function(x){
-  if('Jack' %in% x$name){
-    NULL
-  } else {
-    x
-  }
-})
-ego_noJack
+We can use V(), ego() and induced_subgraph() to get a graph that only includes the nodes of interest. Let's find a Story that does not include Jack as one of the characters.
+```{r,  echo = T}
+gt75_nodes <- V(g)[[randomValue >= 75]]
+gt75_ego <- ego(g, 1, gt75_nodes, 'in')
+gt75_ego
 ```
+
 ## Combo Continued
-```{r combo2, echo = T}
-ego_noJack %>%
-  unlist
+```{r, echo = T}
+unlist(gt75_ego)
 
-noJack_nodes <- ego_noJack %>% 
-  unlist() %>%
-  names()
+names_gt75 <- names(unlist(gt75_ego))
 
-g_noJack <- induced_subgraph(g_directed, noJack_nodes)
-g_noJack
+induced_subgraph(g, names_gt75)
+```
+
+
+## Pulling edges of interest
+```{r eoi, echo = T}
+E(g)[randomWeight1 >= 90]
+E(g)[randomWeight1 >= 90] %>%
+  .['a' %--% V(g)]
+```
+
+## Putting edge info into nodes
+```{r e2n, echo = T}
+V(g)$in_weights <- strength(g, mode = 'in', weights = E(g)$randomWeight1)
+V(g)$out_weights <- strength(g, mode = 'out', weights = E(g)$randomWeight1)
+V(g)[[1:vcount(g)]]
+```
+
+## Putting node info into edges
+```{r n2e, echo =T}
+E(g)$out_impact <- E(g)$randomWeight1/head_of(g, E(g))$in_weights
+E(g)$in_impact <- E(g)$randomWeight1/tail_of(g, E(g))$out_weights
+E(g)[[1:10]]
+```
+## magrittr: an aside
+```{r rev_n, echo = T}
+rev_n <- function(nodes, func, graph, ...){
+  arg <- formals(func) %>%
+    names() %>%
+    .[sapply(., function(x) grepl('^v|^n', x, T))] %>%
+    .[1]
+  
+  temp <- list()
+  temp[[arg]] <- nodes
+  temp[['graph']] <- graph
+  
+  temp <- c(temp, as.list(match.call(expand.dots = F)[["..."]]))
+  do.call(func, temp)
+}
+
+```
+
+## magrittr: another aside
+```{r rev_e, echo = T}
+rev_e <- function(edges, func, graph, ...){
+  arg <- formals(func) %>%
+    names() %>%
+    .[sapply(., function(x) grepl('^e', x, T))] %>%
+    .[1]
+  
+  temp <- list()
+  temp[[arg]] <- edges
+  temp[['graph']] <- graph
+  
+  temp <- c(temp, as.list(match.call(expand.dots = F)[["..."]]))
+  do.call(func, temp)
+}
+```
+## USING THE HELPERS
+```{r echo = T}
+g %>% 
+  E() %>% 
+  .[randomWeight1 == max(.$randomWeight1)] %>% 
+  rev_e(ends, g) %>% 
+  c() %>% 
+  rev_n(ego, g, order = 1, 'out') %>% 
+  unlist() %>% 
+  rev_n(induced.subgraph, g)
 ```
