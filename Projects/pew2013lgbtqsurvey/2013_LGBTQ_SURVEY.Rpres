@@ -1,0 +1,714 @@
+2013 PEW LGBTQ Survey...but as a graph
+========================================================
+author: Benjamin Ortiz Ulloa
+date: 
+autosize: true
+
+What's a Graph?
+========================================================
+
+```{r, echo=F, fig.width = 12}
+library(tidyverse)
+library(igraph)
+library(igraphdata)
+g <- make_empty_graph(directed = T) +
+  vertices(
+    c('Node', 'Vertex', 'Thing')
+  ) +
+  edges(
+    c("Node", "Vertex",
+      "Vertex", "Thing",
+      "Thing", "Node",
+      "Thing", "Vertex"),
+    show = c(1, 2, 3),
+    label = c("Link", "Edge", "Relationship", "Another Edge")
+  )
+
+layout = matrix(c(2, 3, 1, 1, 3, 1), ncol = 2, byrow = T)
+
+g %>%
+  {. - E(.)} %>%
+  plot(
+    layout = layout,
+    vertex.label = sapply(V(g)$name, function(x){if_else(x %in% c('Node'), x, '')}),
+    vertex.size = sapply(V(g)$name, function(x){if_else(x %in% c('Node'), 15, 0)})
+  )
+```
+
+What's a Graph?
+========================================================
+
+```{r, echo = F, fig.width = 12}
+g %>%
+  {. - E(.)} %>%
+  plot(
+    layout = layout,
+    vertex.label = sapply(V(g)$name, function(x){if_else(x %in% c('Node', 'Vertex'), x, '')}),
+    vertex.size = sapply(V(g)$name, function(x){if_else(x %in% c('Node', 'Vertex'), 15, 0)})
+  )
+  
+```
+
+What's a Graph?
+========================================================
+
+```{r, echo = F, fig.width = 12}
+g %>%
+  {. - E(.)} %>%
+  plot(
+    layout = layout
+  )
+```
+
+What's a Graph?
+============
+```{r, echo = F, fig.width = 12}
+g %>%
+  {. - E(.)[!label %in% c("Link")]} %>%
+  plot(
+    layout = layout,
+    edge.arrow.size = 0
+  )
+```
+
+What's a Graph?
+============
+```{r, echo = F, fig.width = 12}
+g %>%
+  {. - E(.)[!label %in% c("Link", 'Edge')]} %>%
+  plot(
+    layout = layout,
+    edge.arrow.size = 0
+  )
+```
+
+What's a Graph?
+============
+```{r, echo = F, fig.width = 12}
+g %>%
+  {. - E(.)[label %in% c("Another Edge")]} %>%
+  plot(
+    layout = layout,
+    edge.arrow.size = 0
+  )
+```
+
+What's a Graph?
+============
+```{r, echo = F, fig.width = 12}
+g %>%
+  {. - E(.)[label %in% c("Another Edge")]} %>%
+  plot(
+    layout = layout
+  )
+```
+
+What's a Graph?
+============
+```{r, echo = F, fig.width = 12}
+g %>%
+  plot(
+    layout = layout,
+    edge.curved = c(0, .25, 0, .25)
+  )
+```
+
+What's a Graph?
+============
+```{r, echo = F, fig.width = 12}
+g %>%
+  plot(
+    layout = layout,
+    edge.curved = c(0, .25, 0, .25),
+    vertex.label = str_c(V(.)$name, 'attr', sep ='\n'),
+    edge.label = str_c(E(.)$label, 'attr', sep = '\n')
+  )
+```
+
+What's a Graph?
+============
+```{r, echo = F, fig.width = 12}
+g %>%
+  plot(
+    layout = layout,
+    edge.curved = c(0, .25, 0, .25),
+    vertex.size = c(10, 15, 25),
+    vertex.color = c('orange', 'lightblue', 'pink'),
+    edge.width = c(2, 10, 20, 5),
+    vertex.label = str_c(V(.)$name, 'attr', sep ='\n'),
+    edge.label = str_c(E(.)$label, 'attr', sep = '\n'),
+    edge.lty = c(1, 6, 5, 2)
+  )
+```
+
+Why graph? Social Network Analysis
+=========
+```{r, echo = F, fig.width = 12}
+data("karate")
+plot(
+  karate,
+  main = 'Wayne W. Zachary\nAn Information Flow Model for Conflict and Fission in Small Groups. \nJournal of Anthropological Research Vol. 33, No. 4 452-473', 
+  sub = 'Zachary studied conflict and fission in this network,\n as the karate club was split into two separate clubs, after long disputes between two factions of the club,\n one led by John A., the other by Mr. Hi.'
+)
+rm(karate)
+```
+
+Why graph? Maps, paths, and supply chains
+========
+```{r echo = F, fig.width = 12}
+data("Koenigsberg")
+plot(Koenigsberg,
+     main = "Leonhard Euler\nThe Seven Bridges of Koenigsberg",
+     sub = "Find a walk through the city that would cross each bridge once and only once.\nEuler proved that the problem has no solution.")
+rm(Koenigsberg)
+```
+
+Why graph? Recommendation Systems
+==========
+```{r, echo = F, fig.width = 12}
+g <- make_empty_graph(directed = F) +
+  vertices(
+    c("Person1", "Person2", "Person3", "Object1", "Object2", "Object3", "Object4", "Object5"),
+    color = c(rep('pink', 3), rep('lightblue', 5))
+  ) + 
+  edges(
+    c("Person1", "Object2",
+      "Person2", "Object2",
+      "Person1", "Object3",
+      "Person2", "Object3",
+      "Person1", "Object4",
+      "Person3", "Object4",
+      "Person2", "Object1",
+      "Person3", "Object5",
+      "Person1", "Person2",
+      "Person1", "Person2",
+      "Person1", "Person3"),
+    lty = 1,
+    type = c(rep("person_object", 8), rep("person_person", 3))
+  )
+
+layout = matrix(
+  c(1, 4,
+    8, 5,
+    8, 3,
+    4, 6,
+    4, 5,
+    4, 4,
+    4, 3,
+    4, 2),
+  ncol = 2, 
+  byrow = T)
+
+g %>%
+  {. - E(.)[type == 'person_person']} %>%
+  plot(layout = layout)
+```
+
+Why graph? Recommendation Systems
+============
+```{r, echo = F, fig.width = 12}
+g %>%
+  {. - E(.)[type == 'person_object']} %>%
+  plot(
+    layout = layout,
+    vertex.size = sapply(V(.)$name, function(x){if_else(str_detect(x, 'Object'), 0, 15)}),
+    vertex.label = sapply(V(.)$name, function(x){if_else(str_detect(x, 'Object'), '', x)})
+  )
+```
+
+Why graph? Recommendation Systems
+============
+```{r, echo = F, fig.width = 12}
+g %>%
+  {. - E(.)[type == 'person_person']} %>%
+  {. + edges(c("Person1", "Object1"), type = "person_object", lty = 2)} %>%
+  plot(layout = layout)
+```
+
+Data
+======
+Online survey of self-identified lesbian, gay, bisexual and transgender adults in the U.S., ages 18 or older. 
+
+Sample sizes:
++  Full sample =1,197
++  Gay men n=398
++  Lesbians n=277
++  Bisexuals n=479
++  Transgender adults n=43
+
+[http://www.pewsocialtrends.org/2014/09/18/2013-survey-of-lgbt-adults/]()
+
+Data
+==== 
+It's a `.sav`  file (SPSS), but luckily the **foreign** package in **R** can import it painlessly. 
+
+```{r, eval = F}
+survey <- foreign::read.spss('pew2013lgbtpublicdatarelease.sav') %>%
+  as.tibble()
+```
+```{r, echo = F}
+survey <- foreign::read.spss('pew2013lgbtpublicdatarelease/pew2013lgbtpublicdatarelease.sav') %>%
+  as.tibble()
+survey
+```
+
+1.  R Core Team (2017). foreign: Read Data Stored by 'Minitab', 'S', 'SAS',
+  'SPSS', 'Stata', 'Systat', 'Weka', 'dBase', .... R package version 0.8-69.
+  https://CRAN.R-project.org/package=foreign
+  
+Converting to Graph Data - Overview
+========
+**Main Task:** Create 2 Data Frames
+
+1. Node List:
+    - First Column must be the names or id of the nodes
+        - node names and ids must be unique
+    - Every subsequent column is a node attribute
+    - Only required if the graph has node attributes
+2. Edge List:
+    - First column must be the name or id of the source node (the tail of the edge)
+    - Second column must be the name or id of the target node (the head of the edge)
+    - Every subsequent column is an edge attribute
+    
+Converting to Graph Data - Edge List
+=====
+```{r}
+links <- survey %>%
+  mutate(NEWCASEID = str_c("ID_", NEWCASEID)) %>%
+  gather(question, answer, -NEWCASEID) %>%
+  unite(answer, question, answer, sep = '::') %>%
+  mutate(type = "person_answer")
+links
+```
+    
+Converting to Graph Data - Node List
+=====
+```{r}
+nodes <- rbind(
+  tibble(
+    name = links$NEWCASEID %>% unique,
+    type = 'person'
+  ),
+  tibble(
+    name = links$answer %>% unique,
+    type = 'answer'
+  )
+)
+
+nodes
+```
+
+Converting to Graph Data - The Graph!!
+=====
+```{r}
+g <- graph_from_data_frame(d = links, directed = F, vertices = nodes)
+g
+```
+
+Subgraph - Just Gay Males
+========
+```{r, echo = F, fig.width = 12}
+justGayMales <- g %>%
+  {. - V(.)[!str_detect(name, 'SEX::Male|Q24::Gay|^ID_')]} %>%
+  {. - V(.)[degree(.) < 2]} %>%
+  {V(.)[str_detect(name, '^ID_')]$name} %>%
+  {g - E(g)[!. %--% V(g)]} %>%
+  {. - V(.)[degree(.) == 0]} %>%
+  {. - V(.)[str_detect(name, '^weight')]} %>%
+  {. - V(.)[str_detect(name, '::NA$')]} 
+
+  
+  counterA <<- 0
+  counterP <<- 0
+  counterMA <<- 0
+  nA <<- length(V(justGayMales)[!str_detect(name, '^ID_')]) - 2
+  nP <<- length(V(justGayMales)[str_detect(name, '^ID_')])
+  totN <<- nA + nP + 2
+    
+layout = lapply(V(justGayMales)$name, function(x){
+  if(str_detect(x, '^SEX::|^Q24::')){
+      counterMA <<- counterMA + 1
+      matrix(c(counterMA * (totN/3), totN), ncol = 2)
+    } else if(str_detect(x, '^ID_')){
+      counterP <<- counterP + 1
+      matrix(c(counterP * (totN/nP), totN * 3/4), ncol = 2)
+    } else {
+      counterA <<- counterA + 1
+      matrix(c(counterA * (totN/nA), 1), ncol = 2)
+    }
+  }) %>%
+  do.call(rbind, .)
+    
+  plot(
+    justGayMales, 
+    asp = 0,
+    layout = layout,
+    vertex.label = sapply(V(justGayMales)$name, function(x){if_else(str_detect(x, '^SEX::|^Q24'), x, '')}),
+      vertex.size = 3,
+      edge.color = rgb(0, 0, 0, max = 255, alpha = 5),
+      vertex.color = rgb(249, 156, 2, max = 255, alpha = 127)
+    )
+  
+```
+
+
+Subgraph - Question 102
+=====
+
+**102(a|b|c|d): Which Statement comes closer to your own views - even if neither is exatly right?**
+
+<table>
+<tr>
+  <th>
+    Q.
+  </th>
+  <th>
+    A1.
+  </th>
+  <th>
+    A2
+  </th>
+</tr>
+<tr>
+  <td>
+    A
+  </td>
+  <td>
+    The push for same-sex marriage has taken too much focus away from other issues important to LGBT people
+  </td>
+  <td>
+    Same-sex marriage should be the top priority for LGBT people right now, even if this means some other issues do not get much attention
+  </td>
+</tr>
+<tr>
+  <td>
+    B
+  </td>
+  <td>
+    The best way to achieve equality is for LGBT people to be a part of mainstream culture and institutions like marriage
+  </td>
+  <td>
+    LGBT people should be able to achieve equality while still maintaining their own distinct culture and way of life 
+  </td>
+</tr>
+<tr>
+  <td>
+    C
+  </td>
+  <td>
+    I dont want to be seen as different because of my (sexual orientation)/(gender identity)
+  </td>
+  <td>
+    My (sexual orientation)/(gender identity) makes me different from other people, and I am comfortable with that.
+  </td>
+</tr>
+<tr>
+  <td>
+    D
+  </td>
+  <td>
+    It is important to maintain places like LGBT neighborhoods and gay and lesbian bars
+  </td>
+  <td>
+    These types of places will not be important as LGBT people are more accepted into society
+  </td>
+</tr>
+</table>
+
+Subgraph - Question 102
+=====
+```{r, echo = F, fig.width = 12}
+# layout <- matrix(
+#   c(rep(1109, 1197), 
+#     rep(100, 12),
+#     6:1202,
+#     (1:12 * (1209/12))
+#     ),
+#   ncol = 2)
+
+justGayMales %>%
+  {
+    q102 <- V(.)[str_detect(V(.)$name, '^Q102')]
+    . - E(.)[!V(.) %--% q102]
+  } %>%
+  {. - V(.)[degree(.) == 0]} %>%
+  {
+    totN <<- vcount(.)
+    counterA <<- 0
+    counterP <<- 0
+    nA <<- length(V(.)[!str_detect(name, '^ID_')]) 
+    nP <<- length(V(.)[str_detect(name, '^ID_')])
+    
+    layout = lapply(V(.)$name, function(x){
+      if(str_detect(x, '^ID_')){
+        counterP <<- counterP + 1
+        matrix(c(totN, counterP * (totN/nP)), ncol = 2)
+      } else {
+        counterA <<- counterA + 1
+        matrix(c(1, counterA * (totN/nA)), ncol = 2)
+      }
+    }) %>%
+      do.call(rbind, .)
+    
+    plot(
+      ., 
+      layout = layout,
+      vertex.label = sapply(V(.)$name, function(x){if_else(str_detect(x, '^Q'), x, '')}),
+      vertex.color = sapply(V(.)$name, function(x){if_else(str_detect(x, '^Q'), 'pink', 'lightblue')}),
+      vertex.label.cex = .75,
+      edge.color = rgb(0, 0, 0, max = 255, alpha = 50)
+    )
+  }
+```
+
+Subgraph - Question 102
+=======
+
+```{r, echo = F, fig.width = 12}
+justGayMales %>%
+  {
+    q102 <- V(.)[str_detect(V(.)$name, '^Q102')]
+    . - E(.)[!V(.) %--% q102]
+  } %>%
+  {. - V(.)[degree(.) == 0]} %>%
+  set_vertex_attr('type', 
+                  value = sapply(V(.)$type, function(x){x == 'answer'})) %>%
+  bipartite_projection() %>%
+  .[[2]] %>%
+  {
+    maxW <- E(.)$weight %>% max
+    maxS <- strength(.) %>% max
+
+    plot(
+      .,
+      edge.width = 25 * (E(.)$weight/maxW),
+      vertex.size = 25 * (strength(.)/maxS)
+    )
+  }
+```
+
+Subgraph - Question 102
+=======
+
+```{r, echo = F, fig.width = 12}
+justGayMales %>%
+  {
+    q102 <- V(.)[str_detect(V(.)$name, '^Q102')]
+    . - E(.)[!V(.) %--% q102]
+  } %>%
+  {. - V(.)[degree(.) == 0]} %>%
+  set_vertex_attr('type', 
+                  value = sapply(V(.)$type, function(x){x == 'answer'})) %>%
+  set_vertex_attr('degree',
+                  value = degree(.)) %>%
+  bipartite_projection() %>%
+  .[[2]] %>%
+  {
+    Q102JGM <<- .
+    .
+  } %>%
+  {. - V(.)[str_detect(V(.)$name, 'Refused')]} %>%
+  {
+    
+    totP <- length(V(justGayMales)[str_detect(name, '^ID_')])
+    # not necessary
+    # maxW <- (E(.)$weight/ totP) %>% max
+    maxW <- E(.)$weight %>% max
+    maxD <- V(.)$degree %>% max
+    layout <- matrix(
+      c(1, 1, 3, 6, 8, 8, 3, 6,
+        3.25, 6, 1, 1.25, 3, 5.75, 8, 7.75 ),
+      ncol = 2
+    )
+
+    plot(
+      .,
+      layout = layout,
+      #Not necessary
+      # edge.width = 25 * ((E(.)$weight/totP)/maxW),
+      edge.width = 25 * (E(.)$weight/maxW),
+      vertex.size = 25 * (V(.)$degree/maxD),
+      vertex.label.cex = .75,
+      edge.color = rgb(0, 0, 0, max = 255, alpha = 100)
+    )
+  }
+```
+
+Summary of Vertices - Q102
+=====
+```{r, echo = F, fig.width = 12}
+q102summary <- tibble(
+  answer = V(Q102JGM)$name,
+  people = V(Q102JGM)$degree
+) %>%
+  separate(answer, c('question', 'answer'), '::') %>%
+  arrange(people) %>%
+  mutate(answer = factor(answer, c('Refused', .$answer %>% .[. != 'Refused'])))
+
+ggplot(q102summary) +
+  geom_col(aes(answer, people)) +
+  coord_flip() +
+  facet_grid(question~., drop = T, scales='free_y')
+```
+
+PageRank Summary
+=====
+```{r}
+g %>%
+  set_vertex_attr('type', 
+                  value = sapply(V(.)$type, function(x){x == 'answer'})) %>%
+  set_vertex_attr('nPeople',
+                  value = degree(.)) %>%
+  set_vertex_attr('percPeople',
+                  value = V(.)$nPeople/length(V(.)[str_detect(name, '^ID_')])) %>%
+  bipartite_projection() %>% 
+  .[[2]] %>% 
+  {
+    fullA <<- .
+    .
+  } %>%
+  page_rank() %>% 
+  .$vector %>%
+  .[!str_detect(names(.), 'NA$')] %>%
+  sort(T) %>% 
+  {
+    prFullA <<- tibble(
+      name = names(.),
+      page_rank = .
+    ) %>%
+      left_join(
+        tibble(
+          name = V(fullA)$name,
+          nPeople = V(fullA)$nPeople,
+          percPeople = V(fullA)$percPeople
+        )
+      ) %>%
+      separate(name, c('question', 'answer'), '::')
+  }
+```
+
+fun summary
+====
+
+```{r}
+prFullA %>% 
+  filter(answer != 'Refused') %>%
+  count(question, sort = T) %>% 
+  filter(n < 10, n > 2)  %>%
+  .$question %>%
+  {filter(prFullA, question %in% .)} %>%
+  head(20)
+```
+
+split by cat
+======
+```{r}
+get_sub <- function(g, str_filt, cutoff, type){
+  noi <- V(g)[str_detect(name, str_filt)]
+
+  g %>%
+    {. - E(.)[!V(.) %--% noi]} %>%
+    {. - V(.)[degree(.) == 0]} %>%
+    {
+      poi <- V(.)[str_detect(name, '^ID_')]$name
+      g - E(g)[!poi %--% V(g)]
+    }  %>%
+    {. - V(.)[degree(.) == 0]} %>%
+    set_vertex_attr('type', 
+                    value = sapply(V(.)$type, function(x){x == 'answer'})) %>%
+    set_vertex_attr('nPeople',
+                    value = degree(.)) %>%
+    set_vertex_attr('percPeople',
+                    value = V(.)$nPeople/length(V(.)[str_detect(name, '^ID_')])) %>%
+    {
+      totP <<- V(.)[str_detect(name, '^ID_')] %>%
+        length
+      .
+    } %>%
+    bipartite_projection() %>% 
+    .[[2]] %>%
+    {. - V(.)[percPeople < cutoff]} %>%
+    {. - E(.)[!noi$name %--% V(.)]} %>%
+    {. - V(.)[degree(.) == 0]} %>%
+    set_edge_attr('percTot',
+                  value = E(.)$weight/totP) %>%
+    set_edge_attr('type',
+                  value = type) %>%
+    as_data_frame()
+}
+
+trans <- get_sub(g, 'LGBT::transgender', .7, 'transgender')
+gay <- get_sub(g, 'LGBT::gay', .7, 'gay')
+bisexual <- get_sub(g, 'LGBT::bisexual', .7, 'bisexual')
+lesbian <- get_sub(g, 'LGBT::lesbian', .7, 'lesbian')
+
+lgbt <- list(trans, gay, bisexual, lesbian) %>%
+  bind_rows()
+
+g_lgbt_70 <- graph_from_data_frame(lgbt, F)
+```
+
+disimilar 
+=====
+```{r}
+remove_common <- g_lgbt_70 %>%
+  {. - V(.)[str_detect(name, "::NA$")]} %>%
+  set_vertex_attr('degree', 
+                  value = degree(.)) %>%
+  {. - V(.)[str_detect(name, '^LGBT')]} %>%
+  {. - V(.)[degree > 2]} %>%
+  {V(.)$name} %>% 
+  c(V(g_lgbt_70)[str_detect(name, '^LGBT')]$name)
+
+g_lgbt_70 %>%
+  {. - V(.)[!name %in% (remove_common)]} %>%
+  plot()
+
+g_lgbt_70_dis <- g_lgbt_70 %>% 
+  {. - V(.)[!name %in% remove_common]} 
+
+type_df <- tibble(
+  name = names(degree(g_lgbt_70_dis)),
+  degree = degree(g_lgbt_70_dis),
+  type = map2_chr(name, degree, function(x,y){
+    if(str_detect(x, '^LGBT')){
+      'LGBT'
+    } else if(y > 1) {
+      'right'
+    } else {
+      'left'
+    }
+
+  })
+)
+
+g_lgbt_70_dis <- g_lgbt_70_dis %>%
+  set_vertex_attr('type', 
+                  value = type_df$type)
+
+totN <- vcount(g_lgbt_70_dis)
+totLGBT <- V(g_lgbt_70_dis)[str_detect(name, '^LGBT')] %>% length + 1
+totRight <- V(g_lgbt_70_dis)[!str_detect(name, '^LGBT')][type == 'right'] %>% length + 1
+totLeft <- V(g_lgbt_70_dis)[!str_detect(name, '^LGBT')][type == 'left'] %>% length + 1
+countLGBT <- 0
+countRight <- 0
+countLeft <- 0
+
+layout <- lapply(V(g_lgbt_70_dis)$type, function(x){
+  if(x == 'LGBT'){
+    countLGBT <<- countLGBT + 1
+    matrix(c(totN/2, countLGBT * totN/totLGBT), ncol = 2)
+  } else if(x == 'left'){
+    countLeft <<- countLeft + 1
+    matrix(c(0, countLeft * totN/totLeft), ncol = 2)
+  } else {
+    countRight <<- countRight + 1
+    matrix(c(totN, countRight * totN/totRight), ncol = 2)
+  }
+}) %>%
+  do.call(rbind, .)
+
+plot(g_lgbt_70_dis,
+     layout = layout,
+     vertex.size = 0)
+```
