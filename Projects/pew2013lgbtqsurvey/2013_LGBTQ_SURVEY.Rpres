@@ -722,15 +722,16 @@ projectForType <- function(g, strType){
     set_vertex_attr('type', 
                     value = sapply(V(.)$type, function(x){
                       x == strType
-                    })) %>%
-    set_vertex_attr('degree',
-                    value = degree(.)) %>% 
-    set_vertex_attr('percDegree',
-                    value = degree(.)/vcount(g - V(g)[type == strType])) %>%
+                      })) %>%
+    set_vertex_attr('degree', value = degree(.)) %>% 
+    set_vertex_attr(
+      'percDegree',
+      value = degree(.)/vcount(g - V(g)[type == strType])) %>%
     bipartite_projection() %>%
     .[[2]] %>%
     set_vertex_attr('strength', value = strength(.)) %>%
-    set_edge_attr('percStrength', value = E(.)$weight/vcount(g - V(g)[type == strType]))
+    set_edge_attr('percStrength', 
+                  value = E(.)$weight/vcount(g - V(g)[type == strType]))
 }
 
 justGay102Answers <- projectForType(justGay102, 'answer')

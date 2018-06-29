@@ -1359,18 +1359,18 @@ class:extra-small-code
 
 ```
 # A tibble: 10 x 3
-   NEWCASEID answer                                             type      
-   <chr>     <chr>                                              <chr>     
- 1 ID_382    Q17_E::Very important reason                       person_an…
- 2 ID_514    OFTVOTE::Nearly always                             person_an…
- 3 ID_769    Q3_A::Mostly favorable                             person_an…
- 4 ID_1142   Q3_A::Mostly unfavorable                           person_an…
- 5 ID_298    PPMSACAT::Metro                                    person_an…
- 6 ID_558    Q95::NA                                            person_an…
- 7 ID_287    PPRENT::Owned or being bought by you or someone i… person_an…
- 8 ID_1135   Q67::No, no conflict                               person_an…
- 9 ID_145    Q45C::Grow stronger                                person_an…
-10 ID_158    Q80_C::Top priority                                person_an…
+   NEWCASEID answer                                        type         
+   <chr>     <chr>                                         <chr>        
+ 1 ID_379    Q65_A::Some                                   person_answer
+ 2 ID_290    Q42::14                                       person_answer
+ 3 ID_397    PPMSACAT::Metro                               person_answer
+ 4 ID_1016   Q31::Not too important                        person_answer
+ 5 ID_143    Q90::NA                                       person_answer
+ 6 ID_661    EMPLOY2::Not employed for pay                 person_answer
+ 7 ID_198    BORN::NA                                      person_answer
+ 8 ID_327    Q44new_OE1::NA                                person_answer
+ 9 ID_217    Q33_B::Some                                   person_answer
+10 ID_437    Q85::No, do not regularly discuss LGBT issues person_answer
 ```
     
 Converting to Graph Data - Node List
@@ -1396,18 +1396,18 @@ class:extra-small-code
 
 ```
 # A tibble: 10 x 2
-   name                                  type  
-   <chr>                                 <chr> 
- 1 Q6_A::Refused                         answer
- 2 weight::0.6648                        answer
- 3 Q64_OE2::Lance Bass                   answer
- 4 Q39::24                               answer
- 5 ID_604                                person
- 6 Q47::No, did not tell any brothers(s) answer
- 7 weight::0.2447                        answer
- 8 weight::0.1914                        answer
- 9 ID_38                                 person
-10 ID_517                                person
+   name                  type  
+   <chr>                 <chr> 
+ 1 ID_790                person
+ 2 weight::2.7812        answer
+ 3 Q64_OE2::Jodie Foster answer
+ 4 SEX::Refused          answer
+ 5 ID_647                person
+ 6 weight::0.771         answer
+ 7 duration::29          answer
+ 8 weight::0.4131        answer
+ 9 Q64_OE1::Kesha        answer
+10 weight::1.659         answer
 ```
 
 Converting to Graph Data - The Graph!!
@@ -1422,9 +1422,9 @@ g
 ```
 
 ```
-IGRAPH 3e711c2 UN-B 3533 215460 -- 
+IGRAPH 9ae9592 UN-B 3533 215460 -- 
 + attr: name (v/c), type (v/c), type (e/c)
-+ edges from 3e711c2 (vertex names):
++ edges from 9ae9592 (vertex names):
  [1] ID_1 --Q1::Pretty happy  ID_2 --Q1::Pretty happy 
  [3] ID_3 --Q1::Not too happy ID_4 --Q1::Pretty happy 
  [5] ID_5 --Q1::Pretty happy  ID_6 --Q1::Pretty happy 
@@ -1576,15 +1576,16 @@ projectForType <- function(g, strType){
     set_vertex_attr('type', 
                     value = sapply(V(.)$type, function(x){
                       x == strType
-                    })) %>%
-    set_vertex_attr('degree',
-                    value = degree(.)) %>% 
-    set_vertex_attr('percDegree',
-                    value = degree(.)/vcount(g - V(g)[type == strType])) %>%
+                      })) %>%
+    set_vertex_attr('degree', value = degree(.)) %>% 
+    set_vertex_attr(
+      'percDegree',
+      value = degree(.)/vcount(g - V(g)[type == strType])) %>%
     bipartite_projection() %>%
     .[[2]] %>%
     set_vertex_attr('strength', value = strength(.)) %>%
-    set_edge_attr('percStrength', value = E(.)$weight/vcount(g - V(g)[type == strType]))
+    set_edge_attr('percStrength', 
+                  value = E(.)$weight/vcount(g - V(g)[type == strType]))
 }
 
 justGay102Answers <- projectForType(justGay102, 'answer')
