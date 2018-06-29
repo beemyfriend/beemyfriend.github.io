@@ -6,7 +6,11 @@ autosize: true
 
 <style>
 .small-code pre code {
-  font-size: 1em;
+  font-size: 1.15em;
+}
+
+.extra-small-code pre code {
+font-size: 1em
 }
 
 .myTable td {  /* Table  */
@@ -22,13 +26,15 @@ normal-text ol {
 What's a Graph?
 ========================================================
 
-```{r, echo=F, fig.width = 13}
+```{r, echo=F, fig.width = 15, fig.height = 10}
 library(tidyverse)
 library(igraph)
 library(igraphdata)
 g <- make_empty_graph(directed = T) +
   vertices(
-    c('Thing', 'Node', 'Vertex')
+    c('Thing', 'Node', 'Vertex'),
+    label.cex = 1.35,
+    label.font = 2
   ) +
   edges(
     c("Thing", "Node",
@@ -36,7 +42,9 @@ g <- make_empty_graph(directed = T) +
       "Vertex", "Thing",
       "Vertex", "Node"),
     show = c(1, 2, 3),
-    label = c("Relationship", "Link", "Edge", "Another Edge")
+    label = c("Relationship", "Link", "Edge", "Another Edge"),
+    label.cex = 1.35,
+    label.font = 2
   )
 
 layout = matrix(c(2, 3, 1, 1, 3, 1), ncol = 2, byrow = T)
@@ -46,21 +54,21 @@ g %>%
   plot(
     layout = layout,
     vertex.label = sapply(V(g)$name, function(x){if_else(x %in% c('Thing'), x, '')}),
-    vertex.size = sapply(V(g)$name, function(x){if_else(x %in% c('Thing'), 30, 0)}),
-       edge.width = 5
+    vertex.size = sapply(V(g)$name, function(x){if_else(x %in% c('Thing'), 45, 0)}),
+    edge.width = 5
   )
 ```
 
 What's a Graph?
 ========================================================
 
-```{r, echo = F, fig.width = 13}
+```{r, echo = F, fig.width = 15, fig.height = 10}
 g %>%
   {. - E(.)} %>%
   plot(
     layout = layout,
     vertex.label = sapply(V(g)$name, function(x){if_else(x %in% c('Node', 'Thing'), x, '')}),
-    vertex.size = sapply(V(g)$name, function(x){if_else(x %in% c('Node', 'Thing'), 30, 0)})
+    vertex.size = sapply(V(g)$name, function(x){if_else(x %in% c('Node', 'Thing'), 45, 0)})
   )
   
 ```
@@ -68,115 +76,116 @@ g %>%
 What's a Graph?
 ========================================================
 
-```{r, echo = F, fig.width = 13}
+```{r, echo = F, fig.width = 15, fig.height = 10}
 g %>%
   {. - E(.)} %>%
   plot(
     layout = layout,
-    vertex.size= 30
+    vertex.size= 45
   )
 ```
 
 What's a Graph?
 ============
-```{r, echo = F, fig.width = 13}
+```{r, echo = F, fig.width = 15, fig.height = 10}
 g %>%
   {. - E(.)[!label %in% c("Relationship")]} %>%
   plot(
     layout = layout,
     edge.arrow.size = 0,
-       vertex.size= 30,
+       vertex.size= 45,
        edge.width = 5
   )
 ```
 
 What's a Graph?
 ============
-```{r, echo = F, fig.width = 13}
+```{r, echo = F, fig.width = 15, fig.height = 10}
 g %>%
   {. - E(.)[!label %in% c("Relationship", 'Link')]} %>%
   plot(
     layout = layout,
     edge.arrow.size = 0,
-       vertex.size= 30,
+       vertex.size= 45,
        edge.width = 5
   )
 ```
 
 What's a Graph?
 ============
-```{r, echo = F, fig.width = 13}
+```{r, echo = F, fig.width = 15, fig.height = 10}
 g %>%
   {. - E(.)[label %in% c("Another Edge")]} %>%
   plot(
     layout = layout,
     edge.arrow.size = 0,
-       vertex.size= 30,
+       vertex.size= 45,
        edge.width = 5
   )
 ```
 
-What's a Graph?
+What's a Graph? - Relationships can have direction
 ============
-```{r, echo = F, fig.width = 13}
+```{r, echo = F, fig.width = 15, fig.height = 10}
 g %>%
   {. - E(.)[label %in% c("Another Edge")]} %>%
   plot(
     layout = layout,
-    vertex.size= 30,
+    vertex.size= 45,
     edge.width = 5,
     edge.arrow.size = 3
   )
 ```
 
-What's a Graph?
+What's a Graph? - Multiple relationships are possible
 ============
-```{r, echo = F, fig.width = 13}
+```{r, echo = F, fig.width = 15, fig.height = 10}
 g %>%
   plot(
     layout = layout,
     edge.curved = c(0, .25, 0, .25),
-    vertex.size= 30,
+    vertex.size= 45,
     edge.width = 5,
     edge.arrow.size = 3
   )
 ```
 
-What's a Graph?
+What's a Graph? - Everything can have attributes
 ============
-```{r, echo = F, fig.width = 13}
+```{r, echo = F, fig.width = 15, fig.height = 10}
 g %>%
   plot(
     layout = layout,
     edge.curved = c(0, .25, 0, .25),
     vertex.label = str_c(V(.)$name, 'attr', sep ='\n'),
     edge.label = str_c(E(.)$label, 'attr', sep = '\n'),
-    vertex.size= 30,
+    vertex.size= 45,
     edge.width = 5,
     edge.arrow.size = 3
   )
 ```
 
-What's a Graph?
+What's a Graph? - Attributes can be visualized
 ============
-```{r, echo = F, fig.width = 13}
+```{r, echo = F, fig.width = 15, fig.height = 10}
 g %>%
   plot(
     layout = layout,
     edge.curved = c(0, .25, 0, .25),
-    vertex.size = c(15, 30, 40),
+    vertex.size = c(30, 45, 60),
     vertex.color = c('orange', 'lightblue', 'pink'),
     edge.width = c(2, 10, 20, 5),
     vertex.label = str_c(V(.)$name, 'attr', sep ='\n'),
     edge.label = str_c(E(.)$label, 'attr', sep = '\n'),
     edge.lty = c(1, 6, 5, 2),
-    edge.arrow.size = 3
+    edge.arrow.size = 3,
+    vertex.shape = c('circle', 'square', 'circle')
   )
 ```
 
 Why graph? Social Network Analysis
 =========
-```{r, echo = F, fig.width = 13}
+```{r, echo = F, fig.width = 15, fig.height = 10}
 data("karate")
 plot(
   karate,
@@ -188,23 +197,29 @@ rm(karate)
 
 Why graph? Maps, paths, and supply chains
 ========
-```{r echo = F, fig.width = 13}
+```{r echo = F, fig.width = 15, fig.height = 10}
 data("Koenigsberg")
 plot(Koenigsberg,
      main = "Leonhard Euler\nThe Seven Bridges of Koenigsberg",
      sub = "Find a walk through the city that would cross each bridge once and only once.\nEuler proved that the problem has no solution.",
-       vertex.size= 30,
-       edge.width = 5)
+       vertex.size= 45,
+       edge.width = 5,
+     vertex.label.cex = 1.35,
+     vertex.label.font = 2
+     )
 rm(Koenigsberg)
 ```
 
 Why graph? Recommendation Systems
 ==========
-```{r, echo = F, fig.width = 13}
+```{r, echo = F, fig.width = 15, fig.height = 10}
 g <- make_empty_graph(directed = F) +
   vertices(
     c("Person1", "Person2", "Person3", "Object1", "Object2", "Object3", "Object4", "Object5"),
-    color = c(rep('pink', 3), rep('lightblue', 5))
+    color = c(rep('pink', 3), rep('lightblue', 5)),
+    label.cex = 1.35,
+    size = 45,
+    label.font = 2
   ) + 
   edges(
     c("Person1", "Object2",
@@ -219,7 +234,8 @@ g <- make_empty_graph(directed = F) +
       "Person1", "Person2",
       "Person1", "Person3"),
     lty = 1,
-    type = c(rep("person_object", 8), rep("person_person", 3))
+    type = c(rep("person_object", 8), rep("person_person", 3)), 
+    color = 'lightgrey'
   )
 
 layout = matrix(
@@ -237,18 +253,17 @@ layout = matrix(
 g %>%
   {. - E(.)[type == 'person_person']} %>%
   plot(layout = layout,
-       vertex.size= 30,
        edge.width = 5)
 ```
 
 Why graph? Recommendation Systems
 ============
-```{r, echo = F, fig.width = 13}
+```{r, echo = F, fig.width = 15, fig.height = 10}
 g %>%
   {. - E(.)[type == 'person_object']} %>%
   plot(
     layout = layout,
-    vertex.size = sapply(V(.)$name, function(x){if_else(str_detect(x, 'Object'), 0, 30)}),
+    vertex.size = sapply(V(.)$name, function(x){if_else(str_detect(x, 'Object'), 0, 45)}),
     vertex.label = sapply(V(.)$name, function(x){if_else(str_detect(x, 'Object'), '', x)}),
     edge.width= 5
   )
@@ -256,12 +271,11 @@ g %>%
 
 Why graph? Recommendation Systems
 ============
-```{r, echo = F, fig.width = 13}
+```{r, echo = F, fig.width = 15, fig.height = 10}
 g %>%
   {. - E(.)[type == 'person_person']} %>%
-  {. + edges(c("Person1", "Object1"), type = "person_object", lty = 2)} %>%
+  {. + edges(c("Person1", "Object1"), type = "person_object", lty = 2, color = 'gold')} %>%
   plot(layout = layout,
-       vertex.size= 30,
        edge.width = 5)
 ```
 
@@ -283,11 +297,15 @@ Data
 class:small-code
 It's a `.sav`  file (SPSS), but luckily the **foreign** package in **R** can import it painlessly. 
 
-```{r}
+```{r, eval = F}
 foreign::read.spss('pew2013lgbtpublicdatarelease.sav') %>%
   as.tibble() -> survey
 ```
 
+```{r, echo = F}
+foreign::read.spss('pew2013lgbtpublicdatarelease.sav 7.19.19 AM') %>%
+  as.tibble() -> survey
+```
 
 Data
 ====
@@ -298,17 +316,19 @@ knitr::kable(survey[,1:7])
 
 Converting to Graph Data - Overview
 =======
-```{r, echo = F, fig.width = 13}
+```{r, echo = F, fig.width = 13, fig.height = 10}
 (make_empty_graph(directed = F) +
   vertices(
     c('Person', 'Answer', '', ''),
     color = c('skyblue', 'pink', 'blue', 'pink'),
-    size = c(30, 30, 0, 0)
+    size = c(45, 45, 0, 0),
+    label.cex = 1.35
   ) +
   edges(
     c("Person", "Answer"),
     label = c("Question"),
-    width = 5
+    width = 5,
+    label.cex = 1.35
   ) )%>%
   plot(layout = matrix(c(1, 2, 3, 2, 2, 1, 2, 3), ncol = 2, byrow = T), asp = 0)
 ```
@@ -341,7 +361,7 @@ links <- survey %>%
 
 Converting to Graph Data - Edge List
 ======
-class:small-code
+class:extra-small-code
 
 ```{r, echo = F}
 links %>% sample_n(10)
@@ -365,7 +385,7 @@ nodes <- rbind(
 
 Converting to Graph Data - Node List
 ======
-class:small-code
+class:extra-small-code
 ```{r, echo = F}
 nodes %>% sample_n(10)
 ```
@@ -374,7 +394,9 @@ Converting to Graph Data - The Graph!!
 =====
 class:small-code
 ```{r}
-g <- graph_from_data_frame(d = links, directed = F, vertices = nodes)
+g <- graph_from_data_frame(d = links, 
+                           directed = F,
+                           vertices = nodes)
 g
 ```
 
@@ -393,7 +415,7 @@ dev.off()
 
 Subgraph - Filter the Graph down!!!
 =====
-```{r, echo = F, fig.width = 13}
+```{r, echo = F, fig.width = 15, fig.height = 10}
 tN <- c( 'LGBT::Lesbian', 'LGBT::Bisexual','LGBT::Gay', 'LGBT::Transgender',
        "Person1", "Person2", "Person3", "Person4", "Person5",
        "Answer1", "Answer2", "Answer3", "Answer4", "Answer5", "Answer6", "Answer7")
@@ -401,8 +423,9 @@ tempG <- make_empty_graph(directed = F) +
   vertices(
     tN,
     color = c(rep('pink', 4), rep('skyblue', 5), rep('pink', 7)),
-    size = 20,
-    label.cex = .8,
+    size = c(rep(30, 4), rep(25, 5), rep(20, 7)),
+    label.cex = 1.25,
+    label.font = 2,
     color2 = c(rep(rgb(255,192,203, 10, maxColorValue = 255), 2), 
                rgb(255,192, 203, maxColorValue = 255), 
                rgb(255,192,203, 10, maxColorValue = 255),
@@ -459,7 +482,7 @@ tempG %>%
 
 Subgraph - Filter the graph down!!!
 =====
-```{r, echo = F, fig.width=13}
+```{r, echo = F, fig.width=15, fig.height = 10}
 tempG %>%
   plot(layout=layout, 
        asp = 0, 
@@ -472,7 +495,7 @@ Subgraph - Just Gay Males
 ========
 class:small-code
 
-```{r, fig.width = 13}
+```{r, fig.width = 13, fig.height = 10}
 filterForGroup <- function(g, strFilt){
   g %>%
   {. - E(.)[!V(.)[str_detect(V(.)$name, '^ID_')] %--% V(.)[str_detect(V(.)$name, strFilt)]]} %>%
@@ -489,7 +512,7 @@ justGay <-  filterForGroup(g, 'LGBT::gay')
   
 Subgraph - Just Gay Males. Still too big!!!
 =====
-```{r, echo = F, fig.width = 13}
+```{r, echo = F, fig.width = 15, fig.height = 10}
 counterA <<- 0
 counterP <<- 0
 counterMA <<- 0
@@ -518,7 +541,9 @@ plot(
   vertex.label = sapply(V(justGay)$name, function(x){if_else(str_detect(x, '^LGBT::gay'), x, '')}),
     vertex.size = 3,
     edge.color = rgb(0, 0, 0, max = 255, alpha = 5),
-    vertex.color = rgb(249, 156, 2, max = 255, alpha = 127)
+    vertex.color = rgb(249, 156, 2, max = 255, alpha = 127),
+  vertex.label.cex = 1.35,
+  vertex.label.font = 2
   )
   
 ```
@@ -604,7 +629,7 @@ justGay102 <- filterForQuestion(justGay, '^Q102')
 
 Subgraph - Question 102 Filtered
 ====
-```{r, echo = F,  fig.width = 13}
+```{r, echo = F,  fig.width = 15, fig.height = 10}
 justGay102 %>%
   {
     totN <<- vcount(.)
@@ -629,7 +654,7 @@ justGay102 %>%
       layout = layout,
       vertex.label = sapply(V(.)$name, function(x){if_else(str_detect(x, '^Q'), x, '')}),
       vertex.color = sapply(V(.)$name, function(x){if_else(str_detect(x, '^Q'), 'pink', 'lightblue')}),
-      vertex.label.cex = .75,
+      vertex.label.cex = 1.35,
       edge.color = rgb(0, 0, 0, max = 255, alpha = 10),
       vertex.label.font = 2,
       vertex.size = 10
@@ -639,16 +664,17 @@ justGay102 %>%
 
 Subgraph - Projection
 ====
-```{r, echo = F, fig.width = 13}
+```{r, echo = F, fig.width = 15, fig.height = 10}
 tN <- c("Q102A1", "Q102B1", "Person1", "Person2")
 tN2 <- c("Q102A1", "Q102B1", '', '')
 gT <- make_empty_graph(directed = T) +
   vertices(
     tN,
     color = c(rep('pink', 2), rep('skyblue', 2)),
-    size = 30,
-    size2 = c(rep(30, 2), rep(0, 2)),
-    label.font = 2
+    size = 45,
+    size2 = c(rep(45, 2), rep(0, 2)),
+    label.font = 2,
+    label.cex = 1.35
   ) + 
   edges(
     c(tN[1], tN[3],
@@ -678,7 +704,7 @@ gT %>%
 
 Subgraph - Projection
 ====
-```{r, echo = F, fig.width = 13}
+```{r, echo = F, fig.width = 15, fig.height = 10}
 gT %>%
   {. - E(.)[type =='answer_person']} %>%
   plot(layout = layout,
@@ -689,7 +715,7 @@ gT %>%
 
 Subgraph - Question 102 Projected
 =======
-class:small-code
+class:extra-small-code
 ```{r}
 projectForType <- function(g, strType){
   g %>%
@@ -714,7 +740,7 @@ justGay102Answers <- projectForType(justGay102, 'answer')
 Subgraph - Answers have relationships
 =======
 
-```{r, echo = F, fig.width = 13}
+```{r, echo = F, fig.width = 15, fig.height = 10}
 justGay102Answers %>%
   {
     layout <- matrix(
@@ -735,7 +761,7 @@ justGay102Answers %>%
       layout = layout,
       edge.width = 25 * (E(.)$weight/max(E(.)$weight)),
       vertex.size = 40 * (V(.)$strength/max(V(.)$strength)),
-      vertex.label.cex = .75,
+      vertex.label.cex = 1,
       vertex.label.font= 2,
       edge.color = rgb(0, 0, 0, max = 255, alpha = 100)
     )
@@ -744,7 +770,7 @@ justGay102Answers %>%
 
 Subgraph - Statistics Change if the Relationships Change
 ====
-```{r, echo = F, fig.width = 13}
+```{r, echo = F, fig.width = 15, fig.height = 10}
 justGay102 %>%
   {. - E(.)[!V(.) %--% V(.)[str_detect(name, 'Q102C::My')]]} %>%
   {. - V(.)[degree(.) == 0]} %>%
@@ -771,7 +797,7 @@ justGay102 %>%
       layout = layout,
       edge.width = 25 * (E(.)$weight/max(E(.)$weight)),
       vertex.size = 40 * (V(.)$strength/max(V(.)$strength)),
-      vertex.label.cex = .75,
+      vertex.label.cex = 1,
       vertex.label.font= 2,
       edge.color = rgb(0, 0, 0, max = 255, alpha = 100)
     )
@@ -780,7 +806,7 @@ justGay102 %>%
 
 Summary of Vertices - They're just vectors 
 =====
-class:small-code
+class:extra-small-code
 
 ```{r, eval = F, fig.width = 13}
 justGay102Summary <- tibble(
@@ -789,7 +815,8 @@ justGay102Summary <- tibble(
 ) %>%
   separate(answer, c('question', 'answer'), '::') %>%
   arrange(people) %>%
-  mutate(answer = factor(answer, c('Refused', .$answer %>% .[. != 'Refused'])))
+  mutate(answer = factor(answer, 
+                         c('Refused', .$answer %>% .[. != 'Refused'])))
 
 ggplot(justGay102Summary) +
   geom_col(aes(answer, people)) +
@@ -877,7 +904,7 @@ g_lgbt_70_sim <- g_lgbt_70 %>%
 
 Similarities
 ====
-```{r, echo = F, fig.width = 13}
+```{r, echo = F, fig.width = 15, fig.height = 10}
 type_df <- tibble(
   name = names(degree(g_lgbt_70_sim)),
   degree = degree(g_lgbt_70_sim),
@@ -922,7 +949,7 @@ layout <- lapply(V(g_lgbt_70_sim)$type, function(x){
 plot(g_lgbt_70_sim,
      layout = layout,
      vertex.size = 0,
-     vertex.label.cex = .8,
+     vertex.label.cex = 1.25,
      vertex.label.font = 2
      )
 ```
@@ -949,7 +976,7 @@ g_lgbt_70_dis <- g_lgbt_70 %>%
 
 Dissimilarities
 =====
-```{r, echo = F, fig.width=13}
+```{r, echo = F, fig.width=15, fig.height = 10}
 type_df <- tibble(
   name = names(degree(g_lgbt_70_dis)),
   degree = degree(g_lgbt_70_dis),
@@ -994,7 +1021,7 @@ layout <- lapply(V(g_lgbt_70_dis)$type, function(x){
 plot(g_lgbt_70_dis,
      layout = layout,
      vertex.size = 0,
-     vertex.label.cex = .8,
+     vertex.label.cex = 1.25,
      vertex.label.font = 2)
 ```
 
