@@ -3,6 +3,7 @@
 author: Benjamin Ortiz Ulloa
 date: 
 autosize: true
+transition: fade
 
 <style>
 .small-code pre code {

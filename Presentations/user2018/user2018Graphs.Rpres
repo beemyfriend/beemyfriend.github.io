@@ -1,0 +1,274 @@
+Exploring Graphs
+========================================================
+author: Benjamin Ortiz Ulloa
+date: 
+autosize: true
+transition: fade
+
+
+What's a Graph?
+========================================================
+
+```{r, echo=F, fig.width = 15, fig.height = 10}
+library(tidyverse)
+library(igraph)
+library(igraphdata)
+g <- make_empty_graph(directed = T) +
+  vertices(
+    c('Thing', 'Node', 'Vertex'),
+    label.cex = 1.75,
+    label.font = 2
+  ) +
+  edges(
+    c("Thing", "Node",
+      "Node", "Vertex",
+      "Vertex", "Thing",
+      "Vertex", "Node"),
+    show = c(1, 2, 3),
+    label = c("Relationship", "Link", "Edge", "Another Edge"),
+    label.cex = 1.75,
+    label.font = 2
+  )
+
+layout = matrix(c(2, 3, 1, 1, 3, 1), ncol = 2, byrow = T)
+
+g %>%
+  {. - E(.)} %>%
+  plot(
+    layout = layout,
+    vertex.label = sapply(V(g)$name, function(x){if_else(x %in% c('Thing'), x, '')}),
+    vertex.size = sapply(V(g)$name, function(x){if_else(x %in% c('Thing'), 45, 0)}),
+    edge.width = 5
+  )
+```
+
+What's a Graph?
+========================================================
+
+```{r, echo = F, fig.width = 15, fig.height = 10}
+g %>%
+  {. - E(.)} %>%
+  plot(
+    layout = layout,
+    vertex.label = sapply(V(g)$name, function(x){if_else(x %in% c('Node', 'Thing'), x, '')}),
+    vertex.size = sapply(V(g)$name, function(x){if_else(x %in% c('Node', 'Thing'), 45, 0)})
+  )
+  
+```
+
+What's a Graph?
+========================================================
+
+```{r, echo = F, fig.width = 15, fig.height = 10}
+g %>%
+  {. - E(.)} %>%
+  plot(
+    layout = layout,
+    vertex.size= 45
+  )
+```
+
+What's a Graph?
+============
+```{r, echo = F, fig.width = 15, fig.height = 10}
+g %>%
+  {. - E(.)[!label %in% c("Relationship")]} %>%
+  plot(
+    layout = layout,
+    edge.arrow.size = 0,
+       vertex.size= 45,
+       edge.width = 5
+  )
+```
+
+What's a Graph?
+============
+```{r, echo = F, fig.width = 15, fig.height = 10}
+g %>%
+  {. - E(.)[!label %in% c("Relationship", 'Link')]} %>%
+  plot(
+    layout = layout,
+    edge.arrow.size = 0,
+       vertex.size= 45,
+       edge.width = 5
+  )
+```
+
+What's a Graph?
+============
+```{r, echo = F, fig.width = 15, fig.height = 10}
+g %>%
+  {. - E(.)[label %in% c("Another Edge")]} %>%
+  plot(
+    layout = layout,
+    edge.arrow.size = 0,
+       vertex.size= 45,
+       edge.width = 5
+  )
+```
+
+Relationships can have direction
+============
+```{r, echo = F, fig.width = 15, fig.height = 10}
+g %>%
+  {. - E(.)[label %in% c("Another Edge")]} %>%
+  plot(
+    layout = layout,
+    vertex.size= 45,
+    edge.width = 5,
+    edge.arrow.size = 3
+  )
+```
+
+Multiple relationships are possible
+============
+```{r, echo = F, fig.width = 15, fig.height = 10}
+g %>%
+  plot(
+    layout = layout,
+    edge.curved = c(0, .25, 0, .25),
+    vertex.size= 45,
+    edge.width = 5,
+    edge.arrow.size = 3
+  )
+```
+
+Everything can have attributes
+============
+```{r, echo = F, fig.width = 15, fig.height = 10}
+g %>%
+  plot(
+    layout = layout,
+    edge.curved = c(0, .25, 0, .25),
+    vertex.label = str_c(V(.)$name, 'attr', sep ='\n'),
+    edge.label = str_c(E(.)$label, 'attr', sep = '\n'),
+    vertex.size= 45,
+    edge.width = 5,
+    edge.arrow.size = 3
+  )
+```
+
+Attributes can be visualized
+============
+```{r, echo = F, fig.width = 15, fig.height = 10}
+g %>%
+  plot(
+    layout = layout,
+    edge.curved = c(0, .25, 0, .25),
+    vertex.size = c(30, 60, 70),
+    vertex.color = c('lightblue', 'lightblue', 'pink'),
+    edge.width = c(2, 10, 20, 5),
+    vertex.label = '',
+    edge.label = '',
+    edge.lty = c(1, 6, 5, 2),
+    edge.arrow.size = 3,
+    vertex.shape = c('circle', 'square', 'circle')
+  )
+```
+
+Node attributes can also be nodes
+======
+```{r, echo = F, fig.width = 15, fig.height = 10}
+g <- make_empty_graph(directed = T) +
+  vertices(
+    c('Thing', 'Node', 'Vertex', "Blue", "Pink", "Small", "Large", "Circle", "Square"),
+    label.cex = 1.75,
+    label.font = 2,
+    size = c(rep(45, 3), rep(30, 6)),
+    color = c(rep('orange', 3), rep('lightgrey', 6))
+  ) +
+  edges(
+    c("Thing", "Blue",
+      "Node", "Blue",
+      "Vertex", "Pink",
+      "Thing", "Small",
+      "Node", "Large", 
+      "Vertex", "Large",
+      "Thing", "Circle",
+      "Node", "Square",
+      "Vertex", "Circle"),
+    label = c(rep('Color', 3),
+              rep("Size", 3),
+              rep("Shape", 3)),
+    label.cex = 1.5,
+    label.font = 2
+  )
+
+layout = matrix(c(4.5, 7,
+                  2, 3,
+                  7, 3,
+                  1, 6,
+                  9, 1,
+                  4.5, 10,
+                  4.5, 1,
+                  8, 6,
+                  0, 1),
+                ncol = 2,
+                byrow = T)
+
+plot(g, layout = layout)
+```
+
+
+Content Based Recommendations
+========================================================
+
+```{r  echo=FALSE, out.width = '100%'}
+knitr::include_graphics("collabFilter/shopRec05.png")
+```
+
+Content Based Recommendations
+========================================================
+
+```{r  echo=FALSE, out.width = '100%'}
+knitr::include_graphics("collabFilter/shopRec06.png")
+```
+
+Content Based Recommendations
+========================================================
+
+```{r  echo=FALSE, out.width = '100%'}
+knitr::include_graphics("collabFilter/shopRec07.png")
+```
+
+Content Based Recommendations
+========================================================
+
+```{r  echo=FALSE, out.width = '100%'}
+knitr::include_graphics("collabFilter/shopRec08.png")
+```
+
+Content Based Recommendations 
+========================================================
+
+```{r  echo=FALSE, out.width = '100%'}
+knitr::include_graphics("collabFilter/shopRec09.png")
+```
+
+Collaborative Filtering 
+========================================================
+
+```{r echo=FALSE, out.width = '100%'}
+knitr::include_graphics("collabFilter/shopRec01.png")
+```
+
+Collaborative Filtering 
+========================================================
+
+```{r  echo=FALSE,  out.width = '100%'}
+knitr::include_graphics("collabFilter/shopRec02.png")
+```
+
+Collaborative Filtering 
+========================================================
+
+```{r echo=FALSE, out.width = '100%'}
+knitr::include_graphics("collabFilter/shopRec03.png")
+```
+
+Collaborative Filtering 
+========================================================
+
+```{r  echo=FALSE, out.width = '100%'}
+knitr::include_graphics("collabFilter/shopRec04.png")
+```

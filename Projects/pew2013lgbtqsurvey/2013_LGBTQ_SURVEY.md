@@ -3,6 +3,7 @@
 author: Benjamin Ortiz Ulloa
 date: 
 autosize: true
+transition: fade
 
 <style>
 .small-code pre code {
@@ -1359,18 +1360,18 @@ class:extra-small-code
 
 ```
 # A tibble: 10 x 3
-   NEWCASEID answer                                        type         
-   <chr>     <chr>                                         <chr>        
- 1 ID_379    Q65_A::Some                                   person_answer
- 2 ID_290    Q42::14                                       person_answer
- 3 ID_397    PPMSACAT::Metro                               person_answer
- 4 ID_1016   Q31::Not too important                        person_answer
- 5 ID_143    Q90::NA                                       person_answer
- 6 ID_661    EMPLOY2::Not employed for pay                 person_answer
- 7 ID_198    BORN::NA                                      person_answer
- 8 ID_327    Q44new_OE1::NA                                person_answer
- 9 ID_217    Q33_B::Some                                   person_answer
-10 ID_437    Q85::No, do not regularly discuss LGBT issues person_answer
+   NEWCASEID answer                                               type    
+   <chr>     <chr>                                                <chr>   
+ 1 ID_645    Q82_C::Never happened                                person_…
+ 2 ID_918    q45aNEW::NA                                          person_…
+ 3 ID_381    Q9C::Poor people have hard lives because government… person_…
+ 4 ID_429    Q66_D::Unfriendly                                    person_…
+ 5 ID_1113   Q99::Some of them                                    person_…
+ 6 ID_1013   Q27::Somewhat more attracted to males than females   person_…
+ 7 ID_1037   Q92::Yes                                             person_…
+ 8 ID_269    Q32A_posOE4::NA                                      person_…
+ 9 ID_525    Q46::No, did not tell any sister(s)                  person_…
+10 ID_896    Q17_G::Not an important reason                       person_…
 ```
     
 Converting to Graph Data - Node List
@@ -1396,18 +1397,18 @@ class:extra-small-code
 
 ```
 # A tibble: 10 x 2
-   name                  type  
-   <chr>                 <chr> 
- 1 ID_790                person
- 2 weight::2.7812        answer
- 3 Q64_OE2::Jodie Foster answer
- 4 SEX::Refused          answer
- 5 ID_647                person
- 6 weight::0.771         answer
- 7 duration::29          answer
- 8 weight::0.4131        answer
- 9 Q64_OE1::Kesha        answer
-10 weight::1.659         answer
+   name                 type  
+   <chr>                <chr> 
+ 1 Q89::NA              answer
+ 2 Q66_B::Refused       answer
+ 3 weight::0.195        answer
+ 4 Q42::14              answer
+ 5 Q33_C::Only a little answer
+ 6 ID_962               person
+ 7 weight::0.2009       answer
+ 8 Q6_B::Only a little  answer
+ 9 ID_699               person
+10 weight::0.5064       answer
 ```
 
 Converting to Graph Data - The Graph!!
@@ -1422,9 +1423,9 @@ g
 ```
 
 ```
-IGRAPH 9ae9592 UN-B 3533 215460 -- 
+IGRAPH 5d6addf UN-B 3533 215460 -- 
 + attr: name (v/c), type (v/c), type (e/c)
-+ edges from 9ae9592 (vertex names):
++ edges from 5d6addf (vertex names):
  [1] ID_1 --Q1::Pretty happy  ID_2 --Q1::Pretty happy 
  [3] ID_3 --Q1::Not too happy ID_4 --Q1::Pretty happy 
  [5] ID_5 --Q1::Pretty happy  ID_6 --Q1::Pretty happy 
