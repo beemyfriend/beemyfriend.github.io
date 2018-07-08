@@ -487,3 +487,66 @@ SnehalataHuzurbazar %>%
   {. - V(.)[degree(.) == 0]} %>%
   plot( vertex.size= 0, vertex.label.font = 2, vertex.label.cex = 1.5)
 ```
+
+Creating graphs: Find data
+=====
+```{r echo = F, fig.width = 12}
+knitr::kable(starwars[,1:10])
+```
+
+Creating graphs: Edge List
+=======
+```{r echo = F, fig.width = 12}
+starwarsEL <- starwars %>%
+  mutate_if(function(x){!is.list(x)}, as.character) %>%
+  tidyr::gather(type, to, -name) %>%
+  unnest() %>% 
+  rename(from = name) %>%
+  mutate(type = str_c('has ', type)) %>%
+  select(from, to, type) %>%
+  filter(!is.na(to))
+set.seed(1234)
+knitr::kable(starwarsEL %>% sample_n(15))
+```
+
+Creating graphs: Optional Node List
+====
+```{r, echo = F, fig.wisth = 12}
+starwarsNL <- list(
+  tibble(
+    name = starwarsEL$from %>% unique,
+    type = 'character'
+  ),
+  tibble(
+    name = starwarsEL$to %>% unique,
+    type = 'not a character'
+  )
+) %>%
+  bind_rows()
+set.seed(1234)
+knitr::kable(starwarsNL %>% sample_n(15))
+```
+
+Creating graphs: igraph
+=====
+```{r, fig.width = 12}
+g <- graph_from_data_frame(d = starwarsEL, 
+                           directed = F, 
+                           vertices = starwarsNL)
+g
+```
+
+Searching Vertices: It's just a vector
+======
+```{r}
+V(g)[name == "Luke Skywalker"]
+V(g)[type == 'character']
+```
+
+
+Searching Edges: It's just a vector
+=====
+```{r}
+E(g)[type == 'has starships']
+E(g)['Luke Skywalker' %--% V(g)]
+```
