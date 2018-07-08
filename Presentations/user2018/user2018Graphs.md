@@ -5,6 +5,11 @@ date:
 autosize: true
 transition: fade
 
+<style>
+.small-code pre code {
+  font-size: 1em;
+}
+</style>
 
 What's a Graph?
 ========================================================
@@ -289,14 +294,14 @@ Creating graphs: Optional Node List
 
 |name         |type            |
 |:------------|:---------------|
-|Darth Maul   |character       |
+|Darth Maul   |a character     |
 |31.5         |not a character |
 |29           |not a character |
 |896          |not a character |
 |Vulptereen   |not a character |
 |41           |not a character |
-|Darth Vader  |character       |
-|Arvel Crynyd |character       |
+|Darth Vader  |a character     |
+|Arvel Crynyd |a character     |
 |22           |not a character |
 |fair         |not a character |
 |Naboo        |not a character |
@@ -307,47 +312,49 @@ Creating graphs: Optional Node List
 
 Creating graphs: igraph
 =====
+class:small-code
 
 ```r
 g <- graph_from_data_frame(d = starwarsEL, 
-                           directed = F, 
+                           directed = T, 
                            vertices = starwarsNL)
 g
 ```
 
 ```
-IGRAPH 9e876ec UN-B 357 899 -- 
+IGRAPH a56f260 DN-B 357 899 -- 
 + attr: name (v/c), type (v/c), type (e/c)
-+ edges from 9e876ec (vertex names):
- [1] Luke Skywalker       --172 C-3PO                --167
- [3] R2-D2                --96  Darth Vader          --202
- [5] Leia Organa          --150 Owen Lars            --178
- [7] Beru Whitesun lars   --165 R5-D4                --97 
- [9] Biggs Darklighter    --183 Obi-Wan Kenobi       --182
-[11] Anakin Skywalker     --188 Wilhuff Tarkin       --180
-[13] Chewbacca            --228 Han Solo             --180
-[15] Greedo               --173 Jabba Desilijic Tiure--175
++ edges from a56f260 (vertex names):
+ [1] Luke Skywalker       ->172 C-3PO                ->167
+ [3] R2-D2                ->96  Darth Vader          ->202
+ [5] Leia Organa          ->150 Owen Lars            ->178
+ [7] Beru Whitesun lars   ->165 R5-D4                ->97 
+ [9] Biggs Darklighter    ->183 Obi-Wan Kenobi       ->182
+[11] Anakin Skywalker     ->188 Wilhuff Tarkin       ->180
+[13] Chewbacca            ->228 Han Solo             ->180
+[15] Greedo               ->173 Jabba Desilijic Tiure->175
 + ... omitted several edges
 ```
 
 Searching Vertices: It's just a vector
 ======
+class:small-code
 
 ```r
 V(g)[name == "Luke Skywalker"]
 ```
 
 ```
-+ 1/357 vertex, named, from 9e876ec:
++ 1/357 vertex, named, from a56f260:
 [1] Luke Skywalker
 ```
 
 ```r
-V(g)[type == 'character']
+V(g)[type == 'a character']
 ```
 
 ```
-+ 87/357 vertices, named, from 9e876ec:
++ 87/357 vertices, named, from a56f260:
  [1] Luke Skywalker        C-3PO                 R2-D2                
  [4] Darth Vader           Leia Organa           Owen Lars            
  [7] Beru Whitesun lars    R5-D4                 Biggs Darklighter    
@@ -364,23 +371,24 @@ V(g)[type == 'character']
 
 Searching Edges: It's just a vector
 =====
+class:small-code
 
 ```r
-E(g)[type == 'has starships']
+E(g)[type == 'has films']
 ```
 
 ```
-+ 31/899 edges from 9e876ec (vertex names):
- [1] Luke Skywalker   --X-wing                  
- [2] Luke Skywalker   --Imperial shuttle        
- [3] Darth Vader      --TIE Advanced x1         
- [4] Biggs Darklighter--X-wing                  
- [5] Obi-Wan Kenobi   --Jedi starfighter        
- [6] Obi-Wan Kenobi   --Trade Federation cruiser
- [7] Obi-Wan Kenobi   --Naboo star skiff        
- [8] Obi-Wan Kenobi   --Jedi Interceptor        
- [9] Obi-Wan Kenobi   --Belbullab-22 starfighter
-[10] Anakin Skywalker --Trade Federation cruiser
++ 173/899 edges from a56f260 (vertex names):
+ [1] Luke Skywalker->Revenge of the Sith    
+ [2] Luke Skywalker->Return of the Jedi     
+ [3] Luke Skywalker->The Empire Strikes Back
+ [4] Luke Skywalker->A New Hope             
+ [5] Luke Skywalker->The Force Awakens      
+ [6] C-3PO         ->Attack of the Clones   
+ [7] C-3PO         ->The Phantom Menace     
+ [8] C-3PO         ->Revenge of the Sith    
+ [9] C-3PO         ->Return of the Jedi     
+[10] C-3PO         ->The Empire Strikes Back
 + ... omitted several edges
 ```
 
@@ -389,16 +397,213 @@ E(g)['Luke Skywalker' %--% V(g)]
 ```
 
 ```
-+ 18/899 edges from 9e876ec (vertex names):
- [1] Luke Skywalker--172                    
- [2] Luke Skywalker--77                     
- [3] Luke Skywalker--blond                  
- [4] Luke Skywalker--fair                   
- [5] Luke Skywalker--blue                   
- [6] Luke Skywalker--19                     
- [7] Luke Skywalker--male                   
- [8] Luke Skywalker--Tatooine               
- [9] Luke Skywalker--Human                  
-[10] Luke Skywalker--Revenge of the Sith    
++ 18/899 edges from a56f260 (vertex names):
+ [1] Luke Skywalker->172                    
+ [2] Luke Skywalker->77                     
+ [3] Luke Skywalker->blond                  
+ [4] Luke Skywalker->fair                   
+ [5] Luke Skywalker->blue                   
+ [6] Luke Skywalker->19                     
+ [7] Luke Skywalker->male                   
+ [8] Luke Skywalker->Tatooine               
+ [9] Luke Skywalker->Human                  
+[10] Luke Skywalker->Revenge of the Sith    
 + ... omitted several edges
 ```
+
+Filter Graphs: Remove the unwanted with - and !
+======
+class:small-code
+
+```r
+#Get rid of all edges NOT connected to LUKE SKYWALKER
+g - E(g)[!'Luke Skywalker' %--% V(g)]
+```
+
+```
+IGRAPH 7bd809a DN-B 357 18 -- 
++ attr: name (v/c), type (v/c), type (e/c)
++ edges from 7bd809a (vertex names):
+ [1] Luke Skywalker->172                    
+ [2] Luke Skywalker->77                     
+ [3] Luke Skywalker->blond                  
+ [4] Luke Skywalker->fair                   
+ [5] Luke Skywalker->blue                   
+ [6] Luke Skywalker->19                     
+ [7] Luke Skywalker->male                   
+ [8] Luke Skywalker->Tatooine               
++ ... omitted several edges
+```
+
+Chain Filters: %>%, {}, and .
+====
+class:small-code
+
+```r
+g %>%
+  #get rid of all edges that DON'T have the type 'has films'
+  {. - E(.)[type != 'has films']} %>%
+  #get rid of all edges that are NOT connected FROM a SKYWALKER
+  {. - E(.)[V(.)[!str_detect(name, 'Skywalker')] %->% V(.)]} %>%
+  #get rid of all vertices that are NOT connected to other nodes
+  #getting rid of the edges does not get rid of the nodes
+  {. - V(.)[degree(.) == 0]}
+```
+
+```
+IGRAPH 42f3f90 DN-B 10 10 -- 
++ attr: name (v/c), type (v/c), type (e/c)
++ edges from 42f3f90 (vertex names):
+ [1] Luke Skywalker  ->Revenge of the Sith    
+ [2] Luke Skywalker  ->Return of the Jedi     
+ [3] Luke Skywalker  ->The Empire Strikes Back
+ [4] Luke Skywalker  ->A New Hope             
+ [5] Luke Skywalker  ->The Force Awakens      
+ [6] Anakin Skywalker->Attack of the Clones   
+ [7] Anakin Skywalker->The Phantom Menace     
+ [8] Anakin Skywalker->Revenge of the Sith    
++ ... omitted several edges
+```
+
+Projections
+=====
+class:small-code
+
+```r
+movieCharProj <- g %>%
+  {. - E(.)[type != 'has films']} %>%
+  {. - V(.)[degree(.) == 0]} %>%
+  #type has to be a boolean for projections to work
+  {
+    V(.)$type <- V(.)$type == 'a character'
+    .
+  } %>%
+  bipartite_projection()
+
+movieCharProj
+```
+
+```
+$proj1
+IGRAPH b0037a1 UNW- 7 21 -- 
++ attr: name (v/c), weight (e/n)
++ edges from b0037a1 (vertex names):
+ [1] Revenge of the Sith--Return of the Jedi     
+ [2] Revenge of the Sith--The Empire Strikes Back
+ [3] Revenge of the Sith--A New Hope             
+ [4] Revenge of the Sith--The Force Awakens      
+ [5] Revenge of the Sith--Attack of the Clones   
+ [6] Revenge of the Sith--The Phantom Menace     
+ [7] Return of the Jedi --The Empire Strikes Back
+ [8] Return of the Jedi --A New Hope             
++ ... omitted several edges
+
+$proj2
+IGRAPH d1b0eca UNW- 87 1793 -- 
++ attr: name (v/c), weight (e/n)
++ edges from d1b0eca (vertex names):
+ [1] Luke Skywalker--C-3PO              Luke Skywalker--R2-D2             
+ [3] Luke Skywalker--Darth Vader        Luke Skywalker--Leia Organa       
+ [5] Luke Skywalker--Owen Lars          Luke Skywalker--Beru Whitesun lars
+ [7] Luke Skywalker--Obi-Wan Kenobi     Luke Skywalker--Anakin Skywalker  
+ [9] Luke Skywalker--Wilhuff Tarkin     Luke Skywalker--Chewbacca         
+[11] Luke Skywalker--Yoda               Luke Skywalker--Palpatine         
+[13] Luke Skywalker--Nute Gunray        Luke Skywalker--Ayla Secura       
+[15] Luke Skywalker--Mace Windu         Luke Skywalker--Ki-Adi-Mundi      
++ ... omitted several edges
+```
+
+Projections
+====
+![plot of chunk unnamed-chunk-45](user2018Graphs-figure/unnamed-chunk-45-1.png)
+
+Projections
+====
+![plot of chunk unnamed-chunk-46](user2018Graphs-figure/unnamed-chunk-46-1.png)
+
+Untangle the hairball
+===
+class:small-code
+
+```r
+movieCharProj[[2]] %>%
+  {E(.)$weight} %>%
+  summary
+```
+
+```
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+   1.00    1.00    1.00    1.35    1.00    6.00 
+```
+
+Untangle the hairball
+===
+class:small-code
+
+
+```r
+movieCharProj[[2]] %>%
+  {. - E(.)[weight < 3]} %>%
+  {. - V(.)[degree(.) == 0]}
+```
+
+```
+IGRAPH a6983e2 UNW- 23 134 -- 
++ attr: name (v/c), weight (e/n)
++ edges from a6983e2 (vertex names):
+ [1] Luke Skywalker--C-3PO              Luke Skywalker--R2-D2             
+ [3] Luke Skywalker--Darth Vader        Luke Skywalker--Leia Organa       
+ [5] Luke Skywalker--Obi-Wan Kenobi     Luke Skywalker--Chewbacca         
+ [7] Luke Skywalker--Yoda               Luke Skywalker--Palpatine         
+ [9] Luke Skywalker--Han Solo           Luke Skywalker--Wedge Antilles    
+[11] C-3PO         --R2-D2              C-3PO         --Darth Vader       
+[13] C-3PO         --Leia Organa        C-3PO         --Owen Lars         
+[15] C-3PO         --Beru Whitesun lars C-3PO         --Obi-Wan Kenobi    
++ ... omitted several edges
+```
+
+Untangle the hairball
+=====
+class:small-code
+![plot of chunk unnamed-chunk-49](user2018Graphs-figure/unnamed-chunk-49-1.png)
+
+Untangle the hairball
+====
+class:small-code
+![plot of chunk unnamed-chunk-50](user2018Graphs-figure/unnamed-chunk-50-1.png)
+
+Changing the data changes the network
+=====
+class:small-code
+
+```r
+anakinIsLukesFather <- g %>%
+  as_data_frame('both') %>%
+  {
+    .[[1]] <- .[[1]] %>% filter(name != 'Darth Vader')
+    .[[2]] <- .[[2]] %>% mutate(from = sapply(from, function(x){ifelse(x == 'Darth Vader', 'Anakin Skywalker', x)})) %>% distinct
+    .
+  } %>%
+  {graph_from_data_frame(.[[2]], T, .[[1]])} %>%
+  {. - E(.)[type != 'has films']} %>%
+  {. - V(.)[degree(.) == 0]} %>%
+  {
+    V(.)$type <- V(.)$type == 'a character'
+    .
+  } %>%
+  bipartite_projection() %>%
+  .[[2]] %>%
+  {. - E(.)[weight < 3]} %>%
+  {. - V(.)[degree(.) == 0]}
+```
+
+Changing the data changes the network
+=====
+class:small-code
+![plot of chunk unnamed-chunk-52](user2018Graphs-figure/unnamed-chunk-52-1.png)
+
+Changing the data changes the network
+==== 
+class:small-code
+![plot of chunk unnamed-chunk-53](user2018Graphs-figure/unnamed-chunk-53-1.png)
+

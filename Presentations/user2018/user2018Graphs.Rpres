@@ -5,6 +5,11 @@ date:
 autosize: true
 transition: fade
 
+<style>
+.small-code pre code {
+  font-size: 1em;
+}
+</style>
 
 What's a Graph?
 ========================================================
@@ -515,7 +520,7 @@ Creating graphs: Optional Node List
 starwarsNL <- list(
   tibble(
     name = starwarsEL$from %>% unique,
-    type = 'character'
+    type = 'a character'
   ),
   tibble(
     name = starwarsEL$to %>% unique,
@@ -529,24 +534,182 @@ knitr::kable(starwarsNL %>% sample_n(15))
 
 Creating graphs: igraph
 =====
+class:small-code
 ```{r, fig.width = 12}
 g <- graph_from_data_frame(d = starwarsEL, 
-                           directed = F, 
+                           directed = T, 
                            vertices = starwarsNL)
 g
 ```
 
 Searching Vertices: It's just a vector
 ======
+class:small-code
 ```{r}
 V(g)[name == "Luke Skywalker"]
-V(g)[type == 'character']
+V(g)[type == 'a character']
 ```
 
 
 Searching Edges: It's just a vector
 =====
+class:small-code
 ```{r}
-E(g)[type == 'has starships']
+E(g)[type == 'has films']
 E(g)['Luke Skywalker' %--% V(g)]
 ```
+
+Filter Graphs: Remove the unwanted with - and !
+======
+class:small-code
+```{r}
+#Get rid of all edges NOT connected to LUKE SKYWALKER
+g - E(g)[!'Luke Skywalker' %--% V(g)]
+```
+
+Chain Filters: %>%, {}, and .
+====
+class:small-code
+```{r}
+g %>%
+  #get rid of all edges that DON'T have the type 'has films'
+  {. - E(.)[type != 'has films']} %>%
+  #get rid of all edges that are NOT connected FROM a SKYWALKER
+  {. - E(.)[V(.)[!str_detect(name, 'Skywalker')] %->% V(.)]} %>%
+  #get rid of all vertices that are NOT connected to other nodes
+  #getting rid of the edges does not get rid of the nodes
+  {. - V(.)[degree(.) == 0]}
+```
+
+Projections
+=====
+class:small-code
+```{r}
+movieCharProj <- g %>%
+  {. - E(.)[type != 'has films']} %>%
+  {. - V(.)[degree(.) == 0]} %>%
+  #type has to be a boolean for projections to work
+  {
+    V(.)$type <- V(.)$type == 'a character'
+    .
+  } %>%
+  bipartite_projection()
+
+movieCharProj
+```
+
+Projections
+====
+```{r echo = F, fig.width=12}
+set.seed(4321)
+movieCharProj[[1]] %>% 
+  plot(vertex.size = 0,
+       edge.width = (E(.)$weight/max(E(.)$weight)) * 20,
+       vertex.label.font = 2, 
+       vertex.label.cex = 1.25)
+```
+
+Projections
+====
+```{r echo = F, fig.width=12}
+set.seed(4321)
+movieCharProj[[2]] %>%
+  plot(vertex.size = 0)
+```
+
+Untangle the hairball
+===
+class:small-code
+```{r}
+movieCharProj[[2]] %>%
+  {E(.)$weight} %>%
+  summary
+```
+
+Untangle the hairball
+===
+class:small-code
+
+```{r}
+movieCharProj[[2]] %>%
+  {. - E(.)[weight < 3]} %>%
+  {. - V(.)[degree(.) == 0]}
+```
+
+Untangle the hairball
+=====
+class:small-code
+```{r,echo = F, fig.width = 12}
+set.seed(1234)
+anakinAndVader <- movieCharProj[[2]] %>%
+  {. - E(.)[weight < 3]} %>%
+  {. - V(.)[degree(.) == 0]}
+anakinAndVader %>%
+  plot(vertex.size = 0,
+       vertex.label.font = 2)
+```
+
+Untangle the hairball
+====
+class:small-code
+```{r, echo = F, fig.width = 12}
+set.seed(1234)
+anakinAndVader %>%
+  {
+    V(.)$pr <- page_rank(.)$vector
+    .
+  } %>%
+  plot(vertex.size = 0,
+       vertex.label.font = 2,
+       vertex.label.cex = 2 * (V(.)$pr/max(V(.)$pr)))
+```
+
+Changing the data changes the network
+=====
+class:small-code
+```{r}
+anakinIsLukesFather <- g %>%
+  as_data_frame('both') %>%
+  {
+    .[[1]] <- .[[1]] %>% filter(name != 'Darth Vader')
+    .[[2]] <- .[[2]] %>% mutate(from = sapply(from, function(x){ifelse(x == 'Darth Vader', 'Anakin Skywalker', x)})) %>% distinct
+    .
+  } %>%
+  {graph_from_data_frame(.[[2]], T, .[[1]])} %>%
+  {. - E(.)[type != 'has films']} %>%
+  {. - V(.)[degree(.) == 0]} %>%
+  {
+    V(.)$type <- V(.)$type == 'a character'
+    .
+  } %>%
+  bipartite_projection() %>%
+  .[[2]] %>%
+  {. - E(.)[weight < 3]} %>%
+  {. - V(.)[degree(.) == 0]}
+```
+
+Changing the data changes the network
+=====
+class:small-code
+```{r, echo = F, fig.width = 12}
+set.seed(1234)
+anakinIsLukesFather %>%
+  plot(vertex.size = 0,
+       vertex.label.font = 2)
+```
+
+Changing the data changes the network
+==== 
+class:small-code
+```{r, echo = F, fig.width = 12}
+set.seed(1234)
+anakinIsLukesFather %>%
+  {
+    V(.)$pr <- page_rank(.)$vector
+    .
+  } %>%
+  plot(vertex.size = 0,
+       vertex.label.font = 2,
+       vertex.label.cex = 2 * (V(.)$pr/max(V(.)$pr)))
+```
+
