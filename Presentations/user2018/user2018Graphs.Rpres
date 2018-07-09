@@ -1,4 +1,4 @@
-Exploring Graphs
+Exploring Graphs with igraph
 ========================================================
 author: Benjamin Ortiz Ulloa
 date: 
@@ -9,7 +9,34 @@ transition: fade
 .small-code pre code {
   font-size: 1em;
 }
+
+.grey-out {
+  color: 'lightgrey'
+}
 </style>
+
+Exploring Graphs with igraph
+=====
+<ol>
+  <li>What's a Graph?</li>
+  <li>Practical Applications: Recommendations</li>
+  <li>Measuring Impact/Importance</li>
+  <li>Practical Applications: Keyphrases</li>
+  <li><b>Code:</b> Creating a Graph</li>
+  <li><b>Code:</b> Exploing a Graph</li>
+</ol>
+
+
+Exploring Graphs with igraph
+=====
+<ol>
+  <li>What's a Graph?</li>
+  <li style='color: lightgrey'>Practical Applications: Recommendations</li>
+  <li style='color: lightgrey'>Measuring Impact/Importance</li>
+  <li style='color: lightgrey'>Practical Applications: Keyphrases</li>
+  <li style='color: lightgrey'><b>Code:</b> Creating a Graph</li>
+  <li style='color: lightgrey'><b>Code:</b> Exploing a Graph</li>
+</ol>
 
 What's a Graph?
 ========================================================
@@ -241,6 +268,17 @@ plot(g - E(g) + edges(c("Node", "Thing",
      edge.curved = T)
 ```
 
+Exploring Graphs with igraph
+=====
+<ol>
+  <li style='color: lightgrey'>What's a Graph?</li>
+  <li>Practical Applications: Recommendations</li>
+  <li style='color: lightgrey'>Measuring Impact/Importance</li>
+  <li style='color: lightgrey'>Practical Applications: Keyphrases</li>
+  <li style='color: lightgrey'><b>Code:</b> Creating a Graph</li>
+  <li style='color: lightgrey'><b>Code:</b> Exploing a Graph</li>
+</ol>
+
 Practical Application: Recommendations
 ======
 
@@ -308,6 +346,18 @@ Collaborative Filtering
 ```{r  echo=FALSE, out.width = '100%'}
 knitr::include_graphics("collabFilter/shopRec04.png")
 ```
+
+
+Exploring Graphs with igraph
+=====
+<ol>
+  <li style='color: lightgrey'>What's a Graph?</li>
+  <li style='color: lightgrey'>Practical Applications: Recommendations</li>
+  <li>Measuring Impact/Importance</li>
+  <li style='color: lightgrey'>Practical Applications: Keyphrases</li>
+  <li style='color: lightgrey'><b>Code:</b> Creating a Graph</li>
+  <li style='color: lightgrey'><b>Code:</b> Exploing a Graph</li>
+</ol>
 
 What nodes are important?
 =====
@@ -384,6 +434,17 @@ V(g)$color <- ifelse(V(g)$pr >= tail(sort(V(g)$pr), 5)[1], 'skyblue', 'orange')
 plot(g, layout=layout, vertex.label = '', vertex.size = (V(g)$pr/max(V(g)$pr)) * 20)
 ```
 
+Exploring Graphs with igraph
+=====
+<ol>
+  <li style='color: lightgrey'>What's a Graph?</li>
+  <li style='color: lightgrey'>Practical Applications: Recommendations</li>
+  <li style='color: lightgrey'>Measuring Impact/Importance</li>
+  <li>Practical Applications: Keyphrases</li>
+  <li style='color: lightgrey'><b>Code:</b> Creating a Graph</li>
+  <li style='color: lightgrey'><b>Code:</b> Exploing a Graph</li>
+</ol>
+
 Practical Application: Keyphrases
 =========
 
@@ -406,6 +467,17 @@ BenjaminOrtizUlloa %>%
   graph_from_data_frame() %>%
   plot(vertex.size = 0, vertex.label.font = 2, vertex.label.cex = 1.75)
 ```
+
+TextRank Algorithm
+========
+<ol>
+  <li>Create a text graph</li>
+  <li>Keep only words that are nouns and adjectives</li>
+  <li>Run the PageRank algorithm</li>
+  <li>Keep only the top 1/3 PageRanked vertices</li>
+  <li>The remaining connections represent phrases</li>
+  <ul><li>Make sure the words actually appear in sequential order before committing to a phrase</li></ul>
+</ol>
 
 Text Rank: Benjamin Ortiz Ulloa
 =====
@@ -494,6 +566,17 @@ SnehalataHuzurbazar %>%
   plot( vertex.size= 0, vertex.label.font = 2, vertex.label.cex = 1.5)
 ```
 
+Exploring Graphs with igraph
+=====
+<ol>
+  <li style='color: lightgrey'>What's a Graph?</li>
+  <li style='color: lightgrey'>Practical Applications: Recommendations</li>
+  <li style='color: lightgrey'>Measuring Impact/Importance</li>
+  <li style='color: lightgrey'>Practical Applications: Keyphrases</li>
+  <li><b>Code:</b> Creating a Graph</li>
+  <li style='color: lightgrey'><b>Code:</b> Exploing a Graph</li>
+</ol>
+
 Creating graphs: Find data
 =====
 ```{r echo = F, fig.width = 12}
@@ -543,7 +626,19 @@ g <- graph_from_data_frame(d = starwarsEL,
 g
 ```
 
-Searching Vertices: It's just a vector
+Exploring Graphs with igraph
+=====
+<ol>
+  <li style='color: lightgrey'>What's a Graph?</li>
+  <li style='color: lightgrey'>Practical Applications: Recommendations</li>
+  <li style='color: lightgrey'>Measuring Impact/Importance</li>
+  <li style='color: lightgrey'>Practical Applications: Keyphrases</li>
+  <li style='color: lightgrey'><b>Code:</b> Creating a Graph</li>
+  <li><b>Code:</b> Exploring a Graph</li>
+</ol>
+
+
+Searching Vertices: V(g) is just a vector
 ======
 class:small-code
 ```{r}
@@ -552,7 +647,7 @@ V(g)[type == 'a character']
 ```
 
 
-Searching Edges: It's just a vector
+Searching Edges: E(g) is just a vector
 =====
 class:small-code
 ```{r}
@@ -560,7 +655,7 @@ E(g)[type == 'has films']
 E(g)['Luke Skywalker' %--% V(g)]
 ```
 
-Filter Graphs: Remove the unwanted with - and !
+Filter Graphs: - and !
 ======
 class:small-code
 ```{r}
@@ -610,7 +705,7 @@ movieCharProj[[1]] %>%
        vertex.label.cex = 1.25)
 ```
 
-Projections
+Projections: All Character Connections
 ====
 ```{r echo = F, fig.width=12}
 set.seed(4321)
@@ -650,7 +745,7 @@ anakinAndVader %>%
        vertex.label.font = 2)
 ```
 
-Untangle the hairball
+Untangle the hairball: PageRank
 ====
 class:small-code
 ```{r, echo = F, fig.width = 12}
@@ -699,7 +794,7 @@ anakinIsLukesFather %>%
        vertex.label.font = 2)
 ```
 
-Changing the data changes the network
+Changing the network changes the PageRank
 ==== 
 class:small-code
 ```{r, echo = F, fig.width = 12}

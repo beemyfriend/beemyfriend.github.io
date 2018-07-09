@@ -1,4 +1,4 @@
-Exploring Graphs
+Exploring Graphs with igraph
 ========================================================
 author: Benjamin Ortiz Ulloa
 date: 
@@ -9,7 +9,34 @@ transition: fade
 .small-code pre code {
   font-size: 1em;
 }
+
+.grey-out {
+  color: 'lightgrey'
+}
 </style>
+
+Exploring Graphs with igraph
+=====
+<ol>
+  <li>What's a Graph?</li>
+  <li>Practical Applications: Recommendations</li>
+  <li>Measuring Impact/Importance</li>
+  <li>Practical Applications: Keyphrases</li>
+  <li><b>Code:</b> Creating a Graph</li>
+  <li><b>Code:</b> Exploing a Graph</li>
+</ol>
+
+
+Exploring Graphs with igraph
+=====
+<ol>
+  <li>What's a Graph?</li>
+  <li style='color: lightgrey'>Practical Applications: Recommendations</li>
+  <li style='color: lightgrey'>Measuring Impact/Importance</li>
+  <li style='color: lightgrey'>Practical Applications: Keyphrases</li>
+  <li style='color: lightgrey'><b>Code:</b> Creating a Graph</li>
+  <li style='color: lightgrey'><b>Code:</b> Exploing a Graph</li>
+</ol>
 
 What's a Graph?
 ========================================================
@@ -66,6 +93,17 @@ These projections enrich our data
 ==========
 ![plot of chunk unnamed-chunk-13](user2018Graphs-figure/unnamed-chunk-13-1.png)
 
+Exploring Graphs with igraph
+=====
+<ol>
+  <li style='color: lightgrey'>What's a Graph?</li>
+  <li>Practical Applications: Recommendations</li>
+  <li style='color: lightgrey'>Measuring Impact/Importance</li>
+  <li style='color: lightgrey'>Practical Applications: Keyphrases</li>
+  <li style='color: lightgrey'><b>Code:</b> Creating a Graph</li>
+  <li style='color: lightgrey'><b>Code:</b> Exploing a Graph</li>
+</ol>
+
 Practical Application: Recommendations
 ======
 
@@ -116,6 +154,18 @@ Collaborative Filtering
 
 <img src="collabFilter/shopRec04.png" title="plot of chunk unnamed-chunk-22" alt="plot of chunk unnamed-chunk-22" width="100%" />
 
+
+Exploring Graphs with igraph
+=====
+<ol>
+  <li style='color: lightgrey'>What's a Graph?</li>
+  <li style='color: lightgrey'>Practical Applications: Recommendations</li>
+  <li>Measuring Impact/Importance</li>
+  <li style='color: lightgrey'>Practical Applications: Keyphrases</li>
+  <li style='color: lightgrey'><b>Code:</b> Creating a Graph</li>
+  <li style='color: lightgrey'><b>Code:</b> Exploing a Graph</li>
+</ol>
+
 What nodes are important?
 =====
 
@@ -150,6 +200,17 @@ page_rank()
 ====
 ![plot of chunk unnamed-chunk-30](user2018Graphs-figure/unnamed-chunk-30-1.png)
 
+Exploring Graphs with igraph
+=====
+<ol>
+  <li style='color: lightgrey'>What's a Graph?</li>
+  <li style='color: lightgrey'>Practical Applications: Recommendations</li>
+  <li style='color: lightgrey'>Measuring Impact/Importance</li>
+  <li>Practical Applications: Keyphrases</li>
+  <li style='color: lightgrey'><b>Code:</b> Creating a Graph</li>
+  <li style='color: lightgrey'><b>Code:</b> Exploing a Graph</li>
+</ol>
+
 Practical Application: Keyphrases
 =========
 
@@ -158,6 +219,17 @@ Practical Application: Keyphrases
 Proximity as a connection
 =====
 ![plot of chunk unnamed-chunk-31](user2018Graphs-figure/unnamed-chunk-31-1.png)
+
+TextRank Algorithm
+========
+<ol>
+  <li>Create a text graph</li>
+  <li>Keep only words that are nouns and adjectives</li>
+  <li>Run the PageRank algorithm</li>
+  <li>Keep only the top 1/3 PageRanked vertices</li>
+  <li>The remaining connections represent phrases</li>
+  <ul><li>Make sure the words actually appear in sequential order before committing to a phrase</li></ul>
+</ol>
 
 Text Rank: Benjamin Ortiz Ulloa
 =====
@@ -174,6 +246,17 @@ TextRank: Amy Stringer
 TextRank: Snehalata Huzurbazar
 ======
 ![plot of chunk unnamed-chunk-35](user2018Graphs-figure/unnamed-chunk-35-1.png)
+
+Exploring Graphs with igraph
+=====
+<ol>
+  <li style='color: lightgrey'>What's a Graph?</li>
+  <li style='color: lightgrey'>Practical Applications: Recommendations</li>
+  <li style='color: lightgrey'>Measuring Impact/Importance</li>
+  <li style='color: lightgrey'>Practical Applications: Keyphrases</li>
+  <li><b>Code:</b> Creating a Graph</li>
+  <li style='color: lightgrey'><b>Code:</b> Exploing a Graph</li>
+</ol>
 
 Creating graphs: Find data
 =====
@@ -322,9 +405,9 @@ g
 ```
 
 ```
-IGRAPH 4ff98c3 DN-B 357 899 -- 
+IGRAPH e992f3f DN-B 357 899 -- 
 + attr: name (v/c), type (v/c), type (e/c)
-+ edges from 4ff98c3 (vertex names):
++ edges from e992f3f (vertex names):
  [1] Luke Skywalker       ->172 C-3PO                ->167
  [3] R2-D2                ->96  Darth Vader          ->202
  [5] Leia Organa          ->150 Owen Lars            ->178
@@ -336,7 +419,19 @@ IGRAPH 4ff98c3 DN-B 357 899 --
 + ... omitted several edges
 ```
 
-Searching Vertices: It's just a vector
+Exploring Graphs with igraph
+=====
+<ol>
+  <li style='color: lightgrey'>What's a Graph?</li>
+  <li style='color: lightgrey'>Practical Applications: Recommendations</li>
+  <li style='color: lightgrey'>Measuring Impact/Importance</li>
+  <li style='color: lightgrey'>Practical Applications: Keyphrases</li>
+  <li style='color: lightgrey'><b>Code:</b> Creating a Graph</li>
+  <li><b>Code:</b> Exploring a Graph</li>
+</ol>
+
+
+Searching Vertices: V(g) is just a vector
 ======
 class:small-code
 
@@ -345,7 +440,7 @@ V(g)[name == "Luke Skywalker"]
 ```
 
 ```
-+ 1/357 vertex, named, from 4ff98c3:
++ 1/357 vertex, named, from e992f3f:
 [1] Luke Skywalker
 ```
 
@@ -354,7 +449,7 @@ V(g)[type == 'a character']
 ```
 
 ```
-+ 87/357 vertices, named, from 4ff98c3:
++ 87/357 vertices, named, from e992f3f:
  [1] Luke Skywalker        C-3PO                 R2-D2                
  [4] Darth Vader           Leia Organa           Owen Lars            
  [7] Beru Whitesun lars    R5-D4                 Biggs Darklighter    
@@ -369,7 +464,7 @@ V(g)[type == 'a character']
 ```
 
 
-Searching Edges: It's just a vector
+Searching Edges: E(g) is just a vector
 =====
 class:small-code
 
@@ -378,7 +473,7 @@ E(g)[type == 'has films']
 ```
 
 ```
-+ 173/899 edges from 4ff98c3 (vertex names):
++ 173/899 edges from e992f3f (vertex names):
  [1] Luke Skywalker->Revenge of the Sith    
  [2] Luke Skywalker->Return of the Jedi     
  [3] Luke Skywalker->The Empire Strikes Back
@@ -397,7 +492,7 @@ E(g)['Luke Skywalker' %--% V(g)]
 ```
 
 ```
-+ 18/899 edges from 4ff98c3 (vertex names):
++ 18/899 edges from e992f3f (vertex names):
  [1] Luke Skywalker->172                    
  [2] Luke Skywalker->77                     
  [3] Luke Skywalker->blond                  
@@ -411,7 +506,7 @@ E(g)['Luke Skywalker' %--% V(g)]
 + ... omitted several edges
 ```
 
-Filter Graphs: Remove the unwanted with - and !
+Filter Graphs: - and !
 ======
 class:small-code
 
@@ -421,9 +516,9 @@ g - E(g)[!'Luke Skywalker' %--% V(g)]
 ```
 
 ```
-IGRAPH 9d789a2 DN-B 357 18 -- 
+IGRAPH 8a4ad7c DN-B 357 18 -- 
 + attr: name (v/c), type (v/c), type (e/c)
-+ edges from 9d789a2 (vertex names):
++ edges from 8a4ad7c (vertex names):
  [1] Luke Skywalker->172                    
  [2] Luke Skywalker->77                     
  [3] Luke Skywalker->blond                  
@@ -451,9 +546,9 @@ g %>%
 ```
 
 ```
-IGRAPH 933ef2c DN-B 10 10 -- 
+IGRAPH 7004553 DN-B 10 10 -- 
 + attr: name (v/c), type (v/c), type (e/c)
-+ edges from 933ef2c (vertex names):
++ edges from 7004553 (vertex names):
  [1] Luke Skywalker  ->Revenge of the Sith    
  [2] Luke Skywalker  ->Return of the Jedi     
  [3] Luke Skywalker  ->The Empire Strikes Back
@@ -485,9 +580,9 @@ movieCharProj
 
 ```
 $proj1
-IGRAPH a80d66e UNW- 7 21 -- 
+IGRAPH 9ce59ed UNW- 7 21 -- 
 + attr: name (v/c), weight (e/n)
-+ edges from a80d66e (vertex names):
++ edges from 9ce59ed (vertex names):
  [1] Revenge of the Sith--Return of the Jedi     
  [2] Revenge of the Sith--The Empire Strikes Back
  [3] Revenge of the Sith--A New Hope             
@@ -499,9 +594,9 @@ IGRAPH a80d66e UNW- 7 21 --
 + ... omitted several edges
 
 $proj2
-IGRAPH 2c6f877 UNW- 87 1793 -- 
+IGRAPH 6c1d42c UNW- 87 1793 -- 
 + attr: name (v/c), weight (e/n)
-+ edges from 2c6f877 (vertex names):
++ edges from 6c1d42c (vertex names):
  [1] Luke Skywalker--C-3PO              Luke Skywalker--R2-D2             
  [3] Luke Skywalker--Darth Vader        Luke Skywalker--Leia Organa       
  [5] Luke Skywalker--Owen Lars          Luke Skywalker--Beru Whitesun lars
@@ -517,7 +612,7 @@ Projections
 ====
 ![plot of chunk unnamed-chunk-45](user2018Graphs-figure/unnamed-chunk-45-1.png)
 
-Projections
+Projections: All Character Connections
 ====
 ![plot of chunk unnamed-chunk-46](user2018Graphs-figure/unnamed-chunk-46-1.png)
 
@@ -548,9 +643,9 @@ movieCharProj[[2]] %>%
 ```
 
 ```
-IGRAPH b074ead UNW- 23 134 -- 
+IGRAPH ca98b9c UNW- 23 134 -- 
 + attr: name (v/c), weight (e/n)
-+ edges from b074ead (vertex names):
++ edges from ca98b9c (vertex names):
  [1] Luke Skywalker--C-3PO              Luke Skywalker--R2-D2             
  [3] Luke Skywalker--Darth Vader        Luke Skywalker--Leia Organa       
  [5] Luke Skywalker--Obi-Wan Kenobi     Luke Skywalker--Chewbacca         
@@ -567,7 +662,7 @@ Untangle the hairball
 class:small-code
 ![plot of chunk unnamed-chunk-49](user2018Graphs-figure/unnamed-chunk-49-1.png)
 
-Untangle the hairball
+Untangle the hairball: PageRank
 ====
 class:small-code
 ![plot of chunk unnamed-chunk-50](user2018Graphs-figure/unnamed-chunk-50-1.png)
@@ -602,7 +697,7 @@ Changing the data changes the network
 class:small-code
 ![plot of chunk unnamed-chunk-52](user2018Graphs-figure/unnamed-chunk-52-1.png)
 
-Changing the data changes the network
+Changing the network changes the PageRank
 ==== 
 class:small-code
 ![plot of chunk unnamed-chunk-53](user2018Graphs-figure/unnamed-chunk-53-1.png)
