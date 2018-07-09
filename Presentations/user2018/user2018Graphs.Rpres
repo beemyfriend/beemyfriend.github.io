@@ -314,7 +314,8 @@ What nodes are important?
 
 ```{r, echo=F, fig.width = 12}
 set.seed(1234)
-g <- sample_gnp(30, 5/20, directed = T)
+# g <- sample_gnp(30, 5/20, directed = T)
+g <- sample_islands(2, 15, 3/10, 3) %>% as.directed('arbitrary')
 V(g)$name <- 1:vcount(g)
 V(g)$pr <- page_rank(g)$vector
 V(g)$hub <- hub_score(g)$vector
@@ -327,7 +328,7 @@ layout <- layout_nicely(g)
 plot(g, layout=layout, vertex.label = '', vertex.size = 12)
 ```
 
-Diameter and Shortest Paths
+get_diameter() and shortest_paths()
 ===
 ```{r, echo=F, fig.width = 12}
 dmter <- get_diameter(g) %>% {shortest_paths(g, from = .[1], to = .[length(.)], output = 'both')}
@@ -340,7 +341,7 @@ plot(g, layout = layout, vertex.label = '', vertex.size = 12,
 
 ```
 
-Degree
+degree()
 =======
 ```{r, echo=F, fig.width = 12}
 V(g)$color <- ifelse(V(g)$deg >= tail(sort(V(g)$deg), 5)[1], 'skyblue', 'orange')
@@ -348,35 +349,35 @@ plot(g, layout=layout, vertex.label = '', vertex.size = (V(g)$deg/max(V(g)$deg))
 ```
 
 
-Betweenness
+betweenness()
 =======
 ```{r, echo=F, fig.width = 12}
 V(g)$color <- ifelse(V(g)$btwn >= tail(sort(V(g)$btwn), 5)[1], 'skyblue', 'orange')
 plot(g, layout=layout, vertex.label = '', vertex.size = (V(g)$btwn/max(V(g)$btwn)) * 20)
 ```
 
-Closeness
+closeness()
 =======
 ```{r, echo=F, fig.width = 12}
 V(g)$color <- ifelse(V(g)$close >= tail(sort(V(g)$close), 5)[1], 'skyblue', 'orange')
 plot(g, layout=layout, vertex.label = '', vertex.size = (V(g)$close/max(V(g)$close)) * 20)
 ```
 
-Hub Score
+hub_score()
 =======
 ```{r, echo=F, fig.width = 12}
 V(g)$color <- ifelse(V(g)$hub >= tail(sort(V(g)$hub), 5)[1], 'skyblue', 'orange')
 plot(g, layout=layout, vertex.label = '', vertex.size = (V(g)$hub/max(V(g)$hub)) * 20)
 ```
 
-Authority Score
+authority_score()
 =======
 ```{r, echo=F, fig.width = 12}
 V(g)$color <- ifelse(V(g)$auth >= tail(sort(V(g)$auth), 5)[1], 'skyblue', 'orange')
 plot(g, layout=layout, vertex.label = '', vertex.size = (V(g)$auth/max(V(g)$auth)) * 20)
 ```
 
-PageRank
+page_rank()
 ====
 ```{r, echo=F, fig.width = 12}
 V(g)$color <- ifelse(V(g)$pr >= tail(sort(V(g)$pr), 5)[1], 'skyblue', 'orange')
