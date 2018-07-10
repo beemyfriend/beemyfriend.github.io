@@ -202,43 +202,81 @@ Edge attributes provide context
 ====
 ```{r, echo = F, fig.width = 15, fig.height = 10}
 tempG <- make_empty_graph(directed = F) +
-  vertices(c("Person1", "Person2", "Person3"),
+  vertices(c("Person1", "Person2", "Person3", 'Person4', "Person5", "Person6"),
            size = 45,
            label.cex = 1.75,
            label.font = 2) +
   edges(
     c("Person1", "Person2",
       "Person1", "Person3",
-      "Person2", "Person3"),
-    label1 = c("Like", "Like", "Like"),
-    label2 = c("Like", "Dislike", "Dislike"),
+      "Person2", "Person3",
+      "Person1", "Person4",
+      "Person1", "Person5",
+      "Person1", "Person6"),
+    lty1 = c(1, 2, 1),
+    label1 = c("Like", "Like", "Like", '', '', ''),
+    label2 = c("Like", "Dislike", "Dislike", '', '', ''),
+    label3 = c("Like", "Dislike", "???", "Like", "Like", "Like"),
+    label3 = rep('Like', 6),
+    color1 = "#1b9e77",
+    color2 = c("#1b9e77", "#d95f02", "#d95f02"),
+    color3 = c("#1b9e77", 'lightgrey', 'lightgrey'),
+    color3 = c("#1b9e77", "#d95f02", "lightgrey", rep("#1b9e77", 3)),
     label.cex = 2,
     label.font = 2,
-    width = 5
+    width = 8
   )
 
 tempG %>%
   {. - E(.)[2:3]} %>%
+  {. - V(.)[c('Person4', 'Person5', 'Person6')]} %>%
   plot(layout = layout,
        vertex.size = c(45, 45, 0),
        vertex.label = c("Person1", "Person2", ''),
-       edge.label = c("Like", '', ''))
+       edge.label = c("Like", '', ''),
+       edge.color = E(.)$color1)
 ```
 
 Friend of my friend... 
 ====
 ```{r, echo = F, fig.width = 15, fig.height = 10}
-plot(tempG,
-     layout = layout,
-     edge.label = E(tempG)$label1)
+tempG  %>%
+  {. - V(.)[c('Person4', 'Person5', 'Person6')]} %>%
+  plot(layout = layout,
+     edge.label = E(.)$label1,
+     edge.color = E(.)$color1)
 ```
 
 or enemy of my enemy? 
 ====
 ```{r, echo = F, fig.width = 15, fig.height = 10}
-plot(tempG,
-     layout= layout,
-     edge.label = E(tempG)$label2)
+tempG  %>%
+  {. - V(.)[c('Person4', 'Person5', 'Person6')]} %>%
+  plot(layout= layout,
+       edge.label = E(.)$label2,
+       edge.color = E(.)$color2)
+```
+
+What happens if relationships change?
+======
+```{r, echo = F, fig.width = 15, fig.height = 10}
+tempG %>%
+  {. - V(.)[c('Person4', 'Person5', 'Person6')]} %>%
+  plot(layout = layout,
+       vertex.label = c("Person1", "Person2", 'Person3'),
+       edge.label = c("Like", 'Like', 'Like'),
+       edge.color = E(.)$color1)
+```
+
+What happens if relationships change?
+======
+```{r, echo = F, fig.width = 15, fig.height = 10}
+tempG %>%
+  {. - V(.)[c('Person4', 'Person5', 'Person6')]} %>%
+  plot(layout = layout,
+       edge.label = c("Like", 'No Longer Likes', '????'),
+       edge.color = E(.)$color3,
+       edge.lty = E(.)$lty1)
 ```
 
 
