@@ -765,7 +765,7 @@ UD TextRank: Snehalata Huzurbazar
 ```{r echo = F, fig.width = 15, fig.height = 10}
 set.seed(4321)
 SnehalataHuzurbazar %>%
-  createTextRank(T, F) %>%
+  createTextRank(F, F) %>%
   {. - V(.)[pr < sort(V(.)$pr, T)[ceiling(vcount(.)/cutOff)]]} %>%
   {. - V(.)[degree(.) == 0]} %>%
   plot( )
