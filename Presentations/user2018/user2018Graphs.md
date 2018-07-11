@@ -134,6 +134,9 @@ Practical Application: Recommendations
 ======
 
 **<br><h2>35% of what consumers buy on Amazon and 75% of what users watch on Netflix come from product recommendations</h2>**
+<br>
+<br>
+<p style = 'font-size: 25px'>"How retailers can keep up with consumers"  Ian Mackenzie, Chris Meyer, and Steve Noble</p>
 
 Content Based Recommendations
 ========================================================
@@ -278,6 +281,8 @@ TextRank Algorithm
   <li>The remaining connections represent phrases</li>
   <ul><li>Make sure the words actually appear in sequential order before committing to a phrase</li></ul>
 </ol>
+<p style = 'font-size: 25px'>"TextRank: Bringing Order into Texts" Rada Mihalcea and Paul Tarau</p>
+<p style = 'font-size: 25px'>"PositionRank: An Unsupervised Approach to Keyphrase Extraction from Scholarly Documents" Corina Florescu and Cornelia Caragea</p>
 
 Proximity as a connection
 =====
@@ -473,9 +478,9 @@ g
 ```
 
 ```
-IGRAPH a37b8ca DN-B 357 899 -- 
+IGRAPH 3ce2a07 DN-B 357 899 -- 
 + attr: name (v/c), type (v/c), type (e/c)
-+ edges from a37b8ca (vertex names):
++ edges from 3ce2a07 (vertex names):
  [1] Luke Skywalker       ->172 C-3PO                ->167
  [3] R2-D2                ->96  Darth Vader          ->202
  [5] Leia Organa          ->150 Owen Lars            ->178
@@ -1788,7 +1793,7 @@ V(g)[name == "Luke Skywalker"]
 ```
 
 ```
-+ 1/357 vertex, named, from a37b8ca:
++ 1/357 vertex, named, from 3ce2a07:
 [1] Luke Skywalker
 ```
 
@@ -1797,7 +1802,7 @@ V(g)[[type == 'a character']]
 ```
 
 ```
-+ 87/357 vertices, named, from a37b8ca:
++ 87/357 vertices, named, from 3ce2a07:
                     name        type
 1         Luke Skywalker a character
 2                  C-3PO a character
@@ -1898,7 +1903,7 @@ E(g)[type == 'has films']
 ```
 
 ```
-+ 173/899 edges from a37b8ca (vertex names):
++ 173/899 edges from 3ce2a07 (vertex names):
  [1] Luke Skywalker->Revenge of the Sith    
  [2] Luke Skywalker->Return of the Jedi     
  [3] Luke Skywalker->The Empire Strikes Back
@@ -1917,7 +1922,7 @@ E(g)[['Luke Skywalker' %--% V(g)]]
 ```
 
 ```
-+ 18/899 edges from a37b8ca (vertex names):
++ 18/899 edges from 3ce2a07 (vertex names):
               tail                    head tid hid           type
 1   Luke Skywalker                     172   1  88     has height
 82  Luke Skywalker                      77   1 133       has mass
@@ -1949,7 +1954,7 @@ tail_of(g, E(g))
 ```
 
 ```
-+ 899/357 vertices, named, from a37b8ca:
++ 899/357 vertices, named, from 3ce2a07:
   [1] Luke Skywalker        C-3PO                 R2-D2                
   [4] Darth Vader           Leia Organa           Owen Lars            
   [7] Beru Whitesun lars    R5-D4                 Biggs Darklighter    
@@ -1969,7 +1974,7 @@ head_of(g, E(g))
 ```
 
 ```
-+ 899/357 vertices, named, from a37b8ca:
++ 899/357 vertices, named, from 3ce2a07:
   [1] 172                         167                        
   [3] 96                          202                        
   [5] 150                         178                        
@@ -1993,9 +1998,9 @@ g - E(g)[!'Luke Skywalker' %--% V(g)]
 ```
 
 ```
-IGRAPH 01151ff DN-B 357 18 -- 
+IGRAPH 4d0527a DN-B 357 18 -- 
 + attr: name (v/c), type (v/c), type (e/c)
-+ edges from 01151ff (vertex names):
++ edges from 4d0527a (vertex names):
  [1] Luke Skywalker->172                    
  [2] Luke Skywalker->77                     
  [3] Luke Skywalker->blond                  
@@ -2023,9 +2028,9 @@ g %>%
 ```
 
 ```
-IGRAPH d34edb8 DN-B 10 10 -- 
+IGRAPH 1f5ffb1 DN-B 10 10 -- 
 + attr: name (v/c), type (v/c), type (e/c)
-+ edges from d34edb8 (vertex names):
++ edges from 1f5ffb1 (vertex names):
  [1] Luke Skywalker  ->Revenge of the Sith    
  [2] Luke Skywalker  ->Return of the Jedi     
  [3] Luke Skywalker  ->The Empire Strikes Back
@@ -2048,7 +2053,7 @@ V(g)[[]]
 ```
 
 ```
-+ 357/357 vertices, named, from a37b8ca:
++ 357/357 vertices, named, from 3ce2a07:
                            name            type degree
 1                Luke Skywalker     a character     18
 2                         C-3PO     a character     13
@@ -2429,9 +2434,9 @@ movieCharProj
 
 ```
 $proj1
-IGRAPH 81025b7 UNW- 7 21 -- 
+IGRAPH f16b3b3 UNW- 7 21 -- 
 + attr: name (v/c), degree (v/n), weight (e/n)
-+ edges from 81025b7 (vertex names):
++ edges from f16b3b3 (vertex names):
  [1] Revenge of the Sith--Return of the Jedi     
  [2] Revenge of the Sith--The Empire Strikes Back
  [3] Revenge of the Sith--A New Hope             
@@ -2443,9 +2448,9 @@ IGRAPH 81025b7 UNW- 7 21 --
 + ... omitted several edges
 
 $proj2
-IGRAPH e7e1ba3 UNW- 87 1793 -- 
+IGRAPH 84838c2 UNW- 87 1793 -- 
 + attr: name (v/c), degree (v/n), weight (e/n)
-+ edges from e7e1ba3 (vertex names):
++ edges from 84838c2 (vertex names):
  [1] Luke Skywalker--C-3PO              Luke Skywalker--R2-D2             
  [3] Luke Skywalker--Darth Vader        Luke Skywalker--Leia Organa       
  [5] Luke Skywalker--Owen Lars          Luke Skywalker--Beru Whitesun lars
@@ -2492,9 +2497,9 @@ movieCharProj[[2]] %>%
 ```
 
 ```
-IGRAPH 3de0401 UNW- 23 134 -- 
+IGRAPH f73ab1d UNW- 23 134 -- 
 + attr: name (v/c), degree (v/n), weight (e/n)
-+ edges from 3de0401 (vertex names):
++ edges from f73ab1d (vertex names):
  [1] Luke Skywalker--C-3PO              Luke Skywalker--R2-D2             
  [3] Luke Skywalker--Darth Vader        Luke Skywalker--Leia Organa       
  [5] Luke Skywalker--Obi-Wan Kenobi     Luke Skywalker--Chewbacca         
@@ -2550,7 +2555,7 @@ Changing the data changes the network
 class:small-code
 ![plot of chunk unnamed-chunk-72](user2018Graphs-figure/unnamed-chunk-72-1.png)
 
-Changing the network changes the PageRank
+Changing the network changes PageRank
 ==== 
 class:small-code
 ![plot of chunk unnamed-chunk-73](user2018Graphs-figure/unnamed-chunk-73-1.png)

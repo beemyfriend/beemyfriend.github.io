@@ -384,6 +384,9 @@ Practical Application: Recommendations
 ======
 
 **<br><h2>35% of what consumers buy on Amazon and 75% of what users watch on Netflix come from product recommendations</h2>**
+<br>
+<br>
+<p style = 'font-size: 25px'>"How retailers can keep up with consumers"  Ian Mackenzie, Chris Meyer, and Steve Noble</p>
 
 Content Based Recommendations
 ========================================================
@@ -610,6 +613,8 @@ TextRank Algorithm
   <li>The remaining connections represent phrases</li>
   <ul><li>Make sure the words actually appear in sequential order before committing to a phrase</li></ul>
 </ol>
+<p style = 'font-size: 25px'>"TextRank: Bringing Order into Texts" Rada Mihalcea and Paul Tarau</p>
+<p style = 'font-size: 25px'>"PositionRank: An Unsupervised Approach to Keyphrase Extraction from Scholarly Documents" Corina Florescu and Cornelia Caragea</p>
 
 Proximity as a connection
 =====
@@ -1035,7 +1040,7 @@ anakinIsLukesFather %>%
        vertex.label.font = 2)
 ```
 
-Changing the network changes the PageRank
+Changing the network changes PageRank
 ==== 
 class:small-code
 ```{r, echo = F, fig.width = 15, fig.height = 10}
