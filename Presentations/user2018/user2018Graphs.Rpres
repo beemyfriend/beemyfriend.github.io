@@ -830,6 +830,20 @@ g <- graph_from_data_frame(d = starwarsEL,
 g
 ```
 
+Creating Data Frames from graphs
+====
+class:small-code
+```{r, fig.width = 12}
+g %>% as_data_frame('edges')
+```
+
+Creating Data Frames from graphs
+====
+class:small-code
+```{r, fig.width = 12}
+g %>% as_data_frame('vertices')
+```
+
 Exploring Graphs with igraph
 =====
 <ol>
@@ -847,7 +861,7 @@ Searching Vertices: V(g) is just a vector
 class:small-code
 ```{r}
 V(g)[name == "Luke Skywalker"]
-V(g)[type == 'a character']
+V(g)[[type == 'a character']]
 ```
 
 
@@ -856,7 +870,17 @@ Searching Edges: E(g) is just a vector
 class:small-code
 ```{r}
 E(g)[type == 'has films']
-E(g)['Luke Skywalker' %--% V(g)]
+E(g)[['Luke Skywalker' %--% V(g)]]
+```
+
+Accessing Nodes from E(g)
+====
+class:small-code
+```{r}
+#edge is leaving from
+tail_of(g, E(g))
+#edge points to
+head_of(g, E(g))
 ```
 
 Filter Graphs: - and !
@@ -1012,6 +1036,33 @@ anakinIsLukesFather %>%
        vertex.label.font = 2,
        vertex.label.cex = 2 * (V(.)$pr/max(V(.)$pr)))
 ```
+
+
+Assigning Data to Vertices
+====
+class:small-code
+```{r}
+V(anakinIsLukesFather)$degree <- degree(anakinIsLukesFather)
+
+E(anakinIsLukesFather)[[]]
+```
+
+Assigning Data to Edges
+====
+class:small-code
+```{r}
+
+E(anakinIsLukesFather)$tailPercMovies <- anakinIsLukesFather %>%
+  {E(.)$weight/tail_of(., E(.))$degree}
+
+E(anakinIsLukesFather)$headPercMovies <- anakinIsLukesFather %>%
+  {E(.)$weight/head_of(., E(.))$degree}
+
+anakinIsLukesFather %>%
+  as_data_frame('edges') %>%
+  knitr::kable()
+```
+
 
 Learn More!
 ======

@@ -473,9 +473,9 @@ g
 ```
 
 ```
-IGRAPH 77fb71a DN-B 357 899 -- 
+IGRAPH 84e372f DN-B 357 899 -- 
 + attr: name (v/c), type (v/c), type (e/c)
-+ edges from 77fb71a (vertex names):
++ edges from 84e372f (vertex names):
  [1] Luke Skywalker       ->172 C-3PO                ->167
  [3] R2-D2                ->96  Darth Vader          ->202
  [5] Leia Organa          ->150 Owen Lars            ->178
@@ -485,6 +485,1286 @@ IGRAPH 77fb71a DN-B 357 899 --
 [13] Chewbacca            ->228 Han Solo             ->180
 [15] Greedo               ->173 Jabba Desilijic Tiure->175
 + ... omitted several edges
+```
+
+Creating Data Frames from graphs
+====
+class:small-code
+
+```r
+g %>% as_data_frame('edges')
+```
+
+```
+                     from                          to           type
+1          Luke Skywalker                         172     has height
+2                   C-3PO                         167     has height
+3                   R2-D2                          96     has height
+4             Darth Vader                         202     has height
+5             Leia Organa                         150     has height
+6               Owen Lars                         178     has height
+7      Beru Whitesun lars                         165     has height
+8                   R5-D4                          97     has height
+9       Biggs Darklighter                         183     has height
+10         Obi-Wan Kenobi                         182     has height
+11       Anakin Skywalker                         188     has height
+12         Wilhuff Tarkin                         180     has height
+13              Chewbacca                         228     has height
+14               Han Solo                         180     has height
+15                 Greedo                         173     has height
+16  Jabba Desilijic Tiure                         175     has height
+17         Wedge Antilles                         170     has height
+18       Jek Tono Porkins                         180     has height
+19                   Yoda                          66     has height
+20              Palpatine                         170     has height
+21              Boba Fett                         183     has height
+22                  IG-88                         200     has height
+23                  Bossk                         190     has height
+24       Lando Calrissian                         177     has height
+25                  Lobot                         175     has height
+26                 Ackbar                         180     has height
+27             Mon Mothma                         150     has height
+28  Wicket Systri Warrick                          88     has height
+29              Nien Nunb                         160     has height
+30           Qui-Gon Jinn                         193     has height
+31            Nute Gunray                         191     has height
+32          Finis Valorum                         170     has height
+33          Jar Jar Binks                         196     has height
+34           Roos Tarpals                         224     has height
+35             Rugor Nass                         206     has height
+36               Ric Olié                         183     has height
+37                  Watto                         137     has height
+38                Sebulba                         112     has height
+39          Quarsh Panaka                         183     has height
+40         Shmi Skywalker                         163     has height
+41             Darth Maul                         175     has height
+42            Bib Fortuna                         180     has height
+43            Ayla Secura                         178     has height
+44               Dud Bolt                          94     has height
+45                Gasgano                         122     has height
+46         Ben Quadinaros                         163     has height
+47             Mace Windu                         188     has height
+48           Ki-Adi-Mundi                         198     has height
+49              Kit Fisto                         196     has height
+50              Eeth Koth                         171     has height
+51             Adi Gallia                         184     has height
+52            Saesee Tiin                         188     has height
+53            Yarael Poof                         264     has height
+54               Plo Koon                         188     has height
+55             Mas Amedda                         196     has height
+56           Gregar Typho                         185     has height
+57                  Cordé                         157     has height
+58            Cliegg Lars                         183     has height
+59      Poggle the Lesser                         183     has height
+60        Luminara Unduli                         170     has height
+61          Barriss Offee                         166     has height
+62                  Dormé                         165     has height
+63                  Dooku                         193     has height
+64    Bail Prestor Organa                         191     has height
+65             Jango Fett                         183     has height
+66             Zam Wesell                         168     has height
+67        Dexter Jettster                         198     has height
+68                Lama Su                         229     has height
+69                Taun We                         213     has height
+70             Jocasta Nu                         167     has height
+71          Ratts Tyerell                          79     has height
+72                 R4-P17                          96     has height
+73             Wat Tambor                         193     has height
+74               San Hill                         191     has height
+75               Shaak Ti                         178     has height
+76               Grievous                         216     has height
+77                Tarfful                         234     has height
+78        Raymus Antilles                         188     has height
+79              Sly Moore                         178     has height
+80             Tion Medon                         206     has height
+81          Padmé Amidala                         165     has height
+82         Luke Skywalker                          77       has mass
+83                  C-3PO                          75       has mass
+84                  R2-D2                          32       has mass
+85            Darth Vader                         136       has mass
+86            Leia Organa                          49       has mass
+87              Owen Lars                         120       has mass
+88     Beru Whitesun lars                          75       has mass
+89                  R5-D4                          32       has mass
+90      Biggs Darklighter                          84       has mass
+91         Obi-Wan Kenobi                          77       has mass
+92       Anakin Skywalker                          84       has mass
+93              Chewbacca                         112       has mass
+94               Han Solo                          80       has mass
+95                 Greedo                          74       has mass
+96  Jabba Desilijic Tiure                        1358       has mass
+97         Wedge Antilles                          77       has mass
+98       Jek Tono Porkins                         110       has mass
+99                   Yoda                          17       has mass
+100             Palpatine                          75       has mass
+101             Boba Fett                        78.2       has mass
+102                 IG-88                         140       has mass
+103                 Bossk                         113       has mass
+104      Lando Calrissian                          79       has mass
+105                 Lobot                          79       has mass
+106                Ackbar                          83       has mass
+107 Wicket Systri Warrick                          20       has mass
+108             Nien Nunb                          68       has mass
+109          Qui-Gon Jinn                          89       has mass
+110           Nute Gunray                          90       has mass
+111         Jar Jar Binks                          66       has mass
+112          Roos Tarpals                          82       has mass
+113               Sebulba                          40       has mass
+114            Darth Maul                          80       has mass
+115           Ayla Secura                          55       has mass
+116              Dud Bolt                          45       has mass
+117        Ben Quadinaros                          65       has mass
+118            Mace Windu                          84       has mass
+119          Ki-Adi-Mundi                          82       has mass
+120             Kit Fisto                          87       has mass
+121            Adi Gallia                          50       has mass
+122              Plo Koon                          80       has mass
+123          Gregar Typho                          85       has mass
+124     Poggle the Lesser                          80       has mass
+125       Luminara Unduli                        56.2       has mass
+126         Barriss Offee                          50       has mass
+127                 Dooku                          80       has mass
+128            Jango Fett                          79       has mass
+129            Zam Wesell                          55       has mass
+130       Dexter Jettster                         102       has mass
+131               Lama Su                          88       has mass
+132         Ratts Tyerell                          15       has mass
+133            Wat Tambor                          48       has mass
+134              Shaak Ti                          57       has mass
+135              Grievous                         159       has mass
+136               Tarfful                         136       has mass
+137       Raymus Antilles                          79       has mass
+138             Sly Moore                          48       has mass
+139            Tion Medon                          80       has mass
+140         Padmé Amidala                          45       has mass
+141        Luke Skywalker                       blond has hair_color
+142           Darth Vader                        none has hair_color
+143           Leia Organa                       brown has hair_color
+144             Owen Lars                 brown, grey has hair_color
+145    Beru Whitesun lars                       brown has hair_color
+146     Biggs Darklighter                       black has hair_color
+147        Obi-Wan Kenobi               auburn, white has hair_color
+148      Anakin Skywalker                       blond has hair_color
+149        Wilhuff Tarkin                auburn, grey has hair_color
+150             Chewbacca                       brown has hair_color
+151              Han Solo                       brown has hair_color
+152        Wedge Antilles                       brown has hair_color
+153      Jek Tono Porkins                       brown has hair_color
+154                  Yoda                       white has hair_color
+155             Palpatine                        grey has hair_color
+156             Boba Fett                       black has hair_color
+157                 IG-88                        none has hair_color
+158                 Bossk                        none has hair_color
+159      Lando Calrissian                       black has hair_color
+160                 Lobot                        none has hair_color
+161                Ackbar                        none has hair_color
+162            Mon Mothma                      auburn has hair_color
+163          Arvel Crynyd                       brown has hair_color
+164 Wicket Systri Warrick                       brown has hair_color
+165             Nien Nunb                        none has hair_color
+166          Qui-Gon Jinn                       brown has hair_color
+167           Nute Gunray                        none has hair_color
+168         Finis Valorum                       blond has hair_color
+169         Jar Jar Binks                        none has hair_color
+170          Roos Tarpals                        none has hair_color
+171            Rugor Nass                        none has hair_color
+172              Ric Olié                       brown has hair_color
+173                 Watto                       black has hair_color
+174               Sebulba                        none has hair_color
+175         Quarsh Panaka                       black has hair_color
+176        Shmi Skywalker                       black has hair_color
+177            Darth Maul                        none has hair_color
+178           Bib Fortuna                        none has hair_color
+179           Ayla Secura                        none has hair_color
+180              Dud Bolt                        none has hair_color
+181               Gasgano                        none has hair_color
+182        Ben Quadinaros                        none has hair_color
+183            Mace Windu                        none has hair_color
+184          Ki-Adi-Mundi                       white has hair_color
+185             Kit Fisto                        none has hair_color
+186             Eeth Koth                       black has hair_color
+187            Adi Gallia                        none has hair_color
+188           Saesee Tiin                        none has hair_color
+189           Yarael Poof                        none has hair_color
+190              Plo Koon                        none has hair_color
+191            Mas Amedda                        none has hair_color
+192          Gregar Typho                       black has hair_color
+193                 Cordé                       brown has hair_color
+194           Cliegg Lars                       brown has hair_color
+195     Poggle the Lesser                        none has hair_color
+196       Luminara Unduli                       black has hair_color
+197         Barriss Offee                       black has hair_color
+198                 Dormé                       brown has hair_color
+199                 Dooku                       white has hair_color
+200   Bail Prestor Organa                       black has hair_color
+201            Jango Fett                       black has hair_color
+202            Zam Wesell                      blonde has hair_color
+203       Dexter Jettster                        none has hair_color
+204               Lama Su                        none has hair_color
+205               Taun We                        none has hair_color
+206            Jocasta Nu                       white has hair_color
+207         Ratts Tyerell                        none has hair_color
+208                R4-P17                        none has hair_color
+209            Wat Tambor                        none has hair_color
+210              San Hill                        none has hair_color
+211              Shaak Ti                        none has hair_color
+212              Grievous                        none has hair_color
+213               Tarfful                       brown has hair_color
+214       Raymus Antilles                       brown has hair_color
+215             Sly Moore                        none has hair_color
+216            Tion Medon                        none has hair_color
+217                  Finn                       black has hair_color
+218                   Rey                       brown has hair_color
+219           Poe Dameron                       brown has hair_color
+220                   BB8                        none has hair_color
+221        Captain Phasma                     unknown has hair_color
+222         Padmé Amidala                       brown has hair_color
+223        Luke Skywalker                        fair has skin_color
+224                 C-3PO                        gold has skin_color
+225                 R2-D2                 white, blue has skin_color
+226           Darth Vader                       white has skin_color
+227           Leia Organa                       light has skin_color
+228             Owen Lars                       light has skin_color
+229    Beru Whitesun lars                       light has skin_color
+230                 R5-D4                  white, red has skin_color
+231     Biggs Darklighter                       light has skin_color
+232        Obi-Wan Kenobi                        fair has skin_color
+233      Anakin Skywalker                        fair has skin_color
+234        Wilhuff Tarkin                        fair has skin_color
+235             Chewbacca                     unknown has skin_color
+236              Han Solo                        fair has skin_color
+237                Greedo                       green has skin_color
+238 Jabba Desilijic Tiure            green-tan, brown has skin_color
+239        Wedge Antilles                        fair has skin_color
+240      Jek Tono Porkins                        fair has skin_color
+241                  Yoda                       green has skin_color
+242             Palpatine                        pale has skin_color
+243             Boba Fett                        fair has skin_color
+244                 IG-88                       metal has skin_color
+245                 Bossk                       green has skin_color
+246      Lando Calrissian                        dark has skin_color
+247                 Lobot                       light has skin_color
+248                Ackbar                brown mottle has skin_color
+249            Mon Mothma                        fair has skin_color
+250          Arvel Crynyd                        fair has skin_color
+251 Wicket Systri Warrick                       brown has skin_color
+252             Nien Nunb                        grey has skin_color
+253          Qui-Gon Jinn                        fair has skin_color
+254           Nute Gunray               mottled green has skin_color
+255         Finis Valorum                        fair has skin_color
+256         Jar Jar Binks                      orange has skin_color
+257          Roos Tarpals                        grey has skin_color
+258            Rugor Nass                       green has skin_color
+259              Ric Olié                        fair has skin_color
+260                 Watto                  blue, grey has skin_color
+261               Sebulba                   grey, red has skin_color
+262         Quarsh Panaka                        dark has skin_color
+263        Shmi Skywalker                        fair has skin_color
+264            Darth Maul                         red has skin_color
+265           Bib Fortuna                        pale has skin_color
+266           Ayla Secura                        blue has skin_color
+267              Dud Bolt                  blue, grey has skin_color
+268               Gasgano                 white, blue has skin_color
+269        Ben Quadinaros         grey, green, yellow has skin_color
+270            Mace Windu                        dark has skin_color
+271          Ki-Adi-Mundi                        pale has skin_color
+272             Kit Fisto                       green has skin_color
+273             Eeth Koth                       brown has skin_color
+274            Adi Gallia                        dark has skin_color
+275           Saesee Tiin                        pale has skin_color
+276           Yarael Poof                       white has skin_color
+277              Plo Koon                      orange has skin_color
+278            Mas Amedda                        blue has skin_color
+279          Gregar Typho                        dark has skin_color
+280                 Cordé                       light has skin_color
+281           Cliegg Lars                        fair has skin_color
+282     Poggle the Lesser                       green has skin_color
+283       Luminara Unduli                      yellow has skin_color
+284         Barriss Offee                      yellow has skin_color
+285                 Dormé                       light has skin_color
+286                 Dooku                        fair has skin_color
+287   Bail Prestor Organa                         tan has skin_color
+288            Jango Fett                         tan has skin_color
+289            Zam Wesell         fair, green, yellow has skin_color
+290       Dexter Jettster                       brown has skin_color
+291               Lama Su                        grey has skin_color
+292               Taun We                        grey has skin_color
+293            Jocasta Nu                        fair has skin_color
+294         Ratts Tyerell                  grey, blue has skin_color
+295                R4-P17                 silver, red has skin_color
+296            Wat Tambor                 green, grey has skin_color
+297              San Hill                        grey has skin_color
+298              Shaak Ti            red, blue, white has skin_color
+299              Grievous                brown, white has skin_color
+300               Tarfful                       brown has skin_color
+301       Raymus Antilles                       light has skin_color
+302             Sly Moore                        pale has skin_color
+303            Tion Medon                        grey has skin_color
+304                  Finn                        dark has skin_color
+305                   Rey                       light has skin_color
+306           Poe Dameron                       light has skin_color
+307                   BB8                        none has skin_color
+308        Captain Phasma                     unknown has skin_color
+309         Padmé Amidala                       light has skin_color
+310        Luke Skywalker                        blue  has eye_color
+311                 C-3PO                      yellow  has eye_color
+312                 R2-D2                         red  has eye_color
+313           Darth Vader                      yellow  has eye_color
+314           Leia Organa                       brown  has eye_color
+315             Owen Lars                        blue  has eye_color
+316    Beru Whitesun lars                        blue  has eye_color
+317                 R5-D4                         red  has eye_color
+318     Biggs Darklighter                       brown  has eye_color
+319        Obi-Wan Kenobi                   blue-gray  has eye_color
+320      Anakin Skywalker                        blue  has eye_color
+321        Wilhuff Tarkin                        blue  has eye_color
+322             Chewbacca                        blue  has eye_color
+323              Han Solo                       brown  has eye_color
+324                Greedo                       black  has eye_color
+325 Jabba Desilijic Tiure                      orange  has eye_color
+326        Wedge Antilles                       hazel  has eye_color
+327      Jek Tono Porkins                        blue  has eye_color
+328                  Yoda                       brown  has eye_color
+329             Palpatine                      yellow  has eye_color
+330             Boba Fett                       brown  has eye_color
+331                 IG-88                         red  has eye_color
+332                 Bossk                         red  has eye_color
+333      Lando Calrissian                       brown  has eye_color
+334                 Lobot                        blue  has eye_color
+335                Ackbar                      orange  has eye_color
+336            Mon Mothma                        blue  has eye_color
+337          Arvel Crynyd                       brown  has eye_color
+338 Wicket Systri Warrick                       brown  has eye_color
+339             Nien Nunb                       black  has eye_color
+340          Qui-Gon Jinn                        blue  has eye_color
+341           Nute Gunray                         red  has eye_color
+342         Finis Valorum                        blue  has eye_color
+343         Jar Jar Binks                      orange  has eye_color
+344          Roos Tarpals                      orange  has eye_color
+345            Rugor Nass                      orange  has eye_color
+346              Ric Olié                        blue  has eye_color
+347                 Watto                      yellow  has eye_color
+348               Sebulba                      orange  has eye_color
+349         Quarsh Panaka                       brown  has eye_color
+350        Shmi Skywalker                       brown  has eye_color
+351            Darth Maul                      yellow  has eye_color
+352           Bib Fortuna                        pink  has eye_color
+353           Ayla Secura                       hazel  has eye_color
+354              Dud Bolt                      yellow  has eye_color
+355               Gasgano                       black  has eye_color
+356        Ben Quadinaros                      orange  has eye_color
+357            Mace Windu                       brown  has eye_color
+358          Ki-Adi-Mundi                      yellow  has eye_color
+359             Kit Fisto                       black  has eye_color
+360             Eeth Koth                       brown  has eye_color
+361            Adi Gallia                        blue  has eye_color
+362           Saesee Tiin                      orange  has eye_color
+363           Yarael Poof                      yellow  has eye_color
+364              Plo Koon                       black  has eye_color
+365            Mas Amedda                        blue  has eye_color
+366          Gregar Typho                       brown  has eye_color
+367                 Cordé                       brown  has eye_color
+368           Cliegg Lars                        blue  has eye_color
+369     Poggle the Lesser                      yellow  has eye_color
+370       Luminara Unduli                        blue  has eye_color
+371         Barriss Offee                        blue  has eye_color
+372                 Dormé                       brown  has eye_color
+373                 Dooku                       brown  has eye_color
+374   Bail Prestor Organa                       brown  has eye_color
+375            Jango Fett                       brown  has eye_color
+376            Zam Wesell                      yellow  has eye_color
+377       Dexter Jettster                      yellow  has eye_color
+378               Lama Su                       black  has eye_color
+379               Taun We                       black  has eye_color
+380            Jocasta Nu                        blue  has eye_color
+381         Ratts Tyerell                     unknown  has eye_color
+382                R4-P17                   red, blue  has eye_color
+383            Wat Tambor                     unknown  has eye_color
+384              San Hill                        gold  has eye_color
+385              Shaak Ti                       black  has eye_color
+386              Grievous               green, yellow  has eye_color
+387               Tarfful                        blue  has eye_color
+388       Raymus Antilles                       brown  has eye_color
+389             Sly Moore                       white  has eye_color
+390            Tion Medon                       black  has eye_color
+391                  Finn                        dark  has eye_color
+392                   Rey                       hazel  has eye_color
+393           Poe Dameron                       brown  has eye_color
+394                   BB8                       black  has eye_color
+395        Captain Phasma                     unknown  has eye_color
+396         Padmé Amidala                       brown  has eye_color
+397        Luke Skywalker                          19 has birth_year
+398                 C-3PO                         112 has birth_year
+399                 R2-D2                          33 has birth_year
+400           Darth Vader                        41.9 has birth_year
+401           Leia Organa                          19 has birth_year
+402             Owen Lars                          52 has birth_year
+403    Beru Whitesun lars                          47 has birth_year
+404     Biggs Darklighter                          24 has birth_year
+405        Obi-Wan Kenobi                          57 has birth_year
+406      Anakin Skywalker                        41.9 has birth_year
+407        Wilhuff Tarkin                          64 has birth_year
+408             Chewbacca                         200 has birth_year
+409              Han Solo                          29 has birth_year
+410                Greedo                          44 has birth_year
+411 Jabba Desilijic Tiure                         600 has birth_year
+412        Wedge Antilles                          21 has birth_year
+413                  Yoda                         896 has birth_year
+414             Palpatine                          82 has birth_year
+415             Boba Fett                        31.5 has birth_year
+416                 IG-88                          15 has birth_year
+417                 Bossk                          53 has birth_year
+418      Lando Calrissian                          31 has birth_year
+419                 Lobot                          37 has birth_year
+420                Ackbar                          41 has birth_year
+421            Mon Mothma                          48 has birth_year
+422 Wicket Systri Warrick                           8 has birth_year
+423          Qui-Gon Jinn                          92 has birth_year
+424         Finis Valorum                          91 has birth_year
+425         Jar Jar Binks                          52 has birth_year
+426         Quarsh Panaka                          62 has birth_year
+427        Shmi Skywalker                          72 has birth_year
+428            Darth Maul                          54 has birth_year
+429           Ayla Secura                          48 has birth_year
+430            Mace Windu                          72 has birth_year
+431          Ki-Adi-Mundi                          92 has birth_year
+432              Plo Koon                          22 has birth_year
+433           Cliegg Lars                          82 has birth_year
+434       Luminara Unduli                          58 has birth_year
+435         Barriss Offee                          40 has birth_year
+436                 Dooku                         102 has birth_year
+437   Bail Prestor Organa                          67 has birth_year
+438            Jango Fett                          66 has birth_year
+439         Padmé Amidala                          46 has birth_year
+440        Luke Skywalker                        male     has gender
+441           Darth Vader                        male     has gender
+442           Leia Organa                      female     has gender
+443             Owen Lars                        male     has gender
+444    Beru Whitesun lars                      female     has gender
+445     Biggs Darklighter                        male     has gender
+446        Obi-Wan Kenobi                        male     has gender
+447      Anakin Skywalker                        male     has gender
+448        Wilhuff Tarkin                        male     has gender
+449             Chewbacca                        male     has gender
+450              Han Solo                        male     has gender
+451                Greedo                        male     has gender
+452 Jabba Desilijic Tiure               hermaphrodite     has gender
+453        Wedge Antilles                        male     has gender
+454      Jek Tono Porkins                        male     has gender
+455                  Yoda                        male     has gender
+456             Palpatine                        male     has gender
+457             Boba Fett                        male     has gender
+458                 IG-88                        none     has gender
+459                 Bossk                        male     has gender
+460      Lando Calrissian                        male     has gender
+461                 Lobot                        male     has gender
+462                Ackbar                        male     has gender
+463            Mon Mothma                      female     has gender
+464          Arvel Crynyd                        male     has gender
+465 Wicket Systri Warrick                        male     has gender
+466             Nien Nunb                        male     has gender
+467          Qui-Gon Jinn                        male     has gender
+468           Nute Gunray                        male     has gender
+469         Finis Valorum                        male     has gender
+470         Jar Jar Binks                        male     has gender
+471          Roos Tarpals                        male     has gender
+472            Rugor Nass                        male     has gender
+473              Ric Olié                        male     has gender
+474                 Watto                        male     has gender
+475               Sebulba                        male     has gender
+476         Quarsh Panaka                        male     has gender
+477        Shmi Skywalker                      female     has gender
+478            Darth Maul                        male     has gender
+479           Bib Fortuna                        male     has gender
+480           Ayla Secura                      female     has gender
+481              Dud Bolt                        male     has gender
+482               Gasgano                        male     has gender
+483        Ben Quadinaros                        male     has gender
+484            Mace Windu                        male     has gender
+485          Ki-Adi-Mundi                        male     has gender
+486             Kit Fisto                        male     has gender
+487             Eeth Koth                        male     has gender
+488            Adi Gallia                      female     has gender
+489           Saesee Tiin                        male     has gender
+490           Yarael Poof                        male     has gender
+491              Plo Koon                        male     has gender
+492            Mas Amedda                        male     has gender
+493          Gregar Typho                        male     has gender
+494                 Cordé                      female     has gender
+495           Cliegg Lars                        male     has gender
+496     Poggle the Lesser                        male     has gender
+497       Luminara Unduli                      female     has gender
+498         Barriss Offee                      female     has gender
+499                 Dormé                      female     has gender
+500                 Dooku                        male     has gender
+501   Bail Prestor Organa                        male     has gender
+502            Jango Fett                        male     has gender
+503            Zam Wesell                      female     has gender
+504       Dexter Jettster                        male     has gender
+505               Lama Su                        male     has gender
+506               Taun We                      female     has gender
+507            Jocasta Nu                      female     has gender
+508         Ratts Tyerell                        male     has gender
+509                R4-P17                      female     has gender
+510            Wat Tambor                        male     has gender
+511              San Hill                        male     has gender
+512              Shaak Ti                      female     has gender
+513              Grievous                        male     has gender
+514               Tarfful                        male     has gender
+515       Raymus Antilles                        male     has gender
+516             Sly Moore                      female     has gender
+517            Tion Medon                        male     has gender
+518                  Finn                        male     has gender
+519                   Rey                      female     has gender
+520           Poe Dameron                        male     has gender
+521                   BB8                        none     has gender
+522        Captain Phasma                      female     has gender
+523         Padmé Amidala                      female     has gender
+524        Luke Skywalker                    Tatooine  has homeworld
+525                 C-3PO                    Tatooine  has homeworld
+526                 R2-D2                       Naboo  has homeworld
+527           Darth Vader                    Tatooine  has homeworld
+528           Leia Organa                    Alderaan  has homeworld
+529             Owen Lars                    Tatooine  has homeworld
+530    Beru Whitesun lars                    Tatooine  has homeworld
+531                 R5-D4                    Tatooine  has homeworld
+532     Biggs Darklighter                    Tatooine  has homeworld
+533        Obi-Wan Kenobi                     Stewjon  has homeworld
+534      Anakin Skywalker                    Tatooine  has homeworld
+535        Wilhuff Tarkin                      Eriadu  has homeworld
+536             Chewbacca                    Kashyyyk  has homeworld
+537              Han Solo                    Corellia  has homeworld
+538                Greedo                       Rodia  has homeworld
+539 Jabba Desilijic Tiure                   Nal Hutta  has homeworld
+540        Wedge Antilles                    Corellia  has homeworld
+541      Jek Tono Porkins                  Bestine IV  has homeworld
+542             Palpatine                       Naboo  has homeworld
+543             Boba Fett                      Kamino  has homeworld
+544                 Bossk                   Trandosha  has homeworld
+545      Lando Calrissian                     Socorro  has homeworld
+546                 Lobot                      Bespin  has homeworld
+547                Ackbar                    Mon Cala  has homeworld
+548            Mon Mothma                   Chandrila  has homeworld
+549 Wicket Systri Warrick                       Endor  has homeworld
+550             Nien Nunb                     Sullust  has homeworld
+551           Nute Gunray              Cato Neimoidia  has homeworld
+552         Finis Valorum                   Coruscant  has homeworld
+553         Jar Jar Binks                       Naboo  has homeworld
+554          Roos Tarpals                       Naboo  has homeworld
+555            Rugor Nass                       Naboo  has homeworld
+556              Ric Olié                       Naboo  has homeworld
+557                 Watto                    Toydaria  has homeworld
+558               Sebulba                   Malastare  has homeworld
+559         Quarsh Panaka                       Naboo  has homeworld
+560        Shmi Skywalker                    Tatooine  has homeworld
+561            Darth Maul                    Dathomir  has homeworld
+562           Bib Fortuna                      Ryloth  has homeworld
+563           Ayla Secura                      Ryloth  has homeworld
+564              Dud Bolt                     Vulpter  has homeworld
+565               Gasgano                     Troiken  has homeworld
+566        Ben Quadinaros                        Tund  has homeworld
+567            Mace Windu                  Haruun Kal  has homeworld
+568          Ki-Adi-Mundi                       Cerea  has homeworld
+569             Kit Fisto                 Glee Anselm  has homeworld
+570             Eeth Koth                    Iridonia  has homeworld
+571            Adi Gallia                   Coruscant  has homeworld
+572           Saesee Tiin                     Iktotch  has homeworld
+573           Yarael Poof                     Quermia  has homeworld
+574              Plo Koon                       Dorin  has homeworld
+575            Mas Amedda                    Champala  has homeworld
+576          Gregar Typho                       Naboo  has homeworld
+577                 Cordé                       Naboo  has homeworld
+578           Cliegg Lars                    Tatooine  has homeworld
+579     Poggle the Lesser                    Geonosis  has homeworld
+580       Luminara Unduli                      Mirial  has homeworld
+581         Barriss Offee                      Mirial  has homeworld
+582                 Dormé                       Naboo  has homeworld
+583                 Dooku                     Serenno  has homeworld
+584   Bail Prestor Organa                    Alderaan  has homeworld
+585            Jango Fett                Concord Dawn  has homeworld
+586            Zam Wesell                       Zolan  has homeworld
+587       Dexter Jettster                        Ojom  has homeworld
+588               Lama Su                      Kamino  has homeworld
+589               Taun We                      Kamino  has homeworld
+590            Jocasta Nu                   Coruscant  has homeworld
+591         Ratts Tyerell                 Aleen Minor  has homeworld
+592            Wat Tambor                       Skako  has homeworld
+593              San Hill                  Muunilinst  has homeworld
+594              Shaak Ti                       Shili  has homeworld
+595              Grievous                       Kalee  has homeworld
+596               Tarfful                    Kashyyyk  has homeworld
+597       Raymus Antilles                    Alderaan  has homeworld
+598             Sly Moore                      Umbara  has homeworld
+599            Tion Medon                      Utapau  has homeworld
+600         Padmé Amidala                       Naboo  has homeworld
+601        Luke Skywalker                       Human    has species
+602                 C-3PO                       Droid    has species
+603                 R2-D2                       Droid    has species
+604           Darth Vader                       Human    has species
+605           Leia Organa                       Human    has species
+606             Owen Lars                       Human    has species
+607    Beru Whitesun lars                       Human    has species
+608                 R5-D4                       Droid    has species
+609     Biggs Darklighter                       Human    has species
+610        Obi-Wan Kenobi                       Human    has species
+611      Anakin Skywalker                       Human    has species
+612        Wilhuff Tarkin                       Human    has species
+613             Chewbacca                     Wookiee    has species
+614              Han Solo                       Human    has species
+615                Greedo                      Rodian    has species
+616 Jabba Desilijic Tiure                        Hutt    has species
+617        Wedge Antilles                       Human    has species
+618      Jek Tono Porkins                       Human    has species
+619                  Yoda              Yoda's species    has species
+620             Palpatine                       Human    has species
+621             Boba Fett                       Human    has species
+622                 IG-88                       Droid    has species
+623                 Bossk                  Trandoshan    has species
+624      Lando Calrissian                       Human    has species
+625                 Lobot                       Human    has species
+626                Ackbar                Mon Calamari    has species
+627            Mon Mothma                       Human    has species
+628          Arvel Crynyd                       Human    has species
+629 Wicket Systri Warrick                        Ewok    has species
+630             Nien Nunb                   Sullustan    has species
+631          Qui-Gon Jinn                       Human    has species
+632           Nute Gunray                   Neimodian    has species
+633         Finis Valorum                       Human    has species
+634         Jar Jar Binks                      Gungan    has species
+635          Roos Tarpals                      Gungan    has species
+636            Rugor Nass                      Gungan    has species
+637                 Watto                   Toydarian    has species
+638               Sebulba                         Dug    has species
+639        Shmi Skywalker                       Human    has species
+640            Darth Maul                      Zabrak    has species
+641           Bib Fortuna                     Twi'lek    has species
+642           Ayla Secura                     Twi'lek    has species
+643              Dud Bolt                  Vulptereen    has species
+644               Gasgano                       Xexto    has species
+645        Ben Quadinaros                       Toong    has species
+646            Mace Windu                       Human    has species
+647          Ki-Adi-Mundi                      Cerean    has species
+648             Kit Fisto                    Nautolan    has species
+649             Eeth Koth                      Zabrak    has species
+650            Adi Gallia                  Tholothian    has species
+651           Saesee Tiin                    Iktotchi    has species
+652           Yarael Poof                    Quermian    has species
+653              Plo Koon                     Kel Dor    has species
+654            Mas Amedda                    Chagrian    has species
+655          Gregar Typho                       Human    has species
+656                 Cordé                       Human    has species
+657           Cliegg Lars                       Human    has species
+658     Poggle the Lesser                   Geonosian    has species
+659       Luminara Unduli                    Mirialan    has species
+660         Barriss Offee                    Mirialan    has species
+661                 Dormé                       Human    has species
+662                 Dooku                       Human    has species
+663   Bail Prestor Organa                       Human    has species
+664            Jango Fett                       Human    has species
+665            Zam Wesell                    Clawdite    has species
+666       Dexter Jettster                    Besalisk    has species
+667               Lama Su                    Kaminoan    has species
+668               Taun We                    Kaminoan    has species
+669            Jocasta Nu                       Human    has species
+670         Ratts Tyerell                      Aleena    has species
+671            Wat Tambor                     Skakoan    has species
+672              San Hill                        Muun    has species
+673              Shaak Ti                     Togruta    has species
+674              Grievous                     Kaleesh    has species
+675               Tarfful                     Wookiee    has species
+676       Raymus Antilles                       Human    has species
+677            Tion Medon                      Pau'an    has species
+678                  Finn                       Human    has species
+679                   Rey                       Human    has species
+680           Poe Dameron                       Human    has species
+681                   BB8                       Droid    has species
+682         Padmé Amidala                       Human    has species
+683        Luke Skywalker         Revenge of the Sith      has films
+684        Luke Skywalker          Return of the Jedi      has films
+685        Luke Skywalker     The Empire Strikes Back      has films
+686        Luke Skywalker                  A New Hope      has films
+687        Luke Skywalker           The Force Awakens      has films
+688                 C-3PO        Attack of the Clones      has films
+689                 C-3PO          The Phantom Menace      has films
+690                 C-3PO         Revenge of the Sith      has films
+691                 C-3PO          Return of the Jedi      has films
+692                 C-3PO     The Empire Strikes Back      has films
+693                 C-3PO                  A New Hope      has films
+694                 R2-D2        Attack of the Clones      has films
+695                 R2-D2          The Phantom Menace      has films
+696                 R2-D2         Revenge of the Sith      has films
+697                 R2-D2          Return of the Jedi      has films
+698                 R2-D2     The Empire Strikes Back      has films
+699                 R2-D2                  A New Hope      has films
+700                 R2-D2           The Force Awakens      has films
+701           Darth Vader         Revenge of the Sith      has films
+702           Darth Vader          Return of the Jedi      has films
+703           Darth Vader     The Empire Strikes Back      has films
+704           Darth Vader                  A New Hope      has films
+705           Leia Organa         Revenge of the Sith      has films
+706           Leia Organa          Return of the Jedi      has films
+707           Leia Organa     The Empire Strikes Back      has films
+708           Leia Organa                  A New Hope      has films
+709           Leia Organa           The Force Awakens      has films
+710             Owen Lars        Attack of the Clones      has films
+711             Owen Lars         Revenge of the Sith      has films
+712             Owen Lars                  A New Hope      has films
+713    Beru Whitesun lars        Attack of the Clones      has films
+714    Beru Whitesun lars         Revenge of the Sith      has films
+715    Beru Whitesun lars                  A New Hope      has films
+716                 R5-D4                  A New Hope      has films
+717     Biggs Darklighter                  A New Hope      has films
+718        Obi-Wan Kenobi        Attack of the Clones      has films
+719        Obi-Wan Kenobi          The Phantom Menace      has films
+720        Obi-Wan Kenobi         Revenge of the Sith      has films
+721        Obi-Wan Kenobi          Return of the Jedi      has films
+722        Obi-Wan Kenobi     The Empire Strikes Back      has films
+723        Obi-Wan Kenobi                  A New Hope      has films
+724      Anakin Skywalker        Attack of the Clones      has films
+725      Anakin Skywalker          The Phantom Menace      has films
+726      Anakin Skywalker         Revenge of the Sith      has films
+727        Wilhuff Tarkin         Revenge of the Sith      has films
+728        Wilhuff Tarkin                  A New Hope      has films
+729             Chewbacca         Revenge of the Sith      has films
+730             Chewbacca          Return of the Jedi      has films
+731             Chewbacca     The Empire Strikes Back      has films
+732             Chewbacca                  A New Hope      has films
+733             Chewbacca           The Force Awakens      has films
+734              Han Solo          Return of the Jedi      has films
+735              Han Solo     The Empire Strikes Back      has films
+736              Han Solo                  A New Hope      has films
+737              Han Solo           The Force Awakens      has films
+738                Greedo                  A New Hope      has films
+739 Jabba Desilijic Tiure          The Phantom Menace      has films
+740 Jabba Desilijic Tiure          Return of the Jedi      has films
+741 Jabba Desilijic Tiure                  A New Hope      has films
+742        Wedge Antilles          Return of the Jedi      has films
+743        Wedge Antilles     The Empire Strikes Back      has films
+744        Wedge Antilles                  A New Hope      has films
+745      Jek Tono Porkins                  A New Hope      has films
+746                  Yoda        Attack of the Clones      has films
+747                  Yoda          The Phantom Menace      has films
+748                  Yoda         Revenge of the Sith      has films
+749                  Yoda          Return of the Jedi      has films
+750                  Yoda     The Empire Strikes Back      has films
+751             Palpatine        Attack of the Clones      has films
+752             Palpatine          The Phantom Menace      has films
+753             Palpatine         Revenge of the Sith      has films
+754             Palpatine          Return of the Jedi      has films
+755             Palpatine     The Empire Strikes Back      has films
+756             Boba Fett        Attack of the Clones      has films
+757             Boba Fett          Return of the Jedi      has films
+758             Boba Fett     The Empire Strikes Back      has films
+759                 IG-88     The Empire Strikes Back      has films
+760                 Bossk     The Empire Strikes Back      has films
+761      Lando Calrissian          Return of the Jedi      has films
+762      Lando Calrissian     The Empire Strikes Back      has films
+763                 Lobot     The Empire Strikes Back      has films
+764                Ackbar          Return of the Jedi      has films
+765                Ackbar           The Force Awakens      has films
+766            Mon Mothma          Return of the Jedi      has films
+767          Arvel Crynyd          Return of the Jedi      has films
+768 Wicket Systri Warrick          Return of the Jedi      has films
+769             Nien Nunb          Return of the Jedi      has films
+770          Qui-Gon Jinn          The Phantom Menace      has films
+771           Nute Gunray        Attack of the Clones      has films
+772           Nute Gunray          The Phantom Menace      has films
+773           Nute Gunray         Revenge of the Sith      has films
+774         Finis Valorum          The Phantom Menace      has films
+775         Jar Jar Binks        Attack of the Clones      has films
+776         Jar Jar Binks          The Phantom Menace      has films
+777          Roos Tarpals          The Phantom Menace      has films
+778            Rugor Nass          The Phantom Menace      has films
+779              Ric Olié          The Phantom Menace      has films
+780                 Watto        Attack of the Clones      has films
+781                 Watto          The Phantom Menace      has films
+782               Sebulba          The Phantom Menace      has films
+783         Quarsh Panaka          The Phantom Menace      has films
+784        Shmi Skywalker        Attack of the Clones      has films
+785        Shmi Skywalker          The Phantom Menace      has films
+786            Darth Maul          The Phantom Menace      has films
+787           Bib Fortuna          Return of the Jedi      has films
+788           Ayla Secura        Attack of the Clones      has films
+789           Ayla Secura          The Phantom Menace      has films
+790           Ayla Secura         Revenge of the Sith      has films
+791              Dud Bolt          The Phantom Menace      has films
+792               Gasgano          The Phantom Menace      has films
+793        Ben Quadinaros          The Phantom Menace      has films
+794            Mace Windu        Attack of the Clones      has films
+795            Mace Windu          The Phantom Menace      has films
+796            Mace Windu         Revenge of the Sith      has films
+797          Ki-Adi-Mundi        Attack of the Clones      has films
+798          Ki-Adi-Mundi          The Phantom Menace      has films
+799          Ki-Adi-Mundi         Revenge of the Sith      has films
+800             Kit Fisto        Attack of the Clones      has films
+801             Kit Fisto          The Phantom Menace      has films
+802             Kit Fisto         Revenge of the Sith      has films
+803             Eeth Koth          The Phantom Menace      has films
+804             Eeth Koth         Revenge of the Sith      has films
+805            Adi Gallia          The Phantom Menace      has films
+806            Adi Gallia         Revenge of the Sith      has films
+807           Saesee Tiin          The Phantom Menace      has films
+808           Saesee Tiin         Revenge of the Sith      has films
+809           Yarael Poof          The Phantom Menace      has films
+810              Plo Koon        Attack of the Clones      has films
+811              Plo Koon          The Phantom Menace      has films
+812              Plo Koon         Revenge of the Sith      has films
+813            Mas Amedda        Attack of the Clones      has films
+814            Mas Amedda          The Phantom Menace      has films
+815          Gregar Typho        Attack of the Clones      has films
+816                 Cordé        Attack of the Clones      has films
+817           Cliegg Lars        Attack of the Clones      has films
+818     Poggle the Lesser        Attack of the Clones      has films
+819     Poggle the Lesser         Revenge of the Sith      has films
+820       Luminara Unduli        Attack of the Clones      has films
+821       Luminara Unduli         Revenge of the Sith      has films
+822         Barriss Offee        Attack of the Clones      has films
+823                 Dormé        Attack of the Clones      has films
+824                 Dooku        Attack of the Clones      has films
+825                 Dooku         Revenge of the Sith      has films
+826   Bail Prestor Organa        Attack of the Clones      has films
+827   Bail Prestor Organa         Revenge of the Sith      has films
+828            Jango Fett        Attack of the Clones      has films
+829            Zam Wesell        Attack of the Clones      has films
+830       Dexter Jettster        Attack of the Clones      has films
+831               Lama Su        Attack of the Clones      has films
+832               Taun We        Attack of the Clones      has films
+833            Jocasta Nu        Attack of the Clones      has films
+834         Ratts Tyerell          The Phantom Menace      has films
+835                R4-P17        Attack of the Clones      has films
+836                R4-P17         Revenge of the Sith      has films
+837            Wat Tambor        Attack of the Clones      has films
+838              San Hill        Attack of the Clones      has films
+839              Shaak Ti        Attack of the Clones      has films
+840              Shaak Ti         Revenge of the Sith      has films
+841              Grievous         Revenge of the Sith      has films
+842               Tarfful         Revenge of the Sith      has films
+843       Raymus Antilles         Revenge of the Sith      has films
+844       Raymus Antilles                  A New Hope      has films
+845             Sly Moore        Attack of the Clones      has films
+846             Sly Moore         Revenge of the Sith      has films
+847            Tion Medon         Revenge of the Sith      has films
+848                  Finn           The Force Awakens      has films
+849                   Rey           The Force Awakens      has films
+850           Poe Dameron           The Force Awakens      has films
+851                   BB8           The Force Awakens      has films
+852        Captain Phasma           The Force Awakens      has films
+853         Padmé Amidala        Attack of the Clones      has films
+854         Padmé Amidala          The Phantom Menace      has films
+855         Padmé Amidala         Revenge of the Sith      has films
+856        Luke Skywalker                 Snowspeeder   has vehicles
+857        Luke Skywalker       Imperial Speeder Bike   has vehicles
+858           Leia Organa       Imperial Speeder Bike   has vehicles
+859        Obi-Wan Kenobi             Tribubble bongo   has vehicles
+860      Anakin Skywalker         Zephyr-G swoop bike   has vehicles
+861      Anakin Skywalker             XJ-6 airspeeder   has vehicles
+862             Chewbacca                       AT-ST   has vehicles
+863        Wedge Antilles                 Snowspeeder   has vehicles
+864          Qui-Gon Jinn             Tribubble bongo   has vehicles
+865            Darth Maul                Sith speeder   has vehicles
+866                 Dooku            Flitknot speeder   has vehicles
+867            Zam Wesell  Koro-2 Exodrive airspeeder   has vehicles
+868              Grievous Tsmeu-6 personal wheel bike   has vehicles
+869        Luke Skywalker                      X-wing  has starships
+870        Luke Skywalker            Imperial shuttle  has starships
+871           Darth Vader             TIE Advanced x1  has starships
+872     Biggs Darklighter                      X-wing  has starships
+873        Obi-Wan Kenobi            Jedi starfighter  has starships
+874        Obi-Wan Kenobi    Trade Federation cruiser  has starships
+875        Obi-Wan Kenobi            Naboo star skiff  has starships
+876        Obi-Wan Kenobi            Jedi Interceptor  has starships
+877        Obi-Wan Kenobi    Belbullab-22 starfighter  has starships
+878      Anakin Skywalker    Trade Federation cruiser  has starships
+879      Anakin Skywalker            Jedi Interceptor  has starships
+880      Anakin Skywalker               Naboo fighter  has starships
+881             Chewbacca           Millennium Falcon  has starships
+882             Chewbacca            Imperial shuttle  has starships
+883              Han Solo           Millennium Falcon  has starships
+884              Han Solo            Imperial shuttle  has starships
+885        Wedge Antilles                      X-wing  has starships
+886      Jek Tono Porkins                      X-wing  has starships
+887             Boba Fett                     Slave 1  has starships
+888      Lando Calrissian           Millennium Falcon  has starships
+889          Arvel Crynyd                      A-wing  has starships
+890             Nien Nunb           Millennium Falcon  has starships
+891              Ric Olié        Naboo Royal Starship  has starships
+892            Darth Maul                    Scimitar  has starships
+893              Plo Koon            Jedi starfighter  has starships
+894          Gregar Typho               Naboo fighter  has starships
+895              Grievous    Belbullab-22 starfighter  has starships
+896           Poe Dameron         T-70 X-wing fighter  has starships
+897         Padmé Amidala         H-type Nubian yacht  has starships
+898         Padmé Amidala            Naboo star skiff  has starships
+899         Padmé Amidala               Naboo fighter  has starships
+```
+
+Creating Data Frames from graphs
+====
+class:small-code
+
+```r
+g %>% as_data_frame('vertices')
+```
+
+```
+                                                   name            type
+Luke Skywalker                           Luke Skywalker     a character
+C-3PO                                             C-3PO     a character
+R2-D2                                             R2-D2     a character
+Darth Vader                                 Darth Vader     a character
+Leia Organa                                 Leia Organa     a character
+Owen Lars                                     Owen Lars     a character
+Beru Whitesun lars                   Beru Whitesun lars     a character
+R5-D4                                             R5-D4     a character
+Biggs Darklighter                     Biggs Darklighter     a character
+Obi-Wan Kenobi                           Obi-Wan Kenobi     a character
+Anakin Skywalker                       Anakin Skywalker     a character
+Wilhuff Tarkin                           Wilhuff Tarkin     a character
+Chewbacca                                     Chewbacca     a character
+Han Solo                                       Han Solo     a character
+Greedo                                           Greedo     a character
+Jabba Desilijic Tiure             Jabba Desilijic Tiure     a character
+Wedge Antilles                           Wedge Antilles     a character
+Jek Tono Porkins                       Jek Tono Porkins     a character
+Yoda                                               Yoda     a character
+Palpatine                                     Palpatine     a character
+Boba Fett                                     Boba Fett     a character
+IG-88                                             IG-88     a character
+Bossk                                             Bossk     a character
+Lando Calrissian                       Lando Calrissian     a character
+Lobot                                             Lobot     a character
+Ackbar                                           Ackbar     a character
+Mon Mothma                                   Mon Mothma     a character
+Wicket Systri Warrick             Wicket Systri Warrick     a character
+Nien Nunb                                     Nien Nunb     a character
+Qui-Gon Jinn                               Qui-Gon Jinn     a character
+Nute Gunray                                 Nute Gunray     a character
+Finis Valorum                             Finis Valorum     a character
+Jar Jar Binks                             Jar Jar Binks     a character
+Roos Tarpals                               Roos Tarpals     a character
+Rugor Nass                                   Rugor Nass     a character
+Ric Olié                                       Ric Olié     a character
+Watto                                             Watto     a character
+Sebulba                                         Sebulba     a character
+Quarsh Panaka                             Quarsh Panaka     a character
+Shmi Skywalker                           Shmi Skywalker     a character
+Darth Maul                                   Darth Maul     a character
+Bib Fortuna                                 Bib Fortuna     a character
+Ayla Secura                                 Ayla Secura     a character
+Dud Bolt                                       Dud Bolt     a character
+Gasgano                                         Gasgano     a character
+Ben Quadinaros                           Ben Quadinaros     a character
+Mace Windu                                   Mace Windu     a character
+Ki-Adi-Mundi                               Ki-Adi-Mundi     a character
+Kit Fisto                                     Kit Fisto     a character
+Eeth Koth                                     Eeth Koth     a character
+Adi Gallia                                   Adi Gallia     a character
+Saesee Tiin                                 Saesee Tiin     a character
+Yarael Poof                                 Yarael Poof     a character
+Plo Koon                                       Plo Koon     a character
+Mas Amedda                                   Mas Amedda     a character
+Gregar Typho                               Gregar Typho     a character
+Cordé                                             Cordé     a character
+Cliegg Lars                                 Cliegg Lars     a character
+Poggle the Lesser                     Poggle the Lesser     a character
+Luminara Unduli                         Luminara Unduli     a character
+Barriss Offee                             Barriss Offee     a character
+Dormé                                             Dormé     a character
+Dooku                                             Dooku     a character
+Bail Prestor Organa                 Bail Prestor Organa     a character
+Jango Fett                                   Jango Fett     a character
+Zam Wesell                                   Zam Wesell     a character
+Dexter Jettster                         Dexter Jettster     a character
+Lama Su                                         Lama Su     a character
+Taun We                                         Taun We     a character
+Jocasta Nu                                   Jocasta Nu     a character
+Ratts Tyerell                             Ratts Tyerell     a character
+R4-P17                                           R4-P17     a character
+Wat Tambor                                   Wat Tambor     a character
+San Hill                                       San Hill     a character
+Shaak Ti                                       Shaak Ti     a character
+Grievous                                       Grievous     a character
+Tarfful                                         Tarfful     a character
+Raymus Antilles                         Raymus Antilles     a character
+Sly Moore                                     Sly Moore     a character
+Tion Medon                                   Tion Medon     a character
+Padmé Amidala                             Padmé Amidala     a character
+Arvel Crynyd                               Arvel Crynyd     a character
+Finn                                               Finn     a character
+Rey                                                 Rey     a character
+Poe Dameron                                 Poe Dameron     a character
+BB8                                                 BB8     a character
+Captain Phasma                           Captain Phasma     a character
+172                                                 172 not a character
+167                                                 167 not a character
+96                                                   96 not a character
+202                                                 202 not a character
+150                                                 150 not a character
+178                                                 178 not a character
+165                                                 165 not a character
+97                                                   97 not a character
+183                                                 183 not a character
+182                                                 182 not a character
+188                                                 188 not a character
+180                                                 180 not a character
+228                                                 228 not a character
+173                                                 173 not a character
+175                                                 175 not a character
+170                                                 170 not a character
+66                                                   66 not a character
+200                                                 200 not a character
+190                                                 190 not a character
+177                                                 177 not a character
+88                                                   88 not a character
+160                                                 160 not a character
+193                                                 193 not a character
+191                                                 191 not a character
+196                                                 196 not a character
+224                                                 224 not a character
+206                                                 206 not a character
+137                                                 137 not a character
+112                                                 112 not a character
+163                                                 163 not a character
+94                                                   94 not a character
+122                                                 122 not a character
+198                                                 198 not a character
+171                                                 171 not a character
+184                                                 184 not a character
+264                                                 264 not a character
+185                                                 185 not a character
+157                                                 157 not a character
+166                                                 166 not a character
+168                                                 168 not a character
+229                                                 229 not a character
+213                                                 213 not a character
+79                                                   79 not a character
+216                                                 216 not a character
+234                                                 234 not a character
+77                                                   77 not a character
+75                                                   75 not a character
+32                                                   32 not a character
+136                                                 136 not a character
+49                                                   49 not a character
+120                                                 120 not a character
+84                                                   84 not a character
+80                                                   80 not a character
+74                                                   74 not a character
+1358                                               1358 not a character
+110                                                 110 not a character
+17                                                   17 not a character
+78.2                                               78.2 not a character
+140                                                 140 not a character
+113                                                 113 not a character
+83                                                   83 not a character
+20                                                   20 not a character
+68                                                   68 not a character
+89                                                   89 not a character
+90                                                   90 not a character
+82                                                   82 not a character
+40                                                   40 not a character
+55                                                   55 not a character
+45                                                   45 not a character
+65                                                   65 not a character
+87                                                   87 not a character
+50                                                   50 not a character
+85                                                   85 not a character
+56.2                                               56.2 not a character
+102                                                 102 not a character
+15                                                   15 not a character
+48                                                   48 not a character
+57                                                   57 not a character
+159                                                 159 not a character
+blond                                             blond not a character
+none                                               none not a character
+brown                                             brown not a character
+brown, grey                                 brown, grey not a character
+black                                             black not a character
+auburn, white                             auburn, white not a character
+auburn, grey                               auburn, grey not a character
+white                                             white not a character
+grey                                               grey not a character
+auburn                                           auburn not a character
+blonde                                           blonde not a character
+unknown                                         unknown not a character
+fair                                               fair not a character
+gold                                               gold not a character
+white, blue                                 white, blue not a character
+light                                             light not a character
+white, red                                   white, red not a character
+green                                             green not a character
+green-tan, brown                       green-tan, brown not a character
+pale                                               pale not a character
+metal                                             metal not a character
+dark                                               dark not a character
+brown mottle                               brown mottle not a character
+mottled green                             mottled green not a character
+orange                                           orange not a character
+blue, grey                                   blue, grey not a character
+grey, red                                     grey, red not a character
+red                                                 red not a character
+blue                                               blue not a character
+grey, green, yellow                 grey, green, yellow not a character
+yellow                                           yellow not a character
+tan                                                 tan not a character
+fair, green, yellow                 fair, green, yellow not a character
+grey, blue                                   grey, blue not a character
+silver, red                                 silver, red not a character
+green, grey                                 green, grey not a character
+red, blue, white                       red, blue, white not a character
+brown, white                               brown, white not a character
+blue-gray                                     blue-gray not a character
+hazel                                             hazel not a character
+pink                                               pink not a character
+red, blue                                     red, blue not a character
+green, yellow                             green, yellow not a character
+19                                                   19 not a character
+33                                                   33 not a character
+41.9                                               41.9 not a character
+52                                                   52 not a character
+47                                                   47 not a character
+24                                                   24 not a character
+64                                                   64 not a character
+29                                                   29 not a character
+44                                                   44 not a character
+600                                                 600 not a character
+21                                                   21 not a character
+896                                                 896 not a character
+31.5                                               31.5 not a character
+53                                                   53 not a character
+31                                                   31 not a character
+37                                                   37 not a character
+41                                                   41 not a character
+8                                                     8 not a character
+92                                                   92 not a character
+91                                                   91 not a character
+62                                                   62 not a character
+72                                                   72 not a character
+54                                                   54 not a character
+22                                                   22 not a character
+58                                                   58 not a character
+67                                                   67 not a character
+46                                                   46 not a character
+male                                               male not a character
+female                                           female not a character
+hermaphrodite                             hermaphrodite not a character
+Tatooine                                       Tatooine not a character
+Naboo                                             Naboo not a character
+Alderaan                                       Alderaan not a character
+Stewjon                                         Stewjon not a character
+Eriadu                                           Eriadu not a character
+Kashyyyk                                       Kashyyyk not a character
+Corellia                                       Corellia not a character
+Rodia                                             Rodia not a character
+Nal Hutta                                     Nal Hutta not a character
+Bestine IV                                   Bestine IV not a character
+Kamino                                           Kamino not a character
+Trandosha                                     Trandosha not a character
+Socorro                                         Socorro not a character
+Bespin                                           Bespin not a character
+Mon Cala                                       Mon Cala not a character
+Chandrila                                     Chandrila not a character
+Endor                                             Endor not a character
+Sullust                                         Sullust not a character
+Cato Neimoidia                           Cato Neimoidia not a character
+Coruscant                                     Coruscant not a character
+Toydaria                                       Toydaria not a character
+Malastare                                     Malastare not a character
+Dathomir                                       Dathomir not a character
+Ryloth                                           Ryloth not a character
+Vulpter                                         Vulpter not a character
+Troiken                                         Troiken not a character
+Tund                                               Tund not a character
+Haruun Kal                                   Haruun Kal not a character
+Cerea                                             Cerea not a character
+Glee Anselm                                 Glee Anselm not a character
+Iridonia                                       Iridonia not a character
+Iktotch                                         Iktotch not a character
+Quermia                                         Quermia not a character
+Dorin                                             Dorin not a character
+Champala                                       Champala not a character
+Geonosis                                       Geonosis not a character
+Mirial                                           Mirial not a character
+Serenno                                         Serenno not a character
+Concord Dawn                               Concord Dawn not a character
+Zolan                                             Zolan not a character
+Ojom                                               Ojom not a character
+Aleen Minor                                 Aleen Minor not a character
+Skako                                             Skako not a character
+Muunilinst                                   Muunilinst not a character
+Shili                                             Shili not a character
+Kalee                                             Kalee not a character
+Umbara                                           Umbara not a character
+Utapau                                           Utapau not a character
+Human                                             Human not a character
+Droid                                             Droid not a character
+Wookiee                                         Wookiee not a character
+Rodian                                           Rodian not a character
+Hutt                                               Hutt not a character
+Yoda's species                           Yoda's species not a character
+Trandoshan                                   Trandoshan not a character
+Mon Calamari                               Mon Calamari not a character
+Ewok                                               Ewok not a character
+Sullustan                                     Sullustan not a character
+Neimodian                                     Neimodian not a character
+Gungan                                           Gungan not a character
+Toydarian                                     Toydarian not a character
+Dug                                                 Dug not a character
+Zabrak                                           Zabrak not a character
+Twi'lek                                         Twi'lek not a character
+Vulptereen                                   Vulptereen not a character
+Xexto                                             Xexto not a character
+Toong                                             Toong not a character
+Cerean                                           Cerean not a character
+Nautolan                                       Nautolan not a character
+Tholothian                                   Tholothian not a character
+Iktotchi                                       Iktotchi not a character
+Quermian                                       Quermian not a character
+Kel Dor                                         Kel Dor not a character
+Chagrian                                       Chagrian not a character
+Geonosian                                     Geonosian not a character
+Mirialan                                       Mirialan not a character
+Clawdite                                       Clawdite not a character
+Besalisk                                       Besalisk not a character
+Kaminoan                                       Kaminoan not a character
+Aleena                                           Aleena not a character
+Skakoan                                         Skakoan not a character
+Muun                                               Muun not a character
+Togruta                                         Togruta not a character
+Kaleesh                                         Kaleesh not a character
+Pau'an                                           Pau'an not a character
+Revenge of the Sith                 Revenge of the Sith not a character
+Return of the Jedi                   Return of the Jedi not a character
+The Empire Strikes Back         The Empire Strikes Back not a character
+A New Hope                                   A New Hope not a character
+The Force Awakens                     The Force Awakens not a character
+Attack of the Clones               Attack of the Clones not a character
+The Phantom Menace                   The Phantom Menace not a character
+Snowspeeder                                 Snowspeeder not a character
+Imperial Speeder Bike             Imperial Speeder Bike not a character
+Tribubble bongo                         Tribubble bongo not a character
+Zephyr-G swoop bike                 Zephyr-G swoop bike not a character
+XJ-6 airspeeder                         XJ-6 airspeeder not a character
+AT-ST                                             AT-ST not a character
+Sith speeder                               Sith speeder not a character
+Flitknot speeder                       Flitknot speeder not a character
+Koro-2 Exodrive airspeeder   Koro-2 Exodrive airspeeder not a character
+Tsmeu-6 personal wheel bike Tsmeu-6 personal wheel bike not a character
+X-wing                                           X-wing not a character
+Imperial shuttle                       Imperial shuttle not a character
+TIE Advanced x1                         TIE Advanced x1 not a character
+Jedi starfighter                       Jedi starfighter not a character
+Trade Federation cruiser       Trade Federation cruiser not a character
+Naboo star skiff                       Naboo star skiff not a character
+Jedi Interceptor                       Jedi Interceptor not a character
+Belbullab-22 starfighter       Belbullab-22 starfighter not a character
+Naboo fighter                             Naboo fighter not a character
+Millennium Falcon                     Millennium Falcon not a character
+Slave 1                                         Slave 1 not a character
+A-wing                                           A-wing not a character
+Naboo Royal Starship               Naboo Royal Starship not a character
+Scimitar                                       Scimitar not a character
+T-70 X-wing fighter                 T-70 X-wing fighter not a character
+H-type Nubian yacht                 H-type Nubian yacht not a character
 ```
 
 Exploring Graphs with igraph
@@ -508,27 +1788,104 @@ V(g)[name == "Luke Skywalker"]
 ```
 
 ```
-+ 1/357 vertex, named, from 77fb71a:
++ 1/357 vertex, named, from 84e372f:
 [1] Luke Skywalker
 ```
 
 ```r
-V(g)[type == 'a character']
+V(g)[[type == 'a character']]
 ```
 
 ```
-+ 87/357 vertices, named, from 77fb71a:
- [1] Luke Skywalker        C-3PO                 R2-D2                
- [4] Darth Vader           Leia Organa           Owen Lars            
- [7] Beru Whitesun lars    R5-D4                 Biggs Darklighter    
-[10] Obi-Wan Kenobi        Anakin Skywalker      Wilhuff Tarkin       
-[13] Chewbacca             Han Solo              Greedo               
-[16] Jabba Desilijic Tiure Wedge Antilles        Jek Tono Porkins     
-[19] Yoda                  Palpatine             Boba Fett            
-[22] IG-88                 Bossk                 Lando Calrissian     
-[25] Lobot                 Ackbar                Mon Mothma           
-[28] Wicket Systri Warrick Nien Nunb             Qui-Gon Jinn         
-+ ... omitted several vertices
++ 87/357 vertices, named, from 84e372f:
+                    name        type
+1         Luke Skywalker a character
+2                  C-3PO a character
+3                  R2-D2 a character
+4            Darth Vader a character
+5            Leia Organa a character
+6              Owen Lars a character
+7     Beru Whitesun lars a character
+8                  R5-D4 a character
+9      Biggs Darklighter a character
+10        Obi-Wan Kenobi a character
+11      Anakin Skywalker a character
+12        Wilhuff Tarkin a character
+13             Chewbacca a character
+14              Han Solo a character
+15                Greedo a character
+16 Jabba Desilijic Tiure a character
+17        Wedge Antilles a character
+18      Jek Tono Porkins a character
+19                  Yoda a character
+20             Palpatine a character
+21             Boba Fett a character
+22                 IG-88 a character
+23                 Bossk a character
+24      Lando Calrissian a character
+25                 Lobot a character
+26                Ackbar a character
+27            Mon Mothma a character
+28 Wicket Systri Warrick a character
+29             Nien Nunb a character
+30          Qui-Gon Jinn a character
+31           Nute Gunray a character
+32         Finis Valorum a character
+33         Jar Jar Binks a character
+34          Roos Tarpals a character
+35            Rugor Nass a character
+36              Ric Olié a character
+37                 Watto a character
+38               Sebulba a character
+39         Quarsh Panaka a character
+40        Shmi Skywalker a character
+41            Darth Maul a character
+42           Bib Fortuna a character
+43           Ayla Secura a character
+44              Dud Bolt a character
+45               Gasgano a character
+46        Ben Quadinaros a character
+47            Mace Windu a character
+48          Ki-Adi-Mundi a character
+49             Kit Fisto a character
+50             Eeth Koth a character
+51            Adi Gallia a character
+52           Saesee Tiin a character
+53           Yarael Poof a character
+54              Plo Koon a character
+55            Mas Amedda a character
+56          Gregar Typho a character
+57                 Cordé a character
+58           Cliegg Lars a character
+59     Poggle the Lesser a character
+60       Luminara Unduli a character
+61         Barriss Offee a character
+62                 Dormé a character
+63                 Dooku a character
+64   Bail Prestor Organa a character
+65            Jango Fett a character
+66            Zam Wesell a character
+67       Dexter Jettster a character
+68               Lama Su a character
+69               Taun We a character
+70            Jocasta Nu a character
+71         Ratts Tyerell a character
+72                R4-P17 a character
+73            Wat Tambor a character
+74              San Hill a character
+75              Shaak Ti a character
+76              Grievous a character
+77               Tarfful a character
+78       Raymus Antilles a character
+79             Sly Moore a character
+80            Tion Medon a character
+81         Padmé Amidala a character
+82          Arvel Crynyd a character
+83                  Finn a character
+84                   Rey a character
+85           Poe Dameron a character
+86                   BB8 a character
+87        Captain Phasma a character
 ```
 
 
@@ -541,7 +1898,7 @@ E(g)[type == 'has films']
 ```
 
 ```
-+ 173/899 edges from 77fb71a (vertex names):
++ 173/899 edges from 84e372f (vertex names):
  [1] Luke Skywalker->Revenge of the Sith    
  [2] Luke Skywalker->Return of the Jedi     
  [3] Luke Skywalker->The Empire Strikes Back
@@ -556,22 +1913,74 @@ E(g)[type == 'has films']
 ```
 
 ```r
-E(g)['Luke Skywalker' %--% V(g)]
+E(g)[['Luke Skywalker' %--% V(g)]]
 ```
 
 ```
-+ 18/899 edges from 77fb71a (vertex names):
- [1] Luke Skywalker->172                    
- [2] Luke Skywalker->77                     
- [3] Luke Skywalker->blond                  
- [4] Luke Skywalker->fair                   
- [5] Luke Skywalker->blue                   
- [6] Luke Skywalker->19                     
- [7] Luke Skywalker->male                   
- [8] Luke Skywalker->Tatooine               
- [9] Luke Skywalker->Human                  
-[10] Luke Skywalker->Revenge of the Sith    
-+ ... omitted several edges
++ 18/899 edges from 84e372f (vertex names):
+              tail                    head tid hid           type
+1   Luke Skywalker                     172   1  88     has height
+82  Luke Skywalker                      77   1 133       has mass
+141 Luke Skywalker                   blond   1 167 has hair_color
+223 Luke Skywalker                    fair   1 179 has skin_color
+310 Luke Skywalker                    blue   1 195  has eye_color
+397 Luke Skywalker                      19   1 210 has birth_year
+440 Luke Skywalker                    male   1 237     has gender
+524 Luke Skywalker                Tatooine   1 240  has homeworld
+601 Luke Skywalker                   Human   1 288    has species
+683 Luke Skywalker     Revenge of the Sith   1 325      has films
+684 Luke Skywalker      Return of the Jedi   1 326      has films
+685 Luke Skywalker The Empire Strikes Back   1 327      has films
+686 Luke Skywalker              A New Hope   1 328      has films
+687 Luke Skywalker       The Force Awakens   1 329      has films
+856 Luke Skywalker             Snowspeeder   1 332   has vehicles
+857 Luke Skywalker   Imperial Speeder Bike   1 333   has vehicles
+869 Luke Skywalker                  X-wing   1 342  has starships
+870 Luke Skywalker        Imperial shuttle   1 343  has starships
+```
+
+Accessing Nodes from E(g)
+====
+class:small-code
+
+```r
+#edge is leaving from
+tail_of(g, E(g))
+```
+
+```
++ 899/357 vertices, named, from 84e372f:
+  [1] Luke Skywalker        C-3PO                 R2-D2                
+  [4] Darth Vader           Leia Organa           Owen Lars            
+  [7] Beru Whitesun lars    R5-D4                 Biggs Darklighter    
+ [10] Obi-Wan Kenobi        Anakin Skywalker      Wilhuff Tarkin       
+ [13] Chewbacca             Han Solo              Greedo               
+ [16] Jabba Desilijic Tiure Wedge Antilles        Jek Tono Porkins     
+ [19] Yoda                  Palpatine             Boba Fett            
+ [22] IG-88                 Bossk                 Lando Calrissian     
+ [25] Lobot                 Ackbar                Mon Mothma           
+ [28] Wicket Systri Warrick Nien Nunb             Qui-Gon Jinn         
++ ... omitted several vertices
+```
+
+```r
+#edge points to
+head_of(g, E(g))
+```
+
+```
++ 899/357 vertices, named, from 84e372f:
+  [1] 172                         167                        
+  [3] 96                          202                        
+  [5] 150                         178                        
+  [7] 165                         97                         
+  [9] 183                         182                        
+ [11] 188                         180                        
+ [13] 228                         180                        
+ [15] 173                         175                        
+ [17] 170                         180                        
+ [19] 66                          170                        
++ ... omitted several vertices
 ```
 
 Filter Graphs: - and !
@@ -584,9 +1993,9 @@ g - E(g)[!'Luke Skywalker' %--% V(g)]
 ```
 
 ```
-IGRAPH 117c5f8 DN-B 357 18 -- 
+IGRAPH 12579b4 DN-B 357 18 -- 
 + attr: name (v/c), type (v/c), type (e/c)
-+ edges from 117c5f8 (vertex names):
++ edges from 12579b4 (vertex names):
  [1] Luke Skywalker->172                    
  [2] Luke Skywalker->77                     
  [3] Luke Skywalker->blond                  
@@ -614,9 +2023,9 @@ g %>%
 ```
 
 ```
-IGRAPH 6a98278 DN-B 10 10 -- 
+IGRAPH a08f773 DN-B 10 10 -- 
 + attr: name (v/c), type (v/c), type (e/c)
-+ edges from 6a98278 (vertex names):
++ edges from a08f773 (vertex names):
  [1] Luke Skywalker  ->Revenge of the Sith    
  [2] Luke Skywalker  ->Return of the Jedi     
  [3] Luke Skywalker  ->The Empire Strikes Back
@@ -648,9 +2057,9 @@ movieCharProj
 
 ```
 $proj1
-IGRAPH 3bf1c42 UNW- 7 21 -- 
+IGRAPH 9ad681c UNW- 7 21 -- 
 + attr: name (v/c), weight (e/n)
-+ edges from 3bf1c42 (vertex names):
++ edges from 9ad681c (vertex names):
  [1] Revenge of the Sith--Return of the Jedi     
  [2] Revenge of the Sith--The Empire Strikes Back
  [3] Revenge of the Sith--A New Hope             
@@ -662,9 +2071,9 @@ IGRAPH 3bf1c42 UNW- 7 21 --
 + ... omitted several edges
 
 $proj2
-IGRAPH a8bdff3 UNW- 87 1793 -- 
+IGRAPH 4f2a200 UNW- 87 1793 -- 
 + attr: name (v/c), weight (e/n)
-+ edges from a8bdff3 (vertex names):
++ edges from 4f2a200 (vertex names):
  [1] Luke Skywalker--C-3PO              Luke Skywalker--R2-D2             
  [3] Luke Skywalker--Darth Vader        Luke Skywalker--Leia Organa       
  [5] Luke Skywalker--Owen Lars          Luke Skywalker--Beru Whitesun lars
@@ -678,11 +2087,11 @@ IGRAPH a8bdff3 UNW- 87 1793 --
 
 Projections
 ====
-![plot of chunk unnamed-chunk-61](user2018Graphs-figure/unnamed-chunk-61-1.png)
+![plot of chunk unnamed-chunk-64](user2018Graphs-figure/unnamed-chunk-64-1.png)
 
 Projections: All Character Connections
 ====
-![plot of chunk unnamed-chunk-62](user2018Graphs-figure/unnamed-chunk-62-1.png)
+![plot of chunk unnamed-chunk-65](user2018Graphs-figure/unnamed-chunk-65-1.png)
 
 Untangle the hairball
 ===
@@ -711,9 +2120,9 @@ movieCharProj[[2]] %>%
 ```
 
 ```
-IGRAPH 76e4418 UNW- 23 134 -- 
+IGRAPH 2e15ee9 UNW- 23 134 -- 
 + attr: name (v/c), weight (e/n)
-+ edges from 76e4418 (vertex names):
++ edges from 2e15ee9 (vertex names):
  [1] Luke Skywalker--C-3PO              Luke Skywalker--R2-D2             
  [3] Luke Skywalker--Darth Vader        Luke Skywalker--Leia Organa       
  [5] Luke Skywalker--Obi-Wan Kenobi     Luke Skywalker--Chewbacca         
@@ -728,12 +2137,12 @@ IGRAPH 76e4418 UNW- 23 134 --
 Untangle the hairball
 =====
 class:small-code
-![plot of chunk unnamed-chunk-65](user2018Graphs-figure/unnamed-chunk-65-1.png)
+![plot of chunk unnamed-chunk-68](user2018Graphs-figure/unnamed-chunk-68-1.png)
 
 Untangle the hairball: PageRank
 ====
 class:small-code
-![plot of chunk unnamed-chunk-66](user2018Graphs-figure/unnamed-chunk-66-1.png)
+![plot of chunk unnamed-chunk-69](user2018Graphs-figure/unnamed-chunk-69-1.png)
 
 Changing the data changes the network
 =====
@@ -763,12 +2172,316 @@ anakinIsLukesFather <- g %>%
 Changing the data changes the network
 =====
 class:small-code
-![plot of chunk unnamed-chunk-68](user2018Graphs-figure/unnamed-chunk-68-1.png)
+![plot of chunk unnamed-chunk-71](user2018Graphs-figure/unnamed-chunk-71-1.png)
 
 Changing the network changes the PageRank
 ==== 
 class:small-code
-![plot of chunk unnamed-chunk-69](user2018Graphs-figure/unnamed-chunk-69-1.png)
+![plot of chunk unnamed-chunk-72](user2018Graphs-figure/unnamed-chunk-72-1.png)
+
+
+Assigning Data to Vertices
+====
+class:small-code
+
+```r
+V(anakinIsLukesFather)$degree <- degree(anakinIsLukesFather)
+
+E(anakinIsLukesFather)[[]]
+```
+
+```
++ 133/133 edges from a1d39b6 (vertex names):
+                  tail                  head tid hid weight
+1       Luke Skywalker                 C-3PO   1   2      4
+2       Luke Skywalker                 R2-D2   1   3      5
+3       Luke Skywalker           Leia Organa   1   4      5
+4       Luke Skywalker        Obi-Wan Kenobi   1   7      4
+5       Luke Skywalker      Anakin Skywalker   1   8      4
+6       Luke Skywalker             Chewbacca   1   9      5
+7       Luke Skywalker                  Yoda   1  13      3
+8       Luke Skywalker             Palpatine   1  14      3
+9       Luke Skywalker              Han Solo   1  10      4
+10      Luke Skywalker        Wedge Antilles   1  12      3
+11               C-3PO                 R2-D2   2   3      6
+12               C-3PO           Leia Organa   2   4      4
+13               C-3PO             Owen Lars   2   5      3
+14               C-3PO    Beru Whitesun lars   2   6      3
+15               C-3PO        Obi-Wan Kenobi   2   7      6
+16               C-3PO      Anakin Skywalker   2   8      6
+17               C-3PO             Chewbacca   2   9      4
+18               C-3PO                  Yoda   2  13      5
+19               C-3PO             Palpatine   2  14      5
+20               C-3PO           Nute Gunray   2  16      3
+21               C-3PO           Ayla Secura   2  17      3
+22               C-3PO            Mace Windu   2  18      3
+23               C-3PO          Ki-Adi-Mundi   2  19      3
+24               C-3PO             Kit Fisto   2  20      3
+25               C-3PO              Plo Koon   2  21      3
+26               C-3PO         Padmé Amidala   2  22      3
+27               C-3PO              Han Solo   2  10      3
+28               C-3PO Jabba Desilijic Tiure   2  11      3
+29               C-3PO        Wedge Antilles   2  12      3
+30               C-3PO             Boba Fett   2  15      3
+31               R2-D2           Leia Organa   3   4      5
+32               R2-D2             Owen Lars   3   5      3
+33               R2-D2    Beru Whitesun lars   3   6      3
+34               R2-D2        Obi-Wan Kenobi   3   7      6
+35               R2-D2      Anakin Skywalker   3   8      6
+36               R2-D2             Chewbacca   3   9      5
+37               R2-D2                  Yoda   3  13      5
+38               R2-D2             Palpatine   3  14      5
+39               R2-D2           Nute Gunray   3  16      3
+40               R2-D2           Ayla Secura   3  17      3
+41               R2-D2            Mace Windu   3  18      3
+42               R2-D2          Ki-Adi-Mundi   3  19      3
+43               R2-D2             Kit Fisto   3  20      3
+44               R2-D2              Plo Koon   3  21      3
+45               R2-D2         Padmé Amidala   3  22      3
+46               R2-D2              Han Solo   3  10      4
+47               R2-D2 Jabba Desilijic Tiure   3  11      3
+48               R2-D2        Wedge Antilles   3  12      3
+49               R2-D2             Boba Fett   3  15      3
+50         Leia Organa        Obi-Wan Kenobi   4   7      4
+51         Leia Organa      Anakin Skywalker   4   8      4
+52         Leia Organa             Chewbacca   4   9      5
+53         Leia Organa                  Yoda   4  13      3
+54         Leia Organa             Palpatine   4  14      3
+55         Leia Organa              Han Solo   4  10      4
+56         Leia Organa        Wedge Antilles   4  12      3
+57           Owen Lars    Beru Whitesun lars   5   6      3
+58           Owen Lars        Obi-Wan Kenobi   5   7      3
+59           Owen Lars      Anakin Skywalker   5   8      3
+60  Beru Whitesun lars        Obi-Wan Kenobi   6   7      3
+61  Beru Whitesun lars      Anakin Skywalker   6   8      3
+62      Obi-Wan Kenobi      Anakin Skywalker   7   8      6
+63      Obi-Wan Kenobi             Chewbacca   7   9      4
+64      Obi-Wan Kenobi                  Yoda   7  13      5
+65      Obi-Wan Kenobi             Palpatine   7  14      5
+66      Obi-Wan Kenobi           Nute Gunray   7  16      3
+67      Obi-Wan Kenobi           Ayla Secura   7  17      3
+68      Obi-Wan Kenobi            Mace Windu   7  18      3
+69      Obi-Wan Kenobi          Ki-Adi-Mundi   7  19      3
+70      Obi-Wan Kenobi             Kit Fisto   7  20      3
+71      Obi-Wan Kenobi              Plo Koon   7  21      3
+72      Obi-Wan Kenobi         Padmé Amidala   7  22      3
+73      Obi-Wan Kenobi              Han Solo   7  10      3
+74      Obi-Wan Kenobi Jabba Desilijic Tiure   7  11      3
+75      Obi-Wan Kenobi        Wedge Antilles   7  12      3
+76      Obi-Wan Kenobi             Boba Fett   7  15      3
+77    Anakin Skywalker             Chewbacca   8   9      4
+78    Anakin Skywalker                  Yoda   8  13      5
+79    Anakin Skywalker             Palpatine   8  14      5
+80    Anakin Skywalker           Nute Gunray   8  16      3
+81    Anakin Skywalker           Ayla Secura   8  17      3
+82    Anakin Skywalker            Mace Windu   8  18      3
+83    Anakin Skywalker          Ki-Adi-Mundi   8  19      3
+84    Anakin Skywalker             Kit Fisto   8  20      3
+85    Anakin Skywalker              Plo Koon   8  21      3
+86    Anakin Skywalker         Padmé Amidala   8  22      3
+87    Anakin Skywalker              Han Solo   8  10      3
+88    Anakin Skywalker Jabba Desilijic Tiure   8  11      3
+89    Anakin Skywalker        Wedge Antilles   8  12      3
+90    Anakin Skywalker             Boba Fett   8  15      3
+91           Chewbacca                  Yoda   9  13      3
+92           Chewbacca             Palpatine   9  14      3
+93           Chewbacca              Han Solo   9  10      4
+94           Chewbacca        Wedge Antilles   9  12      3
+95            Han Solo        Wedge Antilles  10  12      3
+96                Yoda             Palpatine  13  14      5
+97                Yoda           Nute Gunray  13  16      3
+98                Yoda           Ayla Secura  13  17      3
+99                Yoda            Mace Windu  13  18      3
+100               Yoda          Ki-Adi-Mundi  13  19      3
+101               Yoda             Kit Fisto  13  20      3
+102               Yoda              Plo Koon  13  21      3
+103               Yoda         Padmé Amidala  13  22      3
+104               Yoda             Boba Fett  13  15      3
+105          Palpatine           Nute Gunray  14  16      3
+106          Palpatine           Ayla Secura  14  17      3
+107          Palpatine            Mace Windu  14  18      3
+108          Palpatine          Ki-Adi-Mundi  14  19      3
+109          Palpatine             Kit Fisto  14  20      3
+110          Palpatine              Plo Koon  14  21      3
+111          Palpatine         Padmé Amidala  14  22      3
+112          Palpatine             Boba Fett  14  15      3
+113        Nute Gunray           Ayla Secura  16  17      3
+114        Nute Gunray            Mace Windu  16  18      3
+115        Nute Gunray          Ki-Adi-Mundi  16  19      3
+116        Nute Gunray             Kit Fisto  16  20      3
+117        Nute Gunray              Plo Koon  16  21      3
+118        Nute Gunray         Padmé Amidala  16  22      3
+119        Ayla Secura            Mace Windu  17  18      3
+120        Ayla Secura          Ki-Adi-Mundi  17  19      3
+121        Ayla Secura             Kit Fisto  17  20      3
+122        Ayla Secura              Plo Koon  17  21      3
+123        Ayla Secura         Padmé Amidala  17  22      3
+124         Mace Windu          Ki-Adi-Mundi  18  19      3
+125         Mace Windu             Kit Fisto  18  20      3
+126         Mace Windu              Plo Koon  18  21      3
+127         Mace Windu         Padmé Amidala  18  22      3
+128       Ki-Adi-Mundi             Kit Fisto  19  20      3
+129       Ki-Adi-Mundi              Plo Koon  19  21      3
+130       Ki-Adi-Mundi         Padmé Amidala  19  22      3
+131          Kit Fisto              Plo Koon  20  21      3
+132          Kit Fisto         Padmé Amidala  20  22      3
+133           Plo Koon         Padmé Amidala  21  22      3
+```
+
+Assigning Data to Edges
+====
+class:small-code
+
+```r
+E(anakinIsLukesFather)$tailPercMovies <- anakinIsLukesFather %>%
+  {E(.)$weight/tail_of(., E(.))$degree}
+
+E(anakinIsLukesFather)$headPercMovies <- anakinIsLukesFather %>%
+  {E(.)$weight/head_of(., E(.))$degree}
+
+anakinIsLukesFather %>%
+  as_data_frame('edges') %>%
+  knitr::kable()
+```
+
+
+
+|from               |to                    | weight| tailPercMovies| headPercMovies|
+|:------------------|:---------------------|------:|--------------:|--------------:|
+|Luke Skywalker     |C-3PO                 |      4|      0.4000000|      0.1904762|
+|Luke Skywalker     |R2-D2                 |      5|      0.5000000|      0.2380952|
+|Luke Skywalker     |Leia Organa           |      5|      0.5000000|      0.5000000|
+|Luke Skywalker     |Obi-Wan Kenobi        |      4|      0.4000000|      0.1904762|
+|Luke Skywalker     |Anakin Skywalker      |      4|      0.4000000|      0.1904762|
+|Luke Skywalker     |Chewbacca             |      5|      0.5000000|      0.5000000|
+|Luke Skywalker     |Yoda                  |      3|      0.3000000|      0.1875000|
+|Luke Skywalker     |Palpatine             |      3|      0.3000000|      0.1875000|
+|Luke Skywalker     |Han Solo              |      4|      0.4000000|      0.5000000|
+|Luke Skywalker     |Wedge Antilles        |      3|      0.3000000|      0.3750000|
+|C-3PO              |R2-D2                 |      6|      0.2857143|      0.2857143|
+|C-3PO              |Leia Organa           |      4|      0.1904762|      0.4000000|
+|C-3PO              |Owen Lars             |      3|      0.1428571|      0.6000000|
+|C-3PO              |Beru Whitesun lars    |      3|      0.1428571|      0.6000000|
+|C-3PO              |Obi-Wan Kenobi        |      6|      0.2857143|      0.2857143|
+|C-3PO              |Anakin Skywalker      |      6|      0.2857143|      0.2857143|
+|C-3PO              |Chewbacca             |      4|      0.1904762|      0.4000000|
+|C-3PO              |Yoda                  |      5|      0.2380952|      0.3125000|
+|C-3PO              |Palpatine             |      5|      0.2380952|      0.3125000|
+|C-3PO              |Nute Gunray           |      3|      0.1428571|      0.2500000|
+|C-3PO              |Ayla Secura           |      3|      0.1428571|      0.2500000|
+|C-3PO              |Mace Windu            |      3|      0.1428571|      0.2500000|
+|C-3PO              |Ki-Adi-Mundi          |      3|      0.1428571|      0.2500000|
+|C-3PO              |Kit Fisto             |      3|      0.1428571|      0.2500000|
+|C-3PO              |Plo Koon              |      3|      0.1428571|      0.2500000|
+|C-3PO              |Padmé Amidala         |      3|      0.1428571|      0.2500000|
+|C-3PO              |Han Solo              |      3|      0.1428571|      0.3750000|
+|C-3PO              |Jabba Desilijic Tiure |      3|      0.1428571|      0.7500000|
+|C-3PO              |Wedge Antilles        |      3|      0.1428571|      0.3750000|
+|C-3PO              |Boba Fett             |      3|      0.1428571|      0.5000000|
+|R2-D2              |Leia Organa           |      5|      0.2380952|      0.5000000|
+|R2-D2              |Owen Lars             |      3|      0.1428571|      0.6000000|
+|R2-D2              |Beru Whitesun lars    |      3|      0.1428571|      0.6000000|
+|R2-D2              |Obi-Wan Kenobi        |      6|      0.2857143|      0.2857143|
+|R2-D2              |Anakin Skywalker      |      6|      0.2857143|      0.2857143|
+|R2-D2              |Chewbacca             |      5|      0.2380952|      0.5000000|
+|R2-D2              |Yoda                  |      5|      0.2380952|      0.3125000|
+|R2-D2              |Palpatine             |      5|      0.2380952|      0.3125000|
+|R2-D2              |Nute Gunray           |      3|      0.1428571|      0.2500000|
+|R2-D2              |Ayla Secura           |      3|      0.1428571|      0.2500000|
+|R2-D2              |Mace Windu            |      3|      0.1428571|      0.2500000|
+|R2-D2              |Ki-Adi-Mundi          |      3|      0.1428571|      0.2500000|
+|R2-D2              |Kit Fisto             |      3|      0.1428571|      0.2500000|
+|R2-D2              |Plo Koon              |      3|      0.1428571|      0.2500000|
+|R2-D2              |Padmé Amidala         |      3|      0.1428571|      0.2500000|
+|R2-D2              |Han Solo              |      4|      0.1904762|      0.5000000|
+|R2-D2              |Jabba Desilijic Tiure |      3|      0.1428571|      0.7500000|
+|R2-D2              |Wedge Antilles        |      3|      0.1428571|      0.3750000|
+|R2-D2              |Boba Fett             |      3|      0.1428571|      0.5000000|
+|Leia Organa        |Obi-Wan Kenobi        |      4|      0.4000000|      0.1904762|
+|Leia Organa        |Anakin Skywalker      |      4|      0.4000000|      0.1904762|
+|Leia Organa        |Chewbacca             |      5|      0.5000000|      0.5000000|
+|Leia Organa        |Yoda                  |      3|      0.3000000|      0.1875000|
+|Leia Organa        |Palpatine             |      3|      0.3000000|      0.1875000|
+|Leia Organa        |Han Solo              |      4|      0.4000000|      0.5000000|
+|Leia Organa        |Wedge Antilles        |      3|      0.3000000|      0.3750000|
+|Owen Lars          |Beru Whitesun lars    |      3|      0.6000000|      0.6000000|
+|Owen Lars          |Obi-Wan Kenobi        |      3|      0.6000000|      0.1428571|
+|Owen Lars          |Anakin Skywalker      |      3|      0.6000000|      0.1428571|
+|Beru Whitesun lars |Obi-Wan Kenobi        |      3|      0.6000000|      0.1428571|
+|Beru Whitesun lars |Anakin Skywalker      |      3|      0.6000000|      0.1428571|
+|Obi-Wan Kenobi     |Anakin Skywalker      |      6|      0.2857143|      0.2857143|
+|Obi-Wan Kenobi     |Chewbacca             |      4|      0.1904762|      0.4000000|
+|Obi-Wan Kenobi     |Yoda                  |      5|      0.2380952|      0.3125000|
+|Obi-Wan Kenobi     |Palpatine             |      5|      0.2380952|      0.3125000|
+|Obi-Wan Kenobi     |Nute Gunray           |      3|      0.1428571|      0.2500000|
+|Obi-Wan Kenobi     |Ayla Secura           |      3|      0.1428571|      0.2500000|
+|Obi-Wan Kenobi     |Mace Windu            |      3|      0.1428571|      0.2500000|
+|Obi-Wan Kenobi     |Ki-Adi-Mundi          |      3|      0.1428571|      0.2500000|
+|Obi-Wan Kenobi     |Kit Fisto             |      3|      0.1428571|      0.2500000|
+|Obi-Wan Kenobi     |Plo Koon              |      3|      0.1428571|      0.2500000|
+|Obi-Wan Kenobi     |Padmé Amidala         |      3|      0.1428571|      0.2500000|
+|Obi-Wan Kenobi     |Han Solo              |      3|      0.1428571|      0.3750000|
+|Obi-Wan Kenobi     |Jabba Desilijic Tiure |      3|      0.1428571|      0.7500000|
+|Obi-Wan Kenobi     |Wedge Antilles        |      3|      0.1428571|      0.3750000|
+|Obi-Wan Kenobi     |Boba Fett             |      3|      0.1428571|      0.5000000|
+|Anakin Skywalker   |Chewbacca             |      4|      0.1904762|      0.4000000|
+|Anakin Skywalker   |Yoda                  |      5|      0.2380952|      0.3125000|
+|Anakin Skywalker   |Palpatine             |      5|      0.2380952|      0.3125000|
+|Anakin Skywalker   |Nute Gunray           |      3|      0.1428571|      0.2500000|
+|Anakin Skywalker   |Ayla Secura           |      3|      0.1428571|      0.2500000|
+|Anakin Skywalker   |Mace Windu            |      3|      0.1428571|      0.2500000|
+|Anakin Skywalker   |Ki-Adi-Mundi          |      3|      0.1428571|      0.2500000|
+|Anakin Skywalker   |Kit Fisto             |      3|      0.1428571|      0.2500000|
+|Anakin Skywalker   |Plo Koon              |      3|      0.1428571|      0.2500000|
+|Anakin Skywalker   |Padmé Amidala         |      3|      0.1428571|      0.2500000|
+|Anakin Skywalker   |Han Solo              |      3|      0.1428571|      0.3750000|
+|Anakin Skywalker   |Jabba Desilijic Tiure |      3|      0.1428571|      0.7500000|
+|Anakin Skywalker   |Wedge Antilles        |      3|      0.1428571|      0.3750000|
+|Anakin Skywalker   |Boba Fett             |      3|      0.1428571|      0.5000000|
+|Chewbacca          |Yoda                  |      3|      0.3000000|      0.1875000|
+|Chewbacca          |Palpatine             |      3|      0.3000000|      0.1875000|
+|Chewbacca          |Han Solo              |      4|      0.4000000|      0.5000000|
+|Chewbacca          |Wedge Antilles        |      3|      0.3000000|      0.3750000|
+|Han Solo           |Wedge Antilles        |      3|      0.3750000|      0.3750000|
+|Yoda               |Palpatine             |      5|      0.3125000|      0.3125000|
+|Yoda               |Nute Gunray           |      3|      0.1875000|      0.2500000|
+|Yoda               |Ayla Secura           |      3|      0.1875000|      0.2500000|
+|Yoda               |Mace Windu            |      3|      0.1875000|      0.2500000|
+|Yoda               |Ki-Adi-Mundi          |      3|      0.1875000|      0.2500000|
+|Yoda               |Kit Fisto             |      3|      0.1875000|      0.2500000|
+|Yoda               |Plo Koon              |      3|      0.1875000|      0.2500000|
+|Yoda               |Padmé Amidala         |      3|      0.1875000|      0.2500000|
+|Yoda               |Boba Fett             |      3|      0.1875000|      0.5000000|
+|Palpatine          |Nute Gunray           |      3|      0.1875000|      0.2500000|
+|Palpatine          |Ayla Secura           |      3|      0.1875000|      0.2500000|
+|Palpatine          |Mace Windu            |      3|      0.1875000|      0.2500000|
+|Palpatine          |Ki-Adi-Mundi          |      3|      0.1875000|      0.2500000|
+|Palpatine          |Kit Fisto             |      3|      0.1875000|      0.2500000|
+|Palpatine          |Plo Koon              |      3|      0.1875000|      0.2500000|
+|Palpatine          |Padmé Amidala         |      3|      0.1875000|      0.2500000|
+|Palpatine          |Boba Fett             |      3|      0.1875000|      0.5000000|
+|Nute Gunray        |Ayla Secura           |      3|      0.2500000|      0.2500000|
+|Nute Gunray        |Mace Windu            |      3|      0.2500000|      0.2500000|
+|Nute Gunray        |Ki-Adi-Mundi          |      3|      0.2500000|      0.2500000|
+|Nute Gunray        |Kit Fisto             |      3|      0.2500000|      0.2500000|
+|Nute Gunray        |Plo Koon              |      3|      0.2500000|      0.2500000|
+|Nute Gunray        |Padmé Amidala         |      3|      0.2500000|      0.2500000|
+|Ayla Secura        |Mace Windu            |      3|      0.2500000|      0.2500000|
+|Ayla Secura        |Ki-Adi-Mundi          |      3|      0.2500000|      0.2500000|
+|Ayla Secura        |Kit Fisto             |      3|      0.2500000|      0.2500000|
+|Ayla Secura        |Plo Koon              |      3|      0.2500000|      0.2500000|
+|Ayla Secura        |Padmé Amidala         |      3|      0.2500000|      0.2500000|
+|Mace Windu         |Ki-Adi-Mundi          |      3|      0.2500000|      0.2500000|
+|Mace Windu         |Kit Fisto             |      3|      0.2500000|      0.2500000|
+|Mace Windu         |Plo Koon              |      3|      0.2500000|      0.2500000|
+|Mace Windu         |Padmé Amidala         |      3|      0.2500000|      0.2500000|
+|Ki-Adi-Mundi       |Kit Fisto             |      3|      0.2500000|      0.2500000|
+|Ki-Adi-Mundi       |Plo Koon              |      3|      0.2500000|      0.2500000|
+|Ki-Adi-Mundi       |Padmé Amidala         |      3|      0.2500000|      0.2500000|
+|Kit Fisto          |Plo Koon              |      3|      0.2500000|      0.2500000|
+|Kit Fisto          |Padmé Amidala         |      3|      0.2500000|      0.2500000|
+|Plo Koon           |Padmé Amidala         |      3|      0.2500000|      0.2500000|
+
 
 Learn More!
 ======
