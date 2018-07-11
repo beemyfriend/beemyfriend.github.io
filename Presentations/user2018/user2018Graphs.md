@@ -102,18 +102,22 @@ What happens if relationships change?
 ======
 ![plot of chunk unnamed-chunk-15](user2018Graphs-figure/unnamed-chunk-15-1.png)
 
-
-Node attributes can also be nodes
+What happens if relationships change?
 ======
 ![plot of chunk unnamed-chunk-16](user2018Graphs-figure/unnamed-chunk-16-1.png)
 
+
+Node attributes can also be nodes
+======
+![plot of chunk unnamed-chunk-17](user2018Graphs-figure/unnamed-chunk-17-1.png)
+
 Connections can be projected
 ========
-![plot of chunk unnamed-chunk-17](user2018Graphs-figure/unnamed-chunk-17-1.png)
+![plot of chunk unnamed-chunk-18](user2018Graphs-figure/unnamed-chunk-18-1.png)
 
 These projections enrich our data
 ==========
-![plot of chunk unnamed-chunk-18](user2018Graphs-figure/unnamed-chunk-18-1.png)
+![plot of chunk unnamed-chunk-19](user2018Graphs-figure/unnamed-chunk-19-1.png)
 
 Exploring Graphs with igraph
 =====
@@ -134,47 +138,47 @@ Practical Application: Recommendations
 Content Based Recommendations
 ========================================================
 
-<img src="collabFilter/shopRec05.png" title="plot of chunk unnamed-chunk-19" alt="plot of chunk unnamed-chunk-19" width="100%" />
+<img src="collabFilter/shopRec05.png" title="plot of chunk unnamed-chunk-20" alt="plot of chunk unnamed-chunk-20" width="100%" />
 
 Content Based Recommendations
 ========================================================
 
-<img src="collabFilter/shopRec06.png" title="plot of chunk unnamed-chunk-20" alt="plot of chunk unnamed-chunk-20" width="100%" />
+<img src="collabFilter/shopRec06.png" title="plot of chunk unnamed-chunk-21" alt="plot of chunk unnamed-chunk-21" width="100%" />
 
 Content Based Recommendations
 ========================================================
 
-<img src="collabFilter/shopRec07.png" title="plot of chunk unnamed-chunk-21" alt="plot of chunk unnamed-chunk-21" width="100%" />
+<img src="collabFilter/shopRec07.png" title="plot of chunk unnamed-chunk-22" alt="plot of chunk unnamed-chunk-22" width="100%" />
 
 Content Based Recommendations
 ========================================================
 
-<img src="collabFilter/shopRec08.png" title="plot of chunk unnamed-chunk-22" alt="plot of chunk unnamed-chunk-22" width="100%" />
+<img src="collabFilter/shopRec08.png" title="plot of chunk unnamed-chunk-23" alt="plot of chunk unnamed-chunk-23" width="100%" />
 
 Content Based Recommendations 
 ========================================================
 
-<img src="collabFilter/shopRec09.png" title="plot of chunk unnamed-chunk-23" alt="plot of chunk unnamed-chunk-23" width="100%" />
+<img src="collabFilter/shopRec09.png" title="plot of chunk unnamed-chunk-24" alt="plot of chunk unnamed-chunk-24" width="100%" />
 
 Collaborative Filtering 
 ========================================================
 
-<img src="collabFilter/shopRec01.png" title="plot of chunk unnamed-chunk-24" alt="plot of chunk unnamed-chunk-24" width="100%" />
+<img src="collabFilter/shopRec01.png" title="plot of chunk unnamed-chunk-25" alt="plot of chunk unnamed-chunk-25" width="100%" />
 
 Collaborative Filtering 
 ========================================================
 
-<img src="collabFilter/shopRec02.png" title="plot of chunk unnamed-chunk-25" alt="plot of chunk unnamed-chunk-25" width="100%" />
+<img src="collabFilter/shopRec02.png" title="plot of chunk unnamed-chunk-26" alt="plot of chunk unnamed-chunk-26" width="100%" />
 
 Collaborative Filtering 
 ========================================================
 
-<img src="collabFilter/shopRec03.png" title="plot of chunk unnamed-chunk-26" alt="plot of chunk unnamed-chunk-26" width="100%" />
+<img src="collabFilter/shopRec03.png" title="plot of chunk unnamed-chunk-27" alt="plot of chunk unnamed-chunk-27" width="100%" />
 
 Collaborative Filtering 
 ========================================================
 
-<img src="collabFilter/shopRec04.png" title="plot of chunk unnamed-chunk-27" alt="plot of chunk unnamed-chunk-27" width="100%" />
+<img src="collabFilter/shopRec04.png" title="plot of chunk unnamed-chunk-28" alt="plot of chunk unnamed-chunk-28" width="100%" />
 
 
 Exploring Graphs with igraph
@@ -191,61 +195,61 @@ Exploring Graphs with igraph
 What nodes are important?
 =====
 
-![plot of chunk unnamed-chunk-28](user2018Graphs-figure/unnamed-chunk-28-1.png)
+![plot of chunk unnamed-chunk-29](user2018Graphs-figure/unnamed-chunk-29-1.png)
 
 get_diameter() and shortest_paths()
 ===
-![plot of chunk unnamed-chunk-29](user2018Graphs-figure/unnamed-chunk-29-1.png)
+![plot of chunk unnamed-chunk-30](user2018Graphs-figure/unnamed-chunk-30-1.png)
 
 betweenness(g, directed = T)
 =======
-![plot of chunk unnamed-chunk-30](user2018Graphs-figure/unnamed-chunk-30-1.png)
+![plot of chunk unnamed-chunk-31](user2018Graphs-figure/unnamed-chunk-31-1.png)
 
 betweenness(g, directed = F)
 =======
-![plot of chunk unnamed-chunk-31](user2018Graphs-figure/unnamed-chunk-31-1.png)
+![plot of chunk unnamed-chunk-32](user2018Graphs-figure/unnamed-chunk-32-1.png)
 
 
 degree(g, mode = 'in')
 =======
-![plot of chunk unnamed-chunk-32](user2018Graphs-figure/unnamed-chunk-32-1.png)
+![plot of chunk unnamed-chunk-33](user2018Graphs-figure/unnamed-chunk-33-1.png)
 
 degree(g, mode = 'out')
 =========
-![plot of chunk unnamed-chunk-33](user2018Graphs-figure/unnamed-chunk-33-1.png)
+![plot of chunk unnamed-chunk-34](user2018Graphs-figure/unnamed-chunk-34-1.png)
 
 degree(g, mode = 'all')
 ===========
-![plot of chunk unnamed-chunk-34](user2018Graphs-figure/unnamed-chunk-34-1.png)
+![plot of chunk unnamed-chunk-35](user2018Graphs-figure/unnamed-chunk-35-1.png)
 
 
 closeness(g, mode = 'in')
 =======
-![plot of chunk unnamed-chunk-35](user2018Graphs-figure/unnamed-chunk-35-1.png)
+![plot of chunk unnamed-chunk-36](user2018Graphs-figure/unnamed-chunk-36-1.png)
 
 closeness(g, mode = 'out')
 =======
-![plot of chunk unnamed-chunk-36](user2018Graphs-figure/unnamed-chunk-36-1.png)
+![plot of chunk unnamed-chunk-37](user2018Graphs-figure/unnamed-chunk-37-1.png)
 
 closeness(g, mode = 'all')
 =======
-![plot of chunk unnamed-chunk-37](user2018Graphs-figure/unnamed-chunk-37-1.png)
+![plot of chunk unnamed-chunk-38](user2018Graphs-figure/unnamed-chunk-38-1.png)
 
 hub_score()
 =======
-![plot of chunk unnamed-chunk-38](user2018Graphs-figure/unnamed-chunk-38-1.png)
+![plot of chunk unnamed-chunk-39](user2018Graphs-figure/unnamed-chunk-39-1.png)
 
 authority_score()
 =======
-![plot of chunk unnamed-chunk-39](user2018Graphs-figure/unnamed-chunk-39-1.png)
+![plot of chunk unnamed-chunk-40](user2018Graphs-figure/unnamed-chunk-40-1.png)
 
 page_rank(g, directed = T)
 ====
-![plot of chunk unnamed-chunk-40](user2018Graphs-figure/unnamed-chunk-40-1.png)
+![plot of chunk unnamed-chunk-41](user2018Graphs-figure/unnamed-chunk-41-1.png)
 
 page_rank(g, directed = F)
 ====
-![plot of chunk unnamed-chunk-41](user2018Graphs-figure/unnamed-chunk-41-1.png)
+![plot of chunk unnamed-chunk-42](user2018Graphs-figure/unnamed-chunk-42-1.png)
 
 Exploring Graphs with igraph
 =====
@@ -277,40 +281,40 @@ TextRank Algorithm
 
 Proximity as a connection
 =====
-![plot of chunk unnamed-chunk-42](user2018Graphs-figure/unnamed-chunk-42-1.png)
+![plot of chunk unnamed-chunk-43](user2018Graphs-figure/unnamed-chunk-43-1.png)
 
 
 D TextRank: Benjamin Ortiz Ulloa
 =====
-![plot of chunk unnamed-chunk-43](user2018Graphs-figure/unnamed-chunk-43-1.png)
+![plot of chunk unnamed-chunk-44](user2018Graphs-figure/unnamed-chunk-44-1.png)
 
 UD TextRank: Benjamin Ortiz Ulloa
 ====
-![plot of chunk unnamed-chunk-44](user2018Graphs-figure/unnamed-chunk-44-1.png)
+![plot of chunk unnamed-chunk-45](user2018Graphs-figure/unnamed-chunk-45-1.png)
 
 D TextRank: Miguel Gonzalez-Fierro
 =====
-![plot of chunk unnamed-chunk-45](user2018Graphs-figure/unnamed-chunk-45-1.png)
+![plot of chunk unnamed-chunk-46](user2018Graphs-figure/unnamed-chunk-46-1.png)
 
 UD TextRank: Miguel Gonzalez-Fierro
 =====
-![plot of chunk unnamed-chunk-46](user2018Graphs-figure/unnamed-chunk-46-1.png)
+![plot of chunk unnamed-chunk-47](user2018Graphs-figure/unnamed-chunk-47-1.png)
 
 D TextRank: Amy Stringer
 ====
-![plot of chunk unnamed-chunk-47](user2018Graphs-figure/unnamed-chunk-47-1.png)
+![plot of chunk unnamed-chunk-48](user2018Graphs-figure/unnamed-chunk-48-1.png)
 
 UD TextRank: Amy Stringer
 ====
-![plot of chunk unnamed-chunk-48](user2018Graphs-figure/unnamed-chunk-48-1.png)
+![plot of chunk unnamed-chunk-49](user2018Graphs-figure/unnamed-chunk-49-1.png)
 
 D TextRank: Snehalata Huzurbazar
 ======
-![plot of chunk unnamed-chunk-49](user2018Graphs-figure/unnamed-chunk-49-1.png)
+![plot of chunk unnamed-chunk-50](user2018Graphs-figure/unnamed-chunk-50-1.png)
 
 UD TextRank: Snehalata Huzurbazar
 ======
-![plot of chunk unnamed-chunk-50](user2018Graphs-figure/unnamed-chunk-50-1.png)
+![plot of chunk unnamed-chunk-51](user2018Graphs-figure/unnamed-chunk-51-1.png)
 Exploring Graphs with igraph
 =====
 <ol>
@@ -469,9 +473,9 @@ g
 ```
 
 ```
-IGRAPH 0e3fcc3 DN-B 357 899 -- 
+IGRAPH 77fb71a DN-B 357 899 -- 
 + attr: name (v/c), type (v/c), type (e/c)
-+ edges from 0e3fcc3 (vertex names):
++ edges from 77fb71a (vertex names):
  [1] Luke Skywalker       ->172 C-3PO                ->167
  [3] R2-D2                ->96  Darth Vader          ->202
  [5] Leia Organa          ->150 Owen Lars            ->178
@@ -504,7 +508,7 @@ V(g)[name == "Luke Skywalker"]
 ```
 
 ```
-+ 1/357 vertex, named, from 0e3fcc3:
++ 1/357 vertex, named, from 77fb71a:
 [1] Luke Skywalker
 ```
 
@@ -513,7 +517,7 @@ V(g)[type == 'a character']
 ```
 
 ```
-+ 87/357 vertices, named, from 0e3fcc3:
++ 87/357 vertices, named, from 77fb71a:
  [1] Luke Skywalker        C-3PO                 R2-D2                
  [4] Darth Vader           Leia Organa           Owen Lars            
  [7] Beru Whitesun lars    R5-D4                 Biggs Darklighter    
@@ -537,7 +541,7 @@ E(g)[type == 'has films']
 ```
 
 ```
-+ 173/899 edges from 0e3fcc3 (vertex names):
++ 173/899 edges from 77fb71a (vertex names):
  [1] Luke Skywalker->Revenge of the Sith    
  [2] Luke Skywalker->Return of the Jedi     
  [3] Luke Skywalker->The Empire Strikes Back
@@ -556,7 +560,7 @@ E(g)['Luke Skywalker' %--% V(g)]
 ```
 
 ```
-+ 18/899 edges from 0e3fcc3 (vertex names):
++ 18/899 edges from 77fb71a (vertex names):
  [1] Luke Skywalker->172                    
  [2] Luke Skywalker->77                     
  [3] Luke Skywalker->blond                  
@@ -580,9 +584,9 @@ g - E(g)[!'Luke Skywalker' %--% V(g)]
 ```
 
 ```
-IGRAPH 4ec0480 DN-B 357 18 -- 
+IGRAPH 117c5f8 DN-B 357 18 -- 
 + attr: name (v/c), type (v/c), type (e/c)
-+ edges from 4ec0480 (vertex names):
++ edges from 117c5f8 (vertex names):
  [1] Luke Skywalker->172                    
  [2] Luke Skywalker->77                     
  [3] Luke Skywalker->blond                  
@@ -610,9 +614,9 @@ g %>%
 ```
 
 ```
-IGRAPH d43f8f0 DN-B 10 10 -- 
+IGRAPH 6a98278 DN-B 10 10 -- 
 + attr: name (v/c), type (v/c), type (e/c)
-+ edges from d43f8f0 (vertex names):
++ edges from 6a98278 (vertex names):
  [1] Luke Skywalker  ->Revenge of the Sith    
  [2] Luke Skywalker  ->Return of the Jedi     
  [3] Luke Skywalker  ->The Empire Strikes Back
@@ -644,9 +648,9 @@ movieCharProj
 
 ```
 $proj1
-IGRAPH 688640c UNW- 7 21 -- 
+IGRAPH 3bf1c42 UNW- 7 21 -- 
 + attr: name (v/c), weight (e/n)
-+ edges from 688640c (vertex names):
++ edges from 3bf1c42 (vertex names):
  [1] Revenge of the Sith--Return of the Jedi     
  [2] Revenge of the Sith--The Empire Strikes Back
  [3] Revenge of the Sith--A New Hope             
@@ -658,9 +662,9 @@ IGRAPH 688640c UNW- 7 21 --
 + ... omitted several edges
 
 $proj2
-IGRAPH 6567829 UNW- 87 1793 -- 
+IGRAPH a8bdff3 UNW- 87 1793 -- 
 + attr: name (v/c), weight (e/n)
-+ edges from 6567829 (vertex names):
++ edges from a8bdff3 (vertex names):
  [1] Luke Skywalker--C-3PO              Luke Skywalker--R2-D2             
  [3] Luke Skywalker--Darth Vader        Luke Skywalker--Leia Organa       
  [5] Luke Skywalker--Owen Lars          Luke Skywalker--Beru Whitesun lars
@@ -674,11 +678,11 @@ IGRAPH 6567829 UNW- 87 1793 --
 
 Projections
 ====
-![plot of chunk unnamed-chunk-60](user2018Graphs-figure/unnamed-chunk-60-1.png)
+![plot of chunk unnamed-chunk-61](user2018Graphs-figure/unnamed-chunk-61-1.png)
 
 Projections: All Character Connections
 ====
-![plot of chunk unnamed-chunk-61](user2018Graphs-figure/unnamed-chunk-61-1.png)
+![plot of chunk unnamed-chunk-62](user2018Graphs-figure/unnamed-chunk-62-1.png)
 
 Untangle the hairball
 ===
@@ -707,9 +711,9 @@ movieCharProj[[2]] %>%
 ```
 
 ```
-IGRAPH 68d38c0 UNW- 23 134 -- 
+IGRAPH 76e4418 UNW- 23 134 -- 
 + attr: name (v/c), weight (e/n)
-+ edges from 68d38c0 (vertex names):
++ edges from 76e4418 (vertex names):
  [1] Luke Skywalker--C-3PO              Luke Skywalker--R2-D2             
  [3] Luke Skywalker--Darth Vader        Luke Skywalker--Leia Organa       
  [5] Luke Skywalker--Obi-Wan Kenobi     Luke Skywalker--Chewbacca         
@@ -724,12 +728,12 @@ IGRAPH 68d38c0 UNW- 23 134 --
 Untangle the hairball
 =====
 class:small-code
-![plot of chunk unnamed-chunk-64](user2018Graphs-figure/unnamed-chunk-64-1.png)
+![plot of chunk unnamed-chunk-65](user2018Graphs-figure/unnamed-chunk-65-1.png)
 
 Untangle the hairball: PageRank
 ====
 class:small-code
-![plot of chunk unnamed-chunk-65](user2018Graphs-figure/unnamed-chunk-65-1.png)
+![plot of chunk unnamed-chunk-66](user2018Graphs-figure/unnamed-chunk-66-1.png)
 
 Changing the data changes the network
 =====
@@ -759,12 +763,12 @@ anakinIsLukesFather <- g %>%
 Changing the data changes the network
 =====
 class:small-code
-![plot of chunk unnamed-chunk-67](user2018Graphs-figure/unnamed-chunk-67-1.png)
+![plot of chunk unnamed-chunk-68](user2018Graphs-figure/unnamed-chunk-68-1.png)
 
 Changing the network changes the PageRank
 ==== 
 class:small-code
-![plot of chunk unnamed-chunk-68](user2018Graphs-figure/unnamed-chunk-68-1.png)
+![plot of chunk unnamed-chunk-69](user2018Graphs-figure/unnamed-chunk-69-1.png)
 
 Learn More!
 ======

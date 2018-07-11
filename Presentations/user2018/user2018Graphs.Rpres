@@ -202,7 +202,7 @@ Edge attributes provide context
 ====
 ```{r, echo = F, fig.width = 15, fig.height = 10}
 tempG <- make_empty_graph(directed = F) +
-  vertices(c("Person1", "Person2", "Person3", 'Person4', "Person5", "Person6"),
+  vertices(c("Person1", "Person2", "Person3", 'Person4', "Person5"),
            size = 45,
            label.cex = 1.75,
            label.font = 2) +
@@ -212,16 +212,18 @@ tempG <- make_empty_graph(directed = F) +
       "Person2", "Person3",
       "Person1", "Person4",
       "Person1", "Person5",
-      "Person1", "Person6"),
-    lty1 = c(1, 2, 1),
-    label1 = c("Like", "Like", "Like", '', '', ''),
-    label2 = c("Like", "Dislike", "Dislike", '', '', ''),
-    label3 = c("Like", "Dislike", "???", "Like", "Like", "Like"),
-    label3 = rep('Like', 6),
+      "Person2", "Person4",
+      "Person2", "Person5"),
+    lty1 = c(1, 2, 1, 1, 1, 1),
+    lty2 = c(1, 2, 2, 1, 1, 1),
+    label1 = c("Like", "Like", "Like", '', '', '', ''),
+    label2 = c("Like", "Dislike", "Dislike", '', '', '', ''),
+    label3 = c("???", "Dislike", "???", "Like", "Like", "Like", 'Like'),
+    label4 = c("Like", "Dislike", "Dislike", "Like", "Like", "Like", 'Like'),
     color1 = "#1b9e77",
     color2 = c("#1b9e77", "#d95f02", "#d95f02"),
-    color3 = c("#1b9e77", 'lightgrey', 'lightgrey'),
-    color3 = c("#1b9e77", "#d95f02", "lightgrey", rep("#1b9e77", 3)),
+    color3 = c("lightgrey", '#d95f02', 'lightgrey'),
+    color4 = c("#1b9e77", "#d95f02", "#d95f02", rep("#1b9e77", 3)),
     label.cex = 2,
     label.font = 2,
     width = 8
@@ -229,7 +231,7 @@ tempG <- make_empty_graph(directed = F) +
 
 tempG %>%
   {. - E(.)[2:3]} %>%
-  {. - V(.)[c('Person4', 'Person5', 'Person6')]} %>%
+  {. - V(.)[c('Person4', 'Person5')]} %>%
   plot(layout = layout,
        vertex.size = c(45, 45, 0),
        vertex.label = c("Person1", "Person2", ''),
@@ -241,7 +243,7 @@ Friend of my friend...
 ====
 ```{r, echo = F, fig.width = 15, fig.height = 10}
 tempG  %>%
-  {. - V(.)[c('Person4', 'Person5', 'Person6')]} %>%
+  {. - V(.)[c('Person4', 'Person5')]} %>%
   plot(layout = layout,
      edge.label = E(.)$label1,
      edge.color = E(.)$color1)
@@ -251,7 +253,7 @@ or enemy of my enemy?
 ====
 ```{r, echo = F, fig.width = 15, fig.height = 10}
 tempG  %>%
-  {. - V(.)[c('Person4', 'Person5', 'Person6')]} %>%
+  {. - V(.)[c('Person4', 'Person5')]} %>%
   plot(layout= layout,
        edge.label = E(.)$label2,
        edge.color = E(.)$color2)
@@ -261,7 +263,7 @@ What happens if relationships change?
 ======
 ```{r, echo = F, fig.width = 15, fig.height = 10}
 tempG %>%
-  {. - V(.)[c('Person4', 'Person5', 'Person6')]} %>%
+  {. - V(.)[c('Person4', 'Person5')]} %>%
   plot(layout = layout,
        vertex.label = c("Person1", "Person2", 'Person3'),
        edge.label = c("Like", 'Like', 'Like'),
@@ -272,11 +274,27 @@ What happens if relationships change?
 ======
 ```{r, echo = F, fig.width = 15, fig.height = 10}
 tempG %>%
-  {. - V(.)[c('Person4', 'Person5', 'Person6')]} %>%
+  {. - V(.)[c('Person4', 'Person5')]} %>%
   plot(layout = layout,
-       edge.label = c("Like", 'No Longer Likes', '????'),
+       edge.label = E(.)$label3,
        edge.color = E(.)$color3,
        edge.lty = E(.)$lty1)
+```
+
+What happens if relationships change?
+======
+```{r, echo = F, fig.width = 15, fig.height = 10}
+tempLayout <- matrix(ncol = 2, byrow = T,
+                     c(4, 5,
+                       3, 1,
+                       5, 1,
+                       2, 4,
+                       2, 2))
+tempG %>%
+  plot(layout = tempLayout,
+       edge.label = E(.)$label4,
+       edge.color = E(.)$color4,
+       edge.lty = E(.)$lty2)
 ```
 
 
@@ -671,7 +689,7 @@ AmyStringer <- "The Catlin Seaview project is a large scale reef survey for esti
 SnehalataHuzurbazar <- "Dimension reduction for high-dimensional data is necessary for descriptive data analysis. Most researchers restrict themselves to visualizing 2 or 3 dimensions, however, to understand relationships between many variables in high-dimensional data, more dimensions are needed. This talk presents several new options for visualizing beyond 3D. These are illustrated using 16S rRNA microbiome data. We will show intensity plots developed to highlight the changing contributions of taxa (or subjects) as the number of principal components of the dimension reduction or ordination method are changed. And secondarily revive Andrews curves, connected with a tour algorithm for viewing 1D projections of multiple principal components, to study group behavior in the high-dimensional data. The plots provide a quick visualization of taxa subjects that are close to the center or that contribute to dissimilarity. They also allow for exploration of patterns among related subjects or taxa not seen in other visualizations. All code is written in R and available on Github."
 
 set.seed(4321)
-createTextRank(BenjaminOrtizUlloa, T) %>%
+createTextRank(BenjaminOrtizUlloa) %>%
   {. - V(.)[pr < sort(V(.)$pr, T)[ceiling(vcount(.)/cutOff)]]} %>%
   {. - V(.)[degree(.) == 0]} %>%
   plot( )
@@ -681,7 +699,7 @@ UD TextRank: Benjamin Ortiz Ulloa
 ====
 ```{r echo = F, fig.width = 15, fig.height = 10}
 set.seed(4321)
-createTextRank(BenjaminOrtizUlloa, T, F) %>%
+createTextRank(BenjaminOrtizUlloa, F, F) %>%
   {. - V(.)[pr < sort(V(.)$pr, T)[ceiling(vcount(.)/cutOff)]]} %>%
   {. - V(.)[degree(.) == 0]} %>%
   plot( )
@@ -692,7 +710,7 @@ D TextRank: Miguel Gonzalez-Fierro
 ```{r echo = F, fig.width = 15, fig.height = 10}
 set.seed(4321)
 MiguelGonzalez_Fierro %>%
-  createTextRank(T) %>%
+  createTextRank(F, T) %>%
   {. - V(.)[pr < sort(V(.)$pr, T)[ceiling(vcount(.)/cutOff)]]} %>%
   {. - V(.)[degree(.) == 0]} %>%
   plot()
@@ -703,7 +721,7 @@ UD TextRank: Miguel Gonzalez-Fierro
 ```{r echo = F, fig.width = 15, fig.height = 10}
 set.seed(4321)
 MiguelGonzalez_Fierro %>%
-  createTextRank(T, F) %>%
+  createTextRank(F, F) %>%
   {. - V(.)[pr < sort(V(.)$pr, T)[ceiling(vcount(.)/cutOff)]]} %>%
   {. - V(.)[degree(.) == 0]} %>%
   plot( )
@@ -714,7 +732,7 @@ D TextRank: Amy Stringer
 ```{r echo = F, fig.width = 15, fig.height = 10}
 set.seed(4321)
 AmyStringer %>%
-  createTextRank(T) %>%
+  createTextRank(F, T) %>%
   {. - V(.)[pr < sort(V(.)$pr, T)[ceiling(vcount(.)/cutOff)]]} %>%
   {. - V(.)[degree(.) == 0]} %>%
   plot( )
@@ -725,7 +743,7 @@ UD TextRank: Amy Stringer
 ```{r echo = F, fig.width = 15, fig.height = 10}
 set.seed(4321)
 AmyStringer %>%
-  createTextRank(T, F) %>%
+  createTextRank(F, F) %>%
   {. - V(.)[pr < sort(V(.)$pr, T)[ceiling(vcount(.)/cutOff)]]} %>%
   {. - V(.)[degree(.) == 0]} %>%
   plot()
@@ -736,7 +754,7 @@ D TextRank: Snehalata Huzurbazar
 ```{r echo = F, fig.width = 15, fig.height = 10}
 set.seed(4321)
 SnehalataHuzurbazar %>%
-  createTextRank(T) %>%
+  createTextRank(F, T) %>%
   {. - V(.)[pr < sort(V(.)$pr, T)[ceiling(vcount(.)/cutOff)]]} %>%
   {. - V(.)[degree(.) == 0]} %>%
   plot()
