@@ -905,6 +905,15 @@ g %>%
   {. - V(.)[degree(.) == 0]}
 ```
 
+Assigning Data to Vertices
+====
+class:small-code
+```{r}
+V(g)$degree <- degree(g)
+
+V(g)[[]]
+```
+
 Projections
 =====
 class:small-code
@@ -1003,6 +1012,10 @@ anakinIsLukesFather <- g %>%
   {. - E(.)[type != 'has films']} %>%
   {. - V(.)[degree(.) == 0]} %>%
   {
+    V(.)$degree <- degree(.)
+    .
+  } %>%
+  {
     V(.)$type <- V(.)$type == 'a character'
     .
   } %>%
@@ -1037,15 +1050,6 @@ anakinIsLukesFather %>%
        vertex.label.cex = 2 * (V(.)$pr/max(V(.)$pr)))
 ```
 
-
-Assigning Data to Vertices
-====
-class:small-code
-```{r}
-V(anakinIsLukesFather)$degree <- degree(anakinIsLukesFather)
-
-E(anakinIsLukesFather)[[]]
-```
 
 Assigning Data to Edges
 ====

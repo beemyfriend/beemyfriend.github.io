@@ -473,9 +473,9 @@ g
 ```
 
 ```
-IGRAPH 84e372f DN-B 357 899 -- 
+IGRAPH 2886437 DN-B 357 899 -- 
 + attr: name (v/c), type (v/c), type (e/c)
-+ edges from 84e372f (vertex names):
++ edges from 2886437 (vertex names):
  [1] Luke Skywalker       ->172 C-3PO                ->167
  [3] R2-D2                ->96  Darth Vader          ->202
  [5] Leia Organa          ->150 Owen Lars            ->178
@@ -1788,7 +1788,7 @@ V(g)[name == "Luke Skywalker"]
 ```
 
 ```
-+ 1/357 vertex, named, from 84e372f:
++ 1/357 vertex, named, from 2886437:
 [1] Luke Skywalker
 ```
 
@@ -1797,7 +1797,7 @@ V(g)[[type == 'a character']]
 ```
 
 ```
-+ 87/357 vertices, named, from 84e372f:
++ 87/357 vertices, named, from 2886437:
                     name        type
 1         Luke Skywalker a character
 2                  C-3PO a character
@@ -1898,7 +1898,7 @@ E(g)[type == 'has films']
 ```
 
 ```
-+ 173/899 edges from 84e372f (vertex names):
++ 173/899 edges from 2886437 (vertex names):
  [1] Luke Skywalker->Revenge of the Sith    
  [2] Luke Skywalker->Return of the Jedi     
  [3] Luke Skywalker->The Empire Strikes Back
@@ -1917,7 +1917,7 @@ E(g)[['Luke Skywalker' %--% V(g)]]
 ```
 
 ```
-+ 18/899 edges from 84e372f (vertex names):
++ 18/899 edges from 2886437 (vertex names):
               tail                    head tid hid           type
 1   Luke Skywalker                     172   1  88     has height
 82  Luke Skywalker                      77   1 133       has mass
@@ -1949,7 +1949,7 @@ tail_of(g, E(g))
 ```
 
 ```
-+ 899/357 vertices, named, from 84e372f:
++ 899/357 vertices, named, from 2886437:
   [1] Luke Skywalker        C-3PO                 R2-D2                
   [4] Darth Vader           Leia Organa           Owen Lars            
   [7] Beru Whitesun lars    R5-D4                 Biggs Darklighter    
@@ -1969,7 +1969,7 @@ head_of(g, E(g))
 ```
 
 ```
-+ 899/357 vertices, named, from 84e372f:
++ 899/357 vertices, named, from 2886437:
   [1] 172                         167                        
   [3] 96                          202                        
   [5] 150                         178                        
@@ -1993,9 +1993,9 @@ g - E(g)[!'Luke Skywalker' %--% V(g)]
 ```
 
 ```
-IGRAPH 12579b4 DN-B 357 18 -- 
+IGRAPH 210c3b8 DN-B 357 18 -- 
 + attr: name (v/c), type (v/c), type (e/c)
-+ edges from 12579b4 (vertex names):
++ edges from 210c3b8 (vertex names):
  [1] Luke Skywalker->172                    
  [2] Luke Skywalker->77                     
  [3] Luke Skywalker->blond                  
@@ -2023,9 +2023,9 @@ g %>%
 ```
 
 ```
-IGRAPH a08f773 DN-B 10 10 -- 
+IGRAPH 67ac798 DN-B 10 10 -- 
 + attr: name (v/c), type (v/c), type (e/c)
-+ edges from a08f773 (vertex names):
++ edges from 67ac798 (vertex names):
  [1] Luke Skywalker  ->Revenge of the Sith    
  [2] Luke Skywalker  ->Return of the Jedi     
  [3] Luke Skywalker  ->The Empire Strikes Back
@@ -2035,6 +2035,378 @@ IGRAPH a08f773 DN-B 10 10 --
  [7] Anakin Skywalker->The Phantom Menace     
  [8] Anakin Skywalker->Revenge of the Sith    
 + ... omitted several edges
+```
+
+Assigning Data to Vertices
+====
+class:small-code
+
+```r
+V(g)$degree <- degree(g)
+
+V(g)[[]]
+```
+
+```
++ 357/357 vertices, named, from 2886437:
+                           name            type degree
+1                Luke Skywalker     a character     18
+2                         C-3PO     a character     13
+3                         R2-D2     a character     14
+4                   Darth Vader     a character     14
+5                   Leia Organa     a character     15
+6                     Owen Lars     a character     12
+7            Beru Whitesun lars     a character     12
+8                         R5-D4     a character      7
+9             Biggs Darklighter     a character     11
+10               Obi-Wan Kenobi     a character     21
+11             Anakin Skywalker     a character     17
+12               Wilhuff Tarkin     a character     10
+13                    Chewbacca     a character     17
+14                     Han Solo     a character     15
+15                       Greedo     a character      9
+16        Jabba Desilijic Tiure     a character     11
+17               Wedge Antilles     a character     14
+18             Jek Tono Porkins     a character     10
+19                         Yoda     a character     13
+20                    Palpatine     a character     14
+21                    Boba Fett     a character     13
+22                        IG-88     a character      9
+23                        Bossk     a character     10
+24             Lando Calrissian     a character     12
+25                        Lobot     a character     10
+26                       Ackbar     a character     11
+27                   Mon Mothma     a character      9
+28        Wicket Systri Warrick     a character     10
+29                    Nien Nunb     a character     10
+30                 Qui-Gon Jinn     a character     10
+31                  Nute Gunray     a character     11
+32                Finis Valorum     a character      9
+33                Jar Jar Binks     a character     11
+34                 Roos Tarpals     a character      9
+35                   Rugor Nass     a character      8
+36                     Ric Olié     a character      8
+37                        Watto     a character      9
+38                      Sebulba     a character      9
+39                Quarsh Panaka     a character      8
+40               Shmi Skywalker     a character     10
+41                   Darth Maul     a character     12
+42                  Bib Fortuna     a character      8
+43                  Ayla Secura     a character     12
+44                     Dud Bolt     a character      9
+45                      Gasgano     a character      8
+46               Ben Quadinaros     a character      9
+47                   Mace Windu     a character     12
+48                 Ki-Adi-Mundi     a character     12
+49                    Kit Fisto     a character     11
+50                    Eeth Koth     a character      9
+51                   Adi Gallia     a character     10
+52                  Saesee Tiin     a character      9
+53                  Yarael Poof     a character      8
+54                     Plo Koon     a character     13
+55                   Mas Amedda     a character      9
+56                 Gregar Typho     a character     10
+57                        Cordé     a character      8
+58                  Cliegg Lars     a character      9
+59            Poggle the Lesser     a character     10
+60              Luminara Unduli     a character     11
+61                Barriss Offee     a character     10
+62                        Dormé     a character      8
+63                        Dooku     a character     12
+64          Bail Prestor Organa     a character     10
+65                   Jango Fett     a character     10
+66                   Zam Wesell     a character     10
+67              Dexter Jettster     a character      9
+68                      Lama Su     a character      9
+69                      Taun We     a character      8
+70                   Jocasta Nu     a character      8
+71                Ratts Tyerell     a character      9
+72                       R4-P17     a character      7
+73                   Wat Tambor     a character      9
+74                     San Hill     a character      8
+75                     Shaak Ti     a character     10
+76                     Grievous     a character     11
+77                      Tarfful     a character      9
+78              Raymus Antilles     a character     10
+79                    Sly Moore     a character      9
+80                   Tion Medon     a character      9
+81                Padmé Amidala     a character     15
+82                 Arvel Crynyd     a character      7
+83                         Finn     a character      6
+84                          Rey     a character      6
+85                  Poe Dameron     a character      7
+86                          BB8     a character      6
+87               Captain Phasma     a character      5
+88                          172 not a character      1
+89                          167 not a character      2
+90                           96 not a character      2
+91                          202 not a character      1
+92                          150 not a character      2
+93                          178 not a character      4
+94                          165 not a character      3
+95                           97 not a character      1
+96                          183 not a character      7
+97                          182 not a character      1
+98                          188 not a character      5
+99                          180 not a character      5
+100                         228 not a character      1
+101                         173 not a character      1
+102                         175 not a character      3
+103                         170 not a character      4
+104                          66 not a character      3
+105                         200 not a character      2
+106                         190 not a character      1
+107                         177 not a character      1
+108                          88 not a character      2
+109                         160 not a character      1
+110                         193 not a character      3
+111                         191 not a character      3
+112                         196 not a character      3
+113                         224 not a character      1
+114                         206 not a character      2
+115                         137 not a character      1
+116                         112 not a character      3
+117                         163 not a character      2
+118                          94 not a character      1
+119                         122 not a character      1
+120                         198 not a character      2
+121                         171 not a character      1
+122                         184 not a character      1
+123                         264 not a character      1
+124                         185 not a character      1
+125                         157 not a character      1
+126                         166 not a character      1
+127                         168 not a character      1
+128                         229 not a character      1
+129                         213 not a character      1
+130                          79 not a character      5
+131                         216 not a character      1
+132                         234 not a character      1
+133                          77 not a character      3
+134                          75 not a character      3
+135                          32 not a character      2
+136                         136 not a character      2
+137                          49 not a character      1
+138                         120 not a character      1
+139                          84 not a character      3
+140                          80 not a character      6
+141                          74 not a character      1
+142                        1358 not a character      1
+143                         110 not a character      1
+144                          17 not a character      1
+145                        78.2 not a character      1
+146                         140 not a character      1
+147                         113 not a character      1
+148                          83 not a character      1
+149                          20 not a character      1
+150                          68 not a character      1
+151                          89 not a character      1
+152                          90 not a character      1
+153                          82 not a character      4
+154                          40 not a character      2
+155                          55 not a character      2
+156                          45 not a character      2
+157                          65 not a character      1
+158                          87 not a character      1
+159                          50 not a character      2
+160                          85 not a character      1
+161                        56.2 not a character      1
+162                         102 not a character      2
+163                          15 not a character      2
+164                          48 not a character      4
+165                          57 not a character      2
+166                         159 not a character      1
+167                       blond not a character      3
+168                        none not a character     40
+169                       brown not a character     43
+170                 brown, grey not a character      1
+171                       black not a character     23
+172               auburn, white not a character      1
+173                auburn, grey not a character      1
+174                       white not a character      7
+175                        grey not a character      7
+176                      auburn not a character      1
+177                      blonde not a character      1
+178                     unknown not a character      6
+179                        fair not a character     17
+180                        gold not a character      2
+181                 white, blue not a character      2
+182                       light not a character     11
+183                  white, red not a character      1
+184                       green not a character      6
+185            green-tan, brown not a character      1
+186                        pale not a character      5
+187                       metal not a character      1
+188                        dark not a character      7
+189                brown mottle not a character      1
+190               mottled green not a character      1
+191                      orange not a character     10
+192                  blue, grey not a character      2
+193                   grey, red not a character      1
+194                         red not a character      6
+195                        blue not a character     21
+196         grey, green, yellow not a character      1
+197                      yellow not a character     13
+198                         tan not a character      2
+199         fair, green, yellow not a character      1
+200                  grey, blue not a character      1
+201                 silver, red not a character      1
+202                 green, grey not a character      1
+203            red, blue, white not a character      1
+204                brown, white not a character      1
+205                   blue-gray not a character      1
+206                       hazel not a character      3
+207                        pink not a character      1
+208                   red, blue not a character      1
+209               green, yellow not a character      1
+210                          19 not a character      2
+211                          33 not a character      1
+212                        41.9 not a character      2
+213                          52 not a character      2
+214                          47 not a character      1
+215                          24 not a character      1
+216                          64 not a character      1
+217                          29 not a character      1
+218                          44 not a character      1
+219                         600 not a character      1
+220                          21 not a character      1
+221                         896 not a character      1
+222                        31.5 not a character      1
+223                          53 not a character      1
+224                          31 not a character      1
+225                          37 not a character      1
+226                          41 not a character      1
+227                           8 not a character      1
+228                          92 not a character      2
+229                          91 not a character      1
+230                          62 not a character      1
+231                          72 not a character      2
+232                          54 not a character      1
+233                          22 not a character      1
+234                          58 not a character      1
+235                          67 not a character      1
+236                          46 not a character      1
+237                        male not a character     62
+238                      female not a character     19
+239               hermaphrodite not a character      1
+240                    Tatooine not a character     10
+241                       Naboo not a character     11
+242                    Alderaan not a character      3
+243                     Stewjon not a character      1
+244                      Eriadu not a character      1
+245                    Kashyyyk not a character      2
+246                    Corellia not a character      2
+247                       Rodia not a character      1
+248                   Nal Hutta not a character      1
+249                  Bestine IV not a character      1
+250                      Kamino not a character      3
+251                   Trandosha not a character      1
+252                     Socorro not a character      1
+253                      Bespin not a character      1
+254                    Mon Cala not a character      1
+255                   Chandrila not a character      1
+256                       Endor not a character      1
+257                     Sullust not a character      1
+258              Cato Neimoidia not a character      1
+259                   Coruscant not a character      3
+260                    Toydaria not a character      1
+261                   Malastare not a character      1
+262                    Dathomir not a character      1
+263                      Ryloth not a character      2
+264                     Vulpter not a character      1
+265                     Troiken not a character      1
+266                        Tund not a character      1
+267                  Haruun Kal not a character      1
+268                       Cerea not a character      1
+269                 Glee Anselm not a character      1
+270                    Iridonia not a character      1
+271                     Iktotch not a character      1
+272                     Quermia not a character      1
+273                       Dorin not a character      1
+274                    Champala not a character      1
+275                    Geonosis not a character      1
+276                      Mirial not a character      2
+277                     Serenno not a character      1
+278                Concord Dawn not a character      1
+279                       Zolan not a character      1
+280                        Ojom not a character      1
+281                 Aleen Minor not a character      1
+282                       Skako not a character      1
+283                  Muunilinst not a character      1
+284                       Shili not a character      1
+285                       Kalee not a character      1
+286                      Umbara not a character      1
+287                      Utapau not a character      1
+288                       Human not a character     35
+289                       Droid not a character      5
+290                     Wookiee not a character      2
+291                      Rodian not a character      1
+292                        Hutt not a character      1
+293              Yoda's species not a character      1
+294                  Trandoshan not a character      1
+295                Mon Calamari not a character      1
+296                        Ewok not a character      1
+297                   Sullustan not a character      1
+298                   Neimodian not a character      1
+299                      Gungan not a character      3
+300                   Toydarian not a character      1
+301                         Dug not a character      1
+302                      Zabrak not a character      2
+303                     Twi'lek not a character      2
+304                  Vulptereen not a character      1
+305                       Xexto not a character      1
+306                       Toong not a character      1
+307                      Cerean not a character      1
+308                    Nautolan not a character      1
+309                  Tholothian not a character      1
+310                    Iktotchi not a character      1
+311                    Quermian not a character      1
+312                     Kel Dor not a character      1
+313                    Chagrian not a character      1
+314                   Geonosian not a character      1
+315                    Mirialan not a character      2
+316                    Clawdite not a character      1
+317                    Besalisk not a character      1
+318                    Kaminoan not a character      2
+319                      Aleena not a character      1
+320                     Skakoan not a character      1
+321                        Muun not a character      1
+322                     Togruta not a character      1
+323                     Kaleesh not a character      1
+324                      Pau'an not a character      1
+325         Revenge of the Sith not a character     34
+326          Return of the Jedi not a character     20
+327     The Empire Strikes Back not a character     16
+328                  A New Hope not a character     18
+329           The Force Awakens not a character     11
+330        Attack of the Clones not a character     40
+331          The Phantom Menace not a character     34
+332                 Snowspeeder not a character      2
+333       Imperial Speeder Bike not a character      2
+334             Tribubble bongo not a character      2
+335         Zephyr-G swoop bike not a character      1
+336             XJ-6 airspeeder not a character      1
+337                       AT-ST not a character      1
+338                Sith speeder not a character      1
+339            Flitknot speeder not a character      1
+340  Koro-2 Exodrive airspeeder not a character      1
+341 Tsmeu-6 personal wheel bike not a character      1
+342                      X-wing not a character      4
+343            Imperial shuttle not a character      3
+344             TIE Advanced x1 not a character      1
+345            Jedi starfighter not a character      2
+346    Trade Federation cruiser not a character      2
+347            Naboo star skiff not a character      2
+348            Jedi Interceptor not a character      2
+349    Belbullab-22 starfighter not a character      2
+350               Naboo fighter not a character      3
+351           Millennium Falcon not a character      4
+352                     Slave 1 not a character      1
+353                      A-wing not a character      1
+354        Naboo Royal Starship not a character      1
+355                    Scimitar not a character      1
+356         T-70 X-wing fighter not a character      1
+357         H-type Nubian yacht not a character      1
 ```
 
 Projections
@@ -2057,9 +2429,9 @@ movieCharProj
 
 ```
 $proj1
-IGRAPH 9ad681c UNW- 7 21 -- 
-+ attr: name (v/c), weight (e/n)
-+ edges from 9ad681c (vertex names):
+IGRAPH 5ced86b UNW- 7 21 -- 
++ attr: name (v/c), degree (v/n), weight (e/n)
++ edges from 5ced86b (vertex names):
  [1] Revenge of the Sith--Return of the Jedi     
  [2] Revenge of the Sith--The Empire Strikes Back
  [3] Revenge of the Sith--A New Hope             
@@ -2071,9 +2443,9 @@ IGRAPH 9ad681c UNW- 7 21 --
 + ... omitted several edges
 
 $proj2
-IGRAPH 4f2a200 UNW- 87 1793 -- 
-+ attr: name (v/c), weight (e/n)
-+ edges from 4f2a200 (vertex names):
+IGRAPH 5bfe1be UNW- 87 1793 -- 
++ attr: name (v/c), degree (v/n), weight (e/n)
++ edges from 5bfe1be (vertex names):
  [1] Luke Skywalker--C-3PO              Luke Skywalker--R2-D2             
  [3] Luke Skywalker--Darth Vader        Luke Skywalker--Leia Organa       
  [5] Luke Skywalker--Owen Lars          Luke Skywalker--Beru Whitesun lars
@@ -2087,11 +2459,11 @@ IGRAPH 4f2a200 UNW- 87 1793 --
 
 Projections
 ====
-![plot of chunk unnamed-chunk-64](user2018Graphs-figure/unnamed-chunk-64-1.png)
+![plot of chunk unnamed-chunk-65](user2018Graphs-figure/unnamed-chunk-65-1.png)
 
 Projections: All Character Connections
 ====
-![plot of chunk unnamed-chunk-65](user2018Graphs-figure/unnamed-chunk-65-1.png)
+![plot of chunk unnamed-chunk-66](user2018Graphs-figure/unnamed-chunk-66-1.png)
 
 Untangle the hairball
 ===
@@ -2120,9 +2492,9 @@ movieCharProj[[2]] %>%
 ```
 
 ```
-IGRAPH 2e15ee9 UNW- 23 134 -- 
-+ attr: name (v/c), weight (e/n)
-+ edges from 2e15ee9 (vertex names):
+IGRAPH b0edc29 UNW- 23 134 -- 
++ attr: name (v/c), degree (v/n), weight (e/n)
++ edges from b0edc29 (vertex names):
  [1] Luke Skywalker--C-3PO              Luke Skywalker--R2-D2             
  [3] Luke Skywalker--Darth Vader        Luke Skywalker--Leia Organa       
  [5] Luke Skywalker--Obi-Wan Kenobi     Luke Skywalker--Chewbacca         
@@ -2137,12 +2509,12 @@ IGRAPH 2e15ee9 UNW- 23 134 --
 Untangle the hairball
 =====
 class:small-code
-![plot of chunk unnamed-chunk-68](user2018Graphs-figure/unnamed-chunk-68-1.png)
+![plot of chunk unnamed-chunk-69](user2018Graphs-figure/unnamed-chunk-69-1.png)
 
 Untangle the hairball: PageRank
 ====
 class:small-code
-![plot of chunk unnamed-chunk-69](user2018Graphs-figure/unnamed-chunk-69-1.png)
+![plot of chunk unnamed-chunk-70](user2018Graphs-figure/unnamed-chunk-70-1.png)
 
 Changing the data changes the network
 =====
@@ -2160,6 +2532,10 @@ anakinIsLukesFather <- g %>%
   {. - E(.)[type != 'has films']} %>%
   {. - V(.)[degree(.) == 0]} %>%
   {
+    V(.)$degree <- degree(.)
+    .
+  } %>%
+  {
     V(.)$type <- V(.)$type == 'a character'
     .
   } %>%
@@ -2172,161 +2548,13 @@ anakinIsLukesFather <- g %>%
 Changing the data changes the network
 =====
 class:small-code
-![plot of chunk unnamed-chunk-71](user2018Graphs-figure/unnamed-chunk-71-1.png)
+![plot of chunk unnamed-chunk-72](user2018Graphs-figure/unnamed-chunk-72-1.png)
 
 Changing the network changes the PageRank
 ==== 
 class:small-code
-![plot of chunk unnamed-chunk-72](user2018Graphs-figure/unnamed-chunk-72-1.png)
+![plot of chunk unnamed-chunk-73](user2018Graphs-figure/unnamed-chunk-73-1.png)
 
-
-Assigning Data to Vertices
-====
-class:small-code
-
-```r
-V(anakinIsLukesFather)$degree <- degree(anakinIsLukesFather)
-
-E(anakinIsLukesFather)[[]]
-```
-
-```
-+ 133/133 edges from a1d39b6 (vertex names):
-                  tail                  head tid hid weight
-1       Luke Skywalker                 C-3PO   1   2      4
-2       Luke Skywalker                 R2-D2   1   3      5
-3       Luke Skywalker           Leia Organa   1   4      5
-4       Luke Skywalker        Obi-Wan Kenobi   1   7      4
-5       Luke Skywalker      Anakin Skywalker   1   8      4
-6       Luke Skywalker             Chewbacca   1   9      5
-7       Luke Skywalker                  Yoda   1  13      3
-8       Luke Skywalker             Palpatine   1  14      3
-9       Luke Skywalker              Han Solo   1  10      4
-10      Luke Skywalker        Wedge Antilles   1  12      3
-11               C-3PO                 R2-D2   2   3      6
-12               C-3PO           Leia Organa   2   4      4
-13               C-3PO             Owen Lars   2   5      3
-14               C-3PO    Beru Whitesun lars   2   6      3
-15               C-3PO        Obi-Wan Kenobi   2   7      6
-16               C-3PO      Anakin Skywalker   2   8      6
-17               C-3PO             Chewbacca   2   9      4
-18               C-3PO                  Yoda   2  13      5
-19               C-3PO             Palpatine   2  14      5
-20               C-3PO           Nute Gunray   2  16      3
-21               C-3PO           Ayla Secura   2  17      3
-22               C-3PO            Mace Windu   2  18      3
-23               C-3PO          Ki-Adi-Mundi   2  19      3
-24               C-3PO             Kit Fisto   2  20      3
-25               C-3PO              Plo Koon   2  21      3
-26               C-3PO         Padmé Amidala   2  22      3
-27               C-3PO              Han Solo   2  10      3
-28               C-3PO Jabba Desilijic Tiure   2  11      3
-29               C-3PO        Wedge Antilles   2  12      3
-30               C-3PO             Boba Fett   2  15      3
-31               R2-D2           Leia Organa   3   4      5
-32               R2-D2             Owen Lars   3   5      3
-33               R2-D2    Beru Whitesun lars   3   6      3
-34               R2-D2        Obi-Wan Kenobi   3   7      6
-35               R2-D2      Anakin Skywalker   3   8      6
-36               R2-D2             Chewbacca   3   9      5
-37               R2-D2                  Yoda   3  13      5
-38               R2-D2             Palpatine   3  14      5
-39               R2-D2           Nute Gunray   3  16      3
-40               R2-D2           Ayla Secura   3  17      3
-41               R2-D2            Mace Windu   3  18      3
-42               R2-D2          Ki-Adi-Mundi   3  19      3
-43               R2-D2             Kit Fisto   3  20      3
-44               R2-D2              Plo Koon   3  21      3
-45               R2-D2         Padmé Amidala   3  22      3
-46               R2-D2              Han Solo   3  10      4
-47               R2-D2 Jabba Desilijic Tiure   3  11      3
-48               R2-D2        Wedge Antilles   3  12      3
-49               R2-D2             Boba Fett   3  15      3
-50         Leia Organa        Obi-Wan Kenobi   4   7      4
-51         Leia Organa      Anakin Skywalker   4   8      4
-52         Leia Organa             Chewbacca   4   9      5
-53         Leia Organa                  Yoda   4  13      3
-54         Leia Organa             Palpatine   4  14      3
-55         Leia Organa              Han Solo   4  10      4
-56         Leia Organa        Wedge Antilles   4  12      3
-57           Owen Lars    Beru Whitesun lars   5   6      3
-58           Owen Lars        Obi-Wan Kenobi   5   7      3
-59           Owen Lars      Anakin Skywalker   5   8      3
-60  Beru Whitesun lars        Obi-Wan Kenobi   6   7      3
-61  Beru Whitesun lars      Anakin Skywalker   6   8      3
-62      Obi-Wan Kenobi      Anakin Skywalker   7   8      6
-63      Obi-Wan Kenobi             Chewbacca   7   9      4
-64      Obi-Wan Kenobi                  Yoda   7  13      5
-65      Obi-Wan Kenobi             Palpatine   7  14      5
-66      Obi-Wan Kenobi           Nute Gunray   7  16      3
-67      Obi-Wan Kenobi           Ayla Secura   7  17      3
-68      Obi-Wan Kenobi            Mace Windu   7  18      3
-69      Obi-Wan Kenobi          Ki-Adi-Mundi   7  19      3
-70      Obi-Wan Kenobi             Kit Fisto   7  20      3
-71      Obi-Wan Kenobi              Plo Koon   7  21      3
-72      Obi-Wan Kenobi         Padmé Amidala   7  22      3
-73      Obi-Wan Kenobi              Han Solo   7  10      3
-74      Obi-Wan Kenobi Jabba Desilijic Tiure   7  11      3
-75      Obi-Wan Kenobi        Wedge Antilles   7  12      3
-76      Obi-Wan Kenobi             Boba Fett   7  15      3
-77    Anakin Skywalker             Chewbacca   8   9      4
-78    Anakin Skywalker                  Yoda   8  13      5
-79    Anakin Skywalker             Palpatine   8  14      5
-80    Anakin Skywalker           Nute Gunray   8  16      3
-81    Anakin Skywalker           Ayla Secura   8  17      3
-82    Anakin Skywalker            Mace Windu   8  18      3
-83    Anakin Skywalker          Ki-Adi-Mundi   8  19      3
-84    Anakin Skywalker             Kit Fisto   8  20      3
-85    Anakin Skywalker              Plo Koon   8  21      3
-86    Anakin Skywalker         Padmé Amidala   8  22      3
-87    Anakin Skywalker              Han Solo   8  10      3
-88    Anakin Skywalker Jabba Desilijic Tiure   8  11      3
-89    Anakin Skywalker        Wedge Antilles   8  12      3
-90    Anakin Skywalker             Boba Fett   8  15      3
-91           Chewbacca                  Yoda   9  13      3
-92           Chewbacca             Palpatine   9  14      3
-93           Chewbacca              Han Solo   9  10      4
-94           Chewbacca        Wedge Antilles   9  12      3
-95            Han Solo        Wedge Antilles  10  12      3
-96                Yoda             Palpatine  13  14      5
-97                Yoda           Nute Gunray  13  16      3
-98                Yoda           Ayla Secura  13  17      3
-99                Yoda            Mace Windu  13  18      3
-100               Yoda          Ki-Adi-Mundi  13  19      3
-101               Yoda             Kit Fisto  13  20      3
-102               Yoda              Plo Koon  13  21      3
-103               Yoda         Padmé Amidala  13  22      3
-104               Yoda             Boba Fett  13  15      3
-105          Palpatine           Nute Gunray  14  16      3
-106          Palpatine           Ayla Secura  14  17      3
-107          Palpatine            Mace Windu  14  18      3
-108          Palpatine          Ki-Adi-Mundi  14  19      3
-109          Palpatine             Kit Fisto  14  20      3
-110          Palpatine              Plo Koon  14  21      3
-111          Palpatine         Padmé Amidala  14  22      3
-112          Palpatine             Boba Fett  14  15      3
-113        Nute Gunray           Ayla Secura  16  17      3
-114        Nute Gunray            Mace Windu  16  18      3
-115        Nute Gunray          Ki-Adi-Mundi  16  19      3
-116        Nute Gunray             Kit Fisto  16  20      3
-117        Nute Gunray              Plo Koon  16  21      3
-118        Nute Gunray         Padmé Amidala  16  22      3
-119        Ayla Secura            Mace Windu  17  18      3
-120        Ayla Secura          Ki-Adi-Mundi  17  19      3
-121        Ayla Secura             Kit Fisto  17  20      3
-122        Ayla Secura              Plo Koon  17  21      3
-123        Ayla Secura         Padmé Amidala  17  22      3
-124         Mace Windu          Ki-Adi-Mundi  18  19      3
-125         Mace Windu             Kit Fisto  18  20      3
-126         Mace Windu              Plo Koon  18  21      3
-127         Mace Windu         Padmé Amidala  18  22      3
-128       Ki-Adi-Mundi             Kit Fisto  19  20      3
-129       Ki-Adi-Mundi              Plo Koon  19  21      3
-130       Ki-Adi-Mundi         Padmé Amidala  19  22      3
-131          Kit Fisto              Plo Koon  20  21      3
-132          Kit Fisto         Padmé Amidala  20  22      3
-133           Plo Koon         Padmé Amidala  21  22      3
-```
 
 Assigning Data to Edges
 ====
@@ -2348,139 +2576,139 @@ anakinIsLukesFather %>%
 
 |from               |to                    | weight| tailPercMovies| headPercMovies|
 |:------------------|:---------------------|------:|--------------:|--------------:|
-|Luke Skywalker     |C-3PO                 |      4|      0.4000000|      0.1904762|
-|Luke Skywalker     |R2-D2                 |      5|      0.5000000|      0.2380952|
-|Luke Skywalker     |Leia Organa           |      5|      0.5000000|      0.5000000|
-|Luke Skywalker     |Obi-Wan Kenobi        |      4|      0.4000000|      0.1904762|
-|Luke Skywalker     |Anakin Skywalker      |      4|      0.4000000|      0.1904762|
-|Luke Skywalker     |Chewbacca             |      5|      0.5000000|      0.5000000|
-|Luke Skywalker     |Yoda                  |      3|      0.3000000|      0.1875000|
-|Luke Skywalker     |Palpatine             |      3|      0.3000000|      0.1875000|
-|Luke Skywalker     |Han Solo              |      4|      0.4000000|      0.5000000|
-|Luke Skywalker     |Wedge Antilles        |      3|      0.3000000|      0.3750000|
-|C-3PO              |R2-D2                 |      6|      0.2857143|      0.2857143|
-|C-3PO              |Leia Organa           |      4|      0.1904762|      0.4000000|
-|C-3PO              |Owen Lars             |      3|      0.1428571|      0.6000000|
-|C-3PO              |Beru Whitesun lars    |      3|      0.1428571|      0.6000000|
-|C-3PO              |Obi-Wan Kenobi        |      6|      0.2857143|      0.2857143|
-|C-3PO              |Anakin Skywalker      |      6|      0.2857143|      0.2857143|
-|C-3PO              |Chewbacca             |      4|      0.1904762|      0.4000000|
-|C-3PO              |Yoda                  |      5|      0.2380952|      0.3125000|
-|C-3PO              |Palpatine             |      5|      0.2380952|      0.3125000|
-|C-3PO              |Nute Gunray           |      3|      0.1428571|      0.2500000|
-|C-3PO              |Ayla Secura           |      3|      0.1428571|      0.2500000|
-|C-3PO              |Mace Windu            |      3|      0.1428571|      0.2500000|
-|C-3PO              |Ki-Adi-Mundi          |      3|      0.1428571|      0.2500000|
-|C-3PO              |Kit Fisto             |      3|      0.1428571|      0.2500000|
-|C-3PO              |Plo Koon              |      3|      0.1428571|      0.2500000|
-|C-3PO              |Padmé Amidala         |      3|      0.1428571|      0.2500000|
-|C-3PO              |Han Solo              |      3|      0.1428571|      0.3750000|
-|C-3PO              |Jabba Desilijic Tiure |      3|      0.1428571|      0.7500000|
-|C-3PO              |Wedge Antilles        |      3|      0.1428571|      0.3750000|
-|C-3PO              |Boba Fett             |      3|      0.1428571|      0.5000000|
-|R2-D2              |Leia Organa           |      5|      0.2380952|      0.5000000|
-|R2-D2              |Owen Lars             |      3|      0.1428571|      0.6000000|
-|R2-D2              |Beru Whitesun lars    |      3|      0.1428571|      0.6000000|
-|R2-D2              |Obi-Wan Kenobi        |      6|      0.2857143|      0.2857143|
-|R2-D2              |Anakin Skywalker      |      6|      0.2857143|      0.2857143|
-|R2-D2              |Chewbacca             |      5|      0.2380952|      0.5000000|
-|R2-D2              |Yoda                  |      5|      0.2380952|      0.3125000|
-|R2-D2              |Palpatine             |      5|      0.2380952|      0.3125000|
-|R2-D2              |Nute Gunray           |      3|      0.1428571|      0.2500000|
-|R2-D2              |Ayla Secura           |      3|      0.1428571|      0.2500000|
-|R2-D2              |Mace Windu            |      3|      0.1428571|      0.2500000|
-|R2-D2              |Ki-Adi-Mundi          |      3|      0.1428571|      0.2500000|
-|R2-D2              |Kit Fisto             |      3|      0.1428571|      0.2500000|
-|R2-D2              |Plo Koon              |      3|      0.1428571|      0.2500000|
-|R2-D2              |Padmé Amidala         |      3|      0.1428571|      0.2500000|
-|R2-D2              |Han Solo              |      4|      0.1904762|      0.5000000|
-|R2-D2              |Jabba Desilijic Tiure |      3|      0.1428571|      0.7500000|
-|R2-D2              |Wedge Antilles        |      3|      0.1428571|      0.3750000|
-|R2-D2              |Boba Fett             |      3|      0.1428571|      0.5000000|
-|Leia Organa        |Obi-Wan Kenobi        |      4|      0.4000000|      0.1904762|
-|Leia Organa        |Anakin Skywalker      |      4|      0.4000000|      0.1904762|
-|Leia Organa        |Chewbacca             |      5|      0.5000000|      0.5000000|
-|Leia Organa        |Yoda                  |      3|      0.3000000|      0.1875000|
-|Leia Organa        |Palpatine             |      3|      0.3000000|      0.1875000|
-|Leia Organa        |Han Solo              |      4|      0.4000000|      0.5000000|
-|Leia Organa        |Wedge Antilles        |      3|      0.3000000|      0.3750000|
-|Owen Lars          |Beru Whitesun lars    |      3|      0.6000000|      0.6000000|
-|Owen Lars          |Obi-Wan Kenobi        |      3|      0.6000000|      0.1428571|
-|Owen Lars          |Anakin Skywalker      |      3|      0.6000000|      0.1428571|
-|Beru Whitesun lars |Obi-Wan Kenobi        |      3|      0.6000000|      0.1428571|
-|Beru Whitesun lars |Anakin Skywalker      |      3|      0.6000000|      0.1428571|
-|Obi-Wan Kenobi     |Anakin Skywalker      |      6|      0.2857143|      0.2857143|
-|Obi-Wan Kenobi     |Chewbacca             |      4|      0.1904762|      0.4000000|
-|Obi-Wan Kenobi     |Yoda                  |      5|      0.2380952|      0.3125000|
-|Obi-Wan Kenobi     |Palpatine             |      5|      0.2380952|      0.3125000|
-|Obi-Wan Kenobi     |Nute Gunray           |      3|      0.1428571|      0.2500000|
-|Obi-Wan Kenobi     |Ayla Secura           |      3|      0.1428571|      0.2500000|
-|Obi-Wan Kenobi     |Mace Windu            |      3|      0.1428571|      0.2500000|
-|Obi-Wan Kenobi     |Ki-Adi-Mundi          |      3|      0.1428571|      0.2500000|
-|Obi-Wan Kenobi     |Kit Fisto             |      3|      0.1428571|      0.2500000|
-|Obi-Wan Kenobi     |Plo Koon              |      3|      0.1428571|      0.2500000|
-|Obi-Wan Kenobi     |Padmé Amidala         |      3|      0.1428571|      0.2500000|
-|Obi-Wan Kenobi     |Han Solo              |      3|      0.1428571|      0.3750000|
-|Obi-Wan Kenobi     |Jabba Desilijic Tiure |      3|      0.1428571|      0.7500000|
-|Obi-Wan Kenobi     |Wedge Antilles        |      3|      0.1428571|      0.3750000|
-|Obi-Wan Kenobi     |Boba Fett             |      3|      0.1428571|      0.5000000|
-|Anakin Skywalker   |Chewbacca             |      4|      0.1904762|      0.4000000|
-|Anakin Skywalker   |Yoda                  |      5|      0.2380952|      0.3125000|
-|Anakin Skywalker   |Palpatine             |      5|      0.2380952|      0.3125000|
-|Anakin Skywalker   |Nute Gunray           |      3|      0.1428571|      0.2500000|
-|Anakin Skywalker   |Ayla Secura           |      3|      0.1428571|      0.2500000|
-|Anakin Skywalker   |Mace Windu            |      3|      0.1428571|      0.2500000|
-|Anakin Skywalker   |Ki-Adi-Mundi          |      3|      0.1428571|      0.2500000|
-|Anakin Skywalker   |Kit Fisto             |      3|      0.1428571|      0.2500000|
-|Anakin Skywalker   |Plo Koon              |      3|      0.1428571|      0.2500000|
-|Anakin Skywalker   |Padmé Amidala         |      3|      0.1428571|      0.2500000|
-|Anakin Skywalker   |Han Solo              |      3|      0.1428571|      0.3750000|
-|Anakin Skywalker   |Jabba Desilijic Tiure |      3|      0.1428571|      0.7500000|
-|Anakin Skywalker   |Wedge Antilles        |      3|      0.1428571|      0.3750000|
-|Anakin Skywalker   |Boba Fett             |      3|      0.1428571|      0.5000000|
-|Chewbacca          |Yoda                  |      3|      0.3000000|      0.1875000|
-|Chewbacca          |Palpatine             |      3|      0.3000000|      0.1875000|
-|Chewbacca          |Han Solo              |      4|      0.4000000|      0.5000000|
-|Chewbacca          |Wedge Antilles        |      3|      0.3000000|      0.3750000|
-|Han Solo           |Wedge Antilles        |      3|      0.3750000|      0.3750000|
-|Yoda               |Palpatine             |      5|      0.3125000|      0.3125000|
-|Yoda               |Nute Gunray           |      3|      0.1875000|      0.2500000|
-|Yoda               |Ayla Secura           |      3|      0.1875000|      0.2500000|
-|Yoda               |Mace Windu            |      3|      0.1875000|      0.2500000|
-|Yoda               |Ki-Adi-Mundi          |      3|      0.1875000|      0.2500000|
-|Yoda               |Kit Fisto             |      3|      0.1875000|      0.2500000|
-|Yoda               |Plo Koon              |      3|      0.1875000|      0.2500000|
-|Yoda               |Padmé Amidala         |      3|      0.1875000|      0.2500000|
-|Yoda               |Boba Fett             |      3|      0.1875000|      0.5000000|
-|Palpatine          |Nute Gunray           |      3|      0.1875000|      0.2500000|
-|Palpatine          |Ayla Secura           |      3|      0.1875000|      0.2500000|
-|Palpatine          |Mace Windu            |      3|      0.1875000|      0.2500000|
-|Palpatine          |Ki-Adi-Mundi          |      3|      0.1875000|      0.2500000|
-|Palpatine          |Kit Fisto             |      3|      0.1875000|      0.2500000|
-|Palpatine          |Plo Koon              |      3|      0.1875000|      0.2500000|
-|Palpatine          |Padmé Amidala         |      3|      0.1875000|      0.2500000|
-|Palpatine          |Boba Fett             |      3|      0.1875000|      0.5000000|
-|Nute Gunray        |Ayla Secura           |      3|      0.2500000|      0.2500000|
-|Nute Gunray        |Mace Windu            |      3|      0.2500000|      0.2500000|
-|Nute Gunray        |Ki-Adi-Mundi          |      3|      0.2500000|      0.2500000|
-|Nute Gunray        |Kit Fisto             |      3|      0.2500000|      0.2500000|
-|Nute Gunray        |Plo Koon              |      3|      0.2500000|      0.2500000|
-|Nute Gunray        |Padmé Amidala         |      3|      0.2500000|      0.2500000|
-|Ayla Secura        |Mace Windu            |      3|      0.2500000|      0.2500000|
-|Ayla Secura        |Ki-Adi-Mundi          |      3|      0.2500000|      0.2500000|
-|Ayla Secura        |Kit Fisto             |      3|      0.2500000|      0.2500000|
-|Ayla Secura        |Plo Koon              |      3|      0.2500000|      0.2500000|
-|Ayla Secura        |Padmé Amidala         |      3|      0.2500000|      0.2500000|
-|Mace Windu         |Ki-Adi-Mundi          |      3|      0.2500000|      0.2500000|
-|Mace Windu         |Kit Fisto             |      3|      0.2500000|      0.2500000|
-|Mace Windu         |Plo Koon              |      3|      0.2500000|      0.2500000|
-|Mace Windu         |Padmé Amidala         |      3|      0.2500000|      0.2500000|
-|Ki-Adi-Mundi       |Kit Fisto             |      3|      0.2500000|      0.2500000|
-|Ki-Adi-Mundi       |Plo Koon              |      3|      0.2500000|      0.2500000|
-|Ki-Adi-Mundi       |Padmé Amidala         |      3|      0.2500000|      0.2500000|
-|Kit Fisto          |Plo Koon              |      3|      0.2500000|      0.2500000|
-|Kit Fisto          |Padmé Amidala         |      3|      0.2500000|      0.2500000|
-|Plo Koon           |Padmé Amidala         |      3|      0.2500000|      0.2500000|
+|Luke Skywalker     |C-3PO                 |      4|      0.8000000|      0.6666667|
+|Luke Skywalker     |R2-D2                 |      5|      1.0000000|      0.7142857|
+|Luke Skywalker     |Leia Organa           |      5|      1.0000000|      1.0000000|
+|Luke Skywalker     |Obi-Wan Kenobi        |      4|      0.8000000|      0.6666667|
+|Luke Skywalker     |Anakin Skywalker      |      4|      0.8000000|      0.6666667|
+|Luke Skywalker     |Chewbacca             |      5|      1.0000000|      1.0000000|
+|Luke Skywalker     |Yoda                  |      3|      0.6000000|      0.6000000|
+|Luke Skywalker     |Palpatine             |      3|      0.6000000|      0.6000000|
+|Luke Skywalker     |Han Solo              |      4|      0.8000000|      1.0000000|
+|Luke Skywalker     |Wedge Antilles        |      3|      0.6000000|      1.0000000|
+|C-3PO              |R2-D2                 |      6|      1.0000000|      0.8571429|
+|C-3PO              |Leia Organa           |      4|      0.6666667|      0.8000000|
+|C-3PO              |Owen Lars             |      3|      0.5000000|      1.0000000|
+|C-3PO              |Beru Whitesun lars    |      3|      0.5000000|      1.0000000|
+|C-3PO              |Obi-Wan Kenobi        |      6|      1.0000000|      1.0000000|
+|C-3PO              |Anakin Skywalker      |      6|      1.0000000|      1.0000000|
+|C-3PO              |Chewbacca             |      4|      0.6666667|      0.8000000|
+|C-3PO              |Yoda                  |      5|      0.8333333|      1.0000000|
+|C-3PO              |Palpatine             |      5|      0.8333333|      1.0000000|
+|C-3PO              |Nute Gunray           |      3|      0.5000000|      1.0000000|
+|C-3PO              |Ayla Secura           |      3|      0.5000000|      1.0000000|
+|C-3PO              |Mace Windu            |      3|      0.5000000|      1.0000000|
+|C-3PO              |Ki-Adi-Mundi          |      3|      0.5000000|      1.0000000|
+|C-3PO              |Kit Fisto             |      3|      0.5000000|      1.0000000|
+|C-3PO              |Plo Koon              |      3|      0.5000000|      1.0000000|
+|C-3PO              |Padmé Amidala         |      3|      0.5000000|      1.0000000|
+|C-3PO              |Han Solo              |      3|      0.5000000|      0.7500000|
+|C-3PO              |Jabba Desilijic Tiure |      3|      0.5000000|      1.0000000|
+|C-3PO              |Wedge Antilles        |      3|      0.5000000|      1.0000000|
+|C-3PO              |Boba Fett             |      3|      0.5000000|      1.0000000|
+|R2-D2              |Leia Organa           |      5|      0.7142857|      1.0000000|
+|R2-D2              |Owen Lars             |      3|      0.4285714|      1.0000000|
+|R2-D2              |Beru Whitesun lars    |      3|      0.4285714|      1.0000000|
+|R2-D2              |Obi-Wan Kenobi        |      6|      0.8571429|      1.0000000|
+|R2-D2              |Anakin Skywalker      |      6|      0.8571429|      1.0000000|
+|R2-D2              |Chewbacca             |      5|      0.7142857|      1.0000000|
+|R2-D2              |Yoda                  |      5|      0.7142857|      1.0000000|
+|R2-D2              |Palpatine             |      5|      0.7142857|      1.0000000|
+|R2-D2              |Nute Gunray           |      3|      0.4285714|      1.0000000|
+|R2-D2              |Ayla Secura           |      3|      0.4285714|      1.0000000|
+|R2-D2              |Mace Windu            |      3|      0.4285714|      1.0000000|
+|R2-D2              |Ki-Adi-Mundi          |      3|      0.4285714|      1.0000000|
+|R2-D2              |Kit Fisto             |      3|      0.4285714|      1.0000000|
+|R2-D2              |Plo Koon              |      3|      0.4285714|      1.0000000|
+|R2-D2              |Padmé Amidala         |      3|      0.4285714|      1.0000000|
+|R2-D2              |Han Solo              |      4|      0.5714286|      1.0000000|
+|R2-D2              |Jabba Desilijic Tiure |      3|      0.4285714|      1.0000000|
+|R2-D2              |Wedge Antilles        |      3|      0.4285714|      1.0000000|
+|R2-D2              |Boba Fett             |      3|      0.4285714|      1.0000000|
+|Leia Organa        |Obi-Wan Kenobi        |      4|      0.8000000|      0.6666667|
+|Leia Organa        |Anakin Skywalker      |      4|      0.8000000|      0.6666667|
+|Leia Organa        |Chewbacca             |      5|      1.0000000|      1.0000000|
+|Leia Organa        |Yoda                  |      3|      0.6000000|      0.6000000|
+|Leia Organa        |Palpatine             |      3|      0.6000000|      0.6000000|
+|Leia Organa        |Han Solo              |      4|      0.8000000|      1.0000000|
+|Leia Organa        |Wedge Antilles        |      3|      0.6000000|      1.0000000|
+|Owen Lars          |Beru Whitesun lars    |      3|      1.0000000|      1.0000000|
+|Owen Lars          |Obi-Wan Kenobi        |      3|      1.0000000|      0.5000000|
+|Owen Lars          |Anakin Skywalker      |      3|      1.0000000|      0.5000000|
+|Beru Whitesun lars |Obi-Wan Kenobi        |      3|      1.0000000|      0.5000000|
+|Beru Whitesun lars |Anakin Skywalker      |      3|      1.0000000|      0.5000000|
+|Obi-Wan Kenobi     |Anakin Skywalker      |      6|      1.0000000|      1.0000000|
+|Obi-Wan Kenobi     |Chewbacca             |      4|      0.6666667|      0.8000000|
+|Obi-Wan Kenobi     |Yoda                  |      5|      0.8333333|      1.0000000|
+|Obi-Wan Kenobi     |Palpatine             |      5|      0.8333333|      1.0000000|
+|Obi-Wan Kenobi     |Nute Gunray           |      3|      0.5000000|      1.0000000|
+|Obi-Wan Kenobi     |Ayla Secura           |      3|      0.5000000|      1.0000000|
+|Obi-Wan Kenobi     |Mace Windu            |      3|      0.5000000|      1.0000000|
+|Obi-Wan Kenobi     |Ki-Adi-Mundi          |      3|      0.5000000|      1.0000000|
+|Obi-Wan Kenobi     |Kit Fisto             |      3|      0.5000000|      1.0000000|
+|Obi-Wan Kenobi     |Plo Koon              |      3|      0.5000000|      1.0000000|
+|Obi-Wan Kenobi     |Padmé Amidala         |      3|      0.5000000|      1.0000000|
+|Obi-Wan Kenobi     |Han Solo              |      3|      0.5000000|      0.7500000|
+|Obi-Wan Kenobi     |Jabba Desilijic Tiure |      3|      0.5000000|      1.0000000|
+|Obi-Wan Kenobi     |Wedge Antilles        |      3|      0.5000000|      1.0000000|
+|Obi-Wan Kenobi     |Boba Fett             |      3|      0.5000000|      1.0000000|
+|Anakin Skywalker   |Chewbacca             |      4|      0.6666667|      0.8000000|
+|Anakin Skywalker   |Yoda                  |      5|      0.8333333|      1.0000000|
+|Anakin Skywalker   |Palpatine             |      5|      0.8333333|      1.0000000|
+|Anakin Skywalker   |Nute Gunray           |      3|      0.5000000|      1.0000000|
+|Anakin Skywalker   |Ayla Secura           |      3|      0.5000000|      1.0000000|
+|Anakin Skywalker   |Mace Windu            |      3|      0.5000000|      1.0000000|
+|Anakin Skywalker   |Ki-Adi-Mundi          |      3|      0.5000000|      1.0000000|
+|Anakin Skywalker   |Kit Fisto             |      3|      0.5000000|      1.0000000|
+|Anakin Skywalker   |Plo Koon              |      3|      0.5000000|      1.0000000|
+|Anakin Skywalker   |Padmé Amidala         |      3|      0.5000000|      1.0000000|
+|Anakin Skywalker   |Han Solo              |      3|      0.5000000|      0.7500000|
+|Anakin Skywalker   |Jabba Desilijic Tiure |      3|      0.5000000|      1.0000000|
+|Anakin Skywalker   |Wedge Antilles        |      3|      0.5000000|      1.0000000|
+|Anakin Skywalker   |Boba Fett             |      3|      0.5000000|      1.0000000|
+|Chewbacca          |Yoda                  |      3|      0.6000000|      0.6000000|
+|Chewbacca          |Palpatine             |      3|      0.6000000|      0.6000000|
+|Chewbacca          |Han Solo              |      4|      0.8000000|      1.0000000|
+|Chewbacca          |Wedge Antilles        |      3|      0.6000000|      1.0000000|
+|Han Solo           |Wedge Antilles        |      3|      0.7500000|      1.0000000|
+|Yoda               |Palpatine             |      5|      1.0000000|      1.0000000|
+|Yoda               |Nute Gunray           |      3|      0.6000000|      1.0000000|
+|Yoda               |Ayla Secura           |      3|      0.6000000|      1.0000000|
+|Yoda               |Mace Windu            |      3|      0.6000000|      1.0000000|
+|Yoda               |Ki-Adi-Mundi          |      3|      0.6000000|      1.0000000|
+|Yoda               |Kit Fisto             |      3|      0.6000000|      1.0000000|
+|Yoda               |Plo Koon              |      3|      0.6000000|      1.0000000|
+|Yoda               |Padmé Amidala         |      3|      0.6000000|      1.0000000|
+|Yoda               |Boba Fett             |      3|      0.6000000|      1.0000000|
+|Palpatine          |Nute Gunray           |      3|      0.6000000|      1.0000000|
+|Palpatine          |Ayla Secura           |      3|      0.6000000|      1.0000000|
+|Palpatine          |Mace Windu            |      3|      0.6000000|      1.0000000|
+|Palpatine          |Ki-Adi-Mundi          |      3|      0.6000000|      1.0000000|
+|Palpatine          |Kit Fisto             |      3|      0.6000000|      1.0000000|
+|Palpatine          |Plo Koon              |      3|      0.6000000|      1.0000000|
+|Palpatine          |Padmé Amidala         |      3|      0.6000000|      1.0000000|
+|Palpatine          |Boba Fett             |      3|      0.6000000|      1.0000000|
+|Nute Gunray        |Ayla Secura           |      3|      1.0000000|      1.0000000|
+|Nute Gunray        |Mace Windu            |      3|      1.0000000|      1.0000000|
+|Nute Gunray        |Ki-Adi-Mundi          |      3|      1.0000000|      1.0000000|
+|Nute Gunray        |Kit Fisto             |      3|      1.0000000|      1.0000000|
+|Nute Gunray        |Plo Koon              |      3|      1.0000000|      1.0000000|
+|Nute Gunray        |Padmé Amidala         |      3|      1.0000000|      1.0000000|
+|Ayla Secura        |Mace Windu            |      3|      1.0000000|      1.0000000|
+|Ayla Secura        |Ki-Adi-Mundi          |      3|      1.0000000|      1.0000000|
+|Ayla Secura        |Kit Fisto             |      3|      1.0000000|      1.0000000|
+|Ayla Secura        |Plo Koon              |      3|      1.0000000|      1.0000000|
+|Ayla Secura        |Padmé Amidala         |      3|      1.0000000|      1.0000000|
+|Mace Windu         |Ki-Adi-Mundi          |      3|      1.0000000|      1.0000000|
+|Mace Windu         |Kit Fisto             |      3|      1.0000000|      1.0000000|
+|Mace Windu         |Plo Koon              |      3|      1.0000000|      1.0000000|
+|Mace Windu         |Padmé Amidala         |      3|      1.0000000|      1.0000000|
+|Ki-Adi-Mundi       |Kit Fisto             |      3|      1.0000000|      1.0000000|
+|Ki-Adi-Mundi       |Plo Koon              |      3|      1.0000000|      1.0000000|
+|Ki-Adi-Mundi       |Padmé Amidala         |      3|      1.0000000|      1.0000000|
+|Kit Fisto          |Plo Koon              |      3|      1.0000000|      1.0000000|
+|Kit Fisto          |Padmé Amidala         |      3|      1.0000000|      1.0000000|
+|Plo Koon           |Padmé Amidala         |      3|      1.0000000|      1.0000000|
 
 
 Learn More!
