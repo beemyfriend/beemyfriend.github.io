@@ -1,0 +1,97 @@
+<html>
+<head>
+  <meta charset="utf-8" />
+</head>
+<body>
+  <div id='app'>
+    <court-layout></court-layout>
+  </div>
+</body>
+<script src="./d3/d3.min.js"></script>
+<script src="./vue.js"></script>
+<script src="./vuex.js"></script>
+<script src="./nestedCourtData.js"></script>
+<script src="./courtTypes.js"></script>
+<script src="./store.js"></script>
+
+<script>
+
+Vue.component('court-layout', {
+  // template: `
+  // <svg width='100%' height='100%'>
+  //   <template v-for='d in filteredCourtTypes'>
+  //     <template v-for="x, i in d">
+  //       <text :x="(1/d.length * 100) * i + (1/d.length/2 * 100) + '%'"
+  //             :y="courtTypeScale(x.CourtLevelID) + '%'"
+  //             >
+  //         {{x.CourtName}}
+  //       </text>
+  //     </template>
+  //   </template>
+  // </svg>
+  // `,
+  template: `
+  <div style="position: absolute; width: 100%; height: 100%">
+    <template v-for='x in filteredCourtTypes'>
+      <template v-for="y, i in x">
+        <div v-bind:style='y.style'>
+          <p>
+            {{y.data.CourtName}}
+          </p>
+        </div>
+      </template>
+    </template>
+  </div>
+  `,
+  data() {
+    return {
+      courtdata: store.state.stateData[2].Courts
+    }
+  },
+  methods: {
+    courtTypeScale(d){
+      return d3.scaleBand()
+        .domain(courtTypes)
+        .range([0,90])(d)
+    }
+  },
+  computed: {
+    filteredCourtTypes(){
+      temp = store.state.courtTypes.map(
+        x => {
+          temp = this
+            .courtdata
+            .filter(d => d.CourtLevelID == x)
+
+          temp = temp.map((d,i) => {
+              return {
+                data: d,
+                style: {
+                        position: "absolute",
+                        left: (1/temp.length * 100) * i + (1/temp.length*50) + '%',
+                        top:  this.courtTypeScale(d.CourtLevelID) + "%"}
+              }
+            })
+          console.log(temp);
+          return temp
+        }
+      )
+      console.log(temp)
+      return temp
+    },
+    divLocations(){
+      return this.filteredCourtTypes.map(
+        x => {
+
+        }
+      )
+    }
+  }
+})
+
+var app = new Vue({
+    el: "#app"
+  })
+
+</script>
+</html>
