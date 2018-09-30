@@ -1,23 +1,3 @@
-<html>
-<head>
-  <meta charset="utf-8" />
-</head>
-<body>
-  <div id='app'>
-    <states-layout></states-layout>
-  </div>
-</body>
-<script src="./d3/d3.min.js"></script>
-<script src="./vue.js"></script>
-<script src="./vuex.js"></script>
-<script src="./nestedCourtData.js"></script>
-<script src="./courtTypes.js"></script>
-<script src="./store.js"></script>
-<script src="./topojson.min.js"></script>
-<script src="./state_data.js"></script>
-<script src="./us-10m.v1.js"></script>
-<script>
-
 Vue.component('states-layout', {
   template: `
   <div id="mapContainer" style='position: fixed; width: 100%; height: 100%; overflow: scroll'>
@@ -30,6 +10,7 @@ Vue.component('states-layout', {
           :fill='caseLoadColor(lines.CaseLoad)'
           @mouseover="mouseover(lines)"
           @mouseout='mouseout(lines)'
+          @click='click(lines)'
           ></path>
       </g>
     </svg>
@@ -53,10 +34,12 @@ Vue.component('states-layout', {
         .range([0,90])(d)
     },
     sizeChange(){
-      sWidth = d3.select('#mapContainer').node().getBoundingClientRect().width
-      console.log(sWidth)
-      d3.select('#mapG').attr('transform', `scale(${sWidth/1000})`)
-      d3.select('svg').attr('height', sWidth * .618)
+      if(d3.select('#mapContainer').node()){
+        sWidth = d3.select('#mapContainer').node().getBoundingClientRect().width
+        console.log(sWidth)
+        d3.select('#mapG').attr('transform', `scale(${sWidth/1000})`)
+        d3.select('svg').attr('height', sWidth * .618)
+      }
     },
     mouseover(line){
       d3.select('#state_' + line.id)
@@ -68,6 +51,12 @@ Vue.component('states-layout', {
       d3.select('#state_' + line.id)
         .attr('stroke','black')
         .attr('stroke-width', 1)
+    },
+    click(d){
+      console.log('inside click')
+      console.log(d.fullState)
+      store.commit('changeChosenState', d.fullState)
+      store.commit('changeView', 'courts')
     },
     mapPath: d3.geoPath(),
     caseLoadColor: d3.scaleOrdinal()
@@ -94,10 +83,3 @@ Vue.component('states-layout', {
     }
   }
 })
-
-var app = new Vue({
-    el: "#app"
-  })
-
-</script>
-</html>

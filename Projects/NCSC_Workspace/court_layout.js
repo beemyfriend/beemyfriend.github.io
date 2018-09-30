@@ -1,21 +1,8 @@
 
 Vue.component('court-layout', {
-  // template: `
-  // <svg width='100%' height='100%'>
-  //   <template v-for='d in filteredCourtTypes'>
-  //     <template v-for="x, i in d">
-  //       <text :x="(1/d.length * 100) * i + (1/d.length/2 * 100) + '%'"
-  //             :y="courtTypeScale(x.CourtLevelID) + '%'"
-  //             >
-  //         {{x.CourtName}}
-  //       </text>
-  //     </template>
-  //   </template>
-  // </svg>
-  // `,
   template: `
   <div :class='"state_" + stateindex' style="position: absolute; width: 100%; height: 100%;">
-    <div :class='"chart_" + stateindex' style="top: 0%; height: 100%; overflow: scroll">
+    <div :class='"chart_" + stateindex' style="top: 0%; height: 100%; width: 100%; overflow: scroll">
       <svg :class='"chart_" + stateindex' style="position: absolute; width: 100%; height: 100%">
         <template v-for='x in filteredCourtTypes.Courts'>
           <template v-for="y, i in x">
@@ -53,7 +40,7 @@ Vue.component('court-layout', {
         </template>
       </div>
     </div>
-    <div :id='"info_" + stateindex' style="position: absolute; bottom: 0%; height: 0%; overflow: scroll">
+    <div :id='"info_" + stateindex' style="position: absolute; bottom: 0%; height: 0%; width: 100%; overflow: scroll">
     </div>
   </div>
   `,
@@ -83,12 +70,25 @@ Vue.component('court-layout', {
         .style("stroke", "black")
         .style("stroke-width", 2)
     },
+    closeInfo(){
+      d3.selectAll(".chart_" + this.stateindex)
+        .style("height", "100%")
+      d3.select('#info_' + this.stateindex)
+        .style('heigth', '0%')
+    },
     courtInfo(d){
+      console.log(d.Notes)
       d3.select("#info_" + this.stateindex)
         .style("height", "40%")
         .html(
           `
+          <a href="#" @click="${this.closeInfo}" >&#11015;</a>
           <a href="${d.Link}" ><b>${d.CourtName.join(' ')} (${d.CourtLevelID})</b></a><br><br>
+          <b>Funding Source:</b> ${d.FundingDescription}<br>
+          <b>Appeal From Admin Agency:</b> ${d.AppealFromAdminAgency}<br>
+          <b>Notes:</b> ${d.Notes}<br><br>
+
+
           <table>
           <th>
             <tr>
@@ -141,7 +141,8 @@ Vue.component('court-layout', {
                   background: 'white',
                   margin: '0',
                   padding: '5',
-                  'text-align': 'center'
+                  'text-align': 'center',
+                  border: d.AppealFromAdminAgency == 0 ?'2px solid black' : '3px solid red'
                 }
               }
 
@@ -155,7 +156,7 @@ Vue.component('court-layout', {
       )
 
       temp = {Courts: temp, LineKey: lineKey}
-      console.log(temp)
+
       return temp
     }
   }

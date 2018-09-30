@@ -47,9 +47,23 @@ courtTypesJSON <- jsonlite::toJSON(courtTypes)
 write(courtTypesJSON, 'courtTypes.json')
 
 
-
-
-
+state_info <- read.delim('state.psv', sep='|') %>%
+  rename(id = STATE) %>%
+  mutate(id = sprintf('%02d', id)) %>%
+  mutate(STATE_NAME = STATE_NAME %>% as.character() %>% if_else(. == "Hawaii", "Hawai'i", .)) %>%
+  left_join(hackData$USState, by = c("STATE_NAME" = 'USStateName')) %>%
+  left_join(select(hackData$TrialStructure, -DisplayOrder)) %>%
+  left_join(select(hackData$PopulationCategory, -DisplayOrder)) %>%
+  left_join(select(hackData$Rural, -DisplayOrder)) %>%
+  left_join(select(hackData$TrialCriminalProcessing, -DisplayOrder))  %>%
+  left_join(select(hackData$DeathPenalty, -DisplayOrder))
+  select(-DisplayOrder, -PopulationCategoryID, -RuralID, -TrialStructureID, -TrialCriminalProcessingID, -DeathPenalty)
+us_json <- read_lines('us-10m.v1.json')
+write(str_c('us_topo =', us_json), 'us-10m.v1.js')
+write_tsv(state_info, 'state.tsv')
+state_info_json <- jsonlite::toJSON(state_info) 
+write(state_info_json, 'state_info.json')
+write(str_c('state_data = ', state_info_json), 'state_data.js')
 
 
 nestedCourtData %>% filter(is.na(CourtName))

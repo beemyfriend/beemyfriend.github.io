@@ -3,13 +3,18 @@
   <meta charset="utf-8" />
 </head>
 <body>
-  <div id='control' style="position:fixed; width: 100%; height: 5%; top: 0; left: 0">
-    <state-counter></state-counter>
-  </div>
   <div id="app" style="position: fixed; width: 100%; height: 95%; top: 5%; left: 0; overflow: scroll">
-    <template v-for="i in stateCount">
-      <state-info v-bind:stateindex="i"></state-info>
-    </template>
+    <div v-if="view == 'map'">
+      <states-layout></states-layout>
+    </div>
+    <div v-if="view == 'courts'">
+      <div id='control' style="position:fixed; width: 100%; height: 5%; top: 0; left: 0">
+        <state-counter></state-counter>
+      </div>
+      <template v-for="i in stateCount">
+        <state-info v-bind:stateindex="i" v-bind:chosenState='chosenState'></state-info>
+      </template>
+    </div>
   </div>
 </body>
 <script src="./d3/d3.min.js"></script>
@@ -17,10 +22,14 @@
 <script src="./vuex.js"></script>
 <script src="./nestedCourtData.js"></script>
 <script src="./courtTypes.js"></script>
+<script src="./state_data.js"></script>
 <script src="./store.js"></script>
 <script src='./court_layout.js'></script>
 <script src='./state_info.js'></script>
 <script src="./state_counter.js"></script>
+<script src="./topojson.min.js"></script>
+<script src="./us-10m.v1.js"></script>
+<script src="./map_view.js"></script>
 <script>
 var control = new Vue({
   el: '#control'
@@ -31,6 +40,12 @@ var app = new Vue({
   computed: {
     stateCount(){
       return store.state.stateCount
+    },
+    view(){
+      return store.state.view
+    },
+    chosenState(){
+      return store.state.chosenState
     }
   }
 })
