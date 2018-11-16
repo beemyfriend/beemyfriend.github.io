@@ -1,0 +1,1574 @@
+Exploring Graphs with igraph
+========================================================
+author: Benjamin Ortiz Ulloa
+date: 
+autosize: true
+transition: fade
+
+<style>
+.small-code pre code {
+  font-size: 1em;
+}
+
+.grey-out {
+  color: 'lightgrey'
+}
+</style>
+
+Exploring Graphs with igraph
+=====
+<ol>
+  <li>What's a Graph?</li>
+  <li>Practical Applications: Recommendations</li>
+  <li>Measuring Impact/Importance</li>
+  <li>Practical Applications: Keyphrases</li>
+  <li>Practical Applications: Models</li>
+  <li><b>Code:</b> Creating a Graph</li>
+  <li><b>Code:</b> Exploring a Graph</li>
+  <li>Graph Databases</li>
+</ol>
+
+
+Exploring Graphs with igraph
+=====
+<ol>
+  <li>What's a Graph?</li>
+  <li style='color: lightgrey'>Practical Applications: Recommendations</li>
+  <li style='color: lightgrey'>Measuring Impact/Importance</li>
+  <li style='color: lightgrey'>Practical Applications: Keyphrases</li>
+  <li style='color: lightgrey'>Practical Applications: Models</li>
+  <li style='color: lightgrey'><b>Code:</b> Creating a Graph</li>
+  <li style='color: lightgrey'><b>Code:</b> Exploring a Graph</li>
+  <li style='color: lightgrey'>Graph Databases</li>
+</ol>
+
+What's a Graph?
+========================================================
+
+```{r, echo=F, fig.width = 15, fig.height = 10}
+library(tidyverse)
+library(igraph)
+library(igraphdata)
+library(diagram)
+g <- make_empty_graph(directed = T) +
+  vertices(
+    c('Thing', 'Node', 'Vertex'),
+    label.cex = 1.75,
+    label.font = 2
+  ) +
+  edges(
+    c("Thing", "Node",
+      "Node", "Vertex",
+      "Vertex", "Thing",
+      "Vertex", "Node"),
+    show = c(1, 2, 3),
+    label = c("Relationship", "Link", "Edge", "Another Edge"),
+    label.cex = 1.75,
+    label.font = 2
+  )
+
+layout = matrix(c(2, 3, 1, 1, 3, 1), ncol = 2, byrow = T)
+
+g %>%
+  {. - E(.)} %>%
+  plot(
+    layout = layout,
+    vertex.label = sapply(V(g)$name, function(x){if_else(x %in% c('Thing'), x, '')}),
+    vertex.size = sapply(V(g)$name, function(x){if_else(x %in% c('Thing'), 45, 0)}),
+    edge.width = 5
+  )
+```
+
+What's a Graph?
+========================================================
+
+```{r, echo = F, fig.width = 15, fig.height = 10}
+g %>%
+  {. - E(.)} %>%
+  plot(
+    layout = layout,
+    vertex.label = sapply(V(g)$name, function(x){if_else(x %in% c('Node', 'Thing'), x, '')}),
+    vertex.size = sapply(V(g)$name, function(x){if_else(x %in% c('Node', 'Thing'), 45, 0)})
+  )
+  
+```
+
+What's a Graph?
+========================================================
+
+```{r, echo = F, fig.width = 15, fig.height = 10}
+g %>%
+  {. - E(.)} %>%
+  plot(
+    layout = layout,
+    vertex.size= 45
+  )
+```
+
+What's a Graph?
+============
+```{r, echo = F, fig.width = 15, fig.height = 10}
+g %>%
+  {. - E(.)[!label %in% c("Relationship")]} %>%
+  plot(
+    layout = layout,
+    edge.arrow.size = 0,
+       vertex.size= 45,
+       edge.width = 5
+  )
+```
+
+What's a Graph?
+============
+```{r, echo = F, fig.width = 15, fig.height = 10}
+g %>%
+  {. - E(.)[!label %in% c("Relationship", 'Link')]} %>%
+  plot(
+    layout = layout,
+    edge.arrow.size = 0,
+       vertex.size= 45,
+       edge.width = 5
+  )
+```
+
+What's a Graph?
+============
+```{r, echo = F, fig.width = 15, fig.height = 10}
+g %>%
+  {. - E(.)[label %in% c("Another Edge")]} %>%
+  plot(
+    layout = layout,
+    edge.arrow.size = 0,
+       vertex.size= 45,
+       edge.width = 5
+  )
+```
+
+Relationships can have direction
+============
+```{r, echo = F, fig.width = 15, fig.height = 10}
+g %>%
+  {. - E(.)[label %in% c("Another Edge")]} %>%
+  plot(
+    layout = layout,
+    vertex.size= 45,
+    edge.width = 5,
+    edge.arrow.size = 3
+  )
+```
+
+Multiple relationships are possible
+============
+```{r, echo = F, fig.width = 15, fig.height = 10}
+g %>%
+  plot(
+    layout = layout,
+    edge.curved = c(0, .25, 0, .25),
+    vertex.size= 45,
+    edge.width = 5,
+    edge.arrow.size = 3
+  )
+```
+
+Everything can have attributes
+============
+```{r, echo = F, fig.width = 15, fig.height = 10}
+g %>%
+  plot(
+    layout = layout,
+    edge.curved = c(0, .25, 0, .25),
+    vertex.label = str_c(V(.)$name, 'attr', sep ='\n'),
+    edge.label = str_c(E(.)$label, 'attr', sep = '\n'),
+    vertex.size= 45,
+    edge.width = 5,
+    edge.arrow.size = 3
+  )
+```
+
+Attributes can be visualized
+============
+```{r, echo = F, fig.width = 15, fig.height = 10}
+g %>%
+  plot(
+    layout = layout,
+    edge.curved = c(0, .25, 0, .25),
+    vertex.size = c(30, 60, 70),
+    vertex.color = c('lightblue', 'lightblue', 'pink'),
+    edge.width = c(2, 10, 20, 5),
+    edge.label = '',
+    edge.lty = c(1, 6, 5, 2),
+    edge.arrow.size = 3,
+    vertex.shape = c('circle', 'square', 'circle')
+  )
+```
+
+
+Edge attributes provide context
+====
+```{r, echo = F, fig.width = 15, fig.height = 10}
+tempG <- make_empty_graph(directed = F) +
+  vertices(c("Person1", "Person2", "Person3", 'Person4', "Person5"),
+           size = 45,
+           label.cex = 1.75,
+           label.font = 2) +
+  edges(
+    c("Person1", "Person2",
+      "Person1", "Person3",
+      "Person2", "Person3",
+      "Person1", "Person4",
+      "Person1", "Person5",
+      "Person2", "Person4",
+      "Person2", "Person5"),
+    lty1 = c(1, 2, 1, 1, 1, 1),
+    lty2 = c(1, 2, 2, 1, 1, 1),
+    label1 = c("Like", "Like", "Like", '', '', '', ''),
+    label2 = c("Like", "Dislike", "Dislike", '', '', '', ''),
+    label3 = c("???", "Dislike", "???", "Like", "Like", "Like", 'Like'),
+    label4 = c("Like", "Dislike", "Dislike", "Like", "Like", "Like", 'Like'),
+    color1 = "#1b9e77",
+    color2 = c("#1b9e77", "#d95f02", "#d95f02"),
+    color3 = c("lightgrey", '#d95f02', 'lightgrey'),
+    color4 = c("#1b9e77", "#d95f02", "#d95f02", rep("#1b9e77", 3)),
+    label.cex = 2,
+    label.font = 2,
+    width = 8
+  )
+
+tempG %>%
+  {. - E(.)[2:3]} %>%
+  {. - V(.)[c('Person4', 'Person5')]} %>%
+  plot(layout = layout,
+       vertex.size = c(45, 45, 0),
+       vertex.label = c("Person1", "Person2", ''),
+       edge.label = c("Like", '', ''),
+       edge.color = E(.)$color1)
+```
+
+Friend of my friend... 
+====
+```{r, echo = F, fig.width = 15, fig.height = 10}
+tempG  %>%
+  {. - V(.)[c('Person4', 'Person5')]} %>%
+  plot(layout = layout,
+     edge.label = E(.)$label1,
+     edge.color = E(.)$color1)
+```
+
+or enemy of my enemy? 
+====
+```{r, echo = F, fig.width = 15, fig.height = 10}
+tempG  %>%
+  {. - V(.)[c('Person4', 'Person5')]} %>%
+  plot(layout= layout,
+       edge.label = E(.)$label2,
+       edge.color = E(.)$color2)
+```
+
+What happens if relationships change?
+======
+```{r, echo = F, fig.width = 15, fig.height = 10}
+tempG %>%
+  {. - V(.)[c('Person4', 'Person5')]} %>%
+  plot(layout = layout,
+       vertex.label = c("Person1", "Person2", 'Person3'),
+       edge.label = c("Like", 'Like', 'Like'),
+       edge.color = E(.)$color1)
+```
+
+What happens if relationships change?
+======
+```{r, echo = F, fig.width = 15, fig.height = 10}
+tempG %>%
+  {. - V(.)[c('Person4', 'Person5')]} %>%
+  plot(layout = layout,
+       edge.label = E(.)$label3,
+       edge.color = E(.)$color3,
+       edge.lty = E(.)$lty1)
+```
+
+What happens if relationships change?
+======
+```{r, echo = F, fig.width = 15, fig.height = 10}
+tempLayout <- matrix(ncol = 2, byrow = T,
+                     c(4, 5,
+                       3, 1,
+                       5, 1,
+                       2, 4,
+                       2, 2))
+tempG %>%
+  plot(layout = tempLayout,
+       edge.label = E(.)$label4,
+       edge.color = E(.)$color4,
+       edge.lty = E(.)$lty2)
+```
+
+
+Node attributes can also be nodes
+======
+```{r, echo = F, fig.width = 15, fig.height = 10}
+g <- make_empty_graph(directed = T) +
+  vertices(
+    c('Thing', 'Node', 'Vertex', "Blue", "Pink", "Small", "Large", "Circle", "Square"),
+    label.cex = 1.75,
+    label.font = 2,
+    size = c(rep(45, 3), rep(30, 6)),
+    color = c(rep('orange', 3), rep('lightgrey', 6))
+  ) +
+  edges(
+    c("Thing", "Blue",
+      "Node", "Blue",
+      "Vertex", "Pink",
+      "Thing", "Small",
+      "Node", "Large", 
+      "Vertex", "Large",
+      "Thing", "Circle",
+      "Node", "Square",
+      "Vertex", "Circle"),
+    label = c(rep('Color', 3),
+              rep("Size", 3),
+              rep("Shape", 3)),
+    label.cex = 1.5,
+    label.font = 2
+  )
+
+layout = matrix(c(4.5, 7,
+                  2, 3,
+                  7, 3,
+                  1, 6,
+                  9, 1,
+                  4.5, 10,
+                  4.5, 1,
+                  8, 6,
+                  0, 1),
+                ncol = 2,
+                byrow = T)
+
+plot(g, layout = layout)
+```
+
+Connections can be projected
+========
+```{r, echo = F, fig.width = 15, fig.height = 10}
+plot(g - E(g)[V(g) %--% V(g)[c('Square', 'Small', 'Pink')]],
+     layout = layout,
+     vertex.size = c(rep(45, 3), rep(0, 6)),
+     vertex.label = c('Thing', 'Node', 'Vertex', rep('', 6)))
+```
+
+These projections enrich our data
+==========
+```{r, echo = F, fig.width = 15, fig.height = 10}
+plot(g - E(g) + edges(c("Node", "Thing",
+                        "Vertex", "Node",
+                        "Thing", "Vertex"),
+                      label = c("Same color",
+                                "Same size",
+                                "Same shape")),
+     layout = layout,
+     vertex.size = c(rep(45, 3), rep(0, 6)),
+     vertex.label = c('Thing', 'Node', 'Vertex', rep('', 6)),
+     edge.label.cex = 1.75,
+     edge.label.font = 2,
+     edge.arrow.size = 0,
+     edge.width = 3,
+     edge.curved = T)
+```
+
+Exploring Graphs with igraph
+=====
+<ol>
+  <li style='color: lightgrey'>What's a Graph?</li>
+  <li>Practical Applications: Recommendations</li>
+  <li style='color: lightgrey'>Measuring Impact/Importance</li>
+  <li style='color: lightgrey'>Practical Applications: Keyphrases</li>
+  <li style='color: lightgrey'>Practical Applications: Models</li>
+  <li style='color: lightgrey'><b>Code:</b> Creating a Graph</li>
+  <li style='color: lightgrey'><b>Code:</b> Exploring a Graph</li>
+  <li style='color: lightgrey'>Graph Databases</li>
+</ol>
+
+Practical Application: Recommendations
+======
+
+**<br><h2>35% of what consumers buy on Amazon and 75% of what users watch on Netflix come from product recommendations</h2>**
+<br>
+<br>
+<p style = 'font-size: 25px'>"How retailers can keep up with consumers"  Ian Mackenzie, Chris Meyer, and Steve Noble</p>
+
+Content Based Recommendations
+========================================================
+
+```{r  echo=FALSE, out.width = '100%'}
+knitr::include_graphics("collabFilter/shopRec05.png")
+```
+
+Content Based Recommendations
+========================================================
+
+```{r  echo=FALSE, out.width = '100%'}
+knitr::include_graphics("collabFilter/shopRec06.png")
+```
+
+Content Based Recommendations
+========================================================
+
+```{r  echo=FALSE, out.width = '100%'}
+knitr::include_graphics("collabFilter/shopRec07.png")
+```
+
+Content Based Recommendations
+========================================================
+
+```{r  echo=FALSE, out.width = '100%'}
+knitr::include_graphics("collabFilter/shopRec08.png")
+```
+
+Content Based Recommendations 
+========================================================
+
+```{r  echo=FALSE, out.width = '100%'}
+knitr::include_graphics("collabFilter/shopRec09.png")
+```
+
+Collaborative Filtering 
+========================================================
+
+```{r echo=FALSE, out.width = '100%'}
+knitr::include_graphics("collabFilter/shopRec01.png")
+```
+
+Collaborative Filtering 
+========================================================
+
+```{r  echo=FALSE,  out.width = '100%'}
+knitr::include_graphics("collabFilter/shopRec02.png")
+```
+
+Collaborative Filtering 
+========================================================
+
+```{r echo=FALSE, out.width = '100%'}
+knitr::include_graphics("collabFilter/shopRec03.png")
+```
+
+Collaborative Filtering 
+========================================================
+
+```{r  echo=FALSE, out.width = '100%'}
+knitr::include_graphics("collabFilter/shopRec04.png")
+```
+
+
+Exploring Graphs with igraph
+=====
+<ol>
+  <li style='color: lightgrey'>What's a Graph?</li>
+  <li style='color: lightgrey'>Practical Applications: Recommendations</li>
+  <li>Measuring Impact/Importance</li>
+  <li style='color: lightgrey'>Practical Applications: Keyphrases</li>
+  <li style='color: lightgrey'>Practical Applications: Models</li>
+  <li style='color: lightgrey'><b>Code:</b> Creating a Graph</li>
+  <li style='color: lightgrey'><b>Code:</b> Exploring a Graph</li>
+  <li style='color: lightgrey'>Graph Databases</li>
+</ol>
+
+What nodes are important?
+=====
+
+```{r, echo=F, fig.width = 15, fig.height = 10}
+set.seed(1234)
+# g <- sample_gnp(30, 5/20, directed = T)
+g <- sample_islands(2, 15, 3/10, 3) %>% as.directed('arbitrary')
+V(g)$name <- 1:vcount(g)
+V(g)$prT <- page_rank(g, directed = T)$vector
+V(g)$prF <- page_rank(g, directed = F)$vector
+V(g)$hub <- hub_score(g)$vector
+V(g)$auth <- authority_score(g)$vector
+V(g)$degIn <- degree(g, mode = 'in')
+V(g)$degOut <- degree(g, mode = 'out')
+V(g)$degAll <- degree(g, mode = 'all')
+V(g)$btwnT <- betweenness(g, directed = T)
+V(g)$btwnF <- betweenness(g, directed = F)
+V(g)$closeOut <- closeness(g, mode  = 'out')
+V(g)$closeIn <- closeness(g, mode  = 'in')
+V(g)$closeAll <- closeness(g, mode  = 'all')
+layout <- layout_nicely(g)
+plot(g, layout=layout, vertex.label = '', vertex.size = 12)
+```
+
+get_diameter() and shortest_paths()
+===
+```{r, echo=F, fig.width = 15, fig.height = 10}
+dmter <- get_diameter(g) %>% {shortest_paths(g, from = .[1], to = .[length(.)], output = 'both')}
+
+plot(g, layout = layout, vertex.label = '', vertex.size = 12,
+     vertex.color = ifelse(V(g)$name %in% dmter$vpath[[1]], "skyblue", rgb(.2, .2, .2, .2)),
+     edge.color = ifelse(E(g) %in% dmter$epath[[1]], 'orange', rgb(.2, .2, .2, .2)),
+     edge.width = ifelse(E(g) %in% dmter$epath[[1]], 5, 1)
+)
+
+```
+
+betweenness(g, directed = T)
+=======
+```{r, echo=F, fig.width = 15, fig.height = 10}
+V(g)$color <- ifelse(V(g)$btwnT >= tail(sort(V(g)$btwnT), 5)[1], 'skyblue', 'orange')
+plot(g, layout=layout, vertex.label = '', vertex.size = (V(g)$btwnT/max(V(g)$btwnT)) * 20)
+```
+
+betweenness(g, directed = F)
+=======
+```{r, echo=F, fig.width = 15, fig.height = 10}
+V(g)$color <- ifelse(V(g)$btwnF >= tail(sort(V(g)$btwnF), 5)[1], 'skyblue', 'orange')
+plot(g, layout=layout, vertex.label = '', vertex.size = (V(g)$btwnF/max(V(g)$btwnF)) * 20)
+```
+
+
+degree(g, mode = 'in')
+=======
+```{r, echo=F, fig.width = 15, fig.height = 10}
+V(g)$color <- ifelse(V(g)$degIn >= tail(sort(V(g)$degIn), 5)[1], 'skyblue', 'orange')
+plot(g, layout=layout, vertex.label = '', vertex.size = (V(g)$degIn/max(V(g)$degIn)) * 20)
+```
+
+degree(g, mode = 'out')
+=========
+```{r, echo=F, fig.width = 15, fig.height = 10}
+V(g)$color <- ifelse(V(g)$degOut >= tail(sort(V(g)$degOut), 5)[1], 'skyblue', 'orange')
+plot(g, layout=layout, vertex.label = '', vertex.size = (V(g)$degOut/max(V(g)$degOut)) * 20)
+```
+
+degree(g, mode = 'all')
+===========
+```{r, echo=F, fig.width = 15, fig.height = 10}
+V(g)$color <- ifelse(V(g)$degAll >= tail(sort(V(g)$degAll), 5)[1], 'skyblue', 'orange')
+plot(g, layout=layout, vertex.label = '', vertex.size = (V(g)$degAll/max(V(g)$degAll)) * 20)
+```
+
+
+closeness(g, mode = 'in')
+=======
+```{r, echo=F, fig.width = 15, fig.height = 10}
+V(g)$color <- ifelse(V(g)$closeIn >= tail(sort(V(g)$closeIn), 5)[1], 'skyblue', 'orange')
+plot(g, layout=layout, vertex.label = '', vertex.size = (V(g)$closeIn/max(V(g)$closeIn)) * 20)
+```
+
+closeness(g, mode = 'out')
+=======
+```{r, echo=F, fig.width = 15, fig.height = 10}
+V(g)$color <- ifelse(V(g)$closeOut >= tail(sort(V(g)$closeOut), 5)[1], 'skyblue', 'orange')
+plot(g, layout=layout, vertex.label = '', vertex.size = (V(g)$closeOut/max(V(g)$closeOut)) * 20)
+```
+
+closeness(g, mode = 'all')
+=======
+```{r, echo=F, fig.width = 15, fig.height = 10}
+V(g)$color <- ifelse(V(g)$closeAll >= tail(sort(V(g)$closeAll), 5)[1], 'skyblue', 'orange')
+plot(g, layout=layout, vertex.label = '', vertex.size = (V(g)$closeAll/max(V(g)$closeAll)) * 20)
+```
+
+hub_score()
+=======
+```{r, echo=F, fig.width = 15, fig.height = 10}
+V(g)$color <- ifelse(V(g)$hub >= tail(sort(V(g)$hub), 5)[1], 'skyblue', 'orange')
+plot(g, layout=layout, vertex.label = '', vertex.size = (V(g)$hub/max(V(g)$hub)) * 20)
+```
+
+authority_score()
+=======
+```{r, echo=F, fig.width = 15, fig.height = 10}
+V(g)$color <- ifelse(V(g)$auth >= tail(sort(V(g)$auth), 5)[1], 'skyblue', 'orange')
+plot(g, layout=layout, vertex.label = '', vertex.size = (V(g)$auth/max(V(g)$auth)) * 20)
+```
+
+page_rank(g, directed = T)
+====
+```{r, echo=F, fig.width = 15, fig.height = 10}
+V(g)$color <- ifelse(V(g)$prT >= tail(sort(V(g)$prT), 5)[1], 'skyblue', 'orange')
+plot(g, layout=layout, vertex.label = '', vertex.size = (V(g)$prT/max(V(g)$prT)) * 20)
+```
+
+page_rank(g, directed = F)
+====
+```{r, echo=F, fig.width = 15, fig.height = 10}
+V(g)$color <- ifelse(V(g)$prF >= tail(sort(V(g)$prF), 5)[1], 'skyblue', 'orange')
+plot(g, layout=layout, vertex.label = '', vertex.size = (V(g)$prF/max(V(g)$prF)) * 20)
+```
+
+Exploring Graphs with igraph
+=====
+<ol>
+  <li style='color: lightgrey'>What's a Graph?</li>
+  <li style='color: lightgrey'>Practical Applications: Recommendations</li>
+  <li style='color: lightgrey'>Measuring Impact/Importance</li>
+  <li>Practical Applications: Keyphrases</li>
+  <li style='color: lightgrey'>Practical Applications: Models</li>
+  <li style='color: lightgrey'><b>Code:</b> Creating a Graph</li>
+  <li style='color: lightgrey'><b>Code:</b> Exploring a Graph</li>
+  <li style='color: lightgrey'>Graph Databases</li>
+</ol>
+
+Practical Application: Keyphrases
+=========
+
+**<h5>When people think of graphs, they often think about mapping out social media connections. While graphs are indeed useful for mapping out social networks, they have many other practical applications. Data in the real world resemble vertices and edges more than they resemble rows and columns. This allows researchers to intuitively grasp the data modeled and stored within a graph. Graph exploration -- also known as graph traversal -- is traditionally done with a traversal language such as Gremlin or Cypher. The functionality of these traversal languages can be duplicated by combining the igraph and magrittr packages. Traversing a graph in R gives useRs access to a myriad of simple, but powerful algorithms to explore their data sets. This talk will show why data should be explored as a graph as well as show how a graph can be traversed in R. I will do this by going through a survey of different graph traversal techniques and by showing the code patterns necessary for each of those techniques.</h5>**
+
+
+TextRank Algorithm
+========
+<ol>
+  <li>Create a text graph</li>
+  <li>Keep only words that are nouns and adjectives</li>
+  <li>Run the PageRank algorithm</li>
+  <li>Keep only the top 1/3 PageRanked vertices</li>
+  <li>The remaining connections represent phrases</li>
+  <ul><li>Make sure the words actually appear in sequential order before committing to a phrase</li></ul>
+</ol>
+<p style = 'font-size: 25px'>"TextRank: Bringing Order into Texts" Rada Mihalcea and Paul Tarau</p>
+<p style = 'font-size: 25px'>"PositionRank: An Unsupervised Approach to Keyphrase Extraction from Scholarly Documents" Corina Florescu and Cornelia Caragea</p>
+
+Proximity as a connection
+=====
+```{r echo=F, fig.width = 15, fig.height = 10}
+library(tidytext)
+
+BenjaminOrtizUlloa <- "When people think of graphs, they often think about mapping out social media connections. While graphs are indeed useful for mapping out social networks, they have many other practical applications. Data in the real world resemble vertices and edges more than they resemble rows and columns. This allows researchers to intuitively grasp the data modeled and stored within a graph. Graph exploration -- also known as graph traversal -- is traditionally done with a traversal language such as Gremlin or Cypher. The functionality of these traversal languages can be duplicated by combining the igraph and magrittr packages. Traversing a graph in R gives useRs access to a myriad of simple, but powerful algorithms to explore their data sets. This talk will show why data should be explored as a graph as well as show how a graph can be traversed in R. I will do this by going through a survey of different graph traversal techniques and by showing the code patterns necessary for each of those techniques."
+
+set.seed(1234)
+BenjaminOrtizUlloa %>% 
+  str_extract('^[^\\.]*\\.') %>% 
+  data.frame(label = 'next', word = .) %>% 
+  unnest_tokens(ngram, word, token = 'ngrams', n = 2) %>% 
+  separate(ngram, c('from', 'to')) %>%
+  select(from, to) %>%
+  graph_from_data_frame() %>%
+  plot(vertex.size = 0, vertex.label.font = 2, vertex.label.cex = 1.75)
+```
+
+
+D TextRank: Benjamin Ortiz Ulloa
+=====
+```{r, echo = F, fig.width = 15, fig.height = 10}
+library(openNLP)
+library(NLP)
+
+sent_token_annotator <- Maxent_Sent_Token_Annotator()
+pos_token_annotator <- Maxent_POS_Tag_Annotator()
+word_token_annotator <- Maxent_Word_Token_Annotator()
+
+createTextRank <- function(abstract, stemmer = F, directed = T){
+  s <- as.String(abstract %>%str_to_lower())
+  
+  
+  a <- annotate(s, list(sent_token_annotator, word_token_annotator, pos_token_annotator)) %>%
+  {annotations_in_spans(subset(., type =="word"), subset(., type == 'sentence'))}
+  
+  wordsEdge <- lapply(a, function(x){
+    if(stemmer){
+      stemmed_words <- SnowballC::wordStem(s[x])
+      words <- sprintf("%s::%s", sapply(x$features, '[[', 'POS'), stemmed_words)
+    }else {
+      words <- sprintf('%s::%s', sapply(x$features, '[[', 'POS'), s[x]) %>%
+        str_to_upper()
+    }
+     
+    tibble(
+      from = words[1:(length(words)-1)],
+      to = words[2:length(words)],
+      nextOrder = 1:(length(words) -1)
+    )
+  }) %>%
+    enframe(name = 'sentenceOrder') %>%
+    unnest() %>%
+    filter(str_detect(from, 'NN.*::|JJ.*::'),
+           str_detect(to, 'NN.*::|JJ.*::')) %>%
+    mutate_if(is.character, str_replace, pattern = '^.+::', replacement = '') %>%
+    mutate_if(is.character, SnowballC::wordStem) %>%
+    select(from, to, sentenceOrder, nextOrder)
+  
+  g <- graph_from_data_frame(wordsEdge)
+  V(g)$pr <- page_rank(g, directed = directed)$vector
+  V(g)$size = 0
+  V(g)$label.cex = 1.7
+  V(g)$label.font = 2
+  g
+}
+
+cutOff = 2.8
+
+MiguelGonzalez_Fierro <- "Apache Spark has become the technology of choice for big data engineering. However, provisioning and maintaining Spark clusters can be challenging and expensive. To address this issue, Microsoft has developed the Azure Distributed Data Engineering Toolkit AZTK. This talk describes how AZTK Spark clusters can be provisioned in the cloud from a local machine with just a few commands. The clusters are ready to use in under 5 minutes and come with R and R Studio Server pre-installed, allowing R users to start developing Spark applications immediately. Users can apply their own Docker image to customize the Spark environment. ATZK clusters, composed of low priority Azure virtual machines, can be created on demand and run only as needed allowing for large cost savings. We will show a short demo of how the pre-installed sparklyr package can be used to perform data engineering tasks using dplyr syntax, and machine learning using the Spark MLlib library."
+
+BenjaminOrtizUlloa <- "When people think of graphs, they often think about mapping out social media connections. While graphs are indeed useful for mapping out social networks, they have many other practical applications. Data in the real world resemble vertices and edges more than they resemble rows and columns. This allows researchers to intuitively grasp the data modeled and stored within a graph. Graph exploration -- also known as graph traversal -- is traditionally done with a traversal language such as Gremlin or Cypher. The functionality of these traversal languages can be duplicated by combining the igraph and magrittr packages. Traversing a graph in R gives useRs access to a myriad of simple, but powerful algorithms to explore their data sets. This talk will show why data should be explored as a graph as well as show how a graph can be traversed in R. I will do this by going through a survey of different graph traversal techniques and by showing the code patterns necessary for each of those techniques."
+
+AmyStringer <- "The Catlin Seaview project is a large scale reef survey for estimating coralcover at various locations around the world. Upon re-surveying, it is possible to track changes in, and predict the future condition of, these reefs over time. The survey collects hundreds of thousands of images from 2km transects of reef, which are then sent to a neural network for automatic annotation of reef communities. Annotations are completed in such a way that the resulting datahave hierarchical spatial scales going up from image, to transect, to reef, to subregion, to region. Here, we present an efficient method for extracting, summarising and visualising the big and complex data with Rmarkdown, dplyr and ggplot2. The use of Rmarkdown, for report generation, allows for the introduction of parameters into the construction of the document, allowing for entirely unique reports to be developed from the one source script. This approach has resulted in a system for compiling 22 reproducible reports, extracting, summarising and visualising data at multiple spatial scales, from over 600 000 images, in a matter of minutes; leaving machines to do the work so that people have time to think."
+
+SnehalataHuzurbazar <- "Dimension reduction for high-dimensional data is necessary for descriptive data analysis. Most researchers restrict themselves to visualizing 2 or 3 dimensions, however, to understand relationships between many variables in high-dimensional data, more dimensions are needed. This talk presents several new options for visualizing beyond 3D. These are illustrated using 16S rRNA microbiome data. We will show intensity plots developed to highlight the changing contributions of taxa (or subjects) as the number of principal components of the dimension reduction or ordination method are changed. And secondarily revive Andrews curves, connected with a tour algorithm for viewing 1D projections of multiple principal components, to study group behavior in the high-dimensional data. The plots provide a quick visualization of taxa subjects that are close to the center or that contribute to dissimilarity. They also allow for exploration of patterns among related subjects or taxa not seen in other visualizations. All code is written in R and available on Github."
+
+set.seed(4321)
+createTextRank(BenjaminOrtizUlloa) %>%
+  {. - V(.)[pr < sort(V(.)$pr, T)[ceiling(vcount(.)/cutOff)]]} %>%
+  {. - V(.)[degree(.) == 0]} %>%
+  plot( )
+```
+
+UD TextRank: Benjamin Ortiz Ulloa
+====
+```{r echo = F, fig.width = 15, fig.height = 10}
+set.seed(4321)
+createTextRank(BenjaminOrtizUlloa, F, F) %>%
+  {. - V(.)[pr < sort(V(.)$pr, T)[ceiling(vcount(.)/cutOff)]]} %>%
+  {. - V(.)[degree(.) == 0]} %>%
+  plot( )
+```
+
+D TextRank: Miguel Gonzalez-Fierro
+=====
+```{r echo = F, fig.width = 15, fig.height = 10}
+set.seed(4321)
+MiguelGonzalez_Fierro %>%
+  createTextRank(F, T) %>%
+  {. - V(.)[pr < sort(V(.)$pr, T)[ceiling(vcount(.)/cutOff)]]} %>%
+  {. - V(.)[degree(.) == 0]} %>%
+  plot()
+```
+
+UD TextRank: Miguel Gonzalez-Fierro
+=====
+```{r echo = F, fig.width = 15, fig.height = 10}
+set.seed(4321)
+MiguelGonzalez_Fierro %>%
+  createTextRank(F, F) %>%
+  {. - V(.)[pr < sort(V(.)$pr, T)[ceiling(vcount(.)/cutOff)]]} %>%
+  {. - V(.)[degree(.) == 0]} %>%
+  plot( )
+```
+
+D TextRank: Amy Stringer
+====
+```{r echo = F, fig.width = 15, fig.height = 10}
+set.seed(4321)
+AmyStringer %>%
+  createTextRank(F, T) %>%
+  {. - V(.)[pr < sort(V(.)$pr, T)[ceiling(vcount(.)/cutOff)]]} %>%
+  {. - V(.)[degree(.) == 0]} %>%
+  plot( )
+```
+
+UD TextRank: Amy Stringer
+====
+```{r echo = F, fig.width = 15, fig.height = 10}
+set.seed(4321)
+AmyStringer %>%
+  createTextRank(F, F) %>%
+  {. - V(.)[pr < sort(V(.)$pr, T)[ceiling(vcount(.)/cutOff)]]} %>%
+  {. - V(.)[degree(.) == 0]} %>%
+  plot()
+```
+
+D TextRank: Snehalata Huzurbazar
+======
+```{r echo = F, fig.width = 15, fig.height = 10}
+set.seed(4321)
+SnehalataHuzurbazar %>%
+  createTextRank(F, T) %>%
+  {. - V(.)[pr < sort(V(.)$pr, T)[ceiling(vcount(.)/cutOff)]]} %>%
+  {. - V(.)[degree(.) == 0]} %>%
+  plot()
+```
+
+UD TextRank: Snehalata Huzurbazar
+======
+```{r echo = F, fig.width = 15, fig.height = 10}
+set.seed(4321)
+SnehalataHuzurbazar %>%
+  createTextRank(F, F) %>%
+  {. - V(.)[pr < sort(V(.)$pr, T)[ceiling(vcount(.)/cutOff)]]} %>%
+  {. - V(.)[degree(.) == 0]} %>%
+  plot( )
+```
+
+
+Exploring Graphs with igraph
+=======
+<ol>
+  <li style='color: lightgrey'>What's a Graph?</li>
+  <li style='color: lightgrey'>Practical Applications: Recommendations</li>
+  <li style='color: lightgrey'>Measuring Impact/Importance</li>
+  <li style='color: lightgrey'>Practical Applications: Keyphrases</li>
+  <li>Practical Applications: Models</li>
+  <li style='color: lightgrey'><b>Code:</b> Creating a Graph</li>
+  <li style='color: lightgrey'><b>Code:</b> Exploring a Graph</li>
+  <li style='color: lightgrey'>Graph Databases</li>
+</ol>
+
+
+Simple Contagion: Susceptible
+===========
+
+System at Time = 0
+
+```{r, echo = F, fig.width = 11}
+par(mar = c(1,1,1,1))
+openplotmat()
+elpos <- coordinates(2)
+fromto <- matrix(ncol = 2, byrow = T,
+                 data = c(1,2))
+
+arrpos <- matrix(ncol = 2, nrow = 1)
+
+arrpos[1,] <- straightarrow(to = elpos[fromto[1, 2],],
+                            from = elpos[fromto[1,1],],
+                            lwd = 2,
+                            arr.pos = .6,
+                            arr.length = 0)
+
+textellipse(mid = elpos[1,],
+            radx = .08,
+            rady = .08,
+            lab = "Infected",
+            cex = 1.5,
+            shadow.col = "#d95f02")
+
+textellipse(mid = elpos[2,],
+            radx = .08,
+            rady = .08,
+            lab = "Susceptible",
+            cex = 1.5,
+            shadow.col = "#1b9e77")
+
+text(arrpos[1,1] - .05, arrpos[1,2] - .1, "Connection Represents Contact", cex = 1.25)
+
+```
+
+Simple Contagion: Infected
+===========
+
+System at Time = 1
+
+```{r, echo = F, fig.width = 11}
+par(mar = c(1,1,1,1))
+openplotmat()
+elpos <- coordinates(2)
+fromto <- matrix(ncol = 2, byrow = T,
+                 data = c(1,2))
+
+arrpos <- matrix(ncol = 2, nrow = 1)
+
+arrpos[1,] <- straightarrow(to = elpos[fromto[1, 2],],
+                            from = elpos[fromto[1,1],],
+                            lwd = 2,
+                            arr.pos = .6,
+                            arr.length = 0)
+
+textellipse(mid = elpos[1,],
+            radx = .08,
+            rady = .08,
+            lab = "Infected",
+            cex = 1.5,
+            shadow.col = "#d95f02")
+
+textellipse(mid = elpos[2,],
+            radx = .08,
+            rady = .08,
+            lab = "Infected",
+            cex = 1.5,
+            shadow.col = "#d95f02")
+
+text(arrpos[1,1] - .05, arrpos[1,2] - .1, "Connection Represents Contact", cex = 1.25)
+
+```
+
+SI Model
+=======
+
+```{r, out.width = '700px', echo = F, fig.width = 11}
+knitr::include_graphics("SIR/SI_noR.gif")
+```
+
+
+SI Model Quantified
+======
+```{r, out.width = '700px', echo = F, fig.width = 11}
+stateDF <- read_rds('SIR/SI_STATE_DF.rds')
+
+stateDF %>%
+  mutate(percent = n/75) %>%
+  ggplot(aes(time, percent, color = state)) +
+    geom_line(size = 1.5) +
+    theme_bw() +
+  scale_color_manual(values = c('s' = "#1b9e77",
+                                'i' = "#d95f02"))
+
+```
+
+Simple Contagion: Recovered
+===========
+System at Time = 2 | Infection Life = 2
+
+```{r, echo = F, fig.width = 11}
+par(mar = c(1,1,1,1))
+openplotmat()
+elpos <- coordinates(2)
+fromto <- matrix(ncol = 2, byrow = T,
+                 data = c(1,2))
+
+arrpos <- matrix(ncol = 2, nrow = 1)
+
+arrpos[1,] <- straightarrow(to = elpos[fromto[1, 2],],
+                            from = elpos[fromto[1,1],],
+                            lwd = 2,
+                            arr.pos = .6,
+                            arr.length = 0)
+
+textellipse(mid = elpos[1,],
+            radx = .08,
+            rady = .08,
+            lab = "Recovered",
+            cex = 1.5,
+            shadow.col = "#7570b3")
+
+textellipse(mid = elpos[2,],
+            radx = .08,
+            rady = .08,
+            lab = "Infected",
+            cex = 1.5,
+            shadow.col = "#d95f02")
+
+text(arrpos[1,1] - .05, arrpos[1,2] - .1, "Connection Represents Contact", cex = 1.25)
+
+```
+
+
+SIR Model
+=======
+```{r, out.width = '700px', echo = F, fig.width = 11}
+knitr::include_graphics("SIR/SIR.gif")
+```
+
+SIR Model Quantified
+=====
+```{r, out.width = '700px', echo = F, fig.width = 11}
+stateDF <- read_rds('SIR/SIR_STATE_DF.rds')
+
+stateDF %>%
+  mutate(percent = n/75) %>%
+  ggplot(aes(time, percent, color = state)) +
+    geom_line(size = 1.5) +
+    theme_bw() +
+  scale_color_manual(values = c('s' = "#1b9e77",
+                                'i' = "#d95f02",
+                                'r' = "#7570b3"))
+
+```
+
+Simple Social Contagion
+===========
+
+System at Time = 0
+
+```{r, echo = F, fig.width = 11}
+par(mar = c(1,1,1,1))
+openplotmat()
+elpos <- coordinates(c(3, 3))
+fromto <- matrix(ncol = 2, byrow = T,
+                 data = c(2, 4, 2, 6, 4, 6))
+
+nr <- nrow(fromto)
+arrpos <- matrix(ncol = 2, nrow = nr)
+for(i in 1:nr){
+  arrpos[i, ] <- straightarrow(to = elpos[fromto[i, 2],],
+                               from = elpos[fromto[i, 1],],
+                               lwd = 2, 
+                               arr.pos = .6, 
+                               arr.length = .0)
+}
+
+textellipse(mid = elpos[2,],
+            radx = .1,
+            rady = .1,
+            lab = "Infected\nwith Knowledge",
+            cex = 1.5,
+            shadow.col = "#d95f02")
+
+textellipse(mid = elpos[4,],
+            radx = .1,
+            rady = .1,
+            lab = "Susceptible\nto Knowledge",
+            cex = 1.5,
+            shadow.col = "#1b9e77")
+
+textellipse(mid = elpos[6,],
+            radx = .1,
+            rady = .1,
+            lab = "Susceptible\nto Knowledge",
+            cex = 1.5,
+            shadow.col = "#1b9e77")
+```
+
+Simple Social Contagion
+===========
+
+System at Time = 1
+
+```{r, echo = F, fig.width = 11}
+par(mar = c(1,1,1,1))
+openplotmat()
+elpos <- coordinates(c(3, 3))
+fromto <- matrix(ncol = 2, byrow = T,
+                 data = c(2, 4, 2, 6, 4, 6))
+
+nr <- nrow(fromto)
+arrpos <- matrix(ncol = 2, nrow = nr)
+for(i in 1:nr){
+  arrpos[i, ] <- straightarrow(to = elpos[fromto[i, 2],],
+                               from = elpos[fromto[i, 1],],
+                               lwd = 2, 
+                               arr.pos = .6, 
+                               arr.length = .0)
+}
+
+textellipse(mid = elpos[2,],
+            radx = .1,
+            rady = .1,
+            lab = "Infected\nwith Knowledge",
+            cex = 1.5,
+            shadow.col = "#d95f02")
+
+textellipse(mid = elpos[4,],
+            radx = .1,
+            rady = .1,
+            lab = "Infected\nwith Knowledge",
+            cex = 1.5,
+            shadow.col = "#d95f02")
+
+textellipse(mid = elpos[6,],
+            radx = .1,
+            rady = .1,
+            lab = "Infected\nwith Knowledge",
+            cex = 1.5,
+            shadow.col = "#d95f02")
+```
+
+Simple Social Contagion
+===========
+
+System at Time = 2
+
+```{r, echo = F, fig.width = 11}
+par(mar = c(1,1,1,1))
+openplotmat()
+elpos <- coordinates(c(3, 3))
+fromto <- matrix(ncol = 2, byrow = T,
+                 data = c(2, 4, 2, 6, 4, 6))
+
+nr <- nrow(fromto)
+arrpos <- matrix(ncol = 2, nrow = nr)
+for(i in 1:nr){
+  arrpos[i, ] <- straightarrow(to = elpos[fromto[i, 2],],
+                               from = elpos[fromto[i, 1],],
+                               lwd = 2, 
+                               arr.pos = .6, 
+                               arr.length = .0)
+}
+
+textellipse(mid = elpos[2,],
+            radx = .1,
+            rady = .1,
+            lab = "Recovered\nfrom Fad",
+            cex = 1.5,
+            shadow.col = "#7570b3")
+
+textellipse(mid = elpos[4,],
+            radx = .1,
+            rady = .1,
+            lab = "Infected\nwith Knowledge",
+            cex = 1.5,
+            shadow.col = "#d95f02")
+
+textellipse(mid = elpos[6,],
+            radx = .1,
+            rady = .1,
+            lab = "Infected\nwith Knowledge",
+            cex = 1.5,
+            shadow.col = "#d95f02")
+```
+
+Complex Social Contagion: Agents Matter
+===
+
+System at Time = 0 | Resistence = 1 or 2
+
+```{r, echo = F, fig.width = 11}
+par(mar = c(1,1,1,1))
+openplotmat()
+elpos <- coordinates(c(3, 3))
+fromto <- matrix(ncol = 2, byrow = T,
+                 data = c(2, 4, 2, 6, 4, 6))
+
+nr <- nrow(fromto)
+arrpos <- matrix(ncol = 2, nrow = nr)
+for(i in 1:nr){
+  arrpos[i, ] <- straightarrow(to = elpos[fromto[i, 2],],
+                               from = elpos[fromto[i, 1],],
+                               lwd = 2, 
+                               arr.pos = .6, 
+                               arr.length = .0)
+}
+
+textellipse(mid = elpos[2,],
+            radx = .1,
+            rady = .1,
+            lab = "Infected\nwith Knowledge\n alpha = 1",
+            cex = 1.5,
+            shadow.col = "#d95f02")
+
+textellipse(mid = elpos[4,],
+            radx = .1,
+            rady = .1,
+            lab = "Susceptible\nto Knowledge\n alpha = 1",
+            cex = 1.5,
+            shadow.col = "#1b9e77")
+
+textellipse(mid = elpos[6,],
+            radx = .1,
+            rady = .1,
+            lab = "Susceptible\nto Knowledge\n alpha = 2",
+            cex = 1.5,
+            shadow.col = "#1b9e77")
+```
+
+Complex Social Contagion: Agents Matter
+===
+
+System at Time = 1 | Resistence = 1 or 2
+
+```{r, echo = F, fig.width = 11}
+par(mar = c(1,1,1,1))
+openplotmat()
+elpos <- coordinates(c(3, 3))
+fromto <- matrix(ncol = 2, byrow = T,
+                 data = c(2, 4, 2, 6, 4, 6))
+
+nr <- nrow(fromto)
+arrpos <- matrix(ncol = 2, nrow = nr)
+for(i in 1:nr){
+  arrpos[i, ] <- straightarrow(to = elpos[fromto[i, 2],],
+                               from = elpos[fromto[i, 1],],
+                               lwd = 2, 
+                               arr.pos = .6, 
+                               arr.length = .0)
+}
+
+textellipse(mid = elpos[2,],
+            radx = .1,
+            rady = .1,
+            lab = "Infected\nwith Knowledge\n alpha = 1",
+            cex = 1.5,
+            shadow.col = "#d95f02")
+
+textellipse(mid = elpos[4,],
+            radx = .1,
+            rady = .1,
+            lab = "Infected\nwith Knowledge\n alpha = 1",
+            cex = 1.5,
+            shadow.col = "#d95f02")
+
+textellipse(mid = elpos[6,],
+            radx = .1,
+            rady = .1,
+            lab = "Susceptible\nto Knowledge\n alpha = 2",
+            cex = 1.5,
+            shadow.col = "#1b9e77")
+```
+
+Complex Social Contagion: Agents Matter
+===
+
+System at Time = 2 | Resistence = 1 or 2
+
+```{r, echo = F, fig.width = 11}
+par(mar = c(1,1,1,1))
+openplotmat()
+elpos <- coordinates(c(3, 3))
+fromto <- matrix(ncol = 2, byrow = T,
+                 data = c(2, 4, 2, 6, 4, 6))
+
+nr <- nrow(fromto)
+arrpos <- matrix(ncol = 2, nrow = nr)
+for(i in 1:nr){
+  arrpos[i, ] <- straightarrow(to = elpos[fromto[i, 2],],
+                               from = elpos[fromto[i, 1],],
+                               lwd = 2, 
+                               arr.pos = .6, 
+                               arr.length = .0)
+}
+
+textellipse(mid = elpos[2,],
+            radx = .1,
+            rady = .1,
+            lab = "Infected\nwith Knowledge\n alpha = 1",
+            cex = 1.5,
+            shadow.col = "#d95f02")
+
+textellipse(mid = elpos[4,],
+            radx = .1,
+            rady = .1,
+            lab = "Infected\nwith Knowledge\n alpha = 1",
+            cex = 1.5,
+            shadow.col = "#d95f02")
+
+textellipse(mid = elpos[6,],
+            radx = .1,
+            rady = .1,
+            lab = "Infected\nwith Knowledge\nalpha = 2",
+            cex = 1.5,
+            shadow.col = "#d95f02")
+```
+
+
+SI Model
+=======
+```{r, out.width = '700px', echo = F, fig.width = 11}
+knitr::include_graphics("SIR/COMPLEX_SI_noR.gif")
+```
+
+
+SI Model Quantified
+======
+```{r, out.width = '700px', echo = F, fig.width = 11}
+stateDF <- read_rds('SIR/COMPLEX_SI_STATE_DF.rds')
+
+stateDF %>%
+  mutate(percent = n/75) %>%
+  ggplot(aes(time, percent, color = state)) +
+    geom_line(size = 1.5) +
+    theme_bw() +
+  scale_color_manual(values = c('s' = "#1b9e77",
+                                'i' = "#d95f02"))
+
+```
+
+Exploring Graphs with igraph
+=====
+<ol>
+  <li style='color: lightgrey'>What's a Graph?</li>
+  <li style='color: lightgrey'>Practical Applications: Recommendations</li>
+  <li style='color: lightgrey'>Measuring Impact/Importance</li>
+  <li style='color: lightgrey'>Practical Applications: Keyphrases</li>
+  <li style='color: lightgrey'>Practical Applications: Models</li>
+  <li><b>Code:</b> Creating a Graph</li>
+  <li style='color: lightgrey'><b>Code:</b> Exploring a Graph</li>
+  <li style='color: lightgrey'>Graph Databases</li>
+</ol>
+
+Creating graphs: Find data
+=====
+```{r echo = F, fig.width = 12}
+knitr::kable(starwars[,1:10])
+```
+
+Creating graphs: Edge List
+=======
+```{r echo = F, fig.width = 12}
+starwarsEL <- starwars %>%
+  mutate_if(function(x){!is.list(x)}, as.character) %>%
+  tidyr::gather(type, to, -name) %>%
+  unnest() %>% 
+  rename(from = name) %>%
+  mutate(type = str_c('has ', type)) %>%
+  select(from, to, type) %>%
+  filter(!is.na(to))
+set.seed(1234)
+knitr::kable(starwarsEL %>% sample_n(15))
+```
+
+Creating graphs: Optional Node List
+====
+```{r, echo = F, fig.wisth = 12}
+starwarsNL <- list(
+  tibble(
+    name = starwarsEL$from %>% unique,
+    type = 'a character'
+  ),
+  tibble(
+    name = starwarsEL$to %>% unique,
+    type = 'not a character'
+  )
+) %>%
+  bind_rows()
+set.seed(1234)
+knitr::kable(starwarsNL %>% sample_n(15))
+```
+
+Creating graphs: igraph
+=====
+class:small-code
+```{r, fig.width = 12}
+g <- graph_from_data_frame(d = starwarsEL, 
+                           directed = T, 
+                           vertices = starwarsNL)
+g
+```
+
+Creating Data Frames from graphs
+====
+class:small-code
+```{r, fig.width = 12}
+g %>% as_data_frame('edges')
+```
+
+Creating Data Frames from graphs
+====
+class:small-code
+```{r, fig.width = 12}
+g %>% as_data_frame('vertices')
+```
+
+
+Exploring Graphs with igraph
+==========
+<ol>
+  <li style='color: lightgrey'>What's a Graph?</li>
+  <li style='color: lightgrey'>Practical Applications: Recommendations</li>
+  <li style='color: lightgrey'>Measuring Impact/Importance</li>
+  <li style='color: lightgrey'>Practical Applications: Keyphrases</li>
+  <li style='color: lightgrey'>Practical Applications: Models</li>
+  <li style='color: lightgrey'><b>Code:</b> Creating a Graph</li>
+  <li><b>Code:</b> Exploring a Graph</li>
+  <li style='color: lightgrey'>Graph Databases</li>
+</ol>
+
+
+Searching Vertices: V(g) is just a vector
+======
+class:small-code
+```{r}
+V(g)[name == "Luke Skywalker"]
+V(g)[[type == 'a character']]
+```
+
+
+Searching Edges: E(g) is just a vector
+=====
+class:small-code
+```{r}
+E(g)[type == 'has films']
+E(g)[['Luke Skywalker' %--% V(g)]]
+```
+
+Accessing Nodes from E(g)
+====
+class:small-code
+```{r}
+#edge is leaving from
+tail_of(g, E(g))
+#edge points to
+head_of(g, E(g))
+```
+
+Filter Graphs: - and !
+======
+class:small-code
+```{r}
+#Get rid of all edges NOT connected to LUKE SKYWALKER
+g - E(g)[!'Luke Skywalker' %--% V(g)]
+```
+
+Chain Filters: %>%, {}, and .
+====
+class:small-code
+```{r}
+g %>%
+  #get rid of all edges that DON'T have the type 'has films'
+  {. - E(.)[type != 'has films']} %>%
+  #get rid of all edges that are NOT connected FROM a SKYWALKER
+  {. - E(.)[V(.)[!str_detect(name, 'Skywalker')] %->% V(.)]} %>%
+  #get rid of all vertices that are NOT connected to other nodes
+  #getting rid of the edges does not get rid of the nodes
+  {. - V(.)[degree(.) == 0]}
+```
+
+Assigning Data to Vertices
+====
+class:small-code
+```{r}
+V(g)$degree <- degree(g)
+
+V(g)[[]]
+```
+
+Projections
+=====
+class:small-code
+```{r}
+movieCharProj <- g %>%
+  {. - E(.)[type != 'has films']} %>%
+  {. - V(.)[degree(.) == 0]} %>%
+  #type has to be a boolean for projections to work
+  {
+    V(.)$type <- V(.)$type == 'a character'
+    .
+  } %>%
+  bipartite_projection()
+
+movieCharProj
+```
+
+Projections
+====
+```{r echo = F, fig.width = 15, fig.height = 10}
+set.seed(4321)
+movieCharProj[[1]] %>% 
+  plot(vertex.size = 0,
+       edge.width = (E(.)$weight/max(E(.)$weight)) * 20,
+       vertex.label.font = 2, 
+       vertex.label.cex = 1.25)
+```
+
+Projections: All Character Connections
+====
+```{r echo = F, fig.width = 15, fig.height = 10}
+set.seed(4321)
+movieCharProj[[2]] %>%
+  plot(vertex.size = 0)
+```
+
+Untangle the hairball
+===
+class:small-code
+```{r}
+movieCharProj[[2]] %>%
+  {E(.)$weight} %>%
+  summary
+```
+
+Untangle the hairball
+===
+class:small-code
+
+```{r}
+movieCharProj[[2]] %>%
+  {. - E(.)[weight < 3]} %>%
+  {. - V(.)[degree(.) == 0]}
+```
+
+Untangle the hairball
+=====
+class:small-code
+```{r,echo = F, fig.width = 15, fig.height = 10}
+set.seed(1234)
+anakinAndVader <- movieCharProj[[2]] %>%
+  {. - E(.)[weight < 3]} %>%
+  {. - V(.)[degree(.) == 0]}
+anakinAndVader %>%
+  plot(vertex.size = 0,
+       vertex.label.font = 2)
+```
+
+Untangle the hairball: PageRank
+====
+class:small-code
+```{r, echo = F, fig.width = 15, fig.height = 10}
+set.seed(1234)
+anakinAndVader %>%
+  {
+    V(.)$pr <- page_rank(.)$vector
+    .
+  } %>%
+  plot(vertex.size = 0,
+       vertex.label.font = 2,
+       vertex.label.cex = 2 * (V(.)$pr/max(V(.)$pr)))
+```
+
+Changing the data changes the network
+=====
+class:small-code
+```{r}
+anakinIsLukesFather <- g %>%
+  as_data_frame('both') %>%
+  {
+    .[[1]] <- .[[1]] %>% filter(name != 'Darth Vader')
+    .[[2]] <- .[[2]] %>% mutate(from = sapply(from, function(x){ifelse(x == 'Darth Vader', 'Anakin Skywalker', x)})) %>% distinct
+    .
+  } %>%
+  {graph_from_data_frame(.[[2]], T, .[[1]])} %>%
+  {. - E(.)[type != 'has films']} %>%
+  {. - V(.)[degree(.) == 0]} %>%
+  {
+    V(.)$degree <- degree(.)
+    .
+  } %>%
+  {
+    V(.)$type <- V(.)$type == 'a character'
+    .
+  } %>%
+  bipartite_projection() %>%
+  .[[2]] %>%
+  {. - E(.)[weight < 3]} %>%
+  {. - V(.)[degree(.) == 0]}
+```
+
+Changing the data changes the network
+=====
+class:small-code
+```{r, echo = F, fig.width = 15, fig.height = 10}
+set.seed(1234)
+anakinIsLukesFather %>%
+  plot(vertex.size = 0,
+       vertex.label.font = 2)
+```
+
+Changing the network changes PageRank
+==== 
+class:small-code
+```{r, echo = F, fig.width = 15, fig.height = 10}
+set.seed(1234)
+anakinIsLukesFather %>%
+  {
+    V(.)$pr <- page_rank(.)$vector
+    .
+  } %>%
+  plot(vertex.size = 0,
+       vertex.label.font = 2,
+       vertex.label.cex = 2 * (V(.)$pr/max(V(.)$pr)))
+```
+
+
+Assigning Data to Edges
+====
+class:small-code
+```{r}
+
+E(anakinIsLukesFather)$tailPercMovies <- anakinIsLukesFather %>%
+  {E(.)$weight/tail_of(., E(.))$degree}
+
+E(anakinIsLukesFather)$headPercMovies <- anakinIsLukesFather %>%
+  {E(.)$weight/head_of(., E(.))$degree}
+
+anakinIsLukesFather %>%
+  as_data_frame('edges') %>%
+  knitr::kable()
+```
+
+Exploring Graphs with igraph
+=====
+<ol>
+  <li style='color: lightgrey'>What's a Graph?</li>
+  <li style='color: lightgrey'>Practical Applications: Recommendations</li>
+  <li style='color: lightgrey'>Measuring Impact/Importance</li>
+  <li style='color: lightgrey'>Practical Applications: Keyphrases</li>
+  <li style='color: lightgrey'>Practical Applications: Models</li>
+  <li style='color: lightgrey'><b>Code:</b> Creating a Graph</li>
+  <li><b>Code:</b> Exploring a Graph</li>
+  <li style='color: lightgrey'>Graph Databases</li>
+</ol>
+
+Learn More!
+======
+<ul>
+  <li>Katerine Ognyanova</li>
+  <ul><li><a href='http://kateto.net/tutorials/'>http://kateto.net/tutorials/</a></li></ul>
+  <li>Kelvin R. Lawrence</li>
+  <ul><li><a href='http://kelvinlawrence.net/book/Gremlin-Graph-Guide.html'>http://kelvinlawrence.net/book/Gremlin-Graph-Guide.html</a></li></ul>
+  <li>Neo4j</li>
+  <ul><li><a href='https://neo4j.com/graphacademy/'>https://neo4j.com/graphacademy/</a></li></ul>
