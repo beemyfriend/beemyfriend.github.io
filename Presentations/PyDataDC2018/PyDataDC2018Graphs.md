@@ -597,9 +597,9 @@ g
 ```
 
 ```
-IGRAPH 7f4ab3c DN-B 357 899 -- 
+IGRAPH 467f087 DN-B 357 899 -- 
 + attr: name (v/c), type (v/c), type (e/c)
-+ edges from 7f4ab3c (vertex names):
++ edges from 467f087 (vertex names):
  [1] Luke Skywalker       ->172 C-3PO                ->167
  [3] R2-D2                ->96  Darth Vader          ->202
  [5] Leia Organa          ->150 Owen Lars            ->178
@@ -1915,7 +1915,7 @@ V(g)[name == "Luke Skywalker"]
 ```
 
 ```
-+ 1/357 vertex, named, from 7f4ab3c:
++ 1/357 vertex, named, from 467f087:
 [1] Luke Skywalker
 ```
 
@@ -1924,7 +1924,7 @@ V(g)[[type == 'a character']]
 ```
 
 ```
-+ 87/357 vertices, named, from 7f4ab3c:
++ 87/357 vertices, named, from 467f087:
                     name        type
 1         Luke Skywalker a character
 2                  C-3PO a character
@@ -2025,7 +2025,7 @@ E(g)[type == 'has films']
 ```
 
 ```
-+ 173/899 edges from 7f4ab3c (vertex names):
++ 173/899 edges from 467f087 (vertex names):
  [1] Luke Skywalker->Revenge of the Sith    
  [2] Luke Skywalker->Return of the Jedi     
  [3] Luke Skywalker->The Empire Strikes Back
@@ -2044,7 +2044,7 @@ E(g)[['Luke Skywalker' %--% V(g)]]
 ```
 
 ```
-+ 18/899 edges from 7f4ab3c (vertex names):
++ 18/899 edges from 467f087 (vertex names):
               tail                    head tid hid           type
 1   Luke Skywalker                     172   1  88     has height
 82  Luke Skywalker                      77   1 133       has mass
@@ -2076,7 +2076,7 @@ tail_of(g, E(g))
 ```
 
 ```
-+ 899/357 vertices, named, from 7f4ab3c:
++ 899/357 vertices, named, from 467f087:
   [1] Luke Skywalker        C-3PO                 R2-D2                
   [4] Darth Vader           Leia Organa           Owen Lars            
   [7] Beru Whitesun lars    R5-D4                 Biggs Darklighter    
@@ -2096,7 +2096,7 @@ head_of(g, E(g))
 ```
 
 ```
-+ 899/357 vertices, named, from 7f4ab3c:
++ 899/357 vertices, named, from 467f087:
   [1] 172                         167                        
   [3] 96                          202                        
   [5] 150                         178                        
@@ -2120,9 +2120,9 @@ g - E(g)[!'Luke Skywalker' %--% V(g)]
 ```
 
 ```
-IGRAPH 3e3904c DN-B 357 18 -- 
+IGRAPH 5c198dc DN-B 357 18 -- 
 + attr: name (v/c), type (v/c), type (e/c)
-+ edges from 3e3904c (vertex names):
++ edges from 5c198dc (vertex names):
  [1] Luke Skywalker->172                    
  [2] Luke Skywalker->77                     
  [3] Luke Skywalker->blond                  
@@ -2150,9 +2150,9 @@ g %>%
 ```
 
 ```
-IGRAPH 5af2c2a DN-B 10 10 -- 
+IGRAPH faded93 DN-B 10 10 -- 
 + attr: name (v/c), type (v/c), type (e/c)
-+ edges from 5af2c2a (vertex names):
++ edges from faded93 (vertex names):
  [1] Luke Skywalker  ->Revenge of the Sith    
  [2] Luke Skywalker  ->Return of the Jedi     
  [3] Luke Skywalker  ->The Empire Strikes Back
@@ -2175,7 +2175,7 @@ V(g)[[]]
 ```
 
 ```
-+ 357/357 vertices, named, from 7f4ab3c:
++ 357/357 vertices, named, from 467f087:
                            name            type degree
 1                Luke Skywalker     a character     18
 2                         C-3PO     a character     13
@@ -2556,9 +2556,9 @@ movieCharProj
 
 ```
 $proj1
-IGRAPH 0382c01 UNW- 7 21 -- 
+IGRAPH 74ec878 UNW- 7 21 -- 
 + attr: name (v/c), degree (v/n), weight (e/n)
-+ edges from 0382c01 (vertex names):
++ edges from 74ec878 (vertex names):
  [1] Revenge of the Sith--Return of the Jedi     
  [2] Revenge of the Sith--The Empire Strikes Back
  [3] Revenge of the Sith--A New Hope             
@@ -2570,9 +2570,9 @@ IGRAPH 0382c01 UNW- 7 21 --
 + ... omitted several edges
 
 $proj2
-IGRAPH 89dad78 UNW- 87 1793 -- 
+IGRAPH 06e5729 UNW- 87 1793 -- 
 + attr: name (v/c), degree (v/n), weight (e/n)
-+ edges from 89dad78 (vertex names):
++ edges from 06e5729 (vertex names):
  [1] Luke Skywalker--C-3PO              Luke Skywalker--R2-D2             
  [3] Luke Skywalker--Darth Vader        Luke Skywalker--Leia Organa       
  [5] Luke Skywalker--Owen Lars          Luke Skywalker--Beru Whitesun lars
@@ -2619,9 +2619,9 @@ movieCharProj[[2]] %>%
 ```
 
 ```
-IGRAPH 3430139 UNW- 23 134 -- 
+IGRAPH 7dd13ce UNW- 23 134 -- 
 + attr: name (v/c), degree (v/n), weight (e/n)
-+ edges from 3430139 (vertex names):
++ edges from 7dd13ce (vertex names):
  [1] Luke Skywalker--C-3PO              Luke Skywalker--R2-D2             
  [3] Luke Skywalker--Darth Vader        Luke Skywalker--Leia Organa       
  [5] Luke Skywalker--Obi-Wan Kenobi     Luke Skywalker--Chewbacca         
