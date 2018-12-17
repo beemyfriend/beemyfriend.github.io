@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Network Entropy</title>
+    <meta charset="utf-8">
+    <meta name="author" content="plzbeemyfriend" />
+    <meta name="date" content="2018-12-16" />
+    <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <link href="libs/remark-css/default-fonts.css" rel="stylesheet" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Network Entropy
+## Exploring Urban &amp; Traditional Networks
+### plzbeemyfriend
+### 2018-12-16
+
+---
+
+class: center, middle
+
+
+
+&lt;h1&gt;&lt;a href='https://geoffboeing.com/2018/07/comparing-city-street-orientations/'&gt;Geoff Boeing did something cool&lt;/a&gt;&lt;/h1&gt;
+
+---
+class: center, middle
+
+&lt;img src="./city-street-orientations-usa-osmnx.png" width="500px" /&gt;
+
+
+---
+class: center, middle
+
+
+&lt;h2&gt;Geoff did something cool &lt;/h2&gt;
+
+--
+
+&lt;h2&gt;&lt;a href="https://github.com/gboeing/osmnx-examples/blob/master/notebooks/17-street-network-orientations.ipynb"&gt;But did it in Python&lt;/a&gt; &amp;#x1f40d;&lt;/h2&gt;
+
+--
+
+&lt;h2&gt;And that makes me sad  	&amp;#x1F622; &lt;/h2&gt;
+
+
+---
+class: center, middle
+
+&lt;h2&gt;So let's do this with&lt;/h2&gt;
+
+&lt;img src="./R_logo.png" width="300px" /&gt;
+
+---
+&lt;h2&gt;What do we need to make these in R?&lt;/h2&gt;
+
+--
+
+* Grab city street data with **osmdata**
+
+--
+
+* Create a street network graph with **stplanr** and **igraph**
+
+--
+
+* Use trigonmetry functions from **base**
+
+--
+
+* Use handwavy magic from **ggplot2**
+
+---
+#First things first
+
+We need to make sure we have all the important packages installed/loaded
+
+
+```r
+packages &lt;- c('tidyverse',
+              'sf',
+              'osmdata',
+              'tmap', 
+              'stplanr',
+              'igraph')
+
+lapply(packages, library, character.only = T)
+```
+
+---
+class:  middle, center
+
+# Grab city street data with **osmdata**
+
+---
+
+# osmdata::getbb
+
+Before we pull out any kind of map data, we need to define the *boundng box* of the region we want. 
+
+
+```r
+dc_bb &lt;- getbb('Washington, DC')
+```
+
+and this will provide us with a matrix of the maximum and minmum values for the regions longitudal (x) and latitudal (y) borders
+
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt;   &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; min &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; max &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; x &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -77.11977 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -76.90937 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; y &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 38.79163 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 38.99585 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+---
+
+# ::opq | ::add_osm_feature | ::osmdata_sf
+
+Once we define the region we care about, we can pull data from **OpenStreetMap** by building an *Overpass Query*. Since we're only interested in building a street network, we will only pull the *highway features*. Once tell OSM the features we want, we can extract the *linestring* geometry as a **Simple Feature**.
+
+
+```r
+road_types &lt;- c('trunk', 'primary', 'secondary', 'tertiary')
+dc_roads &lt;- lapply(road_types, function(rt){
+  opq(bbox = dc_bb) %&gt;%
+    add_osm_feature(key = 'highway', value = rt) %&gt;%
+    osmdata_sf() 
+}) %&gt;%
+  do.call(c, .) %&gt;%
+  .$osm_lines %&gt;%
+  select(geometry, highway)
+```
+
+---
+
+# ::opq | ::add_osm_feature | ::osmdata_sf
+What we get is  a *simple feature data frame*. That is, a data frame that can contain map geometries and data associated with those geometries.
+
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt;   &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; highway &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; geometry &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; 468774691 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; primary &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; c(-77.1176921, -77.1175392, -77.1165797, -77.1162211, -77.1160958, -77.1157736, -77.115236, -77.1151692, -77.1149663, -77.1143937, -77.1139752, -77.1135609, -77.1130037, -77.1127736, -77.1124931, 38.8540069, 38.8540523, 38.8543155, 38.8544193, 38.8544584, 38.854553, 38.8547028, 38.8547214, 38.8547785, 38.8549395, 38.8550784, 38.8552481, 38.8555182, 38.8556298, 38.855742) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; 457558482 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; tertiary &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; c(-77.006729, -77.0066586, -77.0065936, 38.936555, 38.9365576, 38.9365623) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; 545776405 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; primary &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; c(-77.0751086, -77.0754492, 38.8066826, 38.8067208) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; 397338850 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; trunk &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; c(-77.052326, -77.0523741, 38.841097, 38.8414563) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; 36742972 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; tertiary &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; c(-77.0514138, -77.0517088, 38.9395995, 38.9397653) &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+---
+
+## We can plot what we already have with **tmap**
+
+The goal is to analyze maps as graphs, not as spatial plots, but it's still worth showing how to plot a map. 
+
+
+```r
+tm_shape(filter(dc_roads, highway == 'trunk')) +
+  tm_lines('grey40', .5) +
+  tm_shape(filter(dc_roads, highway == 'primary')) +
+  tm_lines('grey30', .5) +
+  tm_shape(filter(dc_roads, highway == 'secondary')) +
+  tm_lines('grey15', .5) +
+  tm_shape(filter(dc_roads, highway == 'tertiary')) +
+  tm_lines('grey10', .5)
+```
+
+&lt;img src="network_complexity_files/figure-html/unnamed-chunk-9-1.png" height="250px" /&gt;
+
+
+
+---
+class: middle, center
+
+# Create a street network graph with **stplanr** and **igraph**
+
+---
+#sf::as | stplanr::SpatialLinesNetwork
+
+We need to convert the *simple feature* data frame into a *spatial lines* data frame before we convert the geometric features into a street network graph.
+
+
+```r
+dc_g &lt;- dc_roads %&gt;%
+    as('Spatial') %&gt;%
+    SpatialLinesNetwork() %&gt;%
+    .@g 
+```
+
+What we get is a cool an *igraph* style graph with the logtitude (x) and latitude (y) coordinates of the intersections (nodes) stored as graph attributes
+
+
+```
+## IGRAPH 1ef817b U-W- 7897 8958 -- 
+## + attr: x (g/n), y (g/n), n (g/n), weight (e/n)
+```
+
+---
+#igraph::set_vertex_attr
+
+For data manipulation purposes we want to store the x/y coordinates in the nodes themselves. 
+
+
+```r
+dc_g &lt;- dc_g %&gt;%
+    set_vertex_attr('x', value = .$x) %&gt;%
+    set_vertex_attr('y', value = .$y)
+```
+
+
+```
+## IGRAPH 1ef817b U-W- 7897 8958 -- 
+## + attr: x (g/n), y (g/n), n (g/n), x (v/n), y (v/n), weight (e/n)
+```
+
+---
+#::plot
+
+Again, the point of ths presentation isn't to show standard plots. But it's worth noting that once the x/y coordinates are set as *vertex attributes*, they are automatically represented on the plot.
+
+.pull-left[
+&lt;br&gt;
+&lt;br&gt;
+
+```r
+plot(dc_g,
+     vertex.size = .1,
+     vertex.label = '')
+```
+]
+
+.pull-right[
+![](network_complexity_files/figure-html/unnamed-chunk-15-1.png)&lt;!-- --&gt;
+]
+
+---
+class: middle, center
+
+# Use trigonmetry functions from **base**
+
+
+---
+class: middle, center
+
+&lt;img src="toa_trig.svg" width="500px" /&gt;
+
+--
+`$$Tangent(\theta)=\frac{Opposite}{Adjacent}$$`
+
+--
+`$$\theta=Tangent^{-1} (\frac{Opposite}{Adjacent})$$`
+
+--
+`$$\theta=Tangent^{-1} (Slope)$$`
+---
+class: middle, center
+
+## Street Graphs Use Cartesian Coordinates
+
+![](network_complexity_files/figure-html/unnamed-chunk-17-1.png)&lt;!-- --&gt;
+
+---
+class: middle, center
+
+## Calculate `\(\theta\)` w/ ArcTan
+
+![](network_complexity_files/figure-html/unnamed-chunk-18-1.png)&lt;!-- --&gt;
+
+---
+class: middle, center
+
+## For maps, NE roads also point SW
+
+![](network_complexity_files/figure-html/unnamed-chunk-19-1.png)&lt;!-- --&gt;
+
+
+---
+#::set_edge_attr | ::head_of | ::tail_of
+
+Sometimes it's easier to do these calculations if we store the data in one place. Let's move the adjacent node data into the edges.
+
+
+```r
+dc_g &lt;- dc_g %&gt;%
+    set_edge_attr('head_x', value = head_of(., E(.))$x) %&gt;%
+    set_edge_attr('tail_x', value = tail_of(., E(.))$x) %&gt;%
+    set_edge_attr('head_y', value = head_of(., E(.))$y) %&gt;%
+    set_edge_attr('tail_y', value = tail_of(., E(.))$y) 
+```
+
+
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; weight &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; head_x &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; head_y &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; tail_x &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; tail_y &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 0.8444880 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -77.11669 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 38.93686 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -77.11178 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 38.93032 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 0.5055929 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -76.99850 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 38.86260 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -77.00271 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 38.86550 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 0.0756250 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -77.05972 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 38.88615 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -77.05887 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 38.88611 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 0.1094728 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -77.05465 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 38.89152 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -77.05519 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 38.89241 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 0.0684703 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -77.05936 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 38.88564 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -77.05887 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 38.88611 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+---
+#::set_edge_attr | purr::map 
+
+We can iterate over the edge list and derive important information. We can calculate the *slope* and we can even color the edges to do a quick spot check.
+
+
+```r
+dc_g &lt;- dc_g %&gt;%
+  set_edge_attr('slope', value = map_dbl(E(.), function(e){
+    slope = (e$tail_y - e$head_y)/(e$tail_x - e$head_x)
+    if(is.infinite(slope)) return(Inf)
+    return(slope)
+  })) %&gt;%
+  set_edge_attr('color', value = map_chr(E(.)$slope, function(e){
+    if(e &lt; 0) return('red')
+    return('blue')
+  }))
+```
+
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; weight &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; head_x &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; head_y &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; tail_x &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; tail_y &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; slope &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; color &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 0.8444880 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -77.11669 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 38.93686 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -77.11178 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 38.93032 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -1.3329936 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; red &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 0.5055929 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -76.99850 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 38.86260 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -77.00271 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 38.86550 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -0.6885129 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; red &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 0.0756250 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -77.05972 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 38.88615 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -77.05887 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 38.88611 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -0.0537469 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; red &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 0.1094728 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -77.05465 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 38.89152 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -77.05519 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 38.89241 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -1.6446128 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; red &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 0.0684703 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -77.05936 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 38.88564 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -77.05887 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 38.88611 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.9687952 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; blue &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+---
+class: middle, center
+
+#Spot Check: Do the slopes look correct?
+
+
+```r
+plot(dc_g, vertex.label = '', vertex.size = .1)
+```
+
+![](network_complexity_files/figure-html/unnamed-chunk-24-1.png)&lt;!-- --&gt;
+
+---
+
+#base::atan
+
+Now that we have the *slope* all we need to do is plug-and-chug that information into the `atan` or ArcTan function. 
+
+Here we convert the result of `atan` from radians to degrees
+
+
+```r
+dc_g &lt;- dc_g %&gt;%
+  set_edge_attr('angle', value = map_dbl(E(.)$slope, function(e){
+*    atan(e) * 180 / pi
+  }))
+```
+
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; weight &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; head_x &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; head_y &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; tail_x &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; tail_y &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; slope &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; color &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; angle &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 0.8444880 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -77.11669 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 38.93686 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -77.11178 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 38.93032 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -1.3329936 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; red &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -53.12309 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 0.5055929 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -76.99850 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 38.86260 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -77.00271 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 38.86550 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -0.6885129 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; red &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -34.54791 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 0.0756250 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -77.05972 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 38.88615 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -77.05887 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 38.88611 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -0.0537469 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; red &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -3.07651 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 0.1094728 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -77.05465 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 38.89152 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -77.05519 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 38.89241 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -1.6446128 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; red &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -58.69848 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 0.0684703 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -77.05936 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 38.88564 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -77.05887 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 38.88611 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.9687952 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; blue &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 44.09196 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+
+---
+class: middle, center
+
+# Use handwavy magic from **ggplot2**
+
+---
+
+## The end result is a *Polar Histogram*. 
+
+--
+
+### This is an easy enough task now that we've done most of the data cleaning. We should be able to make a *Polar Histogram* in 3 steps:
+
+--
+
+1 Create reasonable bins for the angles
+
+--
+
+2 Duplicate the bins to represent the opposite coordinates
+
+--
+
+3 Plug everything into **ggplot**
+
+---
+
+# Create Reasonable Bins
+
+The angles we have range from -90 `\(^\circ\)` to 90 `\(^\circ\)`. Maybe reasonable bin breaks points would be every 10 degrees.
+
+
+```r
+break_points &lt;- seq(90, -90, -10)
+
+angle_bins &lt;- cut(E(dc_g)$angle, 
+                  break_points,
+                  include.lowest = T) %&gt;%
+    factor(levels = rev(levels(.)))
+
+dc_hist_data &lt;- tibble(angle_bin = angle_bins, 
+                       length = E(dc_g)$weight) %&gt;%
+  count(angle_bin, wt = length)
+```
+
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; angle_bin &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; n &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; (80,90] &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 137.43230 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; (70,80] &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 45.50629 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; (60,70] &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 35.81954 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; (50,60] &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 67.47408 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; (40,50] &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 55.78917 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+---
+
+# Duplicate Bins
+
+Right now we only have information for the North East and South East road orientations. However, if we go off the assumption that roads going North East also go South West, then all we need to do is rename the bins and add them to our data set.
+
+
+```r
+inverse_hist_data &lt;- dc_hist_data %&gt;%
+  mutate(angle_bin = str_c('-', angle_bin))
+```
+
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; angle_bin &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; n &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; -(80,90] &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 137.43230 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; -(70,80] &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 45.50629 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; -(60,70] &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 35.81954 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; -(50,60] &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 67.47408 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; -(40,50] &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 55.78917 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+
+```r
+dc_hist_data &lt;- rbind(dc_hist_data,
+                      inverse_hist_data)
+```
+
+---
+
+# **ggplot** magic
+
+
+```r
+ggplot(dc_hist_data) +
+  geom_col(aes(x = angle_bin, y = n)) +
+  coord_polar() +
+  theme_bw()
+```
+
+&lt;img src="network_complexity_files/figure-html/unnamed-chunk-32-1.png" width="400px" /&gt;
+
+---
+class: middle, center
+
+# Let's look at traditional graphs
+
+---
+
+#Force Directed Graph
+
+.pull-left[
+![](network_complexity_files/figure-html/unnamed-chunk-33-1.png)&lt;!-- --&gt;
+]
+
+.pull-right[
+![](network_complexity_files/figure-html/unnamed-chunk-34-1.png)&lt;!-- --&gt;
+]
+
+---
+
+# Lattice
+
+.pull-left[
+![](network_complexity_files/figure-html/unnamed-chunk-35-1.png)&lt;!-- --&gt;
+]
+
+.pull-right[
+![](network_complexity_files/figure-html/unnamed-chunk-36-1.png)&lt;!-- --&gt;
+]
+
+---
+
+#Circles - 25 Nodes &amp; Edges Within 1
+
+.pull-left[
+![](network_complexity_files/figure-html/unnamed-chunk-37-1.png)&lt;!-- --&gt;
+]
+
+.pull-right[
+![](network_complexity_files/figure-html/unnamed-chunk-38-1.png)&lt;!-- --&gt;
+]
+
+---
+
+# Circles - 25 Nodes &amp; Edges Within 2
+
+.pull-left[
+![](network_complexity_files/figure-html/unnamed-chunk-39-1.png)&lt;!-- --&gt;
+
+]
+
+.pull-right[
+![](network_complexity_files/figure-html/unnamed-chunk-40-1.png)&lt;!-- --&gt;
+]
+
+---
+
+# Circles - 50 Nodes &amp; Edges Within 2
+
+.pull-left[
+![](network_complexity_files/figure-html/unnamed-chunk-41-1.png)&lt;!-- --&gt;
+]
+
+.pull-right[
+![](network_complexity_files/figure-html/unnamed-chunk-42-1.png)&lt;!-- --&gt;
+]
+
+---
+
+#Circles - 120 Nodes &amp; Edges Within 2
+
+.pull-left[
+![](network_complexity_files/figure-html/unnamed-chunk-43-1.png)&lt;!-- --&gt;
+]
+
+.pull-right[
+![](network_complexity_files/figure-html/unnamed-chunk-44-1.png)&lt;!-- --&gt;
+]
+
+---
+
+# Trees - 25 Nodes &amp; 2 Branches
+
+.pull-left[
+![](network_complexity_files/figure-html/unnamed-chunk-45-1.png)&lt;!-- --&gt;
+]
+
+.pull-right[
+![](network_complexity_files/figure-html/unnamed-chunk-46-1.png)&lt;!-- --&gt;
+]
+
+---
+
+# Trees - 100 Nodes &amp; 2 Branches
+
+.pull-left[
+![](network_complexity_files/figure-html/unnamed-chunk-47-1.png)&lt;!-- --&gt;
+]
+
+.pull-right[
+![](network_complexity_files/figure-html/unnamed-chunk-48-1.png)&lt;!-- --&gt;
+]
+
+---
+
+# Trees - 100 Nodes &amp; 4 Branches
+
+.pull-left[
+![](network_complexity_files/figure-html/unnamed-chunk-49-1.png)&lt;!-- --&gt;
+]
+
+.pull-right[
+![](network_complexity_files/figure-html/unnamed-chunk-50-1.png)&lt;!-- --&gt;
+]
+
+---
+# Trees - 200 Nodes &amp; 6 Branches
+
+.pull-left[
+![](network_complexity_files/figure-html/unnamed-chunk-51-1.png)&lt;!-- --&gt;
+]
+
+.pull-right[
+![](network_complexity_files/figure-html/unnamed-chunk-52-1.png)&lt;!-- --&gt;
+]
+
+---
+
+# The trees' orientations look off...
+
+.pull-left[
+![](network_complexity_files/figure-html/unnamed-chunk-53-1.png)&lt;!-- --&gt;
+]
+
+.pull-right[
+![](network_complexity_files/figure-html/unnamed-chunk-54-1.png)&lt;!-- --&gt;
+]
+
+---
+
+# Tree Layout w/ Equal Coords
+.pull-left[
+![](network_complexity_files/figure-html/unnamed-chunk-55-1.png)&lt;!-- --&gt;
+]
+
+.pull-right[
+![](network_complexity_files/figure-html/unnamed-chunk-56-1.png)&lt;!-- --&gt;
+]
+
+---
+class: center, middle
+
+# Notes &amp; Acknowledgements
+
+---
+
+# Notes
+
+There are a handful of differences between my results and Geoff's. This could be due to:
+
+--
+
+- How the graph was created. I believe Geoff used road intersections to create the graph. That is, the nodes are the intersections. I'm not a 100% sure, but `SpatalLinesNetwork` could create the nodes at any road's change of direction.This would mean more edges to calculate.
+
+--
+
+- I binned at every 10 `\(^\circ\)` starting at 90 `\(^\circ\)` and ending at -90 `\(^\circ\)`. I'm not sure how Geoff binned his roads. 
+
+--
+
+- I haven't actually looked at Geoff's source code so this is not a direct port. I just did some guess work. I hope to have some time to actually look over his code and make a true port.
+
+---
+
+#Acknowledgments
+
+True to form, the R community provded me with all the tools to play around and attempt this. In particular, thank you to
+
+--
+
+- [Edzer Pebesma](https://twitter.com/edzerpebesma) for spear-heading the awesome [**sf** package](https://github.com/r-spatial/sf). This package makes it easy to store and extract data from geometries.
+
+--
+
+- [Mark Padgham](https://twitter.com/bikesRdata) for leading the charge with [**osmdata**](https://github.com/ropensci/osmdata). This makes it easy to access the wealth of data stored in the community driven [OpenStreetMap project](https://www.openstreetmap.org/#map=4/38.01/-95.84).
+
+--
+
+- [Robin Lovelace](https://twitter.com/robinlovelace), [Jakub Nowosad](https://twitter.com/jakub_nowosad), and [Jannes Muenchow](http://www.geographie.uni-jena.de/en/Muenchow.html) for writing the amazing textbook [Geocomputation with R](https://geocompr.robinlovelace.net). This book is an deep dive into R's spatial capabilites, but is also very accessible and easy to follow.
+
+--
+
+- [Hadley Wickham](https://twitter.com/hadleywickham), [Lionel Henry](https://twitter.com/_lionelhenry) and the other amazing folks at [RStudio](https://twitter.com/rstudio) for making amazing tools like **ggplot2** and **purrr** that make data viz and data cleaning a breeze.
+
+--
+
+- [Gábor Csárdi](https://twitter.com/GaborCsardi) for making the massive, but awesome [**igraph** api](https://igraph.org/r/). Graph everything you can, it's so much fun.
+
+--
+
+- [Stefan Milton Bache](https://twitter.com/stefanbache?lang=en) for the awesome [magrittr package](https://cran.r-project.org/web/packages/magrittr/vignettes/magrittr.html). Pipe all the things!
+
+
+---
+class: center, middle
+
+# If you want to see the entropy of your own city, then check out [this gist](https://gist.github.com/beemyfriend/df42ca5d7040edd7d1dcb6eab6ed69f6) with utility functions to create them. 
+
+---
+class: center, middle
+
+# Thank You!
+    </textarea>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function() {
+  var d = document, s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})();</script>
+
+<script>
+(function() {
+  var i, text, code, codes = document.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+})();
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
