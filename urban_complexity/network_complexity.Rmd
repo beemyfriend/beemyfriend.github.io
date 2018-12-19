@@ -141,7 +141,7 @@ get_city_graph <- function(city, road_types){
 }
 ```
 
-<h1><a href='https://geoffboeing.com/2018/07/comparing-city-street-orientations/'>Geoff Boeing did something cool</a></h1>
+<h1><a href='https://geoffboeing.com/2018/07/comparing-city-street-orientations/'>Geoff Boeing made something cool</a></h1>
 
 ---
 class: center, middle
@@ -151,12 +151,16 @@ knitr::include_graphics("./city-street-orientations-usa-osmnx.png" )
 
 ```
 
+---
+class: center, middle
+# [OSMnx](https://geoffboeing.com/2016/11/osmnx-python-street-networks/) is a Python package for easily downloading and analyzing street networks anywhere in the world. Among other analyses, we can use it to explore street network orientation. That is, what are the bearings and spatial orientations of the streets in the network? 
+
 
 ---
 class: center, middle
 
 
-<h2>Geoff did something cool </h2>
+<h2>Geoff made something cool </h2>
 
 --
 
@@ -226,7 +230,7 @@ Before we pull out any kind of map data, we need to define the *boundng box* of 
 dc_bb <- getbb('Washington, DC')
 ```
 
-and this will provide us with a matrix of the maximum and minmum values for the regions longitudal (x) and latitudal (y) borders
+and this will provide us with a matrix of the maximum and minimum values for the region's longitudal (x) and latitudal (y) borders
 
 ```{r, echo = F}
 dc_bb <- readRDS('dc_bb.rds')
@@ -237,7 +241,7 @@ knitr::kable(dc_bb, format='html')
 
 # ::opq | ::add_osm_feature | ::osmdata_sf
 
-Once we define the region we care about, we can pull data from **OpenStreetMap** by building an *Overpass Query*. Since we're only interested in building a street network, we will only pull the *highway features*. Once tell OSM the features we want, we can extract the *linestring* geometry as a **Simple Feature**.
+Once we define the region we care about, we can pull data from **OpenStreetMap** by building an *Overpass Query*. Since we're only interested in building a street network, we will only pull the *highway features*. Once we tell OSM the features we want, we can extract the *linestring* geometry as a **Simple Feature**.
 
 ```{r eval=F}
 
@@ -310,7 +314,7 @@ dc_g <- dc_roads %>%
     .@g 
 ```
 
-What we get is a cool an *igraph* style graph with the logtitude (x) and latitude (y) coordinates of the intersections (nodes) stored as graph attributes
+What we get is a cool *igraph* style graph with the logtitude (x) and latitude (y) coordinates of the intersections (nodes) stored as graph attributes. We also have an edge attribute called "weight." This is the relative length of the road an edge represents. A longer road will have a larger weight.
 
 ```{r, echo = F}
 dc_g <- readRDS('dc_g.rds')
@@ -626,6 +630,97 @@ ggplot(dc_hist_data) +
 ```
 
 ---
+# Washington, DC
+
+.pull-left[
+```{r, echo = F}
+knitr::include_graphics("./Washington,_DC_graph.pdf" )
+```
+]
+
+.pull-right[
+```{r, echo = F}
+knitr::include_graphics("./Washington,_DC_entropy.pdf" )
+```
+]
+
+---
+# Philadelphia, PA
+
+.pull-left[
+```{r, echo = F}
+knitr::include_graphics("./Philadelphia,_PA_graph.pdf" )
+```
+]
+
+.pull-right[
+```{r, echo = F}
+knitr::include_graphics("./Philadelphia,_PA_entropy.pdf" )
+```
+]
+
+
+---
+# New Haven, CT
+
+.pull-left[
+```{r, echo = F}
+knitr::include_graphics("./New_Haven,_CT_graph.pdf" )
+```
+]
+
+.pull-right[
+```{r, echo = F}
+knitr::include_graphics("./New_Haven,_CT_entropy.pdf" )
+```
+]
+
+---
+# Santiago, Chile
+
+.pull-left[
+```{r, echo = F}
+knitr::include_graphics("./Santiago,_Chile_graph.pdf" )
+```
+]
+
+.pull-right[
+```{r, echo = F}
+knitr::include_graphics("./Santiago,_Chile_entropy.pdf" )
+```
+]
+
+---
+# New York, New York
+
+.pull-left[
+```{r, echo = F}
+knitr::include_graphics("./New_York,_New_York_graph.pdf" )
+```
+]
+
+.pull-right[
+```{r, echo = F}
+knitr::include_graphics("./New_York,_New_York_entropy.pdf" )
+```
+]
+
+---
+# Boston, MA
+
+.pull-left[
+```{r, echo = F}
+knitr::include_graphics("./Boston,_MA_graph.pdf" )
+```
+]
+
+.pull-right[
+```{r, echo = F}
+knitr::include_graphics("./Boston,_MA_entropy.pdf" )
+```
+]
+
+---
 class: middle, center
 
 # Let's look at traditional graphs
@@ -910,7 +1005,11 @@ There are a handful of differences between my results and Geoff's. This could be
 
 --
 
-- I binned at every 10 $^\circ$ starting at 90 $^\circ$ and ending at -90 $^\circ$. I'm not sure how Geoff binned his roads. 
+- I binned at every 10 $^\circ$ starting at 90 $^\circ$ and ending at -90 $^\circ$. This means I have 18 bins. At a glance, it looks like Geoff binned at every 12 $^\circ$ with 15 bins. 
+
+--
+
+- I only extracted 4 road types: Trunks, Primary, Secondary, and Tertiary roads. I'm not sure what roads Geoff extracted for the analysis.
 
 --
 

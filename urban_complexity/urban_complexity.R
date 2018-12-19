@@ -136,7 +136,7 @@ dc_l <- c(V(dc_g)$x, V(dc_g)$y) %>%
   matrix(ncol = 2)
 
 dc_custom <- customize_graph(dc_g, dc_l)
-dc_orientation <- graph_orientation(dc_custom, 10)
+dc_orientation <- graph_orientation(dc_custom, 12)
 plot(dc_custom, vertex.size = .1)
 plot_entropy(dc_orientation, title = "DC")
 
@@ -155,3 +155,39 @@ charlotte_custom <- customize_graph(charlotte_g, charlotte_l)
 charlotte_orientation <- graph_orientation(charlotte_custom, 10)
 plot(charlotte_custom, vertex.size = .1)
 plot_entropy(charlotte_orientation, title = "Charlotte, NC")
+
+
+cities <- c('Washington, DC', 
+            'Philadelphia, PA', 
+            "New Haven, CT", 
+            "New York, New York", 
+            "Boston, MA", 
+            "Santiago, Chile")
+
+city_graphs <- map(setNames(cities, cities), function(cty){
+  get_city_graph(cty, 
+                 c("primary", "secondary", "tertiary"))
+})
+
+saveRDS(city_graphs, 'city_graphs.rds')
+
+map2(city_graphs, names(city_graphs), function(cg, nm){
+  cg_l <- c(V(cg)$x, V(cg)$y) %>%
+    matrix(ncol = 2)
+  
+  cg_custom <- customize_graph(cg, cg_l)
+  
+  cg_orientation <- graph_orientation(cg_custom, 10)
+  
+  cairo_pdf(str_c(str_replace_all(nm, ' ', '_'), '_graph.pdf'), 8, 11)
+  print(
+    plot(cg_custom, vertex.size = .1)
+  )
+  dev.off()
+  
+  cairo_pdf(str_c(str_replace_all(nm, ' ', '_'), '_entropy.pdf'), 8, 11)
+  print(
+    plot_entropy(cg_orientation, title = nm)
+  )
+  dev.off()
+})
