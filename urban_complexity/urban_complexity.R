@@ -179,13 +179,15 @@ map2(city_graphs, names(city_graphs), function(cg, nm){
   
   cg_orientation <- graph_orientation(cg_custom, 10)
   
-  cairo_pdf(str_c(str_replace_all(nm, ' ', '_'), '_graph.pdf'), 8, 11)
+  png(str_c(str_replace_all(nm, ' ', '_'), '_graph.png'))
+  # cairo_pdf(str_c(str_replace_all(nm, ' ', '_'), '_graph.pdf'), 8, 11)
   print(
     plot(cg_custom, vertex.size = .1)
   )
   dev.off()
   
-  cairo_pdf(str_c(str_replace_all(nm, ' ', '_'), '_entropy.pdf'), 8, 11)
+  png(str_c(str_replace_all(nm, ' ', '_'), '_entropy.png'))
+  # cairo_pdf(str_c(str_replace_all(nm, ' ', '_'), '_entropy.pdf'), 8, 11)
   print(
     plot_entropy(cg_orientation, title = nm)
   )

@@ -634,13 +634,13 @@ ggplot(dc_hist_data) +
 
 .pull-left[
 ```{r, echo = F}
-knitr::include_graphics("./Washington,_DC_graph.pdf" )
+knitr::include_graphics("./Washington,_DC_graph.png" )
 ```
 ]
 
 .pull-right[
 ```{r, echo = F}
-knitr::include_graphics("./Washington,_DC_entropy.pdf" )
+knitr::include_graphics("./Washington,_DC_entropy.png" )
 ```
 ]
 
@@ -649,13 +649,13 @@ knitr::include_graphics("./Washington,_DC_entropy.pdf" )
 
 .pull-left[
 ```{r, echo = F}
-knitr::include_graphics("./Philadelphia,_PA_graph.pdf" )
+knitr::include_graphics("./Philadelphia,_PA_graph.png" )
 ```
 ]
 
 .pull-right[
 ```{r, echo = F}
-knitr::include_graphics("./Philadelphia,_PA_entropy.pdf" )
+knitr::include_graphics("./Philadelphia,_PA_entropy.png" )
 ```
 ]
 
@@ -665,13 +665,13 @@ knitr::include_graphics("./Philadelphia,_PA_entropy.pdf" )
 
 .pull-left[
 ```{r, echo = F}
-knitr::include_graphics("./New_Haven,_CT_graph.pdf" )
+knitr::include_graphics("./New_Haven,_CT_graph.png" )
 ```
 ]
 
 .pull-right[
 ```{r, echo = F}
-knitr::include_graphics("./New_Haven,_CT_entropy.pdf" )
+knitr::include_graphics("./New_Haven,_CT_entropy.png" )
 ```
 ]
 
@@ -680,13 +680,13 @@ knitr::include_graphics("./New_Haven,_CT_entropy.pdf" )
 
 .pull-left[
 ```{r, echo = F}
-knitr::include_graphics("./Santiago,_Chile_graph.pdf" )
+knitr::include_graphics("./Santiago,_Chile_graph.png" )
 ```
 ]
 
 .pull-right[
 ```{r, echo = F}
-knitr::include_graphics("./Santiago,_Chile_entropy.pdf" )
+knitr::include_graphics("./Santiago,_Chile_entropy.png" )
 ```
 ]
 
@@ -695,13 +695,13 @@ knitr::include_graphics("./Santiago,_Chile_entropy.pdf" )
 
 .pull-left[
 ```{r, echo = F}
-knitr::include_graphics("./New_York,_New_York_graph.pdf" )
+knitr::include_graphics("./New_York,_New_York_graph.png" )
 ```
 ]
 
 .pull-right[
 ```{r, echo = F}
-knitr::include_graphics("./New_York,_New_York_entropy.pdf" )
+knitr::include_graphics("./New_York,_New_York_entropy.png" )
 ```
 ]
 
@@ -710,13 +710,13 @@ knitr::include_graphics("./New_York,_New_York_entropy.pdf" )
 
 .pull-left[
 ```{r, echo = F}
-knitr::include_graphics("./Boston,_MA_graph.pdf" )
+knitr::include_graphics("./Boston,_MA_graph.png" )
 ```
 ]
 
 .pull-right[
 ```{r, echo = F}
-knitr::include_graphics("./Boston,_MA_entropy.pdf" )
+knitr::include_graphics("./Boston,_MA_entropy.png" )
 ```
 ]
 
