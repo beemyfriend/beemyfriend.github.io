@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Network Entropy</title>
+    <meta charset="utf-8">
+    <meta name="author" content="plzbeemyfriend" />
+    <meta name="date" content="2018-12-16" />
+    <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <link href="libs/remark-css/default-fonts.css" rel="stylesheet" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Network Entropy
+## Exploring Urban &amp; Traditional Networks
+### plzbeemyfriend
+### 2018-12-16
+
+---
+
+class: center, middle
+
+
+
+&lt;h1&gt;&lt;a href='https://geoffboeing.com/2018/07/comparing-city-street-orientations/'&gt;Geoff Boeing made something cool&lt;/a&gt;&lt;/h1&gt;
+
+---
+class: center, middle
+
+
+&lt;img src="./street_networks_gb.png" width="1324" height="500px" /&gt;
+
+---
+class: center, middle
+
+&lt;img src="./city-street-orientations-usa-osmnx.png" width="500px" /&gt;
+
+---
+class: center, middle
+# [OSMnx](https://geoffboeing.com/2016/11/osmnx-python-street-networks/) is a Python package for easily downloading and analyzing street networks anywhere in the world. Among other analyses, we can use it to explore street network orientation. That is, what are the bearings and spatial orientations of the streets in the network? 
+
+
+---
+class: center, middle
+
+
+&lt;h2&gt;Geoff made something cool &lt;/h2&gt;
+
+--
+
+&lt;h2&gt;&lt;a href="https://github.com/gboeing/osmnx-examples/blob/master/notebooks/17-street-network-orientations.ipynb"&gt;But did it in Python&lt;/a&gt; &amp;#x1f40d;&lt;/h2&gt;
+
+--
+
+&lt;h2&gt;And that makes me sad  	&amp;#x1F622; &lt;/h2&gt;
+
+
+---
+class: center, middle
+
+&lt;h2&gt;So let's do this with&lt;/h2&gt;
+
+&lt;img src="./R_logo.png" width="300px" /&gt;
+
+---
+&lt;h2&gt;What do we need to make these in R?&lt;/h2&gt;
+
+--
+
+* Grab city street data with **osmdata**
+
+--
+
+* Create a street network graph with **stplanr** and **igraph**
+
+--
+
+* Use trigonmetry functions from **base**
+
+--
+
+* Use handwavy magic from **ggplot2**
+
+---
+class:  middle, center
+
+# Grab city street data with **osmdata**
+
+---
+
+## This is a map of DC pulled from **osmdata**
+
+&lt;img src="network_complexity_short_files/figure-html/unnamed-chunk-4-1.png" height="500px" /&gt;
+
+
+
+---
+class: middle, center
+
+# Create a street network graph with **stplanr** and **igraph**
+
+---
+
+--- 
+## we can represent each intersection as a vertex with **stplanr**
+
+![](network_complexity_short_files/figure-html/unnamed-chunk-5-1.png)&lt;!-- --&gt;
+
+---
+## If we store Lon/Lat info in vertices, then we can plot them as x/y coordinates
+
+![](network_complexity_short_files/figure-html/unnamed-chunk-6-1.png)&lt;!-- --&gt;
+
+---
+class: middle, center
+
+# Use trigonmetry functions from **base**
+
+
+---
+class: middle, center
+
+&lt;img src="toa_trig.svg" width="500px" /&gt;
+
+--
+`$$Tangent(\theta)=\frac{Opposite}{Adjacent}$$`
+
+--
+`$$\theta=Tangent^{-1} (\frac{Opposite}{Adjacent})$$`
+
+--
+`$$\theta=Tangent^{-1} (Slope)$$`
+---
+class: middle, center
+
+## Street Graphs Use Cartesian Coordinates
+
+![](network_complexity_short_files/figure-html/unnamed-chunk-8-1.png)&lt;!-- --&gt;
+
+---
+class: middle, center
+
+## Calculate `\(\theta\)` w/ ArcTan
+
+![](network_complexity_short_files/figure-html/unnamed-chunk-9-1.png)&lt;!-- --&gt;
+
+---
+class: middle, center
+
+## For maps, NE roads also point SW
+
+![](network_complexity_short_files/figure-html/unnamed-chunk-10-1.png)&lt;!-- --&gt;
+
+---
+class: middle, center
+
+#Spot Check: Do the slopes look correct?
+
+![](network_complexity_short_files/figure-html/unnamed-chunk-11-1.png)&lt;!-- --&gt;
+
+---
+class: middle, center
+
+# Use handwavy magic from **ggplot2**
+
+---
+
+## The end result is a *Polar Histogram*. 
+
+--
+
+### This is an easy enough task now that we've done most of the data cleaning. We should be able to make a *Polar Histogram* in 3 steps:
+
+--
+
+1 Create reasonable bins for the angles
+
+--
+
+2 Duplicate the bins to represent the opposite coordinates
+
+--
+
+3 Plug everything into **ggplot**
+
+
+---
+# Washington, DC
+
+.pull-left[
+&lt;img src="./Washington,_DC_graph.png" width="640" /&gt;
+]
+
+.pull-right[
+&lt;img src="./Washington,_DC_entropy.png" width="640" /&gt;
+]
+
+---
+# Philadelphia, PA
+
+.pull-left[
+&lt;img src="./Philadelphia,_PA_graph.png" width="640" /&gt;
+]
+
+.pull-right[
+&lt;img src="./Philadelphia,_PA_entropy.png" width="640" /&gt;
+]
+
+
+---
+# New Haven, CT
+
+.pull-left[
+&lt;img src="./New_Haven,_CT_graph.png" width="640" /&gt;
+]
+
+.pull-right[
+&lt;img src="./New_Haven,_CT_entropy.png" width="640" /&gt;
+]
+
+---
+# Santiago, Chile
+
+.pull-left[
+&lt;img src="./Santiago,_Chile_graph.png" width="640" /&gt;
+]
+
+.pull-right[
+&lt;img src="./Santiago,_Chile_entropy.png" width="640" /&gt;
+]
+
+---
+# New York, New York
+
+.pull-left[
+&lt;img src="./New_York,_New_York_graph.png" width="640" /&gt;
+]
+
+.pull-right[
+&lt;img src="./New_York,_New_York_entropy.png" width="640" /&gt;
+]
+
+---
+# Boston, MA
+
+.pull-left[
+&lt;img src="./Boston,_MA_graph.png" width="640" /&gt;
+]
+
+.pull-right[
+&lt;img src="./Boston,_MA_entropy.png" width="640" /&gt;
+]
+
+---
+class: middle, center
+
+# Let's look at traditional graphs
+
+---
+
+#Force Directed Graph
+
+.pull-left[
+![](network_complexity_short_files/figure-html/unnamed-chunk-24-1.png)&lt;!-- --&gt;
+]
+
+.pull-right[
+![](network_complexity_short_files/figure-html/unnamed-chunk-25-1.png)&lt;!-- --&gt;
+]
+
+---
+
+# Lattice
+
+.pull-left[
+![](network_complexity_short_files/figure-html/unnamed-chunk-26-1.png)&lt;!-- --&gt;
+]
+
+.pull-right[
+![](network_complexity_short_files/figure-html/unnamed-chunk-27-1.png)&lt;!-- --&gt;
+]
+
+---
+
+#Circles - 25 Nodes &amp; Edges Within 1
+
+.pull-left[
+![](network_complexity_short_files/figure-html/unnamed-chunk-28-1.png)&lt;!-- --&gt;
+]
+
+.pull-right[
+![](network_complexity_short_files/figure-html/unnamed-chunk-29-1.png)&lt;!-- --&gt;
+]
+
+---
+
+# Circles - 25 Nodes &amp; Edges Within 2
+
+.pull-left[
+![](network_complexity_short_files/figure-html/unnamed-chunk-30-1.png)&lt;!-- --&gt;
+
+]
+
+.pull-right[
+![](network_complexity_short_files/figure-html/unnamed-chunk-31-1.png)&lt;!-- --&gt;
+]
+
+---
+
+# Circles - 50 Nodes &amp; Edges Within 2
+
+.pull-left[
+![](network_complexity_short_files/figure-html/unnamed-chunk-32-1.png)&lt;!-- --&gt;
+]
+
+.pull-right[
+![](network_complexity_short_files/figure-html/unnamed-chunk-33-1.png)&lt;!-- --&gt;
+]
+
+---
+
+#Circles - 120 Nodes &amp; Edges Within 2
+
+.pull-left[
+![](network_complexity_short_files/figure-html/unnamed-chunk-34-1.png)&lt;!-- --&gt;
+]
+
+.pull-right[
+![](network_complexity_short_files/figure-html/unnamed-chunk-35-1.png)&lt;!-- --&gt;
+]
+
+---
+
+# Trees - 25 Nodes &amp; 2 Branches
+
+.pull-left[
+![](network_complexity_short_files/figure-html/unnamed-chunk-36-1.png)&lt;!-- --&gt;
+]
+
+.pull-right[
+![](network_complexity_short_files/figure-html/unnamed-chunk-37-1.png)&lt;!-- --&gt;
+]
+
+---
+
+# Trees - 100 Nodes &amp; 2 Branches
+
+.pull-left[
+![](network_complexity_short_files/figure-html/unnamed-chunk-38-1.png)&lt;!-- --&gt;
+]
+
+.pull-right[
+![](network_complexity_short_files/figure-html/unnamed-chunk-39-1.png)&lt;!-- --&gt;
+]
+
+---
+
+# Trees - 100 Nodes &amp; 4 Branches
+
+.pull-left[
+![](network_complexity_short_files/figure-html/unnamed-chunk-40-1.png)&lt;!-- --&gt;
+]
+
+.pull-right[
+![](network_complexity_short_files/figure-html/unnamed-chunk-41-1.png)&lt;!-- --&gt;
+]
+
+---
+# Trees - 200 Nodes &amp; 6 Branches
+
+.pull-left[
+![](network_complexity_short_files/figure-html/unnamed-chunk-42-1.png)&lt;!-- --&gt;
+]
+
+.pull-right[
+![](network_complexity_short_files/figure-html/unnamed-chunk-43-1.png)&lt;!-- --&gt;
+]
+
+---
+
+# The trees' orientations look off...
+
+.pull-left[
+![](network_complexity_short_files/figure-html/unnamed-chunk-44-1.png)&lt;!-- --&gt;
+]
+
+.pull-right[
+![](network_complexity_short_files/figure-html/unnamed-chunk-45-1.png)&lt;!-- --&gt;
+]
+
+---
+
+# Tree Layout w/ Equal Coords
+.pull-left[
+![](network_complexity_short_files/figure-html/unnamed-chunk-46-1.png)&lt;!-- --&gt;
+]
+
+.pull-right[
+![](network_complexity_short_files/figure-html/unnamed-chunk-47-1.png)&lt;!-- --&gt;
+]
+
+---
+class: center, middle
+
+# Notes &amp; Acknowledgements
+
+---
+
+# Notes
+
+There are a handful of differences between my results and Geoff's. This could be due to:
+
+--
+
+- How the graph was created. I believe Geoff used road intersections to create the graph. That is, the nodes are the intersections. I'm not a 100% sure, but `SpatalLinesNetwork` could create the nodes at any road's change of direction.This would mean more edges to calculate.
+
+--
+
+- I binned at every 10 `\(^\circ\)` starting at 90 `\(^\circ\)` and ending at -90 `\(^\circ\)`. This means I have 18 bins. At a glance, it looks like Geoff binned at every 12 `\(^\circ\)` with 15 bins. 
+
+--
+
+- I only extracted 4 road types: Trunks, Primary, Secondary, and Tertiary roads. I'm not sure what roads Geoff extracted for the analysis.
+
+--
+
+- I haven't actually looked at Geoff's source code so this is not a direct port. I just did some guess work. I hope to have some time to actually look over his code and make a true port.
+
+---
+
+#Acknowledgments
+
+True to form, the R community provded me with all the tools to play around and attempt this. In particular, thank you to
+
+--
+
+- [Edzer Pebesma](https://twitter.com/edzerpebesma) for spear-heading the awesome [**sf** package](https://github.com/r-spatial/sf). This package makes it easy to store and extract data from geometries.
+
+--
+
+- [Mark Padgham](https://twitter.com/bikesRdata) for leading the charge with [**osmdata**](https://github.com/ropensci/osmdata). This makes it easy to access the wealth of data stored in the community driven [OpenStreetMap project](https://www.openstreetmap.org/#map=4/38.01/-95.84).
+
+--
+
+- [Robin Lovelace](https://twitter.com/robinlovelace), [Jakub Nowosad](https://twitter.com/jakub_nowosad), and [Jannes Muenchow](http://www.geographie.uni-jena.de/en/Muenchow.html) for writing the amazing textbook [Geocomputation with R](https://geocompr.robinlovelace.net). This book is an deep dive into R's spatial capabilites, but is also very accessible and easy to follow.
+
+--
+
+- [Hadley Wickham](https://twitter.com/hadleywickham), [Lionel Henry](https://twitter.com/_lionelhenry) and the other amazing folks at [RStudio](https://twitter.com/rstudio) for making amazing tools like **ggplot2** and **purrr** that make data viz and data cleaning a breeze.
+
+--
+
+- [Gábor Csárdi](https://twitter.com/GaborCsardi) for making the massive, but awesome [**igraph** api](https://igraph.org/r/). Graph everything you can, it's so much fun.
+
+--
+
+- [Stefan Milton Bache](https://twitter.com/stefanbache?lang=en) for the awesome [magrittr package](https://cran.r-project.org/web/packages/magrittr/vignettes/magrittr.html). Pipe all the things!
+
+
+---
+class: center, middle
+
+# If you want to see the entropy of your own city, then check out [this gist](https://gist.github.com/beemyfriend/df42ca5d7040edd7d1dcb6eab6ed69f6) with utility functions to create them. 
+
+---
+class: center, middle
+
+# Thank You!
+    </textarea>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function() {
+  var d = document, s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})();</script>
+
+<script>
+(function() {
+  var i, text, code, codes = document.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+})();
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
